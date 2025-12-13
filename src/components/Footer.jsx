@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Instagram } from "lucide-react";
+import { Instagram, MapPin } from "lucide-react";
 
 // Icono de TikTok personalizado
 const TikTokIcon = ({ size = 20 }) => (
@@ -32,7 +32,7 @@ const Footer = () => {
   return (
     <footer className="bg-dark-secondary border-t border-gray/20 py-12">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -116,6 +116,37 @@ const Footer = () => {
                   <social.icon size={20} />
                 </motion.a>
               ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <span className="text-light font-bold text-lg mb-4 block">
+              Ubicación
+            </span>
+            <div className="flex items-start gap-3 text-gray">
+              <MapPin className="text-primary mt-1 flex-shrink-0" size={20} />
+              <div>
+                <p className="leading-relaxed">
+                  Cra. 8 #18-13
+                  <br />
+                  Cumbal, Nariño
+                  <br />
+                  Colombia
+                </p>
+                <a
+                  href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 text-primary hover:text-secondary transition-colors duration-300 text-sm font-semibold"
+                >
+                  Ver en Google Maps →
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>
