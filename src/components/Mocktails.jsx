@@ -112,8 +112,8 @@ const Mocktails = () => {
       name: "Margarota",
       description:
         "Versión gigante y atrevida de la clásica margarita para compartir.",
-      priceSuave: "$40.000",
-      priceCargado: "$50.000",
+      priceSuave: "$50.000",
+      priceCargado: "$70.000",
       liquor: "Tequila JOSE CUERVO Especial Reposado",
       icon: PartyPopper,
       gradient: "from-yellow-400 to-amber-500",
