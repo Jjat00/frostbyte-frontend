@@ -73,12 +73,18 @@ const Header = () => {
       href: "#mocktails",
       description: "Mojitos, Margaritas, Moscow Mule y más.",
     },
+    {
+      title: "Shots",
+      href: "#shots",
+      description: "Ginebra, Vodka, Whisky, Tequila y Ron.",
+    },
   ];
 
   const navItems = [
     { name: "Características", href: "#features" },
-    { name: "Galería", href: "#gallery" },
-    { name: "Contacto", href: "#contact" },
+    { name: "Shots", href: "#shots" },
+    // { name: "Galería", href: "#gallery" },
+    // { name: "Contacto", href: "#contact" },
   ];
 
   return (
@@ -87,7 +93,7 @@ const Header = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+        isScrolled || isMobileMenuOpen
           ? "bg-dark-secondary/95 backdrop-blur-md shadow-lg shadow-primary/10"
           : "bg-transparent"
       }`}
@@ -169,7 +175,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 pb-4 space-y-4"
+            className="md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 bg-dark-secondary rounded-xl border border-gray/20"
           >
             <a
               href="#granizados"
