@@ -2,6 +2,39 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Citrus, Apple, Grape, Sun, Moon } from "lucide-react";
 
+const GradientVisual = ({ gradient, secondaryGradient }) => (
+  <div
+    className={`w-full h-full bg-linear-to-br ${gradient} relative overflow-hidden`}
+  >
+    {/* Efecto de textura de hielo */}
+    <div className="absolute inset-0 opacity-30">
+      <div className="absolute top-1/4 left-1/4 w-16 h-16 bg-white/40 rounded-full blur-xl"></div>
+      <div className="absolute top-1/2 right-1/3 w-12 h-12 bg-white/30 rounded-full blur-lg"></div>
+      <div className="absolute bottom-1/4 left-1/2 w-20 h-20 bg-white/25 rounded-full blur-2xl"></div>
+    </div>
+    {/* Burbujas decorativas */}
+    <div className="absolute top-4 right-6 w-3 h-3 bg-white/50 rounded-full"></div>
+    <div className="absolute top-8 right-12 w-2 h-2 bg-white/40 rounded-full"></div>
+    <div className="absolute bottom-6 left-8 w-4 h-4 bg-white/35 rounded-full"></div>
+    <div className="absolute bottom-12 left-4 w-2 h-2 bg-white/45 rounded-full"></div>
+    {/* Efecto de brillo */}
+    <div
+      className={`absolute inset-0 bg-linear-to-t ${secondaryGradient} opacity-40`}
+    ></div>
+    {/* Patrón de cristales de hielo */}
+    <div
+      className="absolute inset-0 opacity-20"
+      style={{
+        backgroundImage: `radial-gradient(circle at 20% 30%, white 1px, transparent 1px),
+                          radial-gradient(circle at 80% 70%, white 1px, transparent 1px),
+                          radial-gradient(circle at 40% 80%, white 1px, transparent 1px),
+                          radial-gradient(circle at 60% 20%, white 1px, transparent 1px)`,
+        backgroundSize: "60px 60px",
+      }}
+    ></div>
+  </div>
+);
+
 const ProductCard = ({ product, index }) => (
   <motion.div
     initial={{ opacity: 0, y: 50 }}
@@ -14,7 +47,10 @@ const ProductCard = ({ product, index }) => (
     <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20">
       <div className="h-48 overflow-hidden relative">
         <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
-        {product.image}
+        <GradientVisual
+          gradient={product.visualGradient}
+          secondaryGradient={product.secondaryGradient}
+        />
       </div>
 
       <div className="p-6 flex flex-col grow relative z-20 -mt-12">
@@ -56,13 +92,8 @@ const Granizados = () => {
       price: "$10.000 COP",
       icon: Sun,
       gradient: "from-yellow-400 to-orange-500",
-      image: (
-        <img
-          alt="Granizado de mango amarillo brillante con trozos de fruta fresca"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="https://images.unsplash.com/photo-1565167273685-6a58b9d5ff97"
-        />
-      ),
+      visualGradient: "from-yellow-300 via-amber-400 to-orange-500",
+      secondaryGradient: "from-transparent via-yellow-200/20 to-transparent",
     },
     {
       id: 2,
@@ -71,13 +102,8 @@ const Granizados = () => {
       price: "$10.000 COP",
       icon: Citrus,
       gradient: "from-lime-400 to-green-600",
-      image: (
-        <img
-          alt="Granizado de mango biche verde con sal y limón en el borde"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="https://images.unsplash.com/photo-1595548151928-3f0b60efc847"
-        />
-      ),
+      visualGradient: "from-lime-300 via-green-400 to-emerald-500",
+      secondaryGradient: "from-transparent via-lime-200/20 to-transparent",
     },
     {
       id: 3,
@@ -87,13 +113,8 @@ const Granizados = () => {
       price: "$12.000 COP",
       icon: Sun,
       gradient: "from-orange-400 to-yellow-300",
-      image: (
-        <img
-          alt="Granizado bicolor mezclando amarillo y naranja de mango y maracuyá"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="https://images.unsplash.com/photo-1625860650806-871900fe2c36"
-        />
-      ),
+      visualGradient: "from-orange-400 via-amber-400 to-yellow-400",
+      secondaryGradient: "from-transparent via-orange-200/20 to-transparent",
     },
     {
       id: 4,
@@ -103,13 +124,8 @@ const Granizados = () => {
       price: "$11.000 COP",
       icon: Citrus,
       gradient: "from-yellow-300 to-orange-400",
-      image: (
-        <img
-          alt="Granizado de maracuyá amarillo con semillas negras visibles"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="https://images.unsplash.com/photo-1700540220755-daeb64eeac8b"
-        />
-      ),
+      visualGradient: "from-yellow-400 via-amber-500 to-orange-400",
+      secondaryGradient: "from-transparent via-yellow-300/20 to-transparent",
     },
     {
       id: 5,
@@ -119,13 +135,8 @@ const Granizados = () => {
       price: "$11.000 COP",
       icon: Moon,
       gradient: "from-green-300 to-lime-500",
-      image: (
-        <img
-          alt="Granizado de lulo color verde claro con textura espumosa"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="https://images.unsplash.com/photo-1698761098052-49709207d828"
-        />
-      ),
+      visualGradient: "from-emerald-300 via-green-400 to-lime-400",
+      secondaryGradient: "from-transparent via-green-200/20 to-transparent",
     },
   ];
 
