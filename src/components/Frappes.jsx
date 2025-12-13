@@ -1,10 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Coffee, Cookie, Cherry, Candy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
 
-const ProductCard = ({ product, index, handleOrder }) => (
+const ProductCard = ({ product, index }) => (
   <motion.div
     initial={{ opacity: 0, y: 50 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -33,12 +31,6 @@ const ProductCard = ({ product, index, handleOrder }) => (
           <span className="text-2xl font-bold bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
             {product.price}
           </span>
-          <Button
-            onClick={() => handleOrder(product.name)}
-            className="bg-gradient-to-r from-secondary to-primary text-dark font-bold hover:shadow-lg hover:shadow-secondary/50 transition-all duration-300"
-          >
-            Pedir
-          </Button>
         </div>
       </div>
     </div>
@@ -46,8 +38,6 @@ const ProductCard = ({ product, index, handleOrder }) => (
 );
 
 const Frappes = () => {
-  const { toast } = useToast();
-
   const products = [
     {
       id: 1,
@@ -87,14 +77,6 @@ const Frappes = () => {
     },
   ];
 
-  const handleOrder = (productName) => {
-    toast({
-      title: "🚧 Característica Próximamente!",
-      description: `La orden para ${productName} aún no está implementada.`,
-      duration: 4000,
-    });
-  };
-
   return (
     <section id="frappes" className="py-20 bg-dark relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -119,7 +101,7 @@ const Frappes = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} handleOrder={handleOrder} />
+            <ProductCard key={product.id} product={product} index={index} />
           ))}
         </div>
       </div>

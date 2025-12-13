@@ -1,10 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Citrus, Apple, Grape, Sun, Moon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 
-const ProductCard = ({ product, index, handleOrder }) => (
+const ProductCard = ({ product, index }) => (
   <motion.div
     initial={{ opacity: 0, y: 50 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -15,32 +13,33 @@ const ProductCard = ({ product, index, handleOrder }) => (
   >
     <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20">
       <div className="h-48 overflow-hidden relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent z-10 opacity-60"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
         {product.image}
       </div>
 
-      <div className="p-6 flex flex-col flex-grow relative z-20 -mt-12">
+      <div className="p-6 flex flex-col grow relative z-20 -mt-12">
         <div
-          className={`w-12 h-12 bg-gradient-to-br ${product.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+          className={`w-12 h-12 bg-linear-to-br ${product.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
         >
           <product.icon className="text-dark" size={24} />
         </div>
         <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-primary transition-colors duration-300">
           {product.name}
         </h3>
-        <p className="text-gray mb-4 flex-grow text-sm">
-          {product.description}
-        </p>
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-          <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            {product.price}
-          </span>
-          <Button
-            onClick={() => handleOrder(product.name)}
-            className="bg-gradient-to-r from-primary to-secondary text-dark font-bold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
-          >
-            Pedir
-          </Button>
+        <p className="text-gray mb-4 grow text-sm">{product.description}</p>
+        <div className="flex items-center justify-between gap-2 mt-auto pt-4 border-t border-gray/10">
+          <div className="flex flex-col">
+            <span className="text-xs text-gray">Pequeño</span>
+            <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+              $8.000
+            </span>
+          </div>
+          <div className="flex flex-col text-right">
+            <span className="text-xs text-gray">Grande</span>
+            <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+              $10.000
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -48,8 +47,6 @@ const ProductCard = ({ product, index, handleOrder }) => (
 );
 
 const Granizados = () => {
-  const { toast } = useToast();
-
   const products = [
     {
       id: 1,
@@ -132,14 +129,6 @@ const Granizados = () => {
     },
   ];
 
-  const handleOrder = (productName) => {
-    toast({
-      title: "🚧 Característica Próximamente!",
-      description: `La orden para ${productName} aún no está implementada.`,
-      duration: 4000,
-    });
-  };
-
   return (
     <section
       id="granizados"
@@ -159,7 +148,7 @@ const Granizados = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
               GRANIZADOS
             </span>
           </h2>
@@ -171,12 +160,7 @@ const Granizados = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {products.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              index={index}
-              handleOrder={handleOrder}
-            />
+            <ProductCard key={product.id} product={product} index={index} />
           ))}
         </div>
       </div>
