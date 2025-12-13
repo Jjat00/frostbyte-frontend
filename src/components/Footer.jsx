@@ -1,13 +1,32 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Instagram } from "lucide-react";
+
+// Icono de TikTok personalizado
+const TikTokIcon = ({ size = 20 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
+  </svg>
+);
 
 const Footer = () => {
   const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Youtube, href: '#', label: 'Youtube' },
+    {
+      icon: Instagram,
+      href: "https://www.instagram.com/frostbyte.col/",
+      label: "Instagram",
+    },
+    {
+      icon: TikTokIcon,
+      href: "https://www.tiktok.com/@frostbyte.col",
+      label: "TikTok",
+    },
   ];
 
   return (
@@ -29,7 +48,8 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-gray leading-relaxed">
-              Experimenta el futuro de las bebidas heladas. Granizados y frappés inspirados en el cyberpunk que superan los límites del sabor.
+              Experimenta el futuro de las bebidas heladas. Granizados y frappés
+              inspirados en el cyberpunk que superan los límites del sabor.
             </p>
           </motion.div>
 
@@ -39,18 +59,32 @@ const Footer = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <span className="text-light font-bold text-lg mb-4 block">Enlaces Rápidos</span>
+            <span className="text-light font-bold text-lg mb-4 block">
+              Enlaces Rápidos
+            </span>
             <nav className="space-y-2">
-              <a href="#products" className="block text-gray hover:text-primary transition-colors duration-300">
+              <a
+                href="#products"
+                className="block text-gray hover:text-primary transition-colors duration-300"
+              >
                 Productos
               </a>
-              <a href="#features" className="block text-gray hover:text-primary transition-colors duration-300">
+              <a
+                href="#features"
+                className="block text-gray hover:text-primary transition-colors duration-300"
+              >
                 Características
               </a>
-              <a href="#gallery" className="block text-gray hover:text-primary transition-colors duration-300">
+              <a
+                href="#gallery"
+                className="block text-gray hover:text-primary transition-colors duration-300"
+              >
                 Galería
               </a>
-              <a href="#contact" className="block text-gray hover:text-primary transition-colors duration-300">
+              <a
+                href="#contact"
+                className="block text-gray hover:text-primary transition-colors duration-300"
+              >
                 Contacto
               </a>
             </nav>
@@ -62,7 +96,9 @@ const Footer = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="text-light font-bold text-lg mb-4 block">Síguenos</span>
+            <span className="text-light font-bold text-lg mb-4 block">
+              Síguenos
+            </span>
             <p className="text-gray mb-4">
               Únete a nuestra comunidad cyberpunk en redes sociales
             </p>
@@ -71,6 +107,8 @@ const Footer = () => {
                 <motion.a
                   key={index}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={social.label}
                   whileHover={{ scale: 1.2, rotate: 5 }}
                   className="w-10 h-10 bg-dark border border-gray/30 rounded-lg flex items-center justify-center text-gray hover:text-primary hover:border-primary/50 transition-all duration-300"
@@ -88,10 +126,16 @@ const Footer = () => {
               © 2025 Frostbyte. Todos los derechos reservados.
             </p>
             <div className="flex space-x-6">
-              <a href="#" className="text-gray hover:text-primary transition-colors duration-300 text-sm">
+              <a
+                href="#"
+                className="text-gray hover:text-primary transition-colors duration-300 text-sm"
+              >
                 Política de Privacidad
               </a>
-              <a href="#" className="text-gray hover:text-primary transition-colors duration-300 text-sm">
+              <a
+                href="#"
+                className="text-gray hover:text-primary transition-colors duration-300 text-sm"
+              >
                 Términos de Servicio
               </a>
             </div>
