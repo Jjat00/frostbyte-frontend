@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, Cherry, Citrus } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Sparkles, Cherry, Citrus, Sun } from "lucide-react";
 
 const ProductCard = ({ product, index }) => (
   <motion.div
@@ -12,23 +12,30 @@ const ProductCard = ({ product, index }) => (
     className="group relative"
   >
     <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20">
-       <div className="h-48 overflow-hidden relative">
-         <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent z-10 opacity-60"></div>
-         {product.image}
+      <div className="h-48 overflow-hidden relative">
+        <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
+        {product.image}
+        {product.comingSoon && (
+          <div className="absolute inset-0 bg-dark/70 z-20 flex items-center justify-center">
+            <span className="text-light font-bold text-lg tracking-wider uppercase bg-primary/20 px-4 py-2 rounded-lg border border-primary/50">
+              Próximamente
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="p-6 flex flex-col flex-grow relative z-20 -mt-12">
-        <div className={`w-12 h-12 bg-gradient-to-br ${product.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+      <div className="p-6 flex flex-col grow relative z-20 -mt-12">
+        <div
+          className={`w-12 h-12 bg-linear-to-br ${product.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+        >
           <product.icon className="text-dark" size={24} />
         </div>
         <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-primary transition-colors duration-300">
           {product.name}
         </h3>
-        <p className="text-gray mb-4 flex-grow text-sm">
-          {product.description}
-        </p>
+        <p className="text-gray mb-4 grow text-sm">{product.description}</p>
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-          <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span className="text-2xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
             {product.price}
           </span>
         </div>
@@ -37,31 +44,66 @@ const ProductCard = ({ product, index }) => (
   </motion.div>
 );
 
-
 const SodasMicheladas = () => {
   const products = [
     {
       id: 1,
-      name: 'Soda Italiana de Fresa',
-      description: 'Refrescante soda carbonatada con jarabe de fresa natural y hielo.',
-      price: '$9.000 COP',
+      name: "Soda Italiana de Fresa",
+      description:
+        "Refrescante soda carbonatada con jarabe de fresa natural y hielo.",
+      price: "$8.000",
       icon: Cherry,
-      gradient: 'from-red-400 to-pink-500',
-      image: <img alt="Soda italiana de fresa roja brillante con burbujas y hielo" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://images.unsplash.com/photo-1651170021822-fa88d243d2f3" />
+      gradient: "from-red-400 to-pink-500",
+      comingSoon: true,
+      image: (
+        <img
+          alt="Soda italiana de fresa roja brillante con burbujas y hielo"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          src="./SODA-ITALIANA-FRESA-9715.jpg"
+        />
+      ),
     },
     {
       id: 2,
-      name: 'Soda Italiana de Maracuyá',
-      description: 'Exótica soda burbujeante infusionada con la acidez tropical del maracuyá.',
-      price: '$9.000 COP',
+      name: "Soda Italiana de Maracuyá",
+      description:
+        "Exótica soda burbujeante infusionada con la acidez tropical del maracuyá.",
+      price: "$8.000",
       icon: Citrus,
-      gradient: 'from-yellow-400 to-orange-500',
-      image: <img alt="Soda italiana de maracuyá amarilla con semillas y burbujas" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://images.unsplash.com/photo-1689555256964-aeabc20d1d3c" />
-    }
+      gradient: "from-yellow-400 to-orange-500",
+      comingSoon: true,
+      image: (
+        <img
+          alt="Soda italiana de maracuyá amarilla con semillas y burbujas"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          src="./RJjIk1U1.jpg"
+        />
+      ),
+    },
+    {
+      id: 3,
+      name: "Soda Italiana de Mango",
+      description:
+        "Dulce y tropical soda efervescente con el sabor intenso del mango maduro.",
+      price: "$8.000",
+      icon: Sun,
+      gradient: "from-yellow-300 to-orange-400",
+      comingSoon: true,
+      image: (
+        <img
+          alt="Soda italiana de mango amarilla brillante con burbujas"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          src="https://images.unsplash.com/photo-1546173159-315724a31696"
+        />
+      ),
+    },
   ];
 
   return (
-    <section id="sodas" className="py-20 bg-dark-secondary relative overflow-hidden">
+    <section
+      id="sodas"
+      className="py-20 bg-dark-secondary relative overflow-hidden"
+    >
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
         <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
@@ -75,7 +117,10 @@ const SodasMicheladas = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            SODAS <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">ITALIANAS</span>
+            SODAS{" "}
+            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+              ITALIANAS
+            </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
             Refrescantes, burbujeantes y llenas de sabor frutal.
