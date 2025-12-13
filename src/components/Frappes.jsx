@@ -41,13 +41,13 @@ const ProductCard = ({ product, index }) => (
               <div className="flex flex-col">
                 <span className="text-xs text-gray">Chocolisto</span>
                 <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-                  $13.000
+                  $10.000
                 </span>
               </div>
               <div className="flex flex-col text-right">
                 <span className="text-xs text-gray">Milo</span>
                 <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-                  $14.000
+                  $12.000
                 </span>
               </div>
             </div>
