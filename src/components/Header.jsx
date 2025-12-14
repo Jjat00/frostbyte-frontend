@@ -69,6 +69,11 @@ const Header = () => {
       description: "Refrescantes sodas de Fresa y Maracuyá.",
     },
     {
+      title: "Micheladas",
+      href: "#micheladas",
+      description: "Poker, Budweiser y Corona con nuestra mezcla secreta.",
+    },
+    {
       title: "Cócteles",
       href: "#mocktails",
       description: "Mojitos, Margaritas, Moscow Mule y más.",
@@ -197,6 +202,13 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Sodas Italianas
+            </a>
+            <a
+              href="#micheladas"
+              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Micheladas
             </a>
             <a
               href="#mocktails"

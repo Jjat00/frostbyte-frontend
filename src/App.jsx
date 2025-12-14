@@ -12,6 +12,7 @@ import Frappes from "@/components/Frappes";
 import SodasMicheladas from "@/components/SodasMicheladas";
 import Mocktails from "@/components/Mocktails";
 import Shots from "@/components/Shots";
+import Micheladas from "@/components/Micheladas";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Granizados />
           <Frappes />
           <SodasMicheladas />
+          <Micheladas />
           <Mocktails />
           <Shots />
           <Features />
