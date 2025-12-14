@@ -74,7 +74,7 @@ const Frappes = () => {
       price: "$12.000 COP",
       icon: Coffee,
       gradient: "from-amber-700 to-orange-900",
-      comingSoon: true,
+      comingSoon: false,
       image: (
         <img
           alt="Frappé de café cremoso con crema batida y granos de café"
