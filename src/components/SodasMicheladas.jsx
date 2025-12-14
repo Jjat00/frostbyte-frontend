@@ -54,7 +54,7 @@ const SodasMicheladas = () => {
       price: "$8.000",
       icon: Cherry,
       gradient: "from-red-400 to-pink-500",
-      comingSoon: true,
+      comingSoon: false,
       image: (
         <img
           alt="Soda italiana de fresa roja brillante con burbujas y hielo"

@@ -13,6 +13,7 @@ import SodasMicheladas from "@/components/SodasMicheladas";
 import Mocktails from "@/components/Mocktails";
 import Shots from "@/components/Shots";
 import Micheladas from "@/components/Micheladas";
+import QuickNav from "@/components/QuickNav";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Header />
         <main>
           <Hero />
+          <QuickNav />
           <Granizados />
           <Frappes />
           <SodasMicheladas />
