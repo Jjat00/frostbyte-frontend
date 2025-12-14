@@ -41,13 +41,13 @@ const ProductCard = ({ product, index }) => (
               <div className="flex flex-col">
                 <span className="text-xs text-gray">Chocolisto</span>
                 <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-                  $10.000
+                  $13.000
                 </span>
               </div>
               <div className="flex flex-col text-right">
                 <span className="text-xs text-gray">Milo</span>
                 <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-                  $12.000
+                  $15.000
                 </span>
               </div>
             </div>
@@ -71,7 +71,7 @@ const Frappes = () => {
       name: "Café",
       description:
         "El clásico e intenso sabor del café en su versión más helada y cremosa.",
-      price: "$10.000 COP",
+      price: "$12.000 COP",
       icon: Coffee,
       gradient: "from-amber-700 to-orange-900",
       comingSoon: true,
@@ -104,7 +104,7 @@ const Frappes = () => {
       name: "Fresa",
       description:
         "Refrescante y dulce frappé elaborado con fresas naturales seleccionadas.",
-      price: "$12.000 COP",
+      price: "$13.000 COP",
       icon: Cherry,
       gradient: "from-red-500 to-pink-600",
       comingSoon: true,
