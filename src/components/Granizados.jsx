@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Citrus, Apple, Grape, Sun, Moon } from "lucide-react";
+import { Citrus, Apple, Grape, Sun, Moon, Cherry } from "lucide-react";
 
 const GradientVisual = ({ gradient, secondaryGradient }) => (
   <div
@@ -137,6 +137,17 @@ const Granizados = () => {
       gradient: "from-green-300 to-lime-500",
       visualGradient: "from-emerald-300 via-green-400 to-lime-400",
       secondaryGradient: "from-transparent via-green-200/20 to-transparent",
+    },
+    {
+      id: 6,
+      name: "Fresa",
+      description:
+        "Dulce y refrescante granizado de fresa natural con un toque de frescura.",
+      price: "$10.000 COP",
+      icon: Cherry,
+      gradient: "from-red-400 to-pink-500",
+      visualGradient: "from-red-300 via-pink-400 to-rose-500",
+      secondaryGradient: "from-transparent via-red-200/20 to-transparent",
     },
   ];
 
