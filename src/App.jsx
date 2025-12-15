@@ -14,6 +14,7 @@ import Mocktails from "@/components/Mocktails";
 import Shots from "@/components/Shots";
 import Micheladas from "@/components/Micheladas";
 import QuickNav from "@/components/QuickNav";
+import Desguayabator from "@/components/Desguayabator";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
+          <Desguayabator />
           <Granizados />
           <Frappes />
           <SodasMicheladas />
