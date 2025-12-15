@@ -93,7 +93,7 @@ const Hero = () => {
               <Button
                 onClick={() =>
                   document
-                    .getElementById("granizados")
+                    .getElementById("desguayabator")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
                 className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
