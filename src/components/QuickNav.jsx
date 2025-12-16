@@ -73,7 +73,7 @@ const QuickNav = () => {
   };
 
   return (
-    <section className="py-12 bg-dark relative overflow-hidden">
+    <section id="menu" className="py-12 bg-dark relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-1/2 w-96 h-96 bg-primary rounded-full filter blur-[150px]"></div>
       </div>

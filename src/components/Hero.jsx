@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Instagram } from "lucide-react";
+import { ChevronDown, Instagram, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Icono de TikTok personalizado
@@ -93,12 +93,26 @@ const Hero = () => {
               <Button
                 onClick={() =>
                   document
-                    .getElementById("desguayabator")
+                    .getElementById("menu")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
                 className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
               >
                 Explorar Menú
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 hover:border-primary hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
+              >
+                <a
+                  href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MapPin size={20} className="mr-2" />
+                  Cómo Llegar
+                </a>
               </Button>
             </motion.div>
 
