@@ -15,6 +15,7 @@ import Shots from "@/components/Shots";
 import Micheladas from "@/components/Micheladas";
 import QuickNav from "@/components/QuickNav";
 import Desguayabator from "@/components/Desguayabator";
+import ScrollToMenu from "@/components/ScrollToMenu";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           {/* <Contact /> */}
         </main>
         <Footer />
+        <ScrollToMenu />
         <Toaster />
       </div>
     </>
