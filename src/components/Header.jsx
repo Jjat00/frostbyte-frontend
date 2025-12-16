@@ -54,6 +54,11 @@ const Header = () => {
 
   const productLinks = [
     {
+      title: "🩹 Desguayabator",
+      href: "#desguayabator",
+      description: "Bebida helada para curar guayabos. Electrolit + Bonfiest.",
+    },
+    {
       title: "Granizados",
       href: "#granizados",
       description: "Mango, Maracumango, Lulo y más.",
@@ -86,10 +91,12 @@ const Header = () => {
   ];
 
   const navItems = [
-    { name: "Características", href: "#features" },
-    { name: "Shots", href: "#shots" },
-    // { name: "Galería", href: "#gallery" },
-    // { name: "Contacto", href: "#contact" },
+    {
+      name: "Ubicación",
+      href: "https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu",
+      external: true,
+    },
+    { name: "WhatsApp", href: "https://wa.me/573164277879", external: true },
   ];
 
   return (
@@ -146,6 +153,8 @@ const Header = () => {
                   <NavigationMenuItem key={item.name}>
                     <NavigationMenuLink
                       href={item.href}
+                      target={item.external ? "_blank" : undefined}
+                      rel={item.external ? "noopener noreferrer" : undefined}
                       className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
                     >
                       {item.name}
@@ -158,12 +167,12 @@ const Header = () => {
             <Button
               onClick={() =>
                 document
-                  .getElementById("granizados")
+                  .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
               className="ml-6 bg-gradient-to-r from-primary to-secondary text-dark font-bold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
             >
-              Ordenar Ahora
+              Ver Menú
             </Button>
           </div>
 
@@ -182,6 +191,13 @@ const Header = () => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 bg-dark-secondary rounded-xl border border-gray/20"
           >
+            <a
+              href="#desguayabator"
+              className="block text-emerald-400 hover:text-emerald-300 transition-colors duration-300 font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              🩹 Desguayabator
+            </a>
             <a
               href="#granizados"
               className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
@@ -217,26 +233,43 @@ const Header = () => {
             >
               Cócteles
             </a>
-            {navItems.map((item) => (
+            <a
+              href="#shots"
+              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Shots
+            </a>
+            <div className="border-t border-gray/20 pt-4 space-y-4">
               <a
-                key={item.name}
-                href={item.href}
+                href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {item.name}
+                📍 Ubicación
               </a>
-            ))}
+              <a
+                href="https://wa.me/573164277879"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-green-400 hover:text-green-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                💬 WhatsApp
+              </a>
+            </div>
             <Button
               onClick={() => {
                 document
-                  .getElementById("granizados")
+                  .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
               }}
               className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold"
             >
-              Ordenar Ahora
+              Ver Menú
             </Button>
           </motion.div>
         )}

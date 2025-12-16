@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Instagram, MapPin } from "lucide-react";
+import { Instagram, MapPin, MessageCircle } from "lucide-react";
 
 // Icono de TikTok personalizado
 const TikTokIcon = ({ size = 20 }) => (
@@ -82,10 +82,13 @@ const Footer = () => {
                 Galería
               </a>
               <a
-                href="#contact"
-                className="block text-gray hover:text-primary transition-colors duration-300"
+                href="https://wa.me/573164277879"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-gray hover:text-green-400 transition-colors duration-300"
               >
-                Contacto
+                <MessageCircle size={16} />
+                WhatsApp
               </a>
             </nav>
           </motion.div>
