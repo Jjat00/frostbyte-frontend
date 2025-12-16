@@ -200,7 +200,7 @@ const Desguayabator = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-base sm:text-xl md:text-2xl text-gray max-w-3xl mx-auto mb-4 px-2"
           >
-            La fórmula secreta para{" "}
+            La bebida helada con la fórmula secreta para{" "}
             <span className="text-emerald-400 font-bold">revivir</span> después
             de una noche épica
           </motion.p>
