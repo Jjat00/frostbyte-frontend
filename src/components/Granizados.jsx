@@ -1,6 +1,19 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Citrus, Apple, Grape, Sun, Moon, Cherry } from "lucide-react";
+import {
+  Citrus,
+  Apple,
+  Grape,
+  Sun,
+  Moon,
+  Cherry,
+  Skull,
+  Plus,
+  Martini,
+  Wine,
+  Flame,
+  Anchor,
+} from "lucide-react";
 
 const GradientVisual = ({ gradient, secondaryGradient }) => (
   <div
@@ -33,6 +46,30 @@ const GradientVisual = ({ gradient, secondaryGradient }) => (
       }}
     ></div>
   </div>
+);
+
+const PoisonOption = ({
+  name,
+  brand,
+  price,
+  icon: Icon,
+  gradient,
+  className = "",
+}) => (
+  <motion.div
+    whileHover={{ scale: 1.05, y: -5 }}
+    whileTap={{ scale: 0.98 }}
+    className={`bg-dark/60 border border-purple-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 ${className}`}
+  >
+    <div
+      className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
+    >
+      <Icon className="text-dark" size={24} />
+    </div>
+    <h4 className="text-light font-bold text-base">{name}</h4>
+    <p className="text-gray text-xs mb-2">{brand}</p>
+    <span className="text-purple-400 font-bold text-sm">{price}</span>
+  </motion.div>
 );
 
 const ProductCard = ({ product, index }) => (
@@ -185,6 +222,107 @@ const Granizados = () => {
             <ProductCard key={product.id} product={product} index={index} />
           ))}
         </div>
+
+        {/* Sección Envenenar */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mt-20"
+        >
+          <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+            {/* Efectos de fondo */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[100px]"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-pink-500 rounded-full filter blur-[80px]"></div>
+            </div>
+
+            <div className="relative z-10">
+              {/* Header */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-3 mb-4">
+                  <Skull className="text-purple-400" size={32} />
+                  <h3 className="text-3xl sm:text-4xl font-black text-light">
+                    ¿QUIERES{" "}
+                    <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      ENVENENARLO
+                    </span>
+                    ?
+                  </h3>
+                  <Skull className="text-purple-400" size={32} />
+                </div>
+                <p className="text-gray text-base sm:text-lg max-w-2xl mx-auto">
+                  Agrega un shot de tu licor favorito a cualquier granizado y
+                  llévalo al siguiente nivel 🔥
+                </p>
+              </div>
+
+              {/* Shots disponibles */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                <PoisonOption
+                  name="Ginebra"
+                  brand="Beefeater"
+                  price="+$25.000"
+                  icon={Martini}
+                  gradient="from-blue-400 to-blue-600"
+                />
+                <PoisonOption
+                  name="Vodka"
+                  brand="Absolut"
+                  price="+$10.000"
+                  icon={Wine}
+                  gradient="from-sky-300 to-sky-500"
+                />
+                <PoisonOption
+                  name="Whisky"
+                  brand="Jack Daniels"
+                  price="+$12.000"
+                  icon={Flame}
+                  gradient="from-amber-500 to-amber-700"
+                />
+                <PoisonOption
+                  name="Tequila"
+                  brand="Jose Cuervo"
+                  price="+$9.000"
+                  icon={Citrus}
+                  gradient="from-yellow-400 to-orange-500"
+                />
+                <PoisonOption
+                  name="Ron"
+                  brand="Bacardi"
+                  price="+$6.000"
+                  icon={Anchor}
+                  gradient="from-red-500 to-red-700"
+                  className="col-span-2 sm:col-span-1"
+                />
+              </div>
+
+              {/* Ejemplo visual */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="mt-8 text-center"
+              >
+                <div className="inline-flex items-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-4 sm:px-6 py-3 border border-purple-500/30">
+                  <span className="text-light font-semibold text-sm sm:text-base">
+                    🍹 Granizado
+                  </span>
+                  <Plus className="text-purple-400" size={20} />
+                  <span className="text-light font-semibold text-sm sm:text-base">
+                    🥃 Shot
+                  </span>
+                  <span className="text-purple-400 text-xl sm:text-2xl">=</span>
+                  <span className="text-purple-400 font-bold text-sm sm:text-base">
+                    ☠️ ENVENENADO
+                  </span>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
