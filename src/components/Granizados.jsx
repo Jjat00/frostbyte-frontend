@@ -48,18 +48,11 @@ const GradientVisual = ({ gradient, secondaryGradient }) => (
   </div>
 );
 
-const PoisonOption = ({
-  name,
-  brand,
-  price,
-  icon: Icon,
-  gradient,
-  className = "",
-}) => (
+const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   <motion.div
     whileHover={{ scale: 1.05, y: -5 }}
     whileTap={{ scale: 0.98 }}
-    className={`bg-dark/60 border border-purple-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 ${className}`}
+    className="w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border border-purple-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
   >
     <div
       className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
@@ -241,16 +234,22 @@ const Granizados = () => {
             <div className="relative z-10">
               {/* Header */}
               <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-3 mb-4">
-                  <Skull className="text-purple-400" size={32} />
-                  <h3 className="text-3xl sm:text-4xl font-black text-light">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <Skull
+                    className="text-purple-400 hidden sm:block"
+                    size={32}
+                  />
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
                     ¿QUIERES{" "}
                     <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                       ENVENENARLO
                     </span>
                     ?
                   </h3>
-                  <Skull className="text-purple-400" size={32} />
+                  <Skull
+                    className="text-purple-400 hidden sm:block"
+                    size={32}
+                  />
                 </div>
                 <p className="text-gray text-base sm:text-lg max-w-2xl mx-auto">
                   Agrega un shot de tu licor favorito a cualquier granizado y
@@ -259,7 +258,7 @@ const Granizados = () => {
               </div>
 
               {/* Shots disponibles */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
                 <PoisonOption
                   name="Ginebra"
                   brand="Beefeater"
@@ -294,7 +293,6 @@ const Granizados = () => {
                   price="+$6.000"
                   icon={Anchor}
                   gradient="from-red-500 to-red-700"
-                  className="col-span-2 sm:col-span-1"
                 />
               </div>
 
