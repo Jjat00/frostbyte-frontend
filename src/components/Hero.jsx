@@ -1,6 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Instagram, MapPin } from "lucide-react";
+import {
+  ChevronDown,
+  Instagram,
+  MapPin,
+  Snowflake,
+  Coffee,
+  Wine,
+  GlassWater,
+  Beer,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Icono de TikTok personalizado
@@ -28,6 +38,39 @@ const socialLinks = [
     label: "TikTok",
   },
 ];
+
+const ProductFloatCard = ({
+  title,
+  subtitle,
+  icon: Icon,
+  gradient,
+  href,
+  delay = 0,
+}) => (
+  <motion.button
+    type="button"
+    onClick={() =>
+      document.getElementById(href)?.scrollIntoView({ behavior: "smooth" })
+    }
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay }}
+    whileHover={{ y: -4 }}
+    className="group w-full text-left bg-dark border border-gray/20 rounded-2xl p-4 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300"
+  >
+    <div className="flex items-center gap-3">
+      <div
+        className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-linear-to-br ${gradient} group-hover:scale-110 transition-transform duration-300`}
+      >
+        <Icon className="text-dark" size={20} />
+      </div>
+      <div className="min-w-0">
+        <div className="text-light font-bold text-sm">{title}</div>
+        <div className="text-gray text-xs">{subtitle}</div>
+      </div>
+    </div>
+  </motion.button>
+);
 
 const Hero = () => {
   return (
@@ -133,7 +176,7 @@ const Hero = () => {
                     aria-label={social.label}
                     whileHover={{ scale: 1.1, y: -3 }}
                     whileTap={{ scale: 0.95 }}
-                    className="group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/40 rounded-full text-primary hover:from-primary hover:to-secondary hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-300"
+                    className="group flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/40 rounded-full text-primary hover:from-primary hover:to-secondary hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-300"
                   >
                     <social.icon size={20} />
                     <span className="text-sm font-semibold">
@@ -149,15 +192,88 @@ const Hero = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative hidden md:block"
           >
-            <div className="relative w-full h-[500px] flex items-center justify-center">
-              <div className="absolute inset-0 bg-linear-to-r from-primary/30 to-secondary/30 rounded-full filter blur-3xl animate-pulse"></div>
-              <img
-                className="relative z-10 w-full h-full object-contain drop-shadow-2xl"
-                alt="Bebida congelada FrostByte"
-                src="https://images.unsplash.com/photo-1586344497254-1c04ab49d618"
-              />
+            <div className="relative w-full flex items-center justify-center">
+              <div className="w-full max-w-sm">
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Desguayabator destacado */}
+                  <motion.button
+                    type="button"
+                    onClick={() =>
+                      document
+                        .getElementById("desguayabator")
+                        ?.scrollIntoView({ behavior: "smooth" })
+                    }
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    whileHover={{ y: -4 }}
+                    className="col-span-2 group w-full text-left bg-dark border border-emerald-500/40 rounded-2xl p-4 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-linear-to-br from-emerald-400 to-cyan-500 group-hover:scale-110 transition-transform duration-300">
+                        <Sparkles className="text-dark" size={20} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-emerald-400 font-bold text-sm">
+                          Desguayabator
+                        </div>
+                        <div className="text-gray text-xs">Cura guayabos</div>
+                      </div>
+                    </div>
+                  </motion.button>
+
+                  <ProductFloatCard
+                    title="Granizados"
+                    subtitle="Hielo frutal"
+                    icon={Snowflake}
+                    gradient="from-cyan-400 to-blue-500"
+                    href="granizados"
+                    delay={0.3}
+                  />
+                  <ProductFloatCard
+                    title="Frappés"
+                    subtitle="Café helado"
+                    icon={Coffee}
+                    gradient="from-amber-600 to-orange-600"
+                    href="frappes"
+                    delay={0.4}
+                  />
+                  <ProductFloatCard
+                    title="Sodas"
+                    subtitle="Italianas"
+                    icon={Sparkles}
+                    gradient="from-pink-400 to-red-500"
+                    href="sodas"
+                    delay={0.5}
+                  />
+                  <ProductFloatCard
+                    title="Micheladas"
+                    subtitle="Cerveza"
+                    icon={Beer}
+                    gradient="from-orange-400 to-red-500"
+                    href="micheladas"
+                    delay={0.6}
+                  />
+                  <ProductFloatCard
+                    title="Cócteles"
+                    subtitle="Clásicos"
+                    icon={Wine}
+                    gradient="from-purple-400 to-pink-500"
+                    href="mocktails"
+                    delay={0.7}
+                  />
+                  <ProductFloatCard
+                    title="Shots"
+                    subtitle="Licores premium"
+                    icon={GlassWater}
+                    gradient="from-emerald-400 to-teal-500"
+                    href="shots"
+                    delay={0.8}
+                  />
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
