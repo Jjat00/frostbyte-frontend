@@ -121,7 +121,7 @@ const Mocktails = () => {
         <img
           alt="Copa gigante de margarita decorada extravagantemente con frutas"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="https://images.unsplash.com/photo-1700909592926-c07b0c2a0bed"
+          src="./margarota.jpeg"
         />
       ),
     },
@@ -166,8 +166,8 @@ const Mocktails = () => {
       name: "Gintonic",
       description:
         "Elegante combinación de ginebra premium con agua tónica y botánicos.",
-      priceSuave: "$50.000",
-      priceCargado: "$70.000",
+      priceSuave: "$45.000",
+      priceCargado: "$60.000",
       liquor: "Ginebra BEEFEATER London Dry 24",
       icon: Wine,
       gradient: "from-purple-400 to-indigo-600",

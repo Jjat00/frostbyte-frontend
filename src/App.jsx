@@ -32,13 +32,13 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
-          <Desguayabator />
           <Granizados />
           <Frappes />
           <SodasMicheladas />
           <Micheladas />
           <Mocktails />
           <Shots />
+          <Desguayabator />
           <Features />
           {/* <Gallery /> */}
           {/* <Contact /> */}

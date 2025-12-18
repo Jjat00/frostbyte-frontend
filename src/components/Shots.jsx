@@ -46,7 +46,7 @@ const Shots = () => {
       licor: "London Dry 24",
       description:
         "Shot puro de ginebra premium con notas cítricas y botánicos selectos.",
-      price: "$25.000",
+      price: "$20.000",
       icon: Martini,
       gradient: "from-blue-400 to-blue-600",
       image: (

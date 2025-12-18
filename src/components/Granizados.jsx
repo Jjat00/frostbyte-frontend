@@ -262,7 +262,7 @@ const Granizados = () => {
                 <PoisonOption
                   name="Ginebra"
                   brand="Beefeater"
-                  price="+$25.000"
+                  price="+$20.000"
                   icon={Martini}
                   gradient="from-blue-400 to-blue-600"
                 />
