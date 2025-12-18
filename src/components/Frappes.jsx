@@ -79,7 +79,7 @@ const Frappes = () => {
         <img
           alt="Frappé de café cremoso con crema batida y granos de café"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="https://images.unsplash.com/photo-1589396575653-c09c794ff6a6"
+          src="https://i.pinimg.com/736x/31/66/96/316696f0392db53f35113671157c49c0.jpg"
         />
       ),
     },
