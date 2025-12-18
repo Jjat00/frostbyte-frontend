@@ -18,6 +18,7 @@ import Desguayabator from "@/components/Desguayabator";
 import ScrollToMenu from "@/components/ScrollToMenu";
 import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
+import Cuates from "@/components/Cuates";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <SodasMicheladas />
           <Micheladas />
           <Cervezas />
+          <Cuates />
           <Mocktails />
           <Shots />
           <Vinos />
