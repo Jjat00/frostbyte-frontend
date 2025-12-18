@@ -50,6 +50,13 @@ const QuickNav = () => {
       description: "Cerveza picante",
     },
     {
+      name: "Cervezas",
+      href: "#cervezas",
+      icon: Beer,
+      gradient: "from-yellow-400 to-amber-500",
+      description: "Frías y refrescantes",
+    },
+    {
       name: "Cócteles",
       href: "#mocktails",
       icon: Wine,

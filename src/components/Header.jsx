@@ -79,6 +79,11 @@ const Header = () => {
       description: "Poker, Budweiser y Corona con nuestra mezcla secreta.",
     },
     {
+      title: "🍺 Cervezas",
+      href: "#cervezas",
+      description: "Poker, Budweiser, Corona y Coronita bien frías.",
+    },
+    {
       title: "Cócteles",
       href: "#mocktails",
       description: "Mojitos, Margaritas, Moscow Mule y más.",
@@ -230,6 +235,13 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Micheladas
+            </a>
+            <a
+              href="#cervezas"
+              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              🍺 Cervezas
             </a>
             <a
               href="#mocktails"
