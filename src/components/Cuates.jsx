@@ -51,7 +51,7 @@ const Cuates = () => {
         <img
           alt="Los Cuates Margarita Limón"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src="/cuates-limon.png"
+          src="/1766038063842.jpg"
         />
       ),
     },
