@@ -124,6 +124,23 @@ const Shots = () => {
         />
       ),
     },
+    {
+      id: 6,
+      name: "Aguardiente NARIÑO",
+      licor: "Premium Sin Azúcar",
+      description:
+        "Shot de aguardiente nariñense premium. Suave, puro y sin azúcar.",
+      price: "$5.000",
+      icon: Flame,
+      gradient: "from-slate-400 to-slate-600",
+      image: (
+        <img
+          alt="Shot de Aguardiente Nariño Premium"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          src="./narino_premium.jpeg"
+        />
+      ),
+    },
   ];
 
   return (
@@ -151,7 +168,7 @@ const Shots = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {shots.map((shot, index) => (
             <ShotCard key={shot.id} shot={shot} index={index} />
           ))}

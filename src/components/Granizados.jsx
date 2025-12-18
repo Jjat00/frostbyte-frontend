@@ -294,6 +294,13 @@ const Granizados = () => {
                   icon={Anchor}
                   gradient="from-red-500 to-red-700"
                 />
+                <PoisonOption
+                  name="Aguardiente"
+                  brand="Nariño Premium"
+                  price="+$5.000"
+                  icon={Flame}
+                  gradient="from-slate-400 to-slate-600"
+                />
               </div>
 
               {/* Ejemplo visual */}
