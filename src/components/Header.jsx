@@ -88,6 +88,11 @@ const Header = () => {
       href: "#shots",
       description: "Ginebra, Vodka, Whisky, Tequila y Ron.",
     },
+    {
+      title: "🍷 Vinos",
+      href: "#vinos",
+      description: "Copas de Gato Negro y Casillero del Diablo.",
+    },
   ];
 
   const navItems = [
@@ -239,6 +244,13 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Shots
+            </a>
+            <a
+              href="#vinos"
+              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              🍷 Vinos
             </a>
             <div className="border-t border-gray/20 pt-4 space-y-4">
               <a

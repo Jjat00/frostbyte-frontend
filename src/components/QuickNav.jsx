@@ -63,6 +63,13 @@ const QuickNav = () => {
       gradient: "from-emerald-400 to-teal-500",
       description: "Licores premium",
     },
+    {
+      name: "Vinos",
+      href: "#vinos",
+      icon: Wine,
+      gradient: "from-red-500 to-red-700",
+      description: "Tintos chilenos",
+    },
   ];
 
   const handleClick = (href) => {
@@ -96,7 +103,7 @@ const QuickNav = () => {
           <p className="text-gray text-sm">Explora nuestro menú completo</p>
         </motion.div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 md:gap-4">
           {sections.map((section, index) => (
             <motion.button
               key={section.name}
