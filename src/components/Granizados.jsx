@@ -115,17 +115,6 @@ const ProductCard = ({ product, index }) => (
 const Granizados = () => {
   const products = [
     {
-      id: 1,
-      name: "Mango",
-      description:
-        "Dulce pulpa de mango maduro transformada en hielo refrescante.",
-      price: "$10.000 COP",
-      icon: Sun,
-      gradient: "from-yellow-400 to-orange-500",
-      visualGradient: "from-yellow-300 via-amber-400 to-orange-500",
-      secondaryGradient: "from-transparent via-yellow-200/20 to-transparent",
-    },
-    {
       id: 2,
       name: "Mango Biche",
       description: "La acidez perfecta del mango verde con sal y limón.",
@@ -134,17 +123,6 @@ const Granizados = () => {
       gradient: "from-lime-400 to-green-600",
       visualGradient: "from-lime-300 via-green-400 to-emerald-500",
       secondaryGradient: "from-transparent via-lime-200/20 to-transparent",
-    },
-    {
-      id: 3,
-      name: "Maracumango",
-      description:
-        "Fusión exótica entre la dulzura del mango y la pasión del maracuyá.",
-      price: "$12.000 COP",
-      icon: Sun,
-      gradient: "from-orange-400 to-yellow-300",
-      visualGradient: "from-orange-400 via-amber-400 to-yellow-400",
-      secondaryGradient: "from-transparent via-orange-200/20 to-transparent",
     },
     {
       id: 4,
