@@ -1,19 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Citrus,
-  Apple,
-  Grape,
-  Sun,
-  Moon,
-  Cherry,
   Skull,
   Plus,
   Martini,
   Wine,
   Flame,
+  Citrus,
   Anchor,
 } from "lucide-react";
+import { useProductsByCategory } from "@/hooks";
+import { getProductStyles } from "@/lib/productStyles";
+
+// Utilidad para formatear precios colombianos
+const formatPrice = (price) => {
+  if (!price) return "$0";
+  return `$${Number(price).toLocaleString("es-CO")}`;
+};
 
 const GradientVisual = ({ gradient, secondaryGradient }) => (
   <div
@@ -32,7 +35,9 @@ const GradientVisual = ({ gradient, secondaryGradient }) => (
     <div className="absolute bottom-12 left-4 w-2 h-2 bg-white/45 rounded-full"></div>
     {/* Efecto de brillo */}
     <div
-      className={`absolute inset-0 bg-linear-to-t ${secondaryGradient} opacity-40`}
+      className={`absolute inset-0 bg-linear-to-t ${
+        secondaryGradient || "from-transparent via-white/10 to-transparent"
+      } opacity-40`}
     ></div>
     {/* Patrón de cristales de hielo */}
     <div
@@ -65,99 +70,131 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   </motion.div>
 );
 
-const ProductCard = ({ product, index }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 50 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6, delay: index * 0.1 }}
-    whileHover={{ y: -10 }}
-    className="group relative"
-  >
-    <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20">
-      <div className="h-48 overflow-hidden relative">
-        <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
-        <GradientVisual
-          gradient={product.visualGradient}
-          secondaryGradient={product.secondaryGradient}
-        />
-      </div>
+const ProductCard = ({ product, index, styles }) => {
+  const Icon = styles.icon;
+  const variants = product.variants || [];
 
-      <div className="p-6 flex flex-col grow relative z-20 -mt-12">
-        <div
-          className={`w-12 h-12 bg-linear-to-br ${product.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
-        >
-          <product.icon className="text-dark" size={24} />
+  // Buscar variantes por nombre
+  const smallVariant = variants.find((v) => v.name === "Pequeño");
+  const largeVariant = variants.find((v) => v.name === "Grande");
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      whileHover={{ y: -10 }}
+      className="group relative"
+    >
+      <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20">
+        <div className="h-48 overflow-hidden relative">
+          <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
+          <GradientVisual
+            gradient={styles.visualGradient || styles.gradient}
+            secondaryGradient={styles.secondaryGradient}
+          />
         </div>
-        <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-primary transition-colors duration-300">
-          {product.name}
-        </h3>
-        <p className="text-gray mb-4 grow text-sm">{product.description}</p>
-        <div className="flex items-center justify-between gap-2 mt-auto pt-4 border-t border-gray/10">
-          <div className="flex flex-col">
-            <span className="text-xs text-gray">Pequeño</span>
-            <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-              $8.000
-            </span>
+
+        <div className="p-6 flex flex-col grow relative z-20 -mt-12">
+          <div
+            className={`w-12 h-12 bg-linear-to-br ${styles.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+          >
+            <Icon className="text-dark" size={24} />
           </div>
-          <div className="flex flex-col text-right">
-            <span className="text-xs text-gray">Grande</span>
-            <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-              $10.000
-            </span>
+          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-primary transition-colors duration-300">
+            {product.name}
+          </h3>
+          <p className="text-gray mb-4 grow text-sm">{product.description}</p>
+          <div className="flex items-center justify-between gap-2 mt-auto pt-4 border-t border-gray/10">
+            {smallVariant && (
+              <div className="flex flex-col">
+                <span className="text-xs text-gray">{smallVariant.name}</span>
+                <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  {formatPrice(smallVariant.price)}
+                </span>
+              </div>
+            )}
+            {largeVariant && (
+              <div className="flex flex-col text-right">
+                <span className="text-xs text-gray">{largeVariant.name}</span>
+                <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  {formatPrice(largeVariant.price)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const ProductSkeleton = () => (
+  <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full animate-pulse">
+    <div className="h-48 bg-gray/20"></div>
+    <div className="p-6 -mt-12">
+      <div className="w-12 h-12 bg-gray/30 rounded-xl mb-4"></div>
+      <div className="h-6 bg-gray/20 rounded mb-2 w-3/4"></div>
+      <div className="h-4 bg-gray/20 rounded mb-4 w-full"></div>
+      <div className="flex justify-between pt-4 border-t border-gray/10">
+        <div className="h-8 bg-gray/20 rounded w-20"></div>
+        <div className="h-8 bg-gray/20 rounded w-20"></div>
       </div>
     </div>
-  </motion.div>
+  </div>
 );
 
+// Datos de shots para envenenar (estos podrían venir de la API también)
+const poisonShots = [
+  {
+    name: "Ginebra",
+    brand: "Beefeater",
+    price: "+$20.000",
+    icon: Martini,
+    gradient: "from-blue-400 to-blue-600",
+  },
+  {
+    name: "Vodka",
+    brand: "Absolut",
+    price: "+$10.000",
+    icon: Wine,
+    gradient: "from-sky-300 to-sky-500",
+  },
+  {
+    name: "Whisky",
+    brand: "Jack Daniels",
+    price: "+$12.000",
+    icon: Flame,
+    gradient: "from-amber-500 to-amber-700",
+  },
+  {
+    name: "Tequila",
+    brand: "Jose Cuervo",
+    price: "+$9.000",
+    icon: Citrus,
+    gradient: "from-yellow-400 to-orange-500",
+  },
+  {
+    name: "Ron",
+    brand: "Bacardi",
+    price: "+$6.000",
+    icon: Anchor,
+    gradient: "from-red-500 to-red-700",
+  },
+  {
+    name: "Aguardiente",
+    brand: "Nariño Premium",
+    price: "+$5.000",
+    icon: Flame,
+    gradient: "from-slate-400 to-slate-600",
+  },
+];
+
 const Granizados = () => {
-  const products = [
-    {
-      id: 2,
-      name: "Mango Biche",
-      description: "La acidez perfecta del mango verde con sal y limón.",
-      price: "$10.000 COP",
-      icon: Citrus,
-      gradient: "from-lime-400 to-green-600",
-      visualGradient: "from-lime-300 via-green-400 to-emerald-500",
-      secondaryGradient: "from-transparent via-lime-200/20 to-transparent",
-    },
-    {
-      id: 4,
-      name: "Maracuyá",
-      description:
-        "Pura fruta de la pasión convertida en una experiencia helada vibrante.",
-      price: "$11.000 COP",
-      icon: Citrus,
-      gradient: "from-yellow-300 to-orange-400",
-      visualGradient: "from-yellow-400 via-amber-500 to-orange-400",
-      secondaryGradient: "from-transparent via-yellow-300/20 to-transparent",
-    },
-    {
-      id: 5,
-      name: "Lulo",
-      description:
-        "El sabor único y ácido del lulo colombiano en su máxima expresión.",
-      price: "$11.000 COP",
-      icon: Moon,
-      gradient: "from-green-300 to-lime-500",
-      visualGradient: "from-emerald-300 via-green-400 to-lime-400",
-      secondaryGradient: "from-transparent via-green-200/20 to-transparent",
-    },
-    {
-      id: 6,
-      name: "Fresa",
-      description:
-        "Dulce y refrescante granizado de fresa natural con un toque de frescura.",
-      price: "$10.000 COP",
-      icon: Cherry,
-      gradient: "from-red-400 to-pink-500",
-      visualGradient: "from-red-300 via-pink-400 to-rose-500",
-      secondaryGradient: "from-transparent via-red-200/20 to-transparent",
-    },
-  ];
+  const { data, isLoading, error } = useProductsByCategory("granizados");
+
+  const products = data?.results || [];
 
   return (
     <section
@@ -188,10 +225,23 @@ const Granizados = () => {
           </p>
         </motion.div>
 
+        {error && (
+          <div className="text-center text-red-400 mb-8">
+            Error al cargar los productos. Por favor intenta de nuevo.
+          </div>
+        )}
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
+          {isLoading
+            ? [...Array(4)].map((_, i) => <ProductSkeleton key={i} />)
+            : products.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  styles={getProductStyles(product, "granizados")}
+                />
+              ))}
         </div>
 
         {/* Sección Envenenar */}
@@ -237,48 +287,9 @@ const Granizados = () => {
 
               {/* Shots disponibles */}
               <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-                <PoisonOption
-                  name="Ginebra"
-                  brand="Beefeater"
-                  price="+$20.000"
-                  icon={Martini}
-                  gradient="from-blue-400 to-blue-600"
-                />
-                <PoisonOption
-                  name="Vodka"
-                  brand="Absolut"
-                  price="+$10.000"
-                  icon={Wine}
-                  gradient="from-sky-300 to-sky-500"
-                />
-                <PoisonOption
-                  name="Whisky"
-                  brand="Jack Daniels"
-                  price="+$12.000"
-                  icon={Flame}
-                  gradient="from-amber-500 to-amber-700"
-                />
-                <PoisonOption
-                  name="Tequila"
-                  brand="Jose Cuervo"
-                  price="+$9.000"
-                  icon={Citrus}
-                  gradient="from-yellow-400 to-orange-500"
-                />
-                <PoisonOption
-                  name="Ron"
-                  brand="Bacardi"
-                  price="+$6.000"
-                  icon={Anchor}
-                  gradient="from-red-500 to-red-700"
-                />
-                <PoisonOption
-                  name="Aguardiente"
-                  brand="Nariño Premium"
-                  price="+$5.000"
-                  icon={Flame}
-                  gradient="from-slate-400 to-slate-600"
-                />
+                {poisonShots.map((shot) => (
+                  <PoisonOption key={shot.name} {...shot} />
+                ))}
               </div>
 
               {/* Ejemplo visual */}
