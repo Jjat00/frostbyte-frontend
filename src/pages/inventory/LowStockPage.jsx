@@ -319,6 +319,32 @@ const LowStockPage = () => {
         <>
           {/* Vista móvil - Cards */}
           <div className="md:hidden space-y-3">
+            {/* Botón seleccionar todos en móvil */}
+            <div className="flex items-center justify-between bg-dark-secondary border border-gray/20 rounded-xl p-3">
+              <button
+                onClick={toggleSelectAll}
+                className="flex items-center gap-2 text-sm"
+              >
+                <div
+                  className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                    selectedItems.length === materials.length
+                      ? 'bg-primary border-primary'
+                      : 'border-gray/30'
+                  }`}
+                >
+                  {selectedItems.length === materials.length && (
+                    <Check className="w-3 h-3 text-dark" />
+                  )}
+                </div>
+                <span className="text-gray">
+                  {selectedItems.length === materials.length ? 'Deseleccionar todos' : 'Seleccionar todos'}
+                </span>
+              </button>
+              <span className="text-xs text-primary">
+                {selectedCount}/{materials.length}
+              </span>
+            </div>
+
             {materials.map((material) => (
               <LowStockCard key={material.id} material={material} />
             ))}
