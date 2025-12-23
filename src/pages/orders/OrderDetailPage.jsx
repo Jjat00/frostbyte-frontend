@@ -80,6 +80,7 @@ const OrderDetailPage = () => {
   const queryClient = useQueryClient();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Obtener detalle del pedido
   const { data: order, isLoading, isError } = useQuery({
@@ -117,6 +118,14 @@ const OrderDetailPage = () => {
     onSuccess: () => {
       invalidateAllOrderQueries();
       setShowCancelConfirm(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => ordersService.deleteOrder(id),
+    onSuccess: () => {
+      invalidateAllOrderQueries();
+      navigate('/pedidos');
     },
   });
 
@@ -373,6 +382,17 @@ const OrderDetailPage = () => {
         </div>
       )}
 
+      {/* Botón de eliminar - disponible para todos los pedidos */}
+      <div className="pt-4 border-t border-gray/10">
+        <button
+          onClick={() => setShowDeleteConfirm(true)}
+          className="w-full py-3 bg-red-500/5 text-red-400/70 border border-red-500/10 rounded-xl font-medium transition-all hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 flex items-center justify-center gap-2"
+        >
+          <Trash2 className="w-4 h-4" />
+          Eliminar Pedido
+        </button>
+      </div>
+
       {/* Modal de pago */}
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
@@ -441,8 +461,56 @@ const OrderDetailPage = () => {
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <>
-                    <Trash2 className="w-5 h-5" />
+                    <XCircle className="w-5 h-5" />
                     Sí, cancelar
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-dark-secondary border border-gray/20 rounded-xl p-6 w-full max-w-md"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-red-500/20 rounded-xl">
+                <Trash2 className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-light">¿Eliminar pedido permanentemente?</h3>
+                <p className="text-sm text-gray">El pedido #{order.order_number?.slice(-6)} será eliminado de forma permanente</p>
+              </div>
+            </div>
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4">
+              <p className="text-sm text-red-400">
+                ⚠️ Esta acción eliminará completamente el pedido y no se puede deshacer.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 py-3 bg-gray/10 text-gray hover:text-light rounded-xl font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => deleteMutation.mutate()}
+                disabled={deleteMutation.isPending}
+                className="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+              >
+                {deleteMutation.isPending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <Trash2 className="w-5 h-5" />
+                    Eliminar
                   </>
                 )}
               </button>
