@@ -324,24 +324,24 @@ const PurchaseOrdersPage = () => {
     });
   };
 
-  const handleRemoveItemFromOrder = (orderId, itemId) => {
-    if (confirm('¿Eliminar este item de la orden?')) {
+  const handleRemoveItemFromOrder = (orderId, itemId, isPurchased = false) => {
+    const message = isPurchased 
+      ? '¿Eliminar este item? El stock agregado será revertido.' 
+      : '¿Eliminar este item de la orden?';
+    if (confirm(message)) {
       removeItemMutation.mutate({ orderId, itemId });
     }
   };
 
   const getOrderTotal = (order) => {
-    if (order.status === 'purchased') {
-      // Calcular el total real desde los items
-      const total = order.items?.reduce((sum, item) => {
-        if (item.is_purchased && item.actual_subtotal) {
-          return sum + parseFloat(item.actual_subtotal);
-        }
-        return sum + parseFloat(item.estimated_subtotal || 0);
-      }, 0) || parseFloat(order.actual_total) || 0;
-      return total;
-    }
-    return parseFloat(order.estimated_total) || 0;
+    // Calcular total mixto: items comprados con precio real, pendientes con estimado
+    const total = order.items?.reduce((sum, item) => {
+      if (item.is_purchased && item.actual_subtotal) {
+        return sum + parseFloat(item.actual_subtotal);
+      }
+      return sum + parseFloat(item.estimated_subtotal || 0);
+    }, 0) || 0;
+    return total;
   };
 
   // Order Item Card for Mobile
@@ -366,13 +366,14 @@ const PurchaseOrdersPage = () => {
           ) : (
             <span className="text-xs text-yellow-400">Pendiente</span>
           )}
-          {order.status === 'pending' && !item.is_purchased && (
+          {order.status === 'pending' && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleRemoveItemFromOrder(order.id, item.id);
+                handleRemoveItemFromOrder(order.id, item.id, item.is_purchased);
               }}
               className="p-1 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+              title={item.is_purchased ? "Eliminar (revertirá stock)" : "Eliminar"}
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -639,37 +640,35 @@ const PurchaseOrdersPage = () => {
                                   <td className="py-3 text-right">
                                     <div className="flex items-center justify-end gap-1">
                                       {!item.is_purchased && (
-                                        <>
-                                          <button
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              setPurchaseModal({
-                                                orderId: order.id,
-                                                itemId: item.id,
-                                                item,
-                                              });
-                                              setPurchaseData({
-                                                quantity_purchased: item.quantity_needed,
-                                                actual_unit_price: item.estimated_unit_price,
-                                                supplier: item.supplier || '',
-                                              });
-                                            }}
-                                            className="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded hover:bg-green-500/20 transition-colors"
-                                          >
-                                            Registrar
-                                          </button>
-                                          <button
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              handleRemoveItemFromOrder(order.id, item.id);
-                                            }}
-                                            className="p-1.5 text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                                            title="Eliminar item"
-                                          >
-                                            <Trash2 className="w-4 h-4" />
-                                          </button>
-                                        </>
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setPurchaseModal({
+                                              orderId: order.id,
+                                              itemId: item.id,
+                                              item,
+                                            });
+                                            setPurchaseData({
+                                              quantity_purchased: item.quantity_needed,
+                                              actual_unit_price: item.estimated_unit_price,
+                                              supplier: item.supplier || '',
+                                            });
+                                          }}
+                                          className="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded hover:bg-green-500/20 transition-colors"
+                                        >
+                                          Registrar
+                                        </button>
                                       )}
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleRemoveItemFromOrder(order.id, item.id, item.is_purchased);
+                                        }}
+                                        className="p-1.5 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                                        title={item.is_purchased ? "Eliminar (revertirá stock)" : "Eliminar item"}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
                                     </div>
                                   </td>
                                 )}
