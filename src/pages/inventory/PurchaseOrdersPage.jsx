@@ -31,6 +31,8 @@ const PurchaseOrdersPage = () => {
   });
   const [newOrderItems, setNewOrderItems] = useState([]);
   const [newOrderNotes, setNewOrderNotes] = useState('');
+  const [addItemModal, setAddItemModal] = useState(null);
+  const [newItem, setNewItem] = useState({ raw_material: '', quantity_needed: '', estimated_unit_price: '' });
 
   // Obtener órdenes
   const { data, isLoading } = useQuery({
@@ -103,6 +105,24 @@ const PurchaseOrdersPage = () => {
       queryClient.invalidateQueries(['low-stock']);
       setPurchaseModal(null);
       setPurchaseData({ quantity_purchased: '', actual_unit_price: '', supplier: '' });
+    },
+  });
+
+  // Añadir item a orden existente
+  const addItemMutation = useMutation({
+    mutationFn: ({ orderId, data }) => inventoryService.addItemToOrder(orderId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['purchase-orders']);
+      setAddItemModal(null);
+      setNewItem({ raw_material: '', quantity_needed: '', estimated_unit_price: '' });
+    },
+  });
+
+  // Eliminar item de orden existente
+  const removeItemMutation = useMutation({
+    mutationFn: ({ orderId, itemId }) => inventoryService.removeItemFromOrder(orderId, itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['purchase-orders']);
     },
   });
 
@@ -196,6 +216,25 @@ const PurchaseOrdersPage = () => {
     });
   };
 
+  const handleAddItemToOrder = () => {
+    if (!addItemModal || !newItem.raw_material || !newItem.quantity_needed) return;
+    
+    addItemMutation.mutate({
+      orderId: addItemModal.id,
+      data: {
+        raw_material: parseInt(newItem.raw_material),
+        quantity_needed: parseFloat(newItem.quantity_needed),
+        estimated_unit_price: parseFloat(newItem.estimated_unit_price) || 0,
+      },
+    });
+  };
+
+  const handleRemoveItemFromOrder = (orderId, itemId) => {
+    if (confirm('¿Eliminar este item de la orden?')) {
+      removeItemMutation.mutate({ orderId, itemId });
+    }
+  };
+
   const getOrderTotal = (order) => {
     if (order.status === 'purchased') {
       // Calcular el total real desde los items
@@ -214,20 +253,38 @@ const PurchaseOrdersPage = () => {
   const OrderItemCard = ({ item, order }) => (
     <div className="bg-dark/50 rounded-lg p-3 mb-2">
       <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Package className="w-4 h-4 text-gray flex-shrink-0" />
-          <span className="text-light text-sm font-medium truncate">{item.raw_material_name}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <Package className="w-4 h-4 text-gray flex-shrink-0" />
+            <span className="text-light text-sm font-medium truncate">{item.raw_material_name}</span>
+          </div>
+          {item.raw_material_supplier && (
+            <p className="text-xs text-gray ml-6 truncate">{item.raw_material_supplier}</p>
+          )}
         </div>
-        {item.is_purchased ? (
-          <span className="text-xs text-green-400 flex items-center gap-1 flex-shrink-0">
-            <CheckCircle className="w-3 h-3" />
-            Comprado
-          </span>
-        ) : (
-          <span className="text-xs text-yellow-400 flex-shrink-0">Pendiente</span>
-        )}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {item.is_purchased ? (
+            <span className="text-xs text-green-400 flex items-center gap-1">
+              <CheckCircle className="w-3 h-3" />
+              Comprado
+            </span>
+          ) : (
+            <span className="text-xs text-yellow-400">Pendiente</span>
+          )}
+          {order.status === 'pending' && !item.is_purchased && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveItemFromOrder(order.id, item.id);
+              }}
+              className="p-1 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
-      
+
       <div className="grid grid-cols-3 gap-2 text-xs mb-2">
         <div>
           <p className="text-gray">Cantidad</p>
@@ -411,6 +468,21 @@ const PurchaseOrdersPage = () => {
                         {order.items?.map((item) => (
                           <OrderItemCard key={item.id} item={item} order={order} />
                         ))}
+                        
+                        {/* Add item button for pending orders (mobile) */}
+                        {order.status === 'pending' && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAddItemModal(order);
+                              setNewItem({ raw_material: '', quantity_needed: '', estimated_unit_price: '' });
+                            }}
+                            className="flex items-center justify-center gap-1 w-full text-xs px-3 py-2.5 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary/20 transition-colors"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Añadir material
+                          </button>
+                        )}
                       </div>
 
                       {/* Desktop: Items table */}
@@ -419,12 +491,13 @@ const PurchaseOrdersPage = () => {
                           <thead>
                             <tr className="text-left text-sm text-gray">
                               <th className="py-2">Material</th>
+                              <th className="py-2">Proveedor</th>
                               <th className="py-2 text-right">Cantidad</th>
                               <th className="py-2 text-right">Precio</th>
                               <th className="py-2 text-right">Subtotal</th>
                               <th className="py-2 text-center">Estado</th>
                               {order.status === 'pending' && (
-                                <th className="py-2 text-right">Acción</th>
+                                <th className="py-2 text-right">Acciones</th>
                               )}
                             </tr>
                           </thead>
@@ -437,6 +510,9 @@ const PurchaseOrdersPage = () => {
                                     <span className="text-light">{item.raw_material_name}</span>
                                     <span className="text-xs text-gray">({item.unit_abbreviation})</span>
                                   </div>
+                                </td>
+                                <td className="py-3 text-gray text-sm">
+                                  {item.raw_material_supplier || '-'}
                                 </td>
                                 <td className="py-3 text-right text-light">
                                   {item.is_purchased
@@ -466,32 +542,61 @@ const PurchaseOrdersPage = () => {
                                 </td>
                                 {order.status === 'pending' && (
                                   <td className="py-3 text-right">
-                                    {!item.is_purchased && (
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setPurchaseModal({
-                                            orderId: order.id,
-                                            itemId: item.id,
-                                            item,
-                                          });
-                                          setPurchaseData({
-                                            quantity_purchased: item.quantity_needed,
-                                            actual_unit_price: item.estimated_unit_price,
-                                            supplier: item.supplier || '',
-                                          });
-                                        }}
-                                        className="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded hover:bg-green-500/20 transition-colors"
-                                      >
-                                        Registrar
-                                      </button>
-                                    )}
+                                    <div className="flex items-center justify-end gap-1">
+                                      {!item.is_purchased && (
+                                        <>
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setPurchaseModal({
+                                                orderId: order.id,
+                                                itemId: item.id,
+                                                item,
+                                              });
+                                              setPurchaseData({
+                                                quantity_purchased: item.quantity_needed,
+                                                actual_unit_price: item.estimated_unit_price,
+                                                supplier: item.supplier || '',
+                                              });
+                                            }}
+                                            className="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded hover:bg-green-500/20 transition-colors"
+                                          >
+                                            Registrar
+                                          </button>
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleRemoveItemFromOrder(order.id, item.id);
+                                            }}
+                                            className="p-1.5 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                                            title="Eliminar item"
+                                          >
+                                            <Trash2 className="w-4 h-4" />
+                                          </button>
+                                        </>
+                                      )}
+                                    </div>
                                   </td>
                                 )}
                               </tr>
                             ))}
                           </tbody>
                         </table>
+
+                        {/* Add item button for pending orders */}
+                        {order.status === 'pending' && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAddItemModal(order);
+                              setNewItem({ raw_material: '', quantity_needed: '', estimated_unit_price: '' });
+                            }}
+                            className="flex items-center gap-1 text-xs px-3 py-2 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary/20 transition-colors mb-4"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Añadir material
+                          </button>
+                        )}
                       </div>
 
                       {/* Actions */}
@@ -856,6 +961,128 @@ const PurchaseOrdersPage = () => {
                     <Trash2 className="w-5 h-5" />
                   )}
                   Eliminar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add Item to Order Modal */}
+      <AnimatePresence>
+        {addItemModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 flex items-end md:items-center justify-center z-50"
+            onClick={() => setAddItemModal(null)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-dark-secondary border-t md:border border-gray/20 rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-bold text-light flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-secondary" />
+                  Añadir Material
+                </h3>
+                <button
+                  onClick={() => setAddItemModal(null)}
+                  className="p-2 text-gray hover:text-light rounded-lg"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="mb-4 p-3 bg-dark/50 rounded-lg">
+                <p className="text-sm text-gray">Orden</p>
+                <p className="font-bold text-light">{addItemModal.order_number}</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-gray mb-1.5 block">Material *</label>
+                  <select
+                    value={newItem.raw_material}
+                    onChange={(e) => {
+                      const materialId = e.target.value;
+                      const material = materials.find(m => m.id === parseInt(materialId));
+                      setNewItem({
+                        ...newItem,
+                        raw_material: materialId,
+                        estimated_unit_price: material?.cost_per_unit || '',
+                      });
+                    }}
+                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                  >
+                    <option value="">Seleccionar material...</option>
+                    {materials.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.name} ({m.unit_abbreviation})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray mb-1.5 block">Cantidad *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={newItem.quantity_needed}
+                    onChange={(e) => setNewItem({ ...newItem, quantity_needed: e.target.value })}
+                    placeholder="Cantidad a pedir"
+                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray mb-1.5 block">Precio unitario estimado (COP)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={newItem.estimated_unit_price}
+                    onChange={(e) => setNewItem({ ...newItem, estimated_unit_price: e.target.value })}
+                    placeholder="Precio por unidad"
+                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {newItem.quantity_needed && newItem.estimated_unit_price && (
+                  <div className="bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/20 rounded-lg p-4">
+                    <p className="text-sm text-gray">Subtotal estimado</p>
+                    <p className="text-xl font-bold text-light">
+                      {formatCurrency(parseFloat(newItem.quantity_needed) * parseFloat(newItem.estimated_unit_price))}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setAddItemModal(null)}
+                  className="flex-1 px-4 py-3 border border-gray/30 text-gray rounded-lg hover:text-light hover:border-gray/50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleAddItemToOrder}
+                  disabled={addItemMutation.isPending || !newItem.raw_material || !newItem.quantity_needed}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {addItemMutation.isPending ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Plus className="w-5 h-5" />
+                  )}
+                  Añadir
                 </button>
               </div>
             </motion.div>
