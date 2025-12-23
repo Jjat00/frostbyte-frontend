@@ -143,7 +143,7 @@ const OrdersStatsPage = () => {
         <StatCard
           title="Ingresos"
           value={formatCurrency(stats?.total_revenue)}
-          subtitle="De pedidos entregados"
+          subtitle={`${stats?.total_paid_items || 0} items pagados`}
           icon={DollarSign}
           color="green"
         />
@@ -294,7 +294,7 @@ const OrdersStatsPage = () => {
                   </div>
                   <div>
                     <p className="font-medium text-light">{config.name}</p>
-                    <p className="text-xs text-gray">{data.count} pedido{data.count !== 1 ? 's' : ''}</p>
+                    <p className="text-xs text-gray">{data.count} item{data.count !== 1 ? 's' : ''}</p>
                   </div>
                 </div>
                 <p className="text-2xl font-bold">
@@ -314,9 +314,12 @@ const OrdersStatsPage = () => {
               <p className="text-sm text-gray">
                 Hay{' '}
                 <span className="text-yellow-400 font-bold">
-                  {formatCurrency(stats?.unpaid_total)}
+                  {stats?.total_unpaid_items || 0} items
                 </span>{' '}
-                en pedidos sin pagar
+                sin pagar por un total de{' '}
+                <span className="text-yellow-400 font-bold">
+                  {formatCurrency(stats?.unpaid_total)}
+                </span>
               </p>
             </div>
           </div>
@@ -375,7 +378,7 @@ const OrdersStatsPage = () => {
               minimumFractionDigits: 0,
             }).format(parseFloat(stats?.total_revenue || 0))}
           </span>{' '}
-          en pedidos entregados y pagados.
+          en <span className="text-light font-medium">{stats?.total_paid_items || 0} items</span> pagados.
         </p>
       </div>
     </div>

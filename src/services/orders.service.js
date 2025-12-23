@@ -110,12 +110,14 @@ export const ordersService = {
 
   /**
    * Agregar item a un pedido existente
+   * @param {number} orderId - ID del pedido
+   * @param {Object} itemData - Datos del item
+   * @param {number} itemData.product_variant_id - ID de la variante del producto
+   * @param {number} itemData.quantity - Cantidad
+   * @param {string} itemData.notes - Notas (opcional)
    */
-  async addItem(orderId, itemData) {
-    const response = await apiClient.post('/order-items/', {
-      order: orderId,
-      ...itemData,
-    });
+  async addItemToOrder(orderId, itemData) {
+    const response = await apiClient.post(`${BASE_URL}/${orderId}/add_item/`, itemData);
     return response.data;
   },
 
@@ -132,6 +134,57 @@ export const ordersService = {
    */
   async deleteItem(itemId) {
     const response = await apiClient.delete(`/order-items/${itemId}/`);
+    return response.data;
+  },
+
+  /**
+   * Marcar un item como pagado
+   * @param {number} itemId - ID del item
+   * @param {string} paymentMethod - Método de pago (cash, nequi, card, transfer, daviplata)
+   */
+  async markItemAsPaid(itemId, paymentMethod = '') {
+    const response = await apiClient.post(`/order-items/${itemId}/mark_paid/`, {
+      payment_method: paymentMethod,
+    });
+    return response.data;
+  },
+
+  /**
+   * Desmarcar un item como pagado
+   * @param {number} itemId - ID del item
+   */
+  async unmarkItemAsPaid(itemId) {
+    const response = await apiClient.post(`/order-items/${itemId}/unmark_paid/`);
+    return response.data;
+  },
+
+  /**
+   * Cambiar el método de pago de un item
+   * @param {number} itemId - ID del item
+   * @param {string} paymentMethod - Nuevo método de pago
+   */
+  async changeItemPaymentMethod(itemId, paymentMethod) {
+    const response = await apiClient.post(`/order-items/${itemId}/change_payment_method/`, {
+      payment_method: paymentMethod,
+    });
+    return response.data;
+  },
+
+  /**
+   * Marcar un item como entregado
+   * @param {number} itemId - ID del item
+   */
+  async markItemAsDelivered(itemId) {
+    const response = await apiClient.post(`/order-items/${itemId}/mark_delivered/`);
+    return response.data;
+  },
+
+  /**
+   * Desmarcar un item como entregado
+   * @param {number} itemId - ID del item
+   */
+  async unmarkItemAsDelivered(itemId) {
+    const response = await apiClient.post(`/order-items/${itemId}/unmark_delivered/`);
     return response.data;
   },
 };
