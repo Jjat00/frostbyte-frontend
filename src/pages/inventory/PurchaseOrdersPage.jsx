@@ -15,8 +15,103 @@ import {
   Clock,
   Trash2,
   AlertTriangle,
+  Search,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
+
+// Componente de selector con búsqueda
+const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar..." }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const selectedOption = options.find(opt => opt.id === parseInt(value));
+  
+  const filteredOptions = options.filter(opt =>
+    opt.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (opt.unit_abbreviation && opt.unit_abbreviation.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const handleSelect = (optionId) => {
+    onChange(optionId.toString());
+    setIsOpen(false);
+    setSearchTerm('');
+  };
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-dark border border-gray/30 rounded-lg px-3 py-2.5 text-left text-sm focus:outline-none focus:border-primary flex items-center justify-between"
+      >
+        <span className={selectedOption ? 'text-light' : 'text-gray'}>
+          {selectedOption ? `${selectedOption.name} (${selectedOption.unit_abbreviation})` : placeholder}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-gray transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Overlay para cerrar */}
+            <div 
+              className="fixed inset-0 z-40" 
+              onClick={() => {
+                setIsOpen(false);
+                setSearchTerm('');
+              }}
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute z-50 w-full mt-1 bg-dark-secondary border border-gray/30 rounded-lg shadow-xl overflow-hidden"
+            >
+              {/* Input de búsqueda */}
+              <div className="p-2 border-b border-gray/20">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Buscar material..."
+                    className="w-full bg-dark border border-gray/30 rounded-lg pl-9 pr-3 py-2 text-sm text-light placeholder-gray/50 focus:outline-none focus:border-primary"
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              {/* Lista de opciones */}
+              <div className="max-h-48 overflow-y-auto">
+                {filteredOptions.length === 0 ? (
+                  <div className="px-3 py-4 text-sm text-gray text-center">
+                    No se encontraron materiales
+                  </div>
+                ) : (
+                  filteredOptions.map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => handleSelect(opt.id)}
+                      className={`w-full px-3 py-2.5 text-left text-sm hover:bg-gray/10 transition-colors flex items-center justify-between ${
+                        parseInt(value) === opt.id ? 'bg-primary/10 text-primary' : 'text-light'
+                      }`}
+                    >
+                      <span>{opt.name}</span>
+                      <span className="text-xs text-gray">{opt.unit_abbreviation}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const PurchaseOrdersPage = () => {
   const queryClient = useQueryClient();
@@ -703,18 +798,12 @@ const PurchaseOrdersPage = () => {
                       <div key={index} className="bg-dark/50 rounded-lg p-3">
                         <div className="grid grid-cols-12 gap-2">
                           <div className="col-span-12 sm:col-span-5">
-                            <select
+                            <SearchableSelect
                               value={item.raw_material}
-                              onChange={(e) => updateNewOrderItem(index, 'raw_material', e.target.value)}
-                              className="w-full bg-dark border border-gray/30 rounded-lg px-3 py-2.5 text-light focus:outline-none focus:border-primary text-sm"
-                            >
-                              <option value="">Seleccionar material...</option>
-                              {materials.map((m) => (
-                                <option key={m.id} value={m.id}>
-                                  {m.name} ({m.unit_abbreviation})
-                                </option>
-                              ))}
-                            </select>
+                              onChange={(value) => updateNewOrderItem(index, 'raw_material', value)}
+                              options={materials}
+                              placeholder="Buscar material..."
+                            />
                           </div>
                           <div className="col-span-5 sm:col-span-3">
                             <input
@@ -1007,26 +1096,19 @@ const PurchaseOrdersPage = () => {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm text-gray mb-1.5 block">Material *</label>
-                  <select
+                  <SearchableSelect
                     value={newItem.raw_material}
-                    onChange={(e) => {
-                      const materialId = e.target.value;
-                      const material = materials.find(m => m.id === parseInt(materialId));
+                    onChange={(value) => {
+                      const material = materials.find(m => m.id === parseInt(value));
                       setNewItem({
                         ...newItem,
-                        raw_material: materialId,
+                        raw_material: value,
                         estimated_unit_price: material?.cost_per_unit || '',
                       });
                     }}
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
-                  >
-                    <option value="">Seleccionar material...</option>
-                    {materials.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.name} ({m.unit_abbreviation})
-                      </option>
-                    ))}
-                  </select>
+                    options={materials}
+                    placeholder="Buscar material..."
+                  />
                 </div>
 
                 <div>
