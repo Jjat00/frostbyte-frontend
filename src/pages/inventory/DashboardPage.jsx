@@ -188,28 +188,42 @@ const DashboardPage = () => {
 
           {/* Quick list */}
           <div className="space-y-2 max-h-48 md:max-h-60 overflow-y-auto">
-            {lowStock.results?.slice(0, 5).map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between p-2.5 md:p-3 bg-dark/30 rounded-lg gap-2"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-light text-sm truncate">{item.name}</p>
-                  <p className="text-xs text-gray">
-                    {item.current_stock} / {item.minimum_stock} {item.unit_abbreviation}
-                  </p>
-                </div>
-                <span
-                  className={`px-2 py-1 rounded text-xs font-medium flex-shrink-0 ${
-                    item.stock_status === 'sin_stock'
-                      ? 'bg-red-500/20 text-red-400'
-                      : 'bg-yellow-500/20 text-yellow-400'
-                  }`}
+            {lowStock.results?.slice(0, 5).map((item) => {
+              const faltante = Math.max(0, item.minimum_stock - item.current_stock);
+              const costoItem = faltante * item.cost_per_unit;
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between p-2.5 md:p-3 bg-dark/30 rounded-lg gap-2"
                 >
-                  {item.stock_status === 'sin_stock' ? 'Sin stock' : 'Bajo'}
-                </span>
-              </div>
-            ))}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-light text-sm truncate">{item.name}</p>
+                    <p className="text-xs text-gray">
+                      Stock: {item.current_stock} / {item.minimum_stock} {item.unit_abbreviation}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="text-right">
+                      <p className="text-xs text-yellow-400 font-medium">
+                        Falta: {faltante.toFixed(0)}
+                      </p>
+                      <p className="text-xs text-green-400">
+                        {formatCurrency(costoItem)}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium ${
+                        item.stock_status === 'sin_stock'
+                          ? 'bg-red-500/20 text-red-400'
+                          : 'bg-yellow-500/20 text-yellow-400'
+                      }`}
+                    >
+                      {item.stock_status === 'sin_stock' ? 'Sin stock' : 'Bajo'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {lowStock.count > 5 && (
