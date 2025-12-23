@@ -9,6 +9,7 @@ import {
   Loader2,
   DollarSign,
   Check,
+  Clock,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
 
@@ -138,7 +139,7 @@ const LowStockPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`bg-dark-secondary border rounded-xl p-4 ${
+        className={`bg-dark-secondary border rounded-xl p-4 overflow-hidden ${
           isSelected
             ? material.stock_status === 'sin_stock'
               ? 'border-red-500/50'
@@ -146,36 +147,54 @@ const LowStockPage = () => {
             : 'border-gray/20 opacity-60'
         }`}
       >
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => toggleSelect(material.id)}
-              className={`w-6 h-6 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
-                isSelected
-                  ? 'bg-primary border-primary'
-                  : 'border-gray/30 hover:border-primary'
+        <div className="flex items-start gap-3 mb-3">
+          <button
+            onClick={() => toggleSelect(material.id)}
+            className={`w-6 h-6 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
+              isSelected
+                ? 'bg-primary border-primary'
+                : 'border-gray/30 hover:border-primary'
+            }`}
+          >
+            {isSelected && <Check className="w-4 h-4 text-dark" />}
+          </button>
+          <div
+            className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              material.stock_status === 'sin_stock' ? 'bg-red-500/10' : 'bg-yellow-500/10'
+            }`}
+          >
+            <Package
+              className={`w-5 h-5 ${
+                material.stock_status === 'sin_stock' ? 'text-red-500' : 'text-yellow-500'
               }`}
-            >
-              {isSelected && <Check className="w-4 h-4 text-dark" />}
-            </button>
-            <div
-              className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                material.stock_status === 'sin_stock' ? 'bg-red-500/10' : 'bg-yellow-500/10'
-              }`}
-            >
-              <Package
-                className={`w-5 h-5 ${
-                  material.stock_status === 'sin_stock' ? 'text-red-500' : 'text-yellow-500'
-                }`}
-              />
-            </div>
-            <div className="min-w-0">
-              <p className="font-medium text-light truncate">{material.name}</p>
-              <p className="text-xs text-gray">{material.unit_abbreviation}</p>
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-light truncate">{material.name}</p>
+                <p className="text-xs text-gray">{material.unit_abbreviation}</p>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                {material.has_pending_order && (
+                  <span className="flex items-center px-1.5 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs">
+                    <Clock className="w-3 h-3" />
+                  </span>
+                )}
+                {getStatusBadge(material.stock_status)}
+              </div>
             </div>
           </div>
-          {getStatusBadge(material.stock_status)}
         </div>
+
+        {material.has_pending_order && (
+          <div className="mb-3 px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+            <p className="text-xs text-blue-400 flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              Ya hay una orden pendiente para este material
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="bg-dark/50 rounded-lg p-2.5">
@@ -381,7 +400,15 @@ const LowStockPage = () => {
                               />
                             </div>
                             <div>
-                              <p className="font-medium text-light">{material.name}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium text-light">{material.name}</p>
+                                {material.has_pending_order && (
+                                  <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs" title="Ya tiene orden pendiente">
+                                    <Clock className="w-3 h-3" />
+                                    Orden pendiente
+                                  </span>
+                                )}
+                              </div>
                               <p className="text-xs text-gray">{material.unit_abbreviation}</p>
                             </div>
                           </div>

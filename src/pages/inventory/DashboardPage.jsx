@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   ArrowRight,
   Loader2,
+  Clock,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
 
@@ -194,10 +195,19 @@ const DashboardPage = () => {
               return (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-2.5 md:p-3 bg-dark/30 rounded-lg gap-2"
+                  className={`flex items-center justify-between p-2.5 md:p-3 bg-dark/30 rounded-lg gap-2 ${
+                    item.has_pending_order ? 'border border-blue-500/30' : ''
+                  }`}
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-light text-sm truncate">{item.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-light text-sm truncate">{item.name}</p>
+                      {item.has_pending_order && (
+                        <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs flex-shrink-0">
+                          <Clock className="w-3 h-3" />
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-gray">
                       Stock: {item.current_stock} / {item.minimum_stock} {item.unit_abbreviation}
                     </p>
