@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -16,6 +16,7 @@ const LowStockPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedItems, setSelectedItems] = useState([]);
+  const [customQuantities, setCustomQuantities] = useState({});
 
   // Obtener items con stock bajo
   const { data, isLoading } = useQuery({
@@ -23,16 +24,64 @@ const LowStockPage = () => {
     queryFn: () => inventoryService.getLowStock(),
   });
 
-  // Mutación para generar orden automática
-  const generateOrderMutation = useMutation({
-    mutationFn: () => inventoryService.generateFromLowStock(),
+  const materials = data?.results || [];
+
+  // Inicializar cantidades personalizadas cuando se cargan los materiales
+  useEffect(() => {
+    if (materials.length > 0) {
+      const initialQuantities = {};
+      materials.forEach((material) => {
+        // Por defecto: lo que falta para llegar al stock mínimo
+        const defaultQuantity = Math.max(0, material.minimum_stock - material.current_stock);
+        initialQuantities[material.id] = defaultQuantity;
+      });
+      setCustomQuantities(initialQuantities);
+      // Seleccionar todos por defecto
+      setSelectedItems(materials.map((m) => m.id));
+    }
+  }, [materials.length]);
+
+  // Calcular costo estimado total basado en items seleccionados y cantidades personalizadas
+  const estimatedTotalCost = useMemo(() => {
+    return materials.reduce((total, material) => {
+      if (selectedItems.includes(material.id)) {
+        const quantity = customQuantities[material.id] || 0;
+        return total + quantity * material.cost_per_unit;
+      }
+      return total;
+    }, 0);
+  }, [materials, selectedItems, customQuantities]);
+
+  // Mutación para crear orden personalizada
+  const createOrderMutation = useMutation({
+    mutationFn: (items) => inventoryService.createPurchaseOrder({ 
+      notes: 'Orden generada desde stock bajo',
+      items 
+    }),
     onSuccess: () => {
       queryClient.invalidateQueries(['purchase-orders']);
       navigate(`/inventario/ordenes`);
     },
   });
 
-  const materials = data?.results || [];
+  const handleGenerateOrder = () => {
+    // Filtrar solo los items seleccionados con cantidad > 0
+    const itemsToOrder = materials
+      .filter((m) => selectedItems.includes(m.id) && (customQuantities[m.id] || 0) > 0)
+      .map((material) => ({
+        raw_material: material.id,
+        quantity_needed: customQuantities[material.id],
+        estimated_unit_price: material.cost_per_unit,
+        supplier: material.supplier || '',
+      }));
+
+    if (itemsToOrder.length === 0) {
+      alert('Selecciona al menos un material con cantidad mayor a 0');
+      return;
+    }
+
+    createOrderMutation.mutate(itemsToOrder);
+  };
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-CO', {
@@ -71,21 +120,44 @@ const LowStockPage = () => {
     }
   };
 
+  const handleQuantityChange = (materialId, value) => {
+    const numValue = parseFloat(value) || 0;
+    setCustomQuantities((prev) => ({
+      ...prev,
+      [materialId]: Math.max(0, numValue),
+    }));
+  };
+
   // Componente Card para móvil
   const LowStockCard = ({ material }) => {
-    const faltante = Math.max(0, material.minimum_stock * 2 - material.current_stock);
-    const costoEstimado = faltante * material.cost_per_unit;
+    const quantity = customQuantities[material.id] || 0;
+    const costoEstimado = quantity * material.cost_per_unit;
+    const isSelected = selectedItems.includes(material.id);
 
     return (
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className={`bg-dark-secondary border rounded-xl p-4 ${
-          material.stock_status === 'sin_stock' ? 'border-red-500/30' : 'border-yellow-500/30'
+          isSelected
+            ? material.stock_status === 'sin_stock'
+              ? 'border-red-500/50'
+              : 'border-yellow-500/50'
+            : 'border-gray/20 opacity-60'
         }`}
       >
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => toggleSelect(material.id)}
+              className={`w-6 h-6 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
+                isSelected
+                  ? 'bg-primary border-primary'
+                  : 'border-gray/30 hover:border-primary'
+              }`}
+            >
+              {isSelected && <Check className="w-4 h-4 text-dark" />}
+            </button>
             <div
               className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                 material.stock_status === 'sin_stock' ? 'bg-red-500/10' : 'bg-yellow-500/10'
@@ -117,8 +189,15 @@ const LowStockPage = () => {
             <p className="font-bold text-gray">{material.minimum_stock}</p>
           </div>
           <div className="bg-dark/50 rounded-lg p-2.5">
-            <p className="text-xs text-gray">Faltante</p>
-            <p className="font-bold text-yellow-400">{faltante.toFixed(0)}</p>
+            <p className="text-xs text-gray">Cantidad a Pedir</p>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              value={quantity}
+              onChange={(e) => handleQuantityChange(material.id, e.target.value)}
+              className="w-full bg-transparent font-bold text-yellow-400 focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 -ml-1"
+            />
           </div>
           <div className="bg-dark/50 rounded-lg p-2.5">
             <p className="text-xs text-gray">Costo Est.</p>
@@ -137,6 +216,8 @@ const LowStockPage = () => {
     );
   }
 
+  const selectedCount = selectedItems.length;
+
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Header */}
@@ -149,14 +230,19 @@ const LowStockPage = () => {
             </h1>
             <p className="text-sm text-gray">
               {data?.count || 0} materiales por reabastecer
+              {selectedCount > 0 && selectedCount < materials.length && (
+                <span className="text-primary ml-1">
+                  ({selectedCount} seleccionados)
+                </span>
+              )}
             </p>
           </div>
           <button
-            onClick={() => generateOrderMutation.mutate()}
-            disabled={generateOrderMutation.isPending || materials.length === 0}
+            onClick={handleGenerateOrder}
+            disabled={createOrderMutation.isPending || selectedCount === 0}
             className="flex items-center gap-2 px-3 md:px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
           >
-            {generateOrderMutation.isPending ? (
+            {createOrderMutation.isPending ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <ShoppingCart className="w-5 h-5" />
@@ -172,9 +258,12 @@ const LowStockPage = () => {
         <div className="bg-dark-secondary border border-gray/20 rounded-xl p-3 md:p-6">
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <Package className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
-            <p className="text-xs md:text-sm text-gray">Afectados</p>
+            <p className="text-xs md:text-sm text-gray">Seleccionados</p>
           </div>
-          <p className="text-xl md:text-3xl font-bold text-light">{data?.count || 0}</p>
+          <p className="text-xl md:text-3xl font-bold text-light">
+            {selectedCount}
+            <span className="text-sm text-gray font-normal">/{materials.length}</span>
+          </p>
         </div>
 
         <div className="bg-dark-secondary border border-gray/20 rounded-xl p-3 md:p-6">
@@ -193,7 +282,7 @@ const LowStockPage = () => {
             <p className="text-xs md:text-sm text-gray">Costo Est.</p>
           </div>
           <p className="text-lg md:text-2xl font-bold text-light truncate">
-            {formatCurrency(data?.estimated_restock_cost || 0)}
+            {formatCurrency(estimatedTotalCost)}
           </p>
         </div>
       </div>
@@ -225,17 +314,21 @@ const LowStockPage = () => {
                     <th className="text-left py-4 px-4 text-sm font-medium text-gray">
                       <button
                         onClick={toggleSelectAll}
-                        className="w-5 h-5 rounded border border-gray/30 flex items-center justify-center hover:border-primary transition-colors"
+                        className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                          selectedItems.length === materials.length
+                            ? 'bg-primary border-primary'
+                            : 'border-gray/30 hover:border-primary'
+                        }`}
                       >
                         {selectedItems.length === materials.length && (
-                          <Check className="w-3 h-3 text-primary" />
+                          <Check className="w-3 h-3 text-dark" />
                         )}
                       </button>
                     </th>
                     <th className="text-left py-4 px-4 text-sm font-medium text-gray">Material</th>
                     <th className="text-right py-4 px-4 text-sm font-medium text-gray">Stock Actual</th>
                     <th className="text-right py-4 px-4 text-sm font-medium text-gray">Stock Mínimo</th>
-                    <th className="text-right py-4 px-4 text-sm font-medium text-gray">Faltante</th>
+                    <th className="text-right py-4 px-4 text-sm font-medium text-gray">Cantidad a Pedir</th>
                     <th className="text-right py-4 px-4 text-sm font-medium text-gray">Precio/Unidad</th>
                     <th className="text-right py-4 px-4 text-sm font-medium text-gray">Costo Estimado</th>
                     <th className="text-center py-4 px-4 text-sm font-medium text-gray">Estado</th>
@@ -243,26 +336,29 @@ const LowStockPage = () => {
                 </thead>
                 <tbody>
                   {materials.map((material) => {
-                    const faltante = Math.max(0, material.minimum_stock * 2 - material.current_stock);
-                    const costoEstimado = faltante * material.cost_per_unit;
+                    const quantity = customQuantities[material.id] || 0;
+                    const costoEstimado = quantity * material.cost_per_unit;
+                    const isSelected = selectedItems.includes(material.id);
 
                     return (
                       <motion.tr
                         key={material.id}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="border-b border-gray/10 hover:bg-gray/5 transition-colors"
+                        className={`border-b border-gray/10 transition-colors ${
+                          isSelected ? 'hover:bg-gray/5' : 'opacity-40'
+                        }`}
                       >
                         <td className="py-4 px-4">
                           <button
                             onClick={() => toggleSelect(material.id)}
                             className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
-                              selectedItems.includes(material.id)
+                              isSelected
                                 ? 'bg-primary border-primary'
                                 : 'border-gray/30 hover:border-primary'
                             }`}
                           >
-                            {selectedItems.includes(material.id) && (
+                            {isSelected && (
                               <Check className="w-3 h-3 text-dark" />
                             )}
                           </button>
@@ -301,7 +397,14 @@ const LowStockPage = () => {
                         </td>
                         <td className="py-4 px-4 text-right text-gray">{material.minimum_stock}</td>
                         <td className="py-4 px-4 text-right">
-                          <span className="text-yellow-400 font-medium">{faltante.toFixed(2)}</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={quantity}
+                            onChange={(e) => handleQuantityChange(material.id, e.target.value)}
+                            className="w-24 bg-dark border border-gray/30 rounded-lg px-3 py-1.5 text-right text-yellow-400 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                          />
                         </td>
                         <td className="py-4 px-4 text-right text-light">
                           {formatCurrency(material.cost_per_unit)}
