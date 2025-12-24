@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   BarChart3,
   DollarSign,
@@ -18,6 +18,9 @@ import {
   Building,
   Wallet,
   AlertTriangle,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 
@@ -63,11 +66,20 @@ const StatCard = ({ title, value, subtitle, icon: Icon, color }) => {
 
 const OrdersStatsPage = () => {
   const [period, setPeriod] = useState('today');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
+  const [useCustomRange, setUseCustomRange] = useState(false);
 
   // Obtener estadísticas
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['orders-stats', period],
-    queryFn: () => ordersService.getStats(period),
+    queryKey: ['orders-stats', period, customStartDate, customEndDate],
+    queryFn: () => {
+      if (useCustomRange && customStartDate && customEndDate) {
+        return ordersService.getStats('custom', customStartDate, customEndDate);
+      }
+      return ordersService.getStats(period);
+    },
   });
 
   const formatCurrency = (value) => {
@@ -88,8 +100,46 @@ const OrdersStatsPage = () => {
 
   const periodLabels = {
     today: 'Hoy',
+    yesterday: 'Ayer',
     week: 'Esta semana',
     month: 'Este mes',
+    last_month: 'Mes anterior',
+    year: 'Este año',
+    custom: 'Rango personalizado',
+  };
+
+  const quickOptions = [
+    { key: 'today', label: 'Hoy', icon: Calendar },
+    { key: 'yesterday', label: 'Ayer', icon: Calendar },
+    { key: 'week', label: 'Esta semana', icon: Calendar },
+    { key: 'month', label: 'Este mes', icon: Calendar },
+    { key: 'last_month', label: 'Mes anterior', icon: Calendar },
+    { key: 'year', label: 'Este año', icon: Calendar },
+  ];
+
+  const handleQuickSelect = (option) => {
+    setPeriod(option);
+    setUseCustomRange(false);
+    setCustomStartDate('');
+    setCustomEndDate('');
+    setShowDatePicker(false);
+  };
+
+  const handleCustomRange = () => {
+    if (customStartDate && customEndDate) {
+      setUseCustomRange(true);
+      setPeriod('custom');
+      setShowDatePicker(false);
+    }
+  };
+
+  const getCurrentPeriodLabel = () => {
+    if (useCustomRange && customStartDate && customEndDate) {
+      const start = new Date(customStartDate).toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
+      const end = new Date(customEndDate).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
+      return `${start} - ${end}`;
+    }
+    return periodLabels[period] || 'Hoy';
   };
 
   if (isLoading) {
@@ -111,25 +161,18 @@ const OrdersStatsPage = () => {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-light">Estadísticas</h1>
-          <p className="text-sm text-gray">Resumen de ventas - {periodLabels[period]}</p>
+          <p className="text-sm text-gray">Resumen de ventas - {getCurrentPeriodLabel()}</p>
         </div>
 
-        {/* Selector de periodo */}
-        <div className="flex gap-2">
-          {['today', 'week', 'month'].map((p) => (
-            <button
-              key={p}
-              onClick={() => setPeriod(p)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                period === p
-                  ? 'bg-secondary/20 text-secondary border border-secondary/30'
-                  : 'bg-gray/10 text-gray hover:text-light border border-transparent'
-              }`}
-            >
-              {p === 'today' ? 'Hoy' : p === 'week' ? 'Semana' : 'Mes'}
-            </button>
-          ))}
-        </div>
+        {/* Botón de selector de fecha */}
+        <button
+          onClick={() => setShowDatePicker(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-secondary/20 text-secondary border border-secondary/30 rounded-lg hover:bg-secondary/30 transition-all text-sm font-medium"
+        >
+          <Calendar className="w-4 h-4" />
+          <span className="hidden sm:inline">Seleccionar período</span>
+          <span className="sm:hidden">Fecha</span>
+        </button>
       </div>
 
       {/* Stats principales */}
@@ -368,7 +411,7 @@ const OrdersStatsPage = () => {
           <h3 className="font-bold text-light">Resumen del Periodo</h3>
         </div>
         <p className="text-gray text-sm">
-          En {periodLabels[period].toLowerCase()}, se han registrado{' '}
+          En {getCurrentPeriodLabel().toLowerCase()}, se han registrado{' '}
           <span className="text-light font-medium">{stats?.total_orders || 0} pedidos</span> con
           ingresos totales de{' '}
           <span className="text-secondary font-medium">
@@ -381,6 +424,105 @@ const OrdersStatsPage = () => {
           en <span className="text-light font-medium">{stats?.total_paid_items || 0} items</span> pagados.
         </p>
       </div>
+
+      {/* Modal de selector de fechas */}
+      <AnimatePresence>
+        {showDatePicker && (
+          <div className="fixed inset-0 bg-black/60 flex items-end md:items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              className="bg-dark-secondary border border-gray/20 rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[90vh] overflow-y-auto"
+            >
+              {/* Header */}
+              <div className="p-4 md:p-6 border-b border-gray/20 flex items-center justify-between">
+                <h3 className="text-xl font-bold text-light flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-secondary" />
+                  Seleccionar Período
+                </h3>
+                <button
+                  onClick={() => setShowDatePicker(false)}
+                  className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-4 md:p-6 space-y-6">
+                {/* Opciones rápidas */}
+                <div>
+                  <p className="text-sm text-gray mb-3 font-medium">Opciones rápidas</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {quickOptions.map((option) => {
+                      const Icon = option.icon;
+                      const isSelected = !useCustomRange && period === option.key;
+                      return (
+                        <button
+                          key={option.key}
+                          onClick={() => handleQuickSelect(option.key)}
+                          className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border ${
+                            isSelected
+                              ? 'bg-secondary/20 text-secondary border-secondary/30'
+                              : 'bg-gray/10 text-gray hover:text-light hover:bg-gray/20 border-transparent'
+                          }`}
+                        >
+                          <Icon className="w-4 h-4" />
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Rango personalizado */}
+                <div className="pt-4 border-t border-gray/20">
+                  <p className="text-sm text-gray mb-3 font-medium">Rango personalizado</p>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray mb-1.5 block">Fecha inicio</label>
+                      <input
+                        type="date"
+                        value={customStartDate}
+                        onChange={(e) => setCustomStartDate(e.target.value)}
+                        max={customEndDate || new Date().toISOString().split('T')[0]}
+                        className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray mb-1.5 block">Fecha fin</label>
+                      <input
+                        type="date"
+                        value={customEndDate}
+                        onChange={(e) => setCustomEndDate(e.target.value)}
+                        min={customStartDate || undefined}
+                        max={new Date().toISOString().split('T')[0]}
+                        className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
+                      />
+                    </div>
+                    <button
+                      onClick={handleCustomRange}
+                      disabled={!customStartDate || !customEndDate || customStartDate > customEndDate}
+                      className="w-full px-4 py-3 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      <Calendar className="w-5 h-5" />
+                      Aplicar rango personalizado
+                    </button>
+                    {useCustomRange && customStartDate && customEndDate && (
+                      <div className="p-3 bg-secondary/10 border border-secondary/20 rounded-lg">
+                        <p className="text-xs text-gray mb-1">Rango activo:</p>
+                        <p className="text-sm text-light font-medium">
+                          {new Date(customStartDate).toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })} - {new Date(customEndDate).toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
