@@ -1,20 +1,21 @@
-import React from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import App from './App';
-import LoginPage from './pages/auth/LoginPage';
-import InventoryLayout from './pages/inventory/InventoryLayout';
-import DashboardPage from './pages/inventory/DashboardPage';
-import MaterialsPage from './pages/inventory/MaterialsPage';
-import LowStockPage from './pages/inventory/LowStockPage';
-import PurchaseOrdersPage from './pages/inventory/PurchaseOrdersPage';
+import React from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import App from "./App";
+import LoginPage from "./pages/auth/LoginPage";
+import HomePage from "./pages/HomePage";
+import InventoryLayout from "./pages/inventory/InventoryLayout";
+import DashboardPage from "./pages/inventory/DashboardPage";
+import MaterialsPage from "./pages/inventory/MaterialsPage";
+import LowStockPage from "./pages/inventory/LowStockPage";
+import PurchaseOrdersPage from "./pages/inventory/PurchaseOrdersPage";
 // Módulo de Pedidos
-import OrdersLayout from './pages/orders/OrdersLayout';
-import ActiveOrdersPage from './pages/orders/ActiveOrdersPage';
-import NewOrderPage from './pages/orders/NewOrderPage';
-import OrderDetailPage from './pages/orders/OrderDetailPage';
-import OrdersHistoryPage from './pages/orders/OrdersHistoryPage';
-import OrdersStatsPage from './pages/orders/OrdersStatsPage';
-import { authService } from './services/auth.service';
+import OrdersLayout from "./pages/orders/OrdersLayout";
+import ActiveOrdersPage from "./pages/orders/ActiveOrdersPage";
+import NewOrderPage from "./pages/orders/NewOrderPage";
+import OrderDetailPage from "./pages/orders/OrderDetailPage";
+import OrdersHistoryPage from "./pages/orders/OrdersHistoryPage";
+import OrdersStatsPage from "./pages/orders/OrdersStatsPage";
+import { authService } from "./services/auth.service";
 
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children }) => {
@@ -32,7 +33,7 @@ const PublicRoute = ({ children }) => {
   const isAuthenticated = authService.isAuthenticated();
 
   if (isAuthenticated) {
-    return <Navigate to="/inventario" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return children;
@@ -41,21 +42,30 @@ const PublicRoute = ({ children }) => {
 export const router = createBrowserRouter([
   // Ruta principal - Menú público
   {
-    path: '/',
+    path: "/",
     element: <App />,
   },
   // Login
   {
-    path: '/login',
+    path: "/login",
     element: (
       <PublicRoute>
         <LoginPage />
       </PublicRoute>
     ),
   },
+  // Home - Selección de módulos
+  {
+    path: "/home",
+    element: (
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>
+    ),
+  },
   // Panel de inventario (protegido)
   {
-    path: '/inventario',
+    path: "/inventario",
     element: (
       <ProtectedRoute>
         <InventoryLayout />
@@ -67,22 +77,22 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
-        path: 'materiales',
+        path: "materiales",
         element: <MaterialsPage />,
       },
       {
-        path: 'stock-bajo',
+        path: "stock-bajo",
         element: <LowStockPage />,
       },
       {
-        path: 'ordenes',
+        path: "ordenes",
         element: <PurchaseOrdersPage />,
       },
     ],
   },
   // Panel de pedidos (para meseros)
   {
-    path: '/pedidos',
+    path: "/pedidos",
     element: (
       <ProtectedRoute>
         <OrdersLayout />
@@ -94,22 +104,21 @@ export const router = createBrowserRouter([
         element: <ActiveOrdersPage />,
       },
       {
-        path: 'nuevo',
+        path: "nuevo",
         element: <NewOrderPage />,
       },
       {
-        path: ':id',
+        path: ":id",
         element: <OrderDetailPage />,
       },
       {
-        path: 'historial',
+        path: "historial",
         element: <OrdersHistoryPage />,
       },
       {
-        path: 'estadisticas',
+        path: "estadisticas",
         element: <OrdersStatsPage />,
       },
     ],
   },
 ]);
-

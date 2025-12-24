@@ -15,9 +15,9 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    // Si ya está autenticado, redirigir al inventario
+    // Si ya está autenticado, redirigir al home
     if (isAuthenticated) {
-      navigate('/inventario');
+      navigate('/home');
     }
   }, [isAuthenticated, navigate]);
 
@@ -35,7 +35,7 @@ const LoginPage = () => {
     e.preventDefault();
     const result = await login(formData.username, formData.password);
     if (result.success) {
-      navigate('/inventario');
+      navigate('/home');
     }
   };
 
