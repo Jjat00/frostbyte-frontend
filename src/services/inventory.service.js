@@ -171,6 +171,17 @@ export const inventoryService = {
     return response.data;
   },
 
+  /**
+   * Actualizar item de orden
+   */
+  async updateOrderItem(orderId, itemId, data) {
+    const response = await apiClient.patch(
+      `${BASE_URL}/purchase-orders/${orderId}/items/${itemId}/update/`,
+      data
+    );
+    return response.data;
+  },
+
   // ============= UNITS =============
 
   /**

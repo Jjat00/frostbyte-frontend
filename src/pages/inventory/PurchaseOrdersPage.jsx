@@ -16,6 +16,7 @@ import {
   Trash2,
   AlertTriangle,
   Search,
+  Pencil,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
 
@@ -128,6 +129,12 @@ const PurchaseOrdersPage = () => {
   const [newOrderNotes, setNewOrderNotes] = useState('');
   const [addItemModal, setAddItemModal] = useState(null);
   const [newItem, setNewItem] = useState({ raw_material: '', quantity_needed: '', estimated_unit_price: '' });
+  const [editItemModal, setEditItemModal] = useState(null);
+  const [editItemData, setEditItemData] = useState({
+    quantity_purchased: '',
+    actual_unit_price: '',
+    supplier: '',
+  });
 
   // Obtener órdenes
   const { data, isLoading } = useQuery({
@@ -218,6 +225,22 @@ const PurchaseOrdersPage = () => {
     mutationFn: ({ orderId, itemId }) => inventoryService.removeItemFromOrder(orderId, itemId),
     onSuccess: () => {
       queryClient.invalidateQueries(['purchase-orders']);
+    },
+  });
+
+  // Editar item de orden
+  const updateItemMutation = useMutation({
+    mutationFn: ({ orderId, itemId, data }) => inventoryService.updateOrderItem(orderId, itemId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['purchase-orders']);
+      queryClient.invalidateQueries(['materials']);
+      queryClient.invalidateQueries(['low-stock']);
+      setEditItemModal(null);
+      setEditItemData({
+        quantity_purchased: '',
+        actual_unit_price: '',
+        supplier: '',
+      });
     },
   });
 
@@ -333,6 +356,38 @@ const PurchaseOrdersPage = () => {
     }
   };
 
+  const handleOpenEditItem = (order, item) => {
+    setEditItemModal({ order, item });
+    setEditItemData({
+      quantity_purchased: item.quantity_purchased || item.quantity_needed || '',
+      actual_unit_price: item.actual_unit_price || item.estimated_unit_price || '',
+      supplier: item.supplier || '',
+    });
+  };
+
+  const handleUpdateItem = () => {
+    if (!editItemModal) return;
+    
+    const dataToUpdate = {};
+    
+    // Solo enviar cantidad comprada, precio real y proveedor
+    if (editItemData.quantity_purchased) {
+      dataToUpdate.quantity_purchased = parseFloat(editItemData.quantity_purchased);
+    }
+    if (editItemData.actual_unit_price) {
+      dataToUpdate.actual_unit_price = parseFloat(editItemData.actual_unit_price);
+    }
+    if (editItemData.supplier !== undefined) {
+      dataToUpdate.supplier = editItemData.supplier;
+    }
+    
+    updateItemMutation.mutate({
+      orderId: editItemModal.order.id,
+      itemId: editItemModal.item.id,
+      data: dataToUpdate,
+    });
+  };
+
   const getOrderTotal = (order) => {
     // Calcular total mixto: items comprados con precio real, pendientes con estimado
     const total = order.items?.reduce((sum, item) => {
@@ -366,18 +421,26 @@ const PurchaseOrdersPage = () => {
           ) : (
             <span className="text-xs text-yellow-400">Pendiente</span>
           )}
-          {order.status === 'pending' && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveItemFromOrder(order.id, item.id, item.is_purchased);
-              }}
-              className="p-1 text-red-400 hover:bg-red-500/10 rounded transition-colors"
-              title={item.is_purchased ? "Eliminar (revertirá stock)" : "Eliminar"}
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenEditItem(order, item);
+            }}
+            className="p-1 text-secondary hover:bg-secondary/10 rounded transition-colors"
+            title="Editar"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleRemoveItemFromOrder(order.id, item.id, item.is_purchased);
+            }}
+            className="p-1 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+            title={item.is_purchased ? "Eliminar (revertirá stock)" : "Eliminar"}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 
@@ -592,9 +655,7 @@ const PurchaseOrdersPage = () => {
                               <th className="py-2 text-right">Precio</th>
                               <th className="py-2 text-right">Subtotal</th>
                               <th className="py-2 text-center">Estado</th>
-                              {order.status === 'pending' && (
-                                <th className="py-2 text-right">Acciones</th>
-                              )}
+                              <th className="py-2 text-right">Acciones</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -636,42 +697,50 @@ const PurchaseOrdersPage = () => {
                                     <span className="text-xs text-yellow-400">Pendiente</span>
                                   )}
                                 </td>
-                                {order.status === 'pending' && (
-                                  <td className="py-3 text-right">
-                                    <div className="flex items-center justify-end gap-1">
-                                      {!item.is_purchased && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setPurchaseModal({
-                                              orderId: order.id,
-                                              itemId: item.id,
-                                              item,
-                                            });
-                                            setPurchaseData({
-                                              quantity_purchased: item.quantity_needed,
-                                              actual_unit_price: item.estimated_unit_price,
-                                              supplier: item.supplier || '',
-                                            });
-                                          }}
-                                          className="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded hover:bg-green-500/20 transition-colors"
-                                        >
-                                          Registrar
-                                        </button>
-                                      )}
+                                <td className="py-3 text-right">
+                                  <div className="flex items-center justify-end gap-1">
+                                    {order.status === 'pending' && !item.is_purchased && (
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          handleRemoveItemFromOrder(order.id, item.id, item.is_purchased);
+                                          setPurchaseModal({
+                                            orderId: order.id,
+                                            itemId: item.id,
+                                            item,
+                                          });
+                                          setPurchaseData({
+                                            quantity_purchased: item.quantity_needed,
+                                            actual_unit_price: item.estimated_unit_price,
+                                            supplier: item.supplier || '',
+                                          });
                                         }}
-                                        className="p-1.5 text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                                        title={item.is_purchased ? "Eliminar (revertirá stock)" : "Eliminar item"}
+                                        className="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded hover:bg-green-500/20 transition-colors"
                                       >
-                                        <Trash2 className="w-4 h-4" />
+                                        Registrar
                                       </button>
-                                    </div>
-                                  </td>
-                                )}
+                                    )}
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpenEditItem(order, item);
+                                      }}
+                                      className="p-1.5 text-secondary hover:bg-secondary/10 rounded transition-colors"
+                                      title="Editar"
+                                    >
+                                      <Pencil className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveItemFromOrder(order.id, item.id, item.is_purchased);
+                                      }}
+                                      className="p-1.5 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                                      title={item.is_purchased ? "Eliminar (revertirá stock)" : "Eliminar item"}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -1164,6 +1233,132 @@ const PurchaseOrdersPage = () => {
                     <Plus className="w-5 h-5" />
                   )}
                   Añadir
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit Item Modal */}
+      <AnimatePresence>
+        {editItemModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 flex items-end md:items-center justify-center z-50"
+            onClick={() => setEditItemModal(null)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-dark-secondary border-t md:border border-gray/20 rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-bold text-light flex items-center gap-2">
+                  <Pencil className="w-5 h-5 text-secondary" />
+                  Editar Item
+                </h3>
+                <button
+                  onClick={() => setEditItemModal(null)}
+                  className="p-2 text-gray hover:text-light rounded-lg"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="mb-4 p-3 bg-dark/50 rounded-lg">
+                <p className="font-bold text-light">{editItemModal.item.raw_material_name}</p>
+                <p className="text-sm text-gray">
+                  {editItemModal.item.unit_abbreviation} • 
+                  {editItemModal.item.is_purchased ? (
+                    <span className="text-green-400 ml-1">Comprado</span>
+                  ) : (
+                    <span className="text-yellow-400 ml-1">Pendiente</span>
+                  )}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {editItemModal.item.is_purchased && (
+                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <p className="text-xs text-green-400 flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      Modificar estos valores actualizará el stock y precio del material
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-sm text-gray mb-1.5 block">Cantidad</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={editItemData.quantity_purchased}
+                    onChange={(e) => setEditItemData({ ...editItemData, quantity_purchased: e.target.value })}
+                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    placeholder="Cantidad comprada"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray mb-1.5 block">Precio unitario (COP)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={editItemData.actual_unit_price}
+                    onChange={(e) => setEditItemData({ ...editItemData, actual_unit_price: e.target.value })}
+                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    placeholder="Precio por unidad"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray mb-1.5 block">Proveedor</label>
+                  <input
+                    type="text"
+                    value={editItemData.supplier}
+                    onChange={(e) => setEditItemData({ ...editItemData, supplier: e.target.value })}
+                    placeholder="Nombre del proveedor"
+                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                {/* Subtotal calculado */}
+                {editItemData.quantity_purchased && editItemData.actual_unit_price && (
+                  <div className="bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/20 rounded-lg p-4">
+                    <p className="text-sm text-gray">Subtotal</p>
+                    <p className="text-xl font-bold text-light">
+                      {formatCurrency(parseFloat(editItemData.quantity_purchased) * parseFloat(editItemData.actual_unit_price))}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setEditItemModal(null)}
+                  className="flex-1 px-4 py-3 border border-gray/30 text-gray rounded-lg hover:text-light hover:border-gray/50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleUpdateItem}
+                  disabled={updateItemMutation.isPending}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50"
+                >
+                  {updateItemMutation.isPending ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Check className="w-5 h-5" />
+                  )}
+                  Guardar
                 </button>
               </div>
             </motion.div>
