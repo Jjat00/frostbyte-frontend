@@ -208,6 +208,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
 const ActiveOrdersPage = () => {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState('all');
+  const [deliveredTab, setDeliveredTab] = useState('unpaid'); // 'paid' o 'unpaid'
 
   // Obtener pedidos activos
   const { data: activeOrders, isLoading: loadingActive, refetch: refetchActive } = useQuery({
@@ -230,11 +231,15 @@ const ActiveOrdersPage = () => {
 
   // Combinar pedidos activos y entregados
   const allActiveOrders = activeOrders || [];
-  const allDeliveredOrders = (deliveredOrders?.results || deliveredOrders || []).slice(0, 10); // Últimos 10 entregados
+  const allDeliveredOrders = (deliveredOrders?.results || deliveredOrders || []).slice(0, 20); // Últimos 20 entregados
+  
+  // Separar pedidos entregados por estado de pago
+  const deliveredPaid = allDeliveredOrders.filter(o => o.is_paid);
+  const deliveredUnpaid = allDeliveredOrders.filter(o => !o.is_paid);
   
   // Todos los pedidos para mostrar
   const allOrders = filter === 'delivered' 
-    ? allDeliveredOrders 
+    ? (deliveredTab === 'paid' ? deliveredPaid : deliveredUnpaid)
     : filter === 'all' 
     ? allActiveOrders 
     : allActiveOrders.filter(o => o.status === filter);
@@ -267,6 +272,8 @@ const ActiveOrdersPage = () => {
     preparing: allActiveOrders?.filter(o => o.status === 'preparing').length || 0,
     ready: allActiveOrders?.filter(o => o.status === 'ready').length || 0,
     delivered: allDeliveredOrders?.length || 0,
+    deliveredPaid: deliveredPaid?.length || 0,
+    deliveredUnpaid: deliveredUnpaid?.length || 0,
   };
 
   if (isLoading) {
@@ -328,7 +335,12 @@ const ActiveOrdersPage = () => {
         ].map((item) => (
           <button
             key={item.key}
-            onClick={() => setFilter(item.key)}
+            onClick={() => {
+              setFilter(item.key);
+              if (item.key === 'delivered') {
+                setDeliveredTab('unpaid'); // Reset a pendientes por pagar cuando cambias a entregados
+              }
+            }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               filter === item.key
                 ? item.color === 'yellow'
@@ -353,6 +365,44 @@ const ActiveOrdersPage = () => {
         ))}
       </div>
 
+      {/* Pestañas para pedidos entregados */}
+      {filter === 'delivered' && (
+        <div className="flex gap-2 border-b border-gray/20 pb-2">
+          <button
+            onClick={() => setDeliveredTab('paid')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              deliveredTab === 'paid'
+                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                : 'bg-gray/10 text-gray hover:text-light border border-transparent'
+            }`}
+          >
+            <CheckCircle className="w-4 h-4" />
+            Pagados
+            <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+              deliveredTab === 'paid' ? 'bg-dark/30' : 'bg-gray/20'
+            }`}>
+              {counts.deliveredPaid}
+            </span>
+          </button>
+          <button
+            onClick={() => setDeliveredTab('unpaid')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              deliveredTab === 'unpaid'
+                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                : 'bg-gray/10 text-gray hover:text-light border border-transparent'
+            }`}
+          >
+            <DollarSign className="w-4 h-4" />
+            Pendientes por pagar
+            <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+              deliveredTab === 'unpaid' ? 'bg-dark/30' : 'bg-gray/20'
+            }`}>
+              {counts.deliveredUnpaid}
+            </span>
+          </button>
+        </div>
+      )}
+
       {/* Grid de pedidos */}
       {allOrders.length === 0 ? (
         <motion.div
@@ -360,25 +410,41 @@ const ActiveOrdersPage = () => {
           animate={{ opacity: 1 }}
           className="text-center py-12"
         >
-          <Clock className="w-16 h-16 text-gray/50 mx-auto mb-4" />
-          <p className="text-light font-medium mb-2">
-            {filter === 'delivered' ? 'No hay pedidos entregados hoy' : 'No hay pedidos activos'}
-          </p>
-          <p className="text-gray text-sm mb-4">
-            {filter === 'delivered' 
-              ? 'Los pedidos entregados aparecerán aquí' 
-              : filter !== 'all' 
-              ? 'No hay pedidos con este estado' 
-              : 'Los pedidos aparecerán aquí'}
-          </p>
-          {filter !== 'delivered' && (
-            <Link
-              to="/pedidos/nuevo"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-xl hover:shadow-lg transition-all"
-            >
-              <PlusCircle className="w-5 h-5" />
-              Crear Pedido
-            </Link>
+          {filter === 'delivered' ? (
+            deliveredTab === 'paid' ? (
+              <>
+                <CheckCircle className="w-16 h-16 text-green-400/50 mx-auto mb-4" />
+                <p className="text-light font-medium mb-2">No hay pedidos entregados y pagados</p>
+                <p className="text-gray text-sm mb-4">
+                  Los pedidos entregados y pagados aparecerán aquí
+                </p>
+              </>
+            ) : (
+              <>
+                <DollarSign className="w-16 h-16 text-yellow-400/50 mx-auto mb-4" />
+                <p className="text-light font-medium mb-2">No hay pedidos entregados pendientes por pagar</p>
+                <p className="text-gray text-sm mb-4">
+                  Los pedidos entregados que aún no están pagados aparecerán aquí
+                </p>
+              </>
+            )
+          ) : (
+            <>
+              <Clock className="w-16 h-16 text-gray/50 mx-auto mb-4" />
+              <p className="text-light font-medium mb-2">No hay pedidos activos</p>
+              <p className="text-gray text-sm mb-4">
+                {filter !== 'all' 
+                  ? 'No hay pedidos con este estado' 
+                  : 'Los pedidos aparecerán aquí'}
+              </p>
+              <Link
+                to="/pedidos/nuevo"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-xl hover:shadow-lg transition-all"
+              >
+                <PlusCircle className="w-5 h-5" />
+                Crear Pedido
+              </Link>
+            </>
           )}
         </motion.div>
       ) : (
