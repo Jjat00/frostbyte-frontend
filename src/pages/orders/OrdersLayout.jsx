@@ -279,37 +279,39 @@ const OrdersLayout = () => {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-dark-secondary/95 backdrop-blur-sm border-t border-gray/20 z-30 safe-area-pb">
         <div className="flex items-center justify-around py-2">
-          {navItems.map((item) => {
-            const active = !item.external && isActive(item.path, item.end);
-            const baseClasses = `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg min-w-[60px] transition-colors ${
-              active ? 'text-secondary' : 'text-gray'
-            }`;
-            
-            if (item.external) {
+          {navItems
+            .filter(item => item.path !== '/home' && item.path !== '/')
+            .map((item) => {
+              const active = !item.external && isActive(item.path, item.end);
+              const baseClasses = `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg min-w-[60px] transition-colors ${
+                active ? 'text-secondary' : 'text-gray'
+              }`;
+              
+              if (item.external) {
+                return (
+                  <a
+                    key={item.path}
+                    href={item.path}
+                    className={baseClasses}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">{item.shortName}</span>
+                  </a>
+                );
+              }
+              
               return (
-                <a
+                <NavLink
                   key={item.path}
-                  href={item.path}
+                  to={item.path}
+                  end={item.end}
                   className={baseClasses}
                 >
-                  <item.icon className="w-5 h-5" />
+                  <item.icon className={`w-5 h-5 ${active ? 'text-secondary' : ''}`} />
                   <span className="text-[10px] font-medium">{item.shortName}</span>
-                </a>
+                </NavLink>
               );
-            }
-            
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.end}
-                className={baseClasses}
-              >
-                <item.icon className={`w-5 h-5 ${active ? 'text-secondary' : ''}`} />
-                <span className="text-[10px] font-medium">{item.shortName}</span>
-              </NavLink>
-            );
-          })}
+            })}
         </div>
       </nav>
     </div>

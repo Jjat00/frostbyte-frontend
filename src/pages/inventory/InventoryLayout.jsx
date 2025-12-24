@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from "react";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Package,
   BarChart3,
@@ -11,8 +11,8 @@ import {
   ClipboardList,
   Home,
   Store,
-} from 'lucide-react';
-import { useAuthStore } from '@/stores/useAuthStore';
+} from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const InventoryLayout = () => {
   const navigate = useNavigate();
@@ -22,46 +22,46 @@ const InventoryLayout = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const navItems = [
     {
-      name: 'Home',
-      shortName: 'Home',
-      path: '/home',
+      name: "Home",
+      shortName: "Home",
+      path: "/home",
       icon: Home,
     },
     {
-      name: 'Menú',
-      shortName: 'Menú',
-      path: '/',
+      name: "Menú",
+      shortName: "Menú",
+      path: "/",
       icon: Store,
       external: true,
     },
     {
-      name: 'Dashboard',
-      shortName: 'Inicio',
-      path: '/inventario',
+      name: "Dashboard",
+      shortName: "Inicio",
+      path: "/inventario",
       icon: BarChart3,
       end: true,
     },
     {
-      name: 'Materiales',
-      shortName: 'Material',
-      path: '/inventario/materiales',
+      name: "Materiales",
+      shortName: "Material",
+      path: "/inventario/materiales",
       icon: Package,
     },
     {
-      name: 'Stock Bajo',
-      shortName: 'Stock',
-      path: '/inventario/stock-bajo',
+      name: "Stock Bajo",
+      shortName: "Stock",
+      path: "/inventario/stock-bajo",
       icon: Boxes,
     },
     {
-      name: 'Órdenes',
-      shortName: 'Órdenes',
-      path: '/inventario/ordenes',
+      name: "Órdenes",
+      shortName: "Órdenes",
+      path: "/inventario/ordenes",
       icon: ClipboardList,
     },
   ];
@@ -77,8 +77,8 @@ const InventoryLayout = () => {
     <div className="min-h-screen bg-dark flex flex-col md:flex-row">
       {/* Mobile Header */}
       <header className="md:hidden h-14 bg-dark-secondary/95 backdrop-blur-sm border-b border-gray/20 flex items-center justify-between px-4 sticky top-0 z-30">
-        <NavLink 
-          to="/home" 
+        <NavLink
+          to="/home"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity active:scale-95"
           title="Ir al Home"
         >
@@ -105,10 +105,10 @@ const InventoryLayout = () => {
               onClick={() => setSidebarOpen(false)}
             />
             <motion.aside
-              initial={{ x: '100%' }}
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="fixed right-0 top-0 bottom-0 w-72 bg-dark-secondary border-l border-gray/20 z-50 flex flex-col md:hidden"
             >
               <div className="p-4 border-b border-gray/20 flex items-center justify-between">
@@ -125,10 +125,14 @@ const InventoryLayout = () => {
               <div className="p-4 border-b border-gray/20">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-lg">
-                    {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+                    {user?.first_name?.charAt(0) ||
+                      user?.username?.charAt(0) ||
+                      "U"}
                   </div>
                   <div>
-                    <p className="font-medium text-light">{user?.full_name || user?.username}</p>
+                    <p className="font-medium text-light">
+                      {user?.full_name || user?.username}
+                    </p>
                     <p className="text-sm text-gray">{user?.role_display}</p>
                   </div>
                 </div>
@@ -137,8 +141,9 @@ const InventoryLayout = () => {
               {/* Navigation */}
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navItems.map((item) => {
-                  const baseClasses = "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-gray hover:text-light hover:bg-gray/10";
-                  
+                  const baseClasses =
+                    "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-gray hover:text-light hover:bg-gray/10";
+
                   if (item.external) {
                     return (
                       <a
@@ -152,7 +157,7 @@ const InventoryLayout = () => {
                       </a>
                     );
                   }
-                  
+
                   return (
                     <NavLink
                       key={item.path}
@@ -162,8 +167,8 @@ const InventoryLayout = () => {
                       className={({ isActive }) =>
                         `${baseClasses} ${
                           isActive
-                            ? 'bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30'
-                            : ''
+                            ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30"
+                            : ""
                         }`
                       }
                     >
@@ -193,14 +198,20 @@ const InventoryLayout = () => {
       <aside className="hidden md:flex w-64 h-screen bg-dark-secondary border-r border-gray/20 flex-col fixed left-0 top-0">
         {/* Logo */}
         <div className="p-5 border-b border-gray/20">
-          <NavLink 
-            to="/home" 
+          <NavLink
+            to="/home"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
             title="Ir al Home"
           >
-            <img src="/logo.png" alt="Frostbyte" className="w-10 h-10 group-hover:scale-105 transition-transform" />
+            <img
+              src="/logo.png"
+              alt="Frostbyte"
+              className="w-10 h-10 group-hover:scale-105 transition-transform"
+            />
             <div>
-              <h1 className="text-lg font-bold text-light tracking-wider group-hover:text-primary transition-colors">FROSTBYTE</h1>
+              <h1 className="text-lg font-bold text-light tracking-wider group-hover:text-primary transition-colors">
+                FROSTBYTE
+              </h1>
               <p className="text-xs text-gray">Inventario</p>
             </div>
           </NavLink>
@@ -209,21 +220,18 @@ const InventoryLayout = () => {
         {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
-            const baseClasses = "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-gray/10";
-            
+            const baseClasses =
+              "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-gray/10";
+
             if (item.external) {
               return (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  className={baseClasses}
-                >
+                <a key={item.path} href={item.path} className={baseClasses}>
                   <item.icon className="w-5 h-5" />
                   <span className="font-medium">{item.name}</span>
                 </a>
               );
             }
-            
+
             return (
               <NavLink
                 key={item.path}
@@ -232,8 +240,8 @@ const InventoryLayout = () => {
                 className={({ isActive }) =>
                   `${baseClasses} ${
                     isActive
-                      ? 'bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30'
-                      : ''
+                      ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30"
+                      : ""
                   }`
                 }
               >
@@ -248,7 +256,7 @@ const InventoryLayout = () => {
         <div className="p-3 border-t border-gray/20">
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold">
-              {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+              {user?.first_name?.charAt(0) || user?.username?.charAt(0) || "U"}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-light truncate">
@@ -278,37 +286,41 @@ const InventoryLayout = () => {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-dark-secondary/95 backdrop-blur-sm border-t border-gray/20 z-30 safe-area-pb">
         <div className="flex items-center justify-around py-2">
-          {navItems.map((item) => {
-            const active = !item.external && isActive(item.path, item.end);
-            const baseClasses = `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg min-w-[60px] transition-colors ${
-              active ? 'text-primary' : 'text-gray'
-            }`;
-            
-            if (item.external) {
+          {navItems
+            .filter((item) => item.path !== "/home" && item.path !== "/")
+            .map((item) => {
+              const active = !item.external && isActive(item.path, item.end);
+              const baseClasses = `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg min-w-[60px] transition-colors ${
+                active ? "text-primary" : "text-gray"
+              }`;
+
+              if (item.external) {
+                return (
+                  <a key={item.path} href={item.path} className={baseClasses}>
+                    <item.icon className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">
+                      {item.shortName}
+                    </span>
+                  </a>
+                );
+              }
+
               return (
-                <a
+                <NavLink
                   key={item.path}
-                  href={item.path}
+                  to={item.path}
+                  end={item.end}
                   className={baseClasses}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span className="text-[10px] font-medium">{item.shortName}</span>
-                </a>
+                  <item.icon
+                    className={`w-5 h-5 ${active ? "text-primary" : ""}`}
+                  />
+                  <span className="text-[10px] font-medium">
+                    {item.shortName}
+                  </span>
+                </NavLink>
               );
-            }
-            
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.end}
-                className={baseClasses}
-              >
-                <item.icon className={`w-5 h-5 ${active ? 'text-primary' : ''}`} />
-                <span className="text-[10px] font-medium">{item.shortName}</span>
-              </NavLink>
-            );
-          })}
+            })}
         </div>
       </nav>
     </div>
