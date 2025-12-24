@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Clock,
@@ -25,94 +25,100 @@ import {
   Check,
   Package,
   PackageCheck,
-} from 'lucide-react';
-import { ordersService } from '@/services/orders.service';
-import { productsService } from '@/services/products.service';
+} from "lucide-react";
+import { ordersService } from "@/services/orders.service";
+import { productsService } from "@/services/products.service";
 
 const statusConfig = {
   pending: {
-    label: 'Pendiente',
-    description: 'Esperando ser preparado',
+    label: "Pendiente",
+    description: "Esperando ser preparado",
     icon: Clock,
-    color: 'yellow',
-    bgClass: 'bg-yellow-500/10 border-yellow-500/30',
-    textClass: 'text-yellow-400',
+    color: "yellow",
+    bgClass: "bg-yellow-500/10 border-yellow-500/30",
+    textClass: "text-yellow-400",
   },
   preparing: {
-    label: 'Preparando',
-    description: 'En preparación',
+    label: "Preparando",
+    description: "En preparación",
     icon: ChefHat,
-    color: 'blue',
-    bgClass: 'bg-blue-500/10 border-blue-500/30',
-    textClass: 'text-blue-400',
+    color: "blue",
+    bgClass: "bg-blue-500/10 border-blue-500/30",
+    textClass: "text-blue-400",
   },
   ready: {
-    label: 'Listo',
-    description: 'Listo para entregar',
+    label: "Listo",
+    description: "Listo para entregar",
     icon: CheckCircle,
-    color: 'green',
-    bgClass: 'bg-green-500/10 border-green-500/30',
-    textClass: 'text-green-400',
+    color: "green",
+    bgClass: "bg-green-500/10 border-green-500/30",
+    textClass: "text-green-400",
   },
   delivered: {
-    label: 'Entregado',
-    description: 'Pedido completado',
+    label: "Entregado",
+    description: "Pedido completado",
     icon: CheckCircle,
-    color: 'emerald',
-    bgClass: 'bg-emerald-500/10 border-emerald-500/30',
-    textClass: 'text-emerald-400',
+    color: "emerald",
+    bgClass: "bg-emerald-500/10 border-emerald-500/30",
+    textClass: "text-emerald-400",
   },
   cancelled: {
-    label: 'Cancelado',
-    description: 'Pedido cancelado',
+    label: "Cancelado",
+    description: "Pedido cancelado",
     icon: XCircle,
-    color: 'red',
-    bgClass: 'bg-red-500/10 border-red-500/30',
-    textClass: 'text-red-400',
+    color: "red",
+    bgClass: "bg-red-500/10 border-red-500/30",
+    textClass: "text-red-400",
   },
 };
 
 const paymentMethods = [
-  { id: 'cash', label: 'Efectivo', icon: Banknote },
-  { id: 'card', label: 'Tarjeta', icon: CreditCard },
-  { id: 'transfer', label: 'Transferencia', icon: Building },
-  { id: 'nequi', label: 'Nequi', icon: Smartphone },
-  { id: 'daviplata', label: 'Daviplata', icon: Smartphone },
+  { id: "cash", label: "Efectivo", icon: Banknote },
+  { id: "card", label: "Tarjeta", icon: CreditCard },
+  { id: "transfer", label: "Transferencia", icon: Building },
+  { id: "nequi", label: "Nequi", icon: Smartphone },
+  { id: "daviplata", label: "Daviplata", icon: Smartphone },
 ];
 
 const OrderDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  
+
   // Estados
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [selectedItemForPayment, setSelectedItemForPayment] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   // Obtener detalle del pedido
-  const { data: order, isLoading, isError } = useQuery({
-    queryKey: ['order', id],
+  const {
+    data: order,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["order", id],
     queryFn: () => ordersService.getOrder(id),
   });
 
   // Obtener productos para añadir
   const { data: productsData } = useQuery({
-    queryKey: ['products'],
+    queryKey: ["products"],
     queryFn: () => productsService.getAll(),
     enabled: showAddProductModal,
   });
 
   // Función para invalidar todas las queries relacionadas
   const invalidateAllOrderQueries = () => {
-    queryClient.invalidateQueries({ queryKey: ['order', id] });
-    queryClient.invalidateQueries({ queryKey: ['active-orders'] });
-    queryClient.invalidateQueries({ queryKey: ['delivered-orders-today'] });
-    queryClient.invalidateQueries({ queryKey: ['orders-stats'] });
-    queryClient.invalidateQueries({ queryKey: ['orders-history'] });
+    queryClient.invalidateQueries({ queryKey: ["order", id] });
+    queryClient.invalidateQueries({ queryKey: ["active-orders"] });
+    queryClient.invalidateQueries({ queryKey: ["delivered-orders-today"] });
+    queryClient.invalidateQueries({ queryKey: ["orders-stats"] });
+    queryClient.invalidateQueries({ queryKey: ["orders-history"] });
   };
 
   // Mutaciones
@@ -132,7 +138,8 @@ const OrderDetailPage = () => {
   });
 
   const markItemPaidMutation = useMutation({
-    mutationFn: ({ itemId, paymentMethod }) => ordersService.markItemAsPaid(itemId, paymentMethod),
+    mutationFn: ({ itemId, paymentMethod }) =>
+      ordersService.markItemAsPaid(itemId, paymentMethod),
     onSuccess: () => {
       invalidateAllOrderQueries();
       setSelectedItemForPayment(null);
@@ -140,7 +147,8 @@ const OrderDetailPage = () => {
   });
 
   const changePaymentMethodMutation = useMutation({
-    mutationFn: ({ itemId, paymentMethod }) => ordersService.changeItemPaymentMethod(itemId, paymentMethod),
+    mutationFn: ({ itemId, paymentMethod }) =>
+      ordersService.changeItemPaymentMethod(itemId, paymentMethod),
     onSuccess: () => {
       invalidateAllOrderQueries();
       setSelectedItemForPayment(null);
@@ -181,7 +189,7 @@ const OrderDetailPage = () => {
     mutationFn: () => ordersService.deleteOrder(id),
     onSuccess: () => {
       invalidateAllOrderQueries();
-      navigate('/pedidos');
+      navigate("/pedidos");
     },
   });
 
@@ -190,7 +198,9 @@ const OrderDetailPage = () => {
     onSuccess: () => {
       invalidateAllOrderQueries();
       setShowAddProductModal(false);
-      setSearchQuery('');
+      setSearchQuery("");
+      setSelectedVariant(null);
+      setQuantity(1);
     },
   });
 
@@ -202,20 +212,20 @@ const OrderDetailPage = () => {
   });
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
       minimumFractionDigits: 0,
     }).format(value || 0);
   };
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString('es-CO', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("es-CO", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -233,7 +243,7 @@ const OrderDetailPage = () => {
         <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
         <p className="text-light font-medium mb-2">Pedido no encontrado</p>
         <button
-          onClick={() => navigate('/pedidos')}
+          onClick={() => navigate("/pedidos")}
           className="px-4 py-2 bg-secondary/20 text-secondary rounded-lg hover:bg-secondary/30 transition-colors"
         >
           Volver a pedidos
@@ -244,33 +254,48 @@ const OrderDetailPage = () => {
 
   const status = statusConfig[order.status] || statusConfig.pending;
   const StatusIcon = status.icon;
-  const isActive = ['pending', 'preparing', 'ready'].includes(order.status);
-  const canAddItems = order.status !== 'cancelled';
+  const isActive = ["pending", "preparing", "ready"].includes(order.status);
+  const canAddItems = order.status !== "cancelled";
 
   const nextStatus = {
-    pending: 'preparing',
-    preparing: 'ready',
-    ready: 'delivered',
+    pending: "preparing",
+    preparing: "ready",
+    ready: "delivered",
   };
 
   const nextStatusLabel = {
-    pending: 'Marcar como Preparando',
-    preparing: 'Marcar como Listo',
-    ready: 'Marcar como Entregado',
+    pending: "Marcar como Preparando",
+    preparing: "Marcar como Listo",
+    ready: "Marcar como Entregado",
   };
 
   // Filtrar productos para búsqueda
-  const filteredProducts = productsData?.results?.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.category_name?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredProducts =
+    productsData?.results?.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category_name?.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
-  const handleAddProduct = (variant) => {
+  const handleAddProduct = (variant, qty = 1) => {
     addItemMutation.mutate({
       product_variant_id: variant.id,
-      quantity: 1,
-      notes: '',
+      quantity: qty,
+      notes: "",
     });
+  };
+
+  const handleSelectVariant = (variant) => {
+    setSelectedVariant(variant);
+    setQuantity(1);
+  };
+
+  const handleConfirmAdd = () => {
+    if (selectedVariant && quantity > 0) {
+      handleAddProduct(selectedVariant, quantity);
+      setSelectedVariant(null);
+      setQuantity(1);
+    }
   };
 
   return (
@@ -278,7 +303,7 @@ const OrderDetailPage = () => {
       {/* Header */}
       <div className="flex items-center gap-3">
         <button
-          onClick={() => navigate('/pedidos')}
+          onClick={() => navigate("/pedidos")}
           className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -287,7 +312,9 @@ const OrderDetailPage = () => {
           <h1 className="text-xl md:text-2xl font-bold text-light">
             Pedido #{order.order_number?.slice(-6)}
           </h1>
-          <p className="text-sm text-gray">{formatDateTime(order.created_at)}</p>
+          <p className="text-sm text-gray">
+            {formatDateTime(order.created_at)}
+          </p>
         </div>
       </div>
 
@@ -302,7 +329,9 @@ const OrderDetailPage = () => {
             <StatusIcon className={`w-8 h-8 ${status.textClass}`} />
           </div>
           <div className="flex-1">
-            <h2 className={`text-xl font-bold ${status.textClass}`}>{status.label}</h2>
+            <h2 className={`text-xl font-bold ${status.textClass}`}>
+              {status.label}
+            </h2>
             <p className="text-gray text-sm">{status.description}</p>
           </div>
           {order.is_paid && (
@@ -321,7 +350,9 @@ const OrderDetailPage = () => {
           Cliente
         </h3>
         <div className="space-y-2">
-          <p className="text-light font-medium">{order.customer_name || 'Sin nombre'}</p>
+          <p className="text-light font-medium">
+            {order.customer_name || "Sin nombre"}
+          </p>
           {order.customer_phone && (
             <p className="text-gray text-sm flex items-center gap-2">
               <Phone className="w-4 h-4" />
@@ -346,22 +377,34 @@ const OrderDetailPage = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
               <p className="text-xs text-gray mb-1">Pagado</p>
-              <p className="text-lg font-bold text-green-400">{formatCurrency(order.paid_total)}</p>
-              <p className="text-xs text-gray">{order.paid_items_count || 0} items</p>
+              <p className="text-lg font-bold text-green-400">
+                {formatCurrency(order.paid_total)}
+              </p>
+              <p className="text-xs text-gray">
+                {order.paid_items_count || 0} items
+              </p>
             </div>
             <div className="text-center p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
               <p className="text-xs text-gray mb-1">Por Pagar</p>
-              <p className="text-lg font-bold text-yellow-400">{formatCurrency(order.pending_total)}</p>
-              <p className="text-xs text-gray">{order.unpaid_items_count || 0} items</p>
+              <p className="text-lg font-bold text-yellow-400">
+                {formatCurrency(order.pending_total)}
+              </p>
+              <p className="text-xs text-gray">
+                {order.unpaid_items_count || 0} items
+              </p>
             </div>
             <div className="text-center p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
               <p className="text-xs text-gray mb-1">Entregados</p>
-              <p className="text-lg font-bold text-emerald-400">{order.delivered_items_count || 0}</p>
+              <p className="text-lg font-bold text-emerald-400">
+                {order.delivered_items_count || 0}
+              </p>
               <p className="text-xs text-gray">items</p>
             </div>
             <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
               <p className="text-xs text-gray mb-1">Por Entregar</p>
-              <p className="text-lg font-bold text-blue-400">{order.undelivered_items_count || 0}</p>
+              <p className="text-lg font-bold text-blue-400">
+                {order.undelivered_items_count || 0}
+              </p>
               <p className="text-xs text-gray">items</p>
             </div>
           </div>
@@ -371,7 +414,9 @@ const OrderDetailPage = () => {
       {/* Items del pedido con pago individual */}
       <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-light">Productos ({order.items?.length || 0})</h3>
+          <h3 className="font-bold text-light">
+            Productos ({order.items?.length || 0})
+          </h3>
           {canAddItems && (
             <button
               onClick={() => setShowAddProductModal(true)}
@@ -382,19 +427,19 @@ const OrderDetailPage = () => {
             </button>
           )}
         </div>
-        
+
         <div className="space-y-3">
           {order.items?.map((item) => (
             <div
               key={item.id}
               className={`rounded-xl p-3 border transition-all ${
                 item.is_delivered && item.is_paid
-                  ? 'bg-emerald-500/5 border-emerald-500/20'
+                  ? "bg-emerald-500/5 border-emerald-500/20"
                   : item.is_paid
-                  ? 'bg-green-500/5 border-green-500/20'
+                  ? "bg-green-500/5 border-green-500/20"
                   : item.is_delivered
-                  ? 'bg-blue-500/5 border-blue-500/20'
-                  : 'bg-dark border-gray/10'
+                  ? "bg-blue-500/5 border-blue-500/20"
+                  : "bg-dark border-gray/10"
               }`}
             >
               <div className="flex items-start gap-3">
@@ -404,17 +449,23 @@ const OrderDetailPage = () => {
                     <span className="w-6 h-6 flex-shrink-0 flex items-center justify-center bg-secondary/20 text-secondary rounded-lg text-sm font-bold">
                       {item.quantity}
                     </span>
-                    <span className="font-medium text-light truncate">{item.product_name}</span>
+                    <span className="font-medium text-light truncate">
+                      {item.product_name}
+                    </span>
                   </div>
                   <p className="text-sm text-gray ml-8">{item.variant_name}</p>
                   {item.notes && (
-                    <p className="text-xs text-secondary ml-8 mt-1">📝 {item.notes}</p>
+                    <p className="text-xs text-secondary ml-8 mt-1">
+                      📝 {item.notes}
+                    </p>
                   )}
                   <div className="flex flex-wrap gap-2 ml-8 mt-1">
                     {item.is_paid && (
                       <span className="text-xs text-green-400 flex items-center gap-1">
                         <DollarSign className="w-3 h-3" />
-                        {paymentMethods.find(m => m.id === item.payment_method)?.label || 'Pagado'}
+                        {paymentMethods.find(
+                          (m) => m.id === item.payment_method
+                        )?.label || "Pagado"}
                       </span>
                     )}
                     {item.is_delivered && (
@@ -428,13 +479,17 @@ const OrderDetailPage = () => {
 
                 {/* Precio y acciones */}
                 <div className="flex flex-col items-end gap-2">
-                  <span className="text-light font-medium">{formatCurrency(item.subtotal)}</span>
-                  
+                  <span className="text-light font-medium">
+                    {formatCurrency(item.subtotal)}
+                  </span>
+
                   <div className="flex flex-wrap gap-1 justify-end">
                     {/* Botón de entrega */}
                     {!item.is_delivered ? (
                       <button
-                        onClick={() => markItemDeliveredMutation.mutate(item.id)}
+                        onClick={() =>
+                          markItemDeliveredMutation.mutate(item.id)
+                        }
                         disabled={markItemDeliveredMutation.isPending}
                         className="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center gap-1"
                       >
@@ -443,7 +498,9 @@ const OrderDetailPage = () => {
                       </button>
                     ) : (
                       <button
-                        onClick={() => unmarkItemDeliveredMutation.mutate(item.id)}
+                        onClick={() =>
+                          unmarkItemDeliveredMutation.mutate(item.id)
+                        }
                         disabled={unmarkItemDeliveredMutation.isPending}
                         className="px-2 py-1 text-xs bg-emerald-500/20 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition-colors flex items-center gap-1"
                         title="Click para desmarcar entrega"
@@ -470,7 +527,7 @@ const OrderDetailPage = () => {
                         <CheckCircle className="w-3 h-3" />
                       </button>
                     )}
-                    
+
                     {canAddItems && (
                       <button
                         onClick={() => deleteItemMutation.mutate(item.id)}
@@ -496,12 +553,16 @@ const OrderDetailPage = () => {
           {order.discount > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-gray">Descuento</span>
-              <span className="text-red-400">-{formatCurrency(order.discount)}</span>
+              <span className="text-red-400">
+                -{formatCurrency(order.discount)}
+              </span>
             </div>
           )}
           <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray/20">
             <span className="text-light">Total</span>
-            <span className="text-secondary">{formatCurrency(order.total)}</span>
+            <span className="text-secondary">
+              {formatCurrency(order.total)}
+            </span>
           </div>
         </div>
       </div>
@@ -512,23 +573,31 @@ const OrderDetailPage = () => {
           {/* Botón de siguiente estado */}
           {nextStatus[order.status] && (
             <button
-              onClick={() => updateStatusMutation.mutate(nextStatus[order.status])}
+              onClick={() =>
+                updateStatusMutation.mutate(nextStatus[order.status])
+              }
               disabled={updateStatusMutation.isPending}
               className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 ${
-                order.status === 'pending'
-                  ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                  : order.status === 'preparing'
-                  ? 'bg-green-500 hover:bg-green-600 text-white'
-                  : 'bg-gradient-to-r from-secondary to-primary text-dark'
+                order.status === "pending"
+                  ? "bg-blue-500 hover:bg-blue-600 text-white"
+                  : order.status === "preparing"
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-gradient-to-r from-secondary to-primary text-dark"
               }`}
             >
               {updateStatusMutation.isPending ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  {order.status === 'pending' && <ChefHat className="w-5 h-5" />}
-                  {order.status === 'preparing' && <CheckCircle className="w-5 h-5" />}
-                  {order.status === 'ready' && <CheckCircle className="w-5 h-5" />}
+                  {order.status === "pending" && (
+                    <ChefHat className="w-5 h-5" />
+                  )}
+                  {order.status === "preparing" && (
+                    <CheckCircle className="w-5 h-5" />
+                  )}
+                  {order.status === "ready" && (
+                    <CheckCircle className="w-5 h-5" />
+                  )}
                   {nextStatusLabel[order.status]}
                 </>
               )}
@@ -558,26 +627,29 @@ const OrderDetailPage = () => {
       )}
 
       {/* Botón de pago para pedidos entregados sin pagar */}
-      {order.status === 'delivered' && !order.is_paid && order.unpaid_items_count > 0 && (
-        <div className="space-y-3">
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-center gap-3">
-            <AlertCircle className="w-6 h-6 text-yellow-400 flex-shrink-0" />
-            <div>
-              <p className="text-yellow-400 font-medium">Pago pendiente</p>
-              <p className="text-sm text-gray">
-                {order.unpaid_items_count} items sin pagar ({formatCurrency(order.pending_total)})
-              </p>
+      {order.status === "delivered" &&
+        !order.is_paid &&
+        order.unpaid_items_count > 0 && (
+          <div className="space-y-3">
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-center gap-3">
+              <AlertCircle className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+              <div>
+                <p className="text-yellow-400 font-medium">Pago pendiente</p>
+                <p className="text-sm text-gray">
+                  {order.unpaid_items_count} items sin pagar (
+                  {formatCurrency(order.pending_total)})
+                </p>
+              </div>
             </div>
+            <button
+              onClick={() => setShowPaymentModal(true)}
+              className="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+            >
+              <DollarSign className="w-5 h-5" />
+              Pagar Todo ({formatCurrency(order.pending_total)})
+            </button>
           </div>
-          <button
-            onClick={() => setShowPaymentModal(true)}
-            className="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-          >
-            <DollarSign className="w-5 h-5" />
-            Pagar Todo ({formatCurrency(order.pending_total)})
-          </button>
-        </div>
-      )}
+        )}
 
       {/* Info de pago si está pagado completamente */}
       {order.is_paid && (
@@ -585,13 +657,15 @@ const OrderDetailPage = () => {
           <CheckCircle className="w-6 h-6 text-green-400" />
           <div>
             <p className="text-green-400 font-medium">Pagado completamente</p>
-            <p className="text-sm text-gray">Total: {formatCurrency(order.total)}</p>
+            <p className="text-sm text-gray">
+              Total: {formatCurrency(order.total)}
+            </p>
           </div>
         </div>
       )}
 
       {/* Botón de añadir productos para pedidos entregados */}
-      {order.status === 'delivered' && (
+      {order.status === "delivered" && (
         <button
           onClick={() => setShowAddProductModal(true)}
           className="w-full py-3 bg-secondary/20 text-secondary border border-secondary/30 rounded-xl font-medium transition-all hover:bg-secondary/30 flex items-center justify-center gap-2"
@@ -623,50 +697,75 @@ const OrderDetailPage = () => {
               className="bg-dark-secondary border border-gray/20 rounded-xl p-6 w-full max-w-md"
             >
               <h3 className="text-xl font-bold text-light mb-2">
-                {selectedItemForPayment.is_paid ? 'Cambiar Método de Pago' : 'Pagar Item'}
+                {selectedItemForPayment.is_paid
+                  ? "Cambiar Método de Pago"
+                  : "Pagar Item"}
               </h3>
               <div className="mb-4 p-3 bg-dark rounded-lg">
-                <p className="text-light font-medium">{selectedItemForPayment.product_name}</p>
-                <p className="text-sm text-gray">{selectedItemForPayment.variant_name}</p>
-                <p className="text-secondary font-bold mt-1">{formatCurrency(selectedItemForPayment.subtotal)}</p>
+                <p className="text-light font-medium">
+                  {selectedItemForPayment.product_name}
+                </p>
+                <p className="text-sm text-gray">
+                  {selectedItemForPayment.variant_name}
+                </p>
+                <p className="text-secondary font-bold mt-1">
+                  {formatCurrency(selectedItemForPayment.subtotal)}
+                </p>
                 {selectedItemForPayment.is_paid && (
                   <p className="text-xs text-green-400 mt-2 flex items-center gap-1">
                     <Check className="w-3 h-3" />
-                    Pagado con: {paymentMethods.find(m => m.id === selectedItemForPayment.payment_method)?.label || 'Sin especificar'}
+                    Pagado con:{" "}
+                    {paymentMethods.find(
+                      (m) => m.id === selectedItemForPayment.payment_method
+                    )?.label || "Sin especificar"}
                   </p>
                 )}
               </div>
               <p className="text-gray text-sm mb-4">
-                {selectedItemForPayment.is_paid ? 'Selecciona el nuevo método de pago:' : 'Selecciona el método de pago:'}
+                {selectedItemForPayment.is_paid
+                  ? "Selecciona el nuevo método de pago:"
+                  : "Selecciona el método de pago:"}
               </p>
               <div className="grid grid-cols-2 gap-3 mb-6">
                 {paymentMethods.map((method) => {
-                  const isCurrentMethod = selectedItemForPayment.payment_method === method.id;
+                  const isCurrentMethod =
+                    selectedItemForPayment.payment_method === method.id;
                   return (
                     <button
                       key={method.id}
                       onClick={() => {
                         if (selectedItemForPayment.is_paid) {
-                          changePaymentMethodMutation.mutate({ 
-                            itemId: selectedItemForPayment.id, 
-                            paymentMethod: method.id 
+                          changePaymentMethodMutation.mutate({
+                            itemId: selectedItemForPayment.id,
+                            paymentMethod: method.id,
                           });
                         } else {
-                          markItemPaidMutation.mutate({ 
-                            itemId: selectedItemForPayment.id, 
-                            paymentMethod: method.id 
+                          markItemPaidMutation.mutate({
+                            itemId: selectedItemForPayment.id,
+                            paymentMethod: method.id,
                           });
                         }
                       }}
-                      disabled={markItemPaidMutation.isPending || changePaymentMethodMutation.isPending}
+                      disabled={
+                        markItemPaidMutation.isPending ||
+                        changePaymentMethodMutation.isPending
+                      }
                       className={`flex flex-col items-center gap-2 p-4 bg-dark border rounded-xl transition-all ${
-                        isCurrentMethod 
-                          ? 'border-green-500 bg-green-500/10' 
-                          : 'border-gray/20 hover:border-green-500/50 hover:bg-green-500/5'
+                        isCurrentMethod
+                          ? "border-green-500 bg-green-500/10"
+                          : "border-gray/20 hover:border-green-500/50 hover:bg-green-500/5"
                       }`}
                     >
-                      <method.icon className={`w-6 h-6 ${isCurrentMethod ? 'text-green-400' : 'text-gray'}`} />
-                      <span className={`text-sm font-medium ${isCurrentMethod ? 'text-green-400' : 'text-light'}`}>
+                      <method.icon
+                        className={`w-6 h-6 ${
+                          isCurrentMethod ? "text-green-400" : "text-gray"
+                        }`}
+                      />
+                      <span
+                        className={`text-sm font-medium ${
+                          isCurrentMethod ? "text-green-400" : "text-light"
+                        }`}
+                      >
                         {method.label}
                       </span>
                       {isCurrentMethod && (
@@ -679,7 +778,9 @@ const OrderDetailPage = () => {
               {/* Botón para deshacer pago */}
               {selectedItemForPayment.is_paid && (
                 <button
-                  onClick={() => unmarkItemPaidMutation.mutate(selectedItemForPayment.id)}
+                  onClick={() =>
+                    unmarkItemPaidMutation.mutate(selectedItemForPayment.id)
+                  }
                   disabled={unmarkItemPaidMutation.isPending}
                   className="w-full py-3 mb-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl font-medium transition-all hover:bg-red-500/20 flex items-center justify-center gap-2"
                 >
@@ -693,7 +794,7 @@ const OrderDetailPage = () => {
                   )}
                 </button>
               )}
-              
+
               <button
                 onClick={() => setSelectedItemForPayment(null)}
                 className="w-full py-2 text-gray hover:text-light transition-colors"
@@ -715,10 +816,14 @@ const OrderDetailPage = () => {
           >
             <h3 className="text-xl font-bold text-light mb-4">Pagar Todo</h3>
             <p className="text-gray text-sm mb-4">
-              Total pendiente: <span className="text-secondary font-bold">{formatCurrency(order.pending_total)}</span>
+              Total pendiente:{" "}
+              <span className="text-secondary font-bold">
+                {formatCurrency(order.pending_total)}
+              </span>
             </p>
             <p className="text-xs text-gray mb-4">
-              Se marcarán {order.unpaid_items_count} items como pagados con el mismo método
+              Se marcarán {order.unpaid_items_count} items como pagados con el
+              mismo método
             </p>
             <div className="grid grid-cols-2 gap-3 mb-6">
               {paymentMethods.map((method) => (
@@ -729,7 +834,9 @@ const OrderDetailPage = () => {
                   className="flex flex-col items-center gap-2 p-4 bg-dark border border-gray/20 rounded-xl hover:border-green-500/50 hover:bg-green-500/5 transition-all"
                 >
                   <method.icon className="w-6 h-6 text-gray" />
-                  <span className="text-sm text-light font-medium">{method.label}</span>
+                  <span className="text-sm text-light font-medium">
+                    {method.label}
+                  </span>
                 </button>
               ))}
             </div>
@@ -756,18 +863,22 @@ const OrderDetailPage = () => {
               {/* Header */}
               <div className="p-4 border-b border-gray/20">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-bold text-light">Añadir Producto</h3>
+                  <h3 className="text-xl font-bold text-light">
+                    Añadir Producto
+                  </h3>
                   <button
                     onClick={() => {
                       setShowAddProductModal(false);
-                      setSearchQuery('');
+                      setSearchQuery("");
+                      setSelectedVariant(null);
+                      setQuantity(1);
                     }}
                     className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
                   >
                     <XCircle className="w-5 h-5" />
                   </button>
                 </div>
-                
+
                 {/* Buscador */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray" />
@@ -784,35 +895,118 @@ const OrderDetailPage = () => {
               {/* Lista de productos */}
               <div className="flex-1 overflow-y-auto p-4 space-y-2">
                 {filteredProducts.length === 0 ? (
-                  <p className="text-center text-gray py-8">No se encontraron productos</p>
+                  <p className="text-center text-gray py-8">
+                    No se encontraron productos
+                  </p>
                 ) : (
                   filteredProducts.map((product) => (
-                    <div key={product.id} className="bg-dark rounded-xl p-3 border border-gray/10">
-                      <p className="font-medium text-light mb-2">{product.name}</p>
-                      <p className="text-xs text-gray mb-2">{product.category_name}</p>
+                    <div
+                      key={product.id}
+                      className="bg-dark rounded-xl p-3 border border-gray/10"
+                    >
+                      <p className="font-medium text-light mb-2">
+                        {product.name}
+                      </p>
+                      <p className="text-xs text-gray mb-2">
+                        {product.category_name}
+                      </p>
                       <div className="flex flex-wrap gap-2">
-                        {product.variants?.map((variant) => (
-                          <button
-                            key={variant.id}
-                            onClick={() => handleAddProduct(variant)}
-                            disabled={addItemMutation.isPending}
-                            className="flex items-center gap-2 px-3 py-2 bg-secondary/10 text-secondary border border-secondary/20 rounded-lg hover:bg-secondary/20 transition-all text-sm"
-                          >
-                            {addItemMutation.isPending ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <>
-                                <Plus className="w-4 h-4" />
-                                {variant.name} - {formatCurrency(variant.price)}
-                              </>
-                            )}
-                          </button>
-                        ))}
+                        {product.variants?.map((variant) => {
+                          const isSelected = selectedVariant?.id === variant.id;
+                          return (
+                            <button
+                              key={variant.id}
+                              onClick={() => handleSelectVariant(variant)}
+                              disabled={addItemMutation.isPending}
+                              className={`flex items-center gap-2 px-3 py-2 border rounded-lg transition-all text-sm ${
+                                isSelected
+                                  ? "bg-secondary/20 text-secondary border-secondary/40"
+                                  : "bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20"
+                              }`}
+                            >
+                              <Plus className="w-4 h-4" />
+                              {variant.name} - {formatCurrency(variant.price)}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   ))
                 )}
               </div>
+
+              {/* Selector de cantidad y confirmar */}
+              {selectedVariant && (
+                <div className="p-4 border-t border-gray/20 bg-dark/50">
+                  <div className="mb-3">
+                    <p className="text-sm text-gray mb-2">
+                      Cantidad a agregar:
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="w-10 h-10 flex items-center justify-center bg-gray/10 text-light rounded-lg hover:bg-gray/20 transition-colors"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <input
+                        type="number"
+                        min="1"
+                        value={quantity}
+                        onChange={(e) =>
+                          setQuantity(
+                            Math.max(1, parseInt(e.target.value) || 1)
+                          )
+                        }
+                        className="flex-1 text-center text-lg font-bold text-light bg-dark border border-gray/20 rounded-lg px-4 py-2 focus:border-secondary/50 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="w-10 h-10 flex items-center justify-center bg-gray/10 text-light rounded-lg hover:bg-gray/20 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mb-3 p-3 bg-secondary/10 border border-secondary/20 rounded-lg">
+                    <p className="text-xs text-gray mb-1">
+                      Producto seleccionado:
+                    </p>
+                    <p className="text-light font-medium">
+                      {selectedVariant.name}
+                    </p>
+                    <p className="text-sm text-secondary font-bold mt-1">
+                      {formatCurrency(selectedVariant.price)} × {quantity} ={" "}
+                      {formatCurrency(selectedVariant.price * quantity)}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedVariant(null);
+                        setQuantity(1);
+                      }}
+                      className="flex-1 px-4 py-2.5 bg-gray/10 text-gray hover:text-light hover:bg-gray/20 rounded-lg font-medium transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={handleConfirmAdd}
+                      disabled={addItemMutation.isPending || quantity < 1}
+                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {addItemMutation.isPending ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <>
+                          <Plus className="w-5 h-5" />
+                          Agregar {quantity} {quantity === 1 ? "item" : "items"}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </div>
         )}
@@ -831,8 +1025,12 @@ const OrderDetailPage = () => {
                 <AlertCircle className="w-6 h-6 text-red-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-light">¿Cancelar pedido?</h3>
-                <p className="text-sm text-gray">Esta acción no se puede deshacer</p>
+                <h3 className="text-lg font-bold text-light">
+                  ¿Cancelar pedido?
+                </h3>
+                <p className="text-sm text-gray">
+                  Esta acción no se puede deshacer
+                </p>
               </div>
             </div>
             <div className="flex gap-3">
@@ -874,13 +1072,19 @@ const OrderDetailPage = () => {
                 <Trash2 className="w-6 h-6 text-red-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-light">¿Eliminar pedido permanentemente?</h3>
-                <p className="text-sm text-gray">El pedido #{order.order_number?.slice(-6)} será eliminado de forma permanente</p>
+                <h3 className="text-lg font-bold text-light">
+                  ¿Eliminar pedido permanentemente?
+                </h3>
+                <p className="text-sm text-gray">
+                  El pedido #{order.order_number?.slice(-6)} será eliminado de
+                  forma permanente
+                </p>
               </div>
             </div>
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4">
               <p className="text-sm text-red-400">
-                ⚠️ Esta acción eliminará completamente el pedido y no se puede deshacer.
+                ⚠️ Esta acción eliminará completamente el pedido y no se puede
+                deshacer.
               </p>
             </div>
             <div className="flex gap-3">
