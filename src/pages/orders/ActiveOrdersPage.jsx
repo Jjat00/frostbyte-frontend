@@ -14,6 +14,9 @@ import {
   DollarSign,
   ArrowRight,
   AlertCircle,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 
@@ -209,6 +212,7 @@ const ActiveOrdersPage = () => {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState('all');
   const [deliveredTab, setDeliveredTab] = useState('unpaid'); // 'paid' o 'unpaid'
+  const [deliveredDate, setDeliveredDate] = useState('today'); // 'today' o 'yesterday'
 
   // Obtener pedidos activos
   const { data: activeOrders, isLoading: loadingActive, refetch: refetchActive } = useQuery({
@@ -218,10 +222,10 @@ const ActiveOrdersPage = () => {
     staleTime: 2000,
   });
 
-  // Obtener pedidos entregados de hoy
+  // Obtener pedidos entregados (hoy o ayer)
   const { data: deliveredOrders, isLoading: loadingDelivered, refetch: refetchDelivered } = useQuery({
-    queryKey: ['delivered-orders-today'],
-    queryFn: () => ordersService.getOrders({ status: 'delivered', date: 'today' }),
+    queryKey: ['delivered-orders', deliveredDate],
+    queryFn: () => ordersService.getOrders({ status: 'delivered', date: deliveredDate }),
     refetchInterval: 10000,
     staleTime: 5000,
   });
@@ -255,7 +259,7 @@ const ActiveOrdersPage = () => {
     onSuccess: () => {
       // Invalidar todas las queries relacionadas inmediatamente
       queryClient.invalidateQueries({ queryKey: ['active-orders'] });
-      queryClient.invalidateQueries({ queryKey: ['delivered-orders-today'] });
+      queryClient.invalidateQueries({ queryKey: ['delivered-orders'] });
       queryClient.invalidateQueries({ queryKey: ['orders-stats'] });
       queryClient.invalidateQueries({ queryKey: ['orders-history'] });
     },
@@ -339,6 +343,7 @@ const ActiveOrdersPage = () => {
               setFilter(item.key);
               if (item.key === 'delivered') {
                 setDeliveredTab('unpaid'); // Reset a pendientes por pagar cuando cambias a entregados
+                setDeliveredDate('today'); // Reset a hoy cuando cambias a entregados
               }
             }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
@@ -367,40 +372,70 @@ const ActiveOrdersPage = () => {
 
       {/* Pestañas para pedidos entregados */}
       {filter === 'delivered' && (
-        <div className="flex gap-2 border-b border-gray/20 pb-2">
-          <button
-            onClick={() => setDeliveredTab('paid')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              deliveredTab === 'paid'
-                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                : 'bg-gray/10 text-gray hover:text-light border border-transparent'
-            }`}
-          >
-            <CheckCircle className="w-4 h-4" />
-            Pagados
-            <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-              deliveredTab === 'paid' ? 'bg-dark/30' : 'bg-gray/20'
-            }`}>
-              {counts.deliveredPaid}
-            </span>
-          </button>
-          <button
-            onClick={() => setDeliveredTab('unpaid')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              deliveredTab === 'unpaid'
-                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                : 'bg-gray/10 text-gray hover:text-light border border-transparent'
-            }`}
-          >
-            <DollarSign className="w-4 h-4" />
-            Pendientes por pagar
-            <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-              deliveredTab === 'unpaid' ? 'bg-dark/30' : 'bg-gray/20'
-            }`}>
-              {counts.deliveredUnpaid}
-            </span>
-          </button>
-        </div>
+        <>
+          <div className="flex gap-2 border-b border-gray/20 pb-2">
+            <button
+              onClick={() => setDeliveredTab('paid')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                deliveredTab === 'paid'
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                  : 'bg-gray/10 text-gray hover:text-light border border-transparent'
+              }`}
+            >
+              <CheckCircle className="w-4 h-4" />
+              Pagados
+              <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                deliveredTab === 'paid' ? 'bg-dark/30' : 'bg-gray/20'
+              }`}>
+                {counts.deliveredPaid}
+              </span>
+            </button>
+            <button
+              onClick={() => setDeliveredTab('unpaid')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                deliveredTab === 'unpaid'
+                  ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                  : 'bg-gray/10 text-gray hover:text-light border border-transparent'
+              }`}
+            >
+              <DollarSign className="w-4 h-4" />
+              Pendientes por pagar
+              <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                deliveredTab === 'unpaid' ? 'bg-dark/30' : 'bg-gray/20'
+              }`}>
+                {counts.deliveredUnpaid}
+              </span>
+            </button>
+          </div>
+
+          {/* Selector de fecha para pedidos entregados */}
+          <div className="flex items-center justify-center gap-3 py-3 bg-dark-secondary/50 rounded-lg border border-gray/20">
+            <button
+              onClick={() => setDeliveredDate('yesterday')}
+              disabled={deliveredDate === 'yesterday'}
+              className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Ayer"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2 px-4 py-2 bg-dark rounded-lg border border-gray/20">
+              <Calendar className="w-4 h-4 text-secondary" />
+              <span className="text-sm font-medium text-light">
+                {deliveredDate === 'today' 
+                  ? 'Hoy' 
+                  : 'Ayer'}
+              </span>
+            </div>
+            <button
+              onClick={() => setDeliveredDate('today')}
+              disabled={deliveredDate === 'today'}
+              className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Hoy"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </>
       )}
 
       {/* Grid de pedidos */}
@@ -414,17 +449,21 @@ const ActiveOrdersPage = () => {
             deliveredTab === 'paid' ? (
               <>
                 <CheckCircle className="w-16 h-16 text-green-400/50 mx-auto mb-4" />
-                <p className="text-light font-medium mb-2">No hay pedidos entregados y pagados</p>
+                <p className="text-light font-medium mb-2">
+                  No hay pedidos entregados y pagados {deliveredDate === 'today' ? 'hoy' : 'ayer'}
+                </p>
                 <p className="text-gray text-sm mb-4">
-                  Los pedidos entregados y pagados aparecerán aquí
+                  Los pedidos entregados y pagados {deliveredDate === 'today' ? 'de hoy' : 'de ayer'} aparecerán aquí
                 </p>
               </>
             ) : (
               <>
                 <DollarSign className="w-16 h-16 text-yellow-400/50 mx-auto mb-4" />
-                <p className="text-light font-medium mb-2">No hay pedidos entregados pendientes por pagar</p>
+                <p className="text-light font-medium mb-2">
+                  No hay pedidos entregados pendientes por pagar {deliveredDate === 'today' ? 'hoy' : 'ayer'}
+                </p>
                 <p className="text-gray text-sm mb-4">
-                  Los pedidos entregados que aún no están pagados aparecerán aquí
+                  Los pedidos entregados que aún no están pagados {deliveredDate === 'today' ? 'de hoy' : 'de ayer'} aparecerán aquí
                 </p>
               </>
             )
