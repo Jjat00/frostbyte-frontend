@@ -9,6 +9,7 @@ import {
   Boxes,
   ShoppingCart,
   Store,
+  Music,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -66,6 +67,21 @@ const HomePage = () => {
         { icon: Store, text: 'Lista de Productos' },
         { icon: Package, text: 'Categorías' },
         { icon: BarChart3, text: 'Variantes' },
+      ],
+    },
+    {
+      id: 'music',
+      title: 'Música',
+      description: 'Gestiona solicitudes de canciones de los clientes',
+      icon: Music,
+      path: '/musica',
+      color: 'from-purple-500 to-pink-500',
+      bgColor: 'bg-purple-500/10',
+      borderColor: 'border-purple-500/30',
+      features: [
+        { icon: Music, text: 'Solicitudes' },
+        { icon: ClipboardList, text: 'Gestionar Estados' },
+        { icon: BarChart3, text: 'Historial' },
       ],
     },
   ];
@@ -186,7 +202,7 @@ const HomePage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray">Módulos</p>
-                <p className="text-2xl font-bold text-light">3</p>
+                <p className="text-2xl font-bold text-light">4</p>
               </div>
               <Package className="w-8 h-8 text-primary/50" />
             </div>

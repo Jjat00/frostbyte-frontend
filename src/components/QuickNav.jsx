@@ -9,6 +9,7 @@ import {
   GlassWater,
   Zap,
   Heart,
+  Music,
 } from "lucide-react";
 
 const QuickNav = () => {
@@ -83,6 +84,14 @@ const QuickNav = () => {
       icon: Wine,
       gradient: "from-red-500 to-red-700",
       description: "Tintos chilenos",
+    },
+    {
+      name: "Solicitar Canción",
+      href: "#solicitar-cancion",
+      icon: Music,
+      gradient: "from-purple-400 to-pink-500",
+      description: "Pide tu canción",
+      featured: true,
     },
   ];
 

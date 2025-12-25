@@ -19,6 +19,7 @@ import ScrollToMenu from "@/components/ScrollToMenu";
 import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
+import SolicitarCancion from "@/components/SolicitarCancion";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Shots />
           <Vinos />
           <Desguayabator />
+          <SolicitarCancion />
           <Features />
           {/* <Gallery /> */}
           {/* <Contact /> */}

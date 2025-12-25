@@ -15,6 +15,10 @@ export const ENDPOINTS = {
   // Variants
   VARIANTS: '/variants/',
   VARIANT_DETAIL: (id) => `/variants/${id}/`,
+  
+  // Song Requests
+  SONG_REQUESTS: '/song-requests/',
+  SONG_REQUEST_DETAIL: (id) => `/song-requests/${id}/`,
 };
 
 export default ENDPOINTS;

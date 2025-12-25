@@ -20,6 +20,9 @@ import ProductsLayout from "./pages/products/ProductsLayout";
 import ProductsListPage from "./pages/products/ProductsListPage";
 import ProductFormPage from "./pages/products/ProductFormPage";
 import CategoriesPage from "./pages/products/CategoriesPage";
+// Módulo de Música
+import MusicLayout from "./pages/music/MusicLayout";
+import SongRequestsPage from "./pages/music/SongRequestsPage";
 import { authService } from "./services/auth.service";
 
 // Componente para rutas protegidas
@@ -150,6 +153,21 @@ export const router = createBrowserRouter([
       {
         path: "categorias",
         element: <CategoriesPage />,
+      },
+    ],
+  },
+  // Panel de música (protegido)
+  {
+    path: "/musica",
+    element: (
+      <ProtectedRoute>
+        <MusicLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <SongRequestsPage />,
       },
     ],
   },
