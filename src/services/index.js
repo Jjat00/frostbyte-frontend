@@ -1,4 +1,4 @@
-export { productsService } from './products.service';
+export { productsService, variantsService } from './products.service';
 export { categoriesService } from './categories.service';
 export { authService } from './auth.service';
 export { inventoryService } from './inventory.service';

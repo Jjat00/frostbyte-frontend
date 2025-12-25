@@ -14,6 +14,7 @@ export const ENDPOINTS = {
   
   // Variants
   VARIANTS: '/variants/',
+  VARIANT_DETAIL: (id) => `/variants/${id}/`,
 };
 
 export default ENDPOINTS;

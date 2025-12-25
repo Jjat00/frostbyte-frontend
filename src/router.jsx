@@ -15,6 +15,11 @@ import NewOrderPage from "./pages/orders/NewOrderPage";
 import OrderDetailPage from "./pages/orders/OrderDetailPage";
 import OrdersHistoryPage from "./pages/orders/OrdersHistoryPage";
 import OrdersStatsPage from "./pages/orders/OrdersStatsPage";
+// Módulo de Productos
+import ProductsLayout from "./pages/products/ProductsLayout";
+import ProductsListPage from "./pages/products/ProductsListPage";
+import ProductFormPage from "./pages/products/ProductFormPage";
+import CategoriesPage from "./pages/products/CategoriesPage";
 import { authService } from "./services/auth.service";
 
 // Componente para rutas protegidas
@@ -118,6 +123,33 @@ export const router = createBrowserRouter([
       {
         path: "estadisticas",
         element: <OrdersStatsPage />,
+      },
+    ],
+  },
+  // Panel de productos (protegido)
+  {
+    path: "/productos",
+    element: (
+      <ProtectedRoute>
+        <ProductsLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <ProductsListPage />,
+      },
+      {
+        path: "nuevo",
+        element: <ProductFormPage />,
+      },
+      {
+        path: "editar/:slug",
+        element: <ProductFormPage />,
+      },
+      {
+        path: "categorias",
+        element: <CategoriesPage />,
       },
     ],
   },

@@ -8,6 +8,7 @@ import {
   BarChart3,
   Boxes,
   ShoppingCart,
+  Store,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -50,6 +51,21 @@ const HomePage = () => {
         { icon: ClipboardList, text: 'Activos' },
         { icon: ShoppingCart, text: 'Nuevo Pedido' },
         { icon: BarChart3, text: 'Estadísticas' },
+      ],
+    },
+    {
+      id: 'products',
+      title: 'Productos',
+      description: 'Gestiona productos del menú, categorías y variantes',
+      icon: Store,
+      path: '/productos',
+      color: 'from-primary to-secondary',
+      bgColor: 'bg-primary/10',
+      borderColor: 'border-primary/30',
+      features: [
+        { icon: Store, text: 'Lista de Productos' },
+        { icon: Package, text: 'Categorías' },
+        { icon: BarChart3, text: 'Variantes' },
       ],
     },
   ];
@@ -170,7 +186,7 @@ const HomePage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray">Módulos</p>
-                <p className="text-2xl font-bold text-light">2</p>
+                <p className="text-2xl font-bold text-light">3</p>
               </div>
               <Package className="w-8 h-8 text-primary/50" />
             </div>
