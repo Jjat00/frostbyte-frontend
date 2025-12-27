@@ -2,6 +2,18 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import {
   BarChart3,
   DollarSign,
   ShoppingBag,
@@ -21,6 +33,8 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  TrendingDown,
+  Package,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 
@@ -82,6 +96,30 @@ const OrdersStatsPage = () => {
     },
   });
 
+  // Obtener ingresos por día
+  const { data: revenueByDay, isLoading: isLoadingRevenue } = useQuery({
+    queryKey: ['revenue-by-day', period, customStartDate, customEndDate, useCustomRange],
+    queryFn: () => {
+      if (useCustomRange && customStartDate && customEndDate) {
+        return ordersService.getRevenueByDay('custom', customStartDate, customEndDate);
+      }
+      return ordersService.getRevenueByDay(period);
+    },
+    enabled: !isLoading, // Esperar a que las stats principales carguen
+  });
+
+  // Obtener estadísticas por producto
+  const { data: productStats, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ['product-stats', period, customStartDate, customEndDate, useCustomRange],
+    queryFn: () => {
+      if (useCustomRange && customStartDate && customEndDate) {
+        return ordersService.getProductStats('custom', customStartDate, customEndDate);
+      }
+      return ordersService.getProductStats(period);
+    },
+    enabled: !isLoading, // Esperar a que las stats principales carguen
+  });
+
   const formatCurrency = (value) => {
     if (!value) return '$0';
     const num = parseFloat(value);
@@ -96,6 +134,19 @@ const OrdersStatsPage = () => {
       currency: 'COP',
       minimumFractionDigits: 0,
     }).format(num);
+  };
+
+  const formatCurrencyTooltip = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
   };
 
   const periodLabels = {
@@ -142,7 +193,7 @@ const OrdersStatsPage = () => {
     return periodLabels[period] || 'Hoy';
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingRevenue || isLoadingProducts) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin text-secondary" />
@@ -204,6 +255,164 @@ const OrdersStatsPage = () => {
           color="blue"
         />
       </div>
+
+      {/* Gráfica de Ingresos por Día */}
+      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+        <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-green-400" />
+          Ingresos por Día
+        </h2>
+        {revenueByDay?.data && revenueByDay.data.length > 0 ? (
+          <div className="h-64 md:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart 
+                data={revenueByDay.data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 60 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis
+                  dataKey="date"
+                  stroke="#9CA3AF"
+                  tickFormatter={formatDate}
+                  style={{ fontSize: '12px' }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                  interval={0}
+                  domain={['dataMin', 'dataMax']}
+                />
+                <YAxis
+                  stroke="#9CA3AF"
+                  tickFormatter={(value) => formatCurrency(value)}
+                  style={{ fontSize: '12px' }}
+                  domain={[0, 'auto']}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB',
+                  }}
+                  formatter={(value) => formatCurrencyTooltip(value)}
+                  labelFormatter={(label) => `Fecha: ${formatDate(label)}`}
+                />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  name="Ingresos"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  dot={{ fill: '#10B981', r: 4 }}
+                  activeDot={{ r: 6 }}
+                  connectNulls={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <div className="h-64 md:h-80 flex items-center justify-center text-gray">
+            <p>No hay datos de ingresos para este período</p>
+          </div>
+        )}
+      </div>
+
+      {/* Gráficas de Productos */}
+      {productStats?.data && productStats.data.length > 0 && (
+        <>
+          {/* Cantidad Vendida por Producto */}
+          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+            <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
+              <Package className="w-5 h-5 text-blue-400" />
+              Cantidad Vendida por Producto
+            </h2>
+            <div className="h-96 md:h-[500px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={productStats.data.slice(0, 15).map((item) => ({
+                    ...item,
+                    name: item.display_name.length > 30 
+                      ? item.display_name.substring(0, 30) + '...' 
+                      : item.display_name,
+                  }))}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis type="number" stroke="#9CA3AF" style={{ fontSize: '12px' }} />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    stroke="#9CA3AF"
+                    width={95}
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F9FAFB',
+                    }}
+                    formatter={(value) => `${value} unidades`}
+                  />
+                  <Legend />
+                  <Bar dataKey="quantity_sold" name="Cantidad Vendida" fill="#3B82F6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Ingresos por Producto */}
+          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+            <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-green-400" />
+              Ingresos por Producto
+            </h2>
+            <div className="h-96 md:h-[500px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={productStats.data.slice(0, 15).map((item) => ({
+                    ...item,
+                    name: item.display_name.length > 30 
+                      ? item.display_name.substring(0, 30) + '...' 
+                      : item.display_name,
+                  }))}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis
+                    type="number"
+                    stroke="#9CA3AF"
+                    tickFormatter={(value) => formatCurrency(value)}
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    stroke="#9CA3AF"
+                    width={95}
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F9FAFB',
+                    }}
+                    formatter={(value) => formatCurrencyTooltip(value)}
+                  />
+                  <Legend />
+                  <Bar dataKey="revenue" name="Ingresos" fill="#10B981" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Desglose por estado */}
       <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">

@@ -111,6 +111,34 @@ export const ordersService = {
     return response.data;
   },
 
+  /**
+   * Obtener ingresos por día para gráfica de línea
+   * @param {string} date - Periodo (today, yesterday, week, month, last_month, year)
+   * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
+   * @param {string} end_date - Fecha fin (YYYY-MM-DD) para rango personalizado
+   */
+  async getRevenueByDay(date = 'today', start_date = null, end_date = null) {
+    const params = { date };
+    if (start_date) params.start_date = start_date;
+    if (end_date) params.end_date = end_date;
+    const response = await apiClient.get(`${BASE_URL}/revenue_by_day/`, { params });
+    return response.data;
+  },
+
+  /**
+   * Obtener estadísticas por producto (cantidad vendida e ingresos)
+   * @param {string} date - Periodo (today, yesterday, week, month, last_month, year)
+   * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
+   * @param {string} end_date - Fecha fin (YYYY-MM-DD) para rango personalizado
+   */
+  async getProductStats(date = 'today', start_date = null, end_date = null) {
+    const params = { date };
+    if (start_date) params.start_date = start_date;
+    if (end_date) params.end_date = end_date;
+    const response = await apiClient.get(`${BASE_URL}/product_stats/`, { params });
+    return response.data;
+  },
+
   // ============= ORDER ITEMS =============
 
   /**
