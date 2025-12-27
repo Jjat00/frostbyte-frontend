@@ -246,14 +246,14 @@ const Header = () => {
             >
               Sodas Italianas
             </a>
-            <a
+            {/* <a
               href="#micheladas"
               className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Micheladas
-            </a>
-            <a
+            </a> */}
+            {/* <a
               href="#cervezas"
               className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -266,8 +266,8 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               🍹 Cuates
-            </a>
-            <a
+            </a> */}
+            {/* <a
               href="#mocktails"
               className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -280,14 +280,14 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Shots
-            </a>
-            <a
+            </a> */}
+            {/* <a
               href="#vinos"
               className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               🍷 Vinos
-            </a>
+            </a> */}
             <div className="border-t border-gray/20 pt-4 space-y-4">
               <Link
                 to="/login"
