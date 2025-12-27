@@ -234,14 +234,16 @@ const Granizados = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {isLoading
             ? [...Array(4)].map((_, i) => <ProductSkeleton key={i} />)
-            : products.map((product, index) => (
+            : products.map((product, index) => 
+              product.slug !== "granizado-con-alcohol-de-maracuya" ? (
                 <ProductCard
                   key={product.id}
                   product={product}
                   index={index}
                   styles={getProductStyles(product, "granizados")}
                 />
-              ))}
+              ) : null
+            )}
         </div>
 
         {/* Sección Envenenar */}
@@ -252,15 +254,14 @@ const Granizados = () => {
           transition={{ duration: 0.6 }}
           className="mt-20"
         >
-          <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+          {/* <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden"> */}
             {/* Efectos de fondo */}
-            <div className="absolute inset-0 opacity-20">
+            {/* <div className="absolute inset-0 opacity-20">
               <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[100px]"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-pink-500 rounded-full filter blur-[80px]"></div>
-            </div>
+            </div> */}
 
-            <div className="relative z-10">
-              {/* Header */}
+            {/* <div className="relative z-10">
               <div className="text-center mb-8">
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <Skull
@@ -285,14 +286,12 @@ const Granizados = () => {
                 </p>
               </div>
 
-              {/* Shots disponibles */}
               <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
                 {poisonShots.map((shot) => (
                   <PoisonOption key={shot.name} {...shot} />
                 ))}
               </div>
-
-              {/* Ejemplo visual */}
+   
               <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -314,8 +313,8 @@ const Granizados = () => {
                   </span>
                 </div>
               </motion.div>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
         </motion.div>
       </div>
     </section>

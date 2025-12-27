@@ -39,12 +39,12 @@ function App() {
           <Granizados />
           <Frappes />
           <SodasMicheladas />
-          <Micheladas />
-          <Cervezas />
-          <Cuates />
-          <Mocktails />
-          <Shots />
-          <Vinos />
+          {/* <Micheladas /> */}
+          {/* <Cervezas /> */}
+          {/* <Cuates /> */}
+          {/* <Mocktails /> */}
+          {/* <Shots /> */}
+          {/* <Vinos /> */}
           <Desguayabator />
           <SolicitarCancion />
           <Features />

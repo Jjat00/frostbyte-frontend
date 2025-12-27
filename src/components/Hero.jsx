@@ -248,30 +248,30 @@ const Hero = () => {
                     href="sodas"
                     delay={0.5}
                   />
-                  <ProductFloatCard
+                  {/* <ProductFloatCard
                     title="Micheladas"
                     subtitle="Cerveza"
                     icon={Beer}
                     gradient="from-orange-400 to-red-500"
                     href="micheladas"
                     delay={0.6}
-                  />
-                  <ProductFloatCard
+                  /> */}
+                  {/* <ProductFloatCard
                     title="Cócteles"
                     subtitle="Clásicos"
                     icon={Wine}
                     gradient="from-purple-400 to-pink-500"
                     href="mocktails"
                     delay={0.7}
-                  />
-                  <ProductFloatCard
+                  /> */}
+                  {/* <ProductFloatCard
                     title="Shots"
                     subtitle="Licores premium"
                     icon={GlassWater}
                     gradient="from-emerald-400 to-teal-500"
                     href="shots"
                     delay={0.8}
-                  />
+                  /> */}
                 </div>
               </div>
             </div>

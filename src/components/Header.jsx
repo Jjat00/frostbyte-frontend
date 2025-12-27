@@ -74,36 +74,36 @@ const Header = () => {
       href: "#sodas",
       description: "Refrescantes sodas de Fresa y Maracuyá.",
     },
-    {
-      title: "Micheladas",
-      href: "#micheladas",
-      description: "Poker, Budweiser y Corona con nuestra mezcla secreta.",
-    },
-    {
-      title: "🍺 Cervezas",
-      href: "#cervezas",
-      description: "Poker, Budweiser, Corona y Coronita bien frías.",
-    },
-    {
-      title: "🍹 Cuates",
-      href: "#cuates",
-      description: "Cócteles con tequila mexicano. Limón, Fresa y Mango.",
-    },
-    {
-      title: "Cócteles",
-      href: "#mocktails",
-      description: "Mojitos, Margaritas, Moscow Mule y más.",
-    },
-    {
-      title: "Shots",
-      href: "#shots",
-      description: "Ginebra, Vodka, Whisky, Tequila y Ron.",
-    },
-    {
-      title: "🍷 Vinos",
-      href: "#vinos",
-      description: "Copas de Gato Negro y Casillero del Diablo.",
-    },
+    // {
+    //   title: "Micheladas",
+    //   href: "#micheladas",
+    //   description: "Poker, Budweiser y Corona con nuestra mezcla secreta.",
+    // },
+    // {
+    //   title: "🍺 Cervezas",
+    //   href: "#cervezas",
+    //   description: "Poker, Budweiser, Corona y Coronita bien frías.",
+    // },
+    // {
+    //   title: "🍹 Cuates",
+    //   href: "#cuates",
+    //   description: "Cócteles con tequila mexicano. Limón, Fresa y Mango.",
+    // },
+    // {
+    //   title: "Cócteles",
+    //   href: "#mocktails",
+    //   description: "Mojitos, Margaritas, Moscow Mule y más.",
+    // },
+    // {
+    //   title: "Shots",
+    //   href: "#shots",
+    //   description: "Ginebra, Vodka, Whisky, Tequila y Ron.",
+    // },
+    // {
+    //   title: "🍷 Vinos",
+    //   href: "#vinos",
+    //   description: "Copas de Gato Negro y Casillero del Diablo.",
+    // },
   ];
 
   const navItems = [
