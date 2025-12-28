@@ -11,6 +11,7 @@ import {
   ClipboardList,
   Home,
   Store,
+  Music,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -38,6 +39,13 @@ const InventoryLayout = () => {
       path: "/",
       icon: Store,
       external: true,
+    },
+    {
+      name: "Música",
+      shortName: "Música",
+      path: "/musica",
+      icon: Music,
+      highlight: true,
     },
     {
       name: "Dashboard",
@@ -168,12 +176,14 @@ const InventoryLayout = () => {
                         `${baseClasses} ${
                           isActive
                             ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30"
+                            : item.highlight
+                            ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30"
                             : ""
                         }`
                       }
                     >
                       <item.icon className="w-5 h-5" />
-                      <span className="font-medium">{item.name}</span>
+                      <span className={`font-medium ${item.highlight ? "text-purple-400" : ""}`}>{item.name}</span>
                     </NavLink>
                   );
                 })}
@@ -241,12 +251,14 @@ const InventoryLayout = () => {
                   `${baseClasses} ${
                     isActive
                       ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30"
+                      : item.highlight
+                      ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30"
                       : ""
                   }`
                 }
               >
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.name}</span>
+                <span className={`font-medium ${item.highlight ? "text-purple-400" : ""}`}>{item.name}</span>
               </NavLink>
             );
           })}
@@ -310,12 +322,12 @@ const InventoryLayout = () => {
                   key={item.path}
                   to={item.path}
                   end={item.end}
-                  className={baseClasses}
+                  className={`${baseClasses} ${item.highlight ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30" : ""}`}
                 >
                   <item.icon
-                    className={`w-5 h-5 ${active ? "text-primary" : ""}`}
+                    className={`w-5 h-5 ${active ? "text-primary" : item.highlight ? "text-purple-400" : ""}`}
                   />
-                  <span className="text-[10px] font-medium">
+                  <span className={`text-[10px] font-medium ${item.highlight ? "text-purple-400" : ""}`}>
                     {item.shortName}
                   </span>
                 </NavLink>

@@ -11,6 +11,7 @@ import {
   X,
   Home,
   Store,
+  Music,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -38,6 +39,13 @@ const ProductsLayout = () => {
       path: '/',
       icon: Store,
       external: true,
+    },
+    {
+      name: 'Música',
+      shortName: 'Música',
+      path: '/musica',
+      icon: Music,
+      highlight: true,
     },
     {
       name: 'Productos',
@@ -157,12 +165,14 @@ const ProductsLayout = () => {
                         `${baseClasses} ${
                           isActive
                             ? 'bg-gradient-to-r from-secondary/20 to-primary/20 text-light border border-secondary/30'
+                            : item.highlight
+                            ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30'
                             : ''
                         }`
                       }
                     >
                       <item.icon className="w-5 h-5" />
-                      <span className="font-medium">{item.name}</span>
+                      <span className={`font-medium ${item.highlight ? 'text-purple-400' : ''}`}>{item.name}</span>
                     </NavLink>
                   );
                 })}
@@ -227,12 +237,14 @@ const ProductsLayout = () => {
                   `${baseClasses} ${
                     isActive
                       ? 'bg-gradient-to-r from-secondary/20 to-primary/20 text-light border border-secondary/30'
+                      : item.highlight
+                      ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30'
                       : ''
                   }`
                 }
               >
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.name}</span>
+                <span className={`font-medium ${item.highlight ? 'text-purple-400' : ''}`}>{item.name}</span>
               </NavLink>
             );
           })}
@@ -298,10 +310,10 @@ const ProductsLayout = () => {
                   key={item.path}
                   to={item.path}
                   end={item.end}
-                  className={baseClasses}
+                  className={`${baseClasses} ${item.highlight ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30' : ''}`}
                 >
-                  <item.icon className={`w-5 h-5 ${active ? 'text-secondary' : ''}`} />
-                  <span className="text-[10px] font-medium">{item.shortName}</span>
+                  <item.icon className={`w-5 h-5 ${active ? 'text-secondary' : item.highlight ? 'text-purple-400' : ''}`} />
+                  <span className={`text-[10px] font-medium ${item.highlight ? 'text-purple-400' : ''}`}>{item.shortName}</span>
                 </NavLink>
               );
             })}
