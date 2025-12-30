@@ -445,21 +445,23 @@ const OrderDetailPage = () => {
               <div className="flex items-start gap-3">
                 {/* Info del producto */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 flex-shrink-0 flex items-center justify-center bg-secondary/20 text-secondary rounded-lg text-sm font-bold">
+                  <div className="flex items-start gap-2">
+                    <span className="w-6 h-6 flex-shrink-0 flex items-center justify-center bg-secondary/20 text-secondary rounded-lg text-sm font-bold mt-0.5">
                       {item.quantity}
                     </span>
-                    <span className="font-medium text-light truncate">
-                      {item.product_name}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium text-light break-words block">
+                        {item.product_name}
+                      </span>
+                      <p className="text-sm text-gray mt-0.5">{item.variant_name}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray ml-8">{item.variant_name}</p>
                   {item.notes && (
-                    <p className="text-xs text-secondary ml-8 mt-1">
+                    <p className="text-xs text-secondary ml-8 mt-1 break-words">
                       📝 {item.notes}
                     </p>
                   )}
-                  <div className="flex flex-wrap gap-2 ml-8 mt-1">
+                  <div className="flex flex-wrap gap-2 ml-8 mt-1.5">
                     {item.is_paid && (
                       <span className="text-xs text-green-400 flex items-center gap-1">
                         <DollarSign className="w-3 h-3" />

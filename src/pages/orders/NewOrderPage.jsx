@@ -318,10 +318,10 @@ const NewOrderPage = () => {
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-light text-sm truncate">
+                        <p className="font-medium text-light text-sm break-words">
                           {item.productName}
                         </p>
-                        <p className="text-xs text-gray">{item.variantName}</p>
+                        <p className="text-xs text-gray break-words">{item.variantName}</p>
                       </div>
                       <button
                         onClick={() => removeFromCart(item.variantId)}

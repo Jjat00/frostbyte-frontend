@@ -164,13 +164,15 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       {/* Items */}
       <div className="space-y-1.5 mb-4">
         {order.items?.slice(0, 4).map((item, idx) => (
-          <div key={idx} className="flex items-center justify-between text-sm">
-            <span className="text-gray">
-              <span className="text-light font-medium">{item.quantity}x</span>{' '}
-              {item.product_name} 
-              <span className="text-gray/70"> ({item.variant_name})</span>
-            </span>
-            <span className="text-light">{formatCurrency(item.subtotal)}</span>
+          <div key={idx} className="flex items-start justify-between text-sm gap-2">
+            <div className="flex-1 min-w-0">
+              <span className="text-gray break-words block">
+                <span className="text-light font-medium">{item.quantity}x</span>{' '}
+                <span className="text-light">{item.product_name}</span>
+                <span className="text-gray/70"> ({item.variant_name})</span>
+              </span>
+            </div>
+            <span className="text-light flex-shrink-0">{formatCurrency(item.subtotal)}</span>
           </div>
         ))}
         {order.items?.length > 4 && (

@@ -399,6 +399,19 @@ const PurchaseOrdersPage = () => {
     return total;
   };
 
+  // Calcular total de órdenes completadas
+  const completedOrdersTotal = orders
+    .filter(order => order.status === 'purchased')
+    .reduce((sum, order) => {
+      // Para órdenes completadas, usar actual_total si existe, sino calcular desde items
+      if (order.actual_total) {
+        return sum + parseFloat(order.actual_total);
+      }
+      return sum + getOrderTotal(order);
+    }, 0);
+
+  const completedOrdersCount = orders.filter(order => order.status === 'purchased').length;
+
   // Order Item Card for Mobile
   const OrderItemCard = ({ item, order }) => (
     <div className="bg-dark/50 rounded-lg p-3 mb-2">
@@ -526,6 +539,29 @@ const PurchaseOrdersPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Resumen de Órdenes Completadas */}
+      {!isLoading && completedOrdersCount > 0 && (
+        <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-xl p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-light mb-1 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                Órdenes Completadas
+              </h2>
+              <p className="text-sm text-gray">
+                {completedOrdersCount} orden{completedOrdersCount !== 1 ? 'es' : ''} comprada{completedOrdersCount !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray mb-1">Total invertido</p>
+              <p className="text-2xl md:text-3xl font-bold text-green-400">
+                {formatCurrency(completedOrdersTotal)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Orders List */}
       {isLoading ? (

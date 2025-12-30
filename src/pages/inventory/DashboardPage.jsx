@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Loader2,
   Clock,
+  ClipboardList,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
 
@@ -121,7 +122,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
         <StatCard
           title="Total Materiales"
           value={stats?.total_materials || 0}
@@ -149,6 +150,14 @@ const DashboardPage = () => {
           value={formatCurrency(stats?.total_inventory_value || 0)}
           icon={DollarSign}
           color="success"
+        />
+        <StatCard
+          title="Órdenes Pendientes"
+          value={stats?.total_pending_orders || 0}
+          icon={ClipboardList}
+          color="secondary"
+          subtitle={formatCurrency(parseFloat(stats?.total_estimated_orders || 0))}
+          link="/inventario/ordenes"
         />
       </div>
 
