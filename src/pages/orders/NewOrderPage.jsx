@@ -29,6 +29,7 @@ const NewOrderPage = () => {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerNotes, setCustomerNotes] = useState('');
+  const [selectedTable, setSelectedTable] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
   const [itemNotes, setItemNotes] = useState({});
 
@@ -131,11 +132,16 @@ const NewOrderPage = () => {
 
   const handleSubmitOrder = () => {
     if (cart.length === 0) return;
+    if (!selectedTable) {
+      alert('Por favor selecciona una mesa');
+      return;
+    }
 
     const orderData = {
       customer_name: customerName || 'Cliente',
       customer_phone: customerPhone,
       customer_notes: customerNotes,
+      table_number: parseInt(selectedTable),
       items: cart.map((item) => ({
         product_variant_id: item.variantId,
         quantity: item.quantity,
@@ -368,6 +374,33 @@ const NewOrderPage = () => {
             )}
           </div>
 
+          {/* Selección de mesa */}
+          {cart.length > 0 && (
+            <div className="p-4 border-t border-gray/20 flex-shrink-0">
+              <label className="block text-sm font-medium text-light mb-2">
+                Mesa/Barra <span className="text-red-400">*</span>
+              </label>
+              <select
+                value={selectedTable}
+                onChange={(e) => setSelectedTable(e.target.value)}
+                className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+              >
+                <option value="">Selecciona una mesa o barra</option>
+                <option value="0">Barra</option>
+                {[1, 2, 3, 4, 5].map((tableNum) => (
+                  <option key={tableNum} value={tableNum}>
+                    Mesa {tableNum}
+                  </option>
+                ))}
+              </select>
+              {!selectedTable && (
+                <p className="text-xs text-red-400 mt-2">
+                  Debes seleccionar una mesa o barra
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Datos del cliente */}
           {cart.length > 0 && (
             <div className="p-4 border-t border-gray/20 space-y-3 flex-shrink-0">
@@ -414,7 +447,7 @@ const NewOrderPage = () => {
             </div>
             <button
               onClick={handleSubmitOrder}
-              disabled={cart.length === 0 || createOrderMutation.isPending}
+              disabled={cart.length === 0 || !selectedTable || createOrderMutation.isPending}
               className="w-full py-3.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-xl hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {createOrderMutation.isPending ? (
@@ -545,6 +578,33 @@ const NewOrderPage = () => {
                     )}
                   </div>
 
+                  {/* Selección de mesa - Mobile */}
+                  {cart.length > 0 && (
+                    <div className="p-4 border-t border-gray/20 bg-dark-secondary/50">
+                      <label className="block text-sm font-medium text-light mb-2">
+                        Mesa/Barra <span className="text-red-400">*</span>
+                      </label>
+                      <select
+                        value={selectedTable}
+                        onChange={(e) => setSelectedTable(e.target.value)}
+                        className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                      >
+                        <option value="">Selecciona una mesa o barra</option>
+                        <option value="0">Barra</option>
+                        {[1, 2, 3, 4, 5].map((tableNum) => (
+                          <option key={tableNum} value={tableNum}>
+                            Mesa {tableNum}
+                          </option>
+                        ))}
+                      </select>
+                      {!selectedTable && (
+                        <p className="text-xs text-red-400 mt-2">
+                          Debes seleccionar una mesa o barra
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {/* Datos del cliente - Mobile */}
                   {cart.length > 0 && (
                     <div className="p-4 border-t border-gray/20 space-y-3 bg-dark-secondary/50">
@@ -594,7 +654,7 @@ const NewOrderPage = () => {
                     </div>
                     <button
                       onClick={handleSubmitOrder}
-                      disabled={cart.length === 0 || createOrderMutation.isPending}
+                      disabled={cart.length === 0 || !selectedTable || createOrderMutation.isPending}
                       className="w-full py-4 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-xl hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
                     >
                       {createOrderMutation.isPending ? (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +25,9 @@ import {
   Check,
   Package,
   PackageCheck,
+  Edit2,
+  X,
+  Save,
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
 import { productsService } from "@/services/products.service";
@@ -94,6 +97,9 @@ const OrderDetailPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [isEditingCustomer, setIsEditingCustomer] = useState(false);
+  const [editedCustomerName, setEditedCustomerName] = useState("");
+  const [editedTableNumber, setEditedTableNumber] = useState("");
 
   // Obtener detalle del pedido
   const {
@@ -104,6 +110,14 @@ const OrderDetailPage = () => {
     queryKey: ["order", id],
     queryFn: () => ordersService.getOrder(id),
   });
+
+  // Inicializar valores de edición cuando cambia el pedido
+  useEffect(() => {
+    if (order && !isEditingCustomer) {
+      setEditedCustomerName(order.customer_name || "");
+      setEditedTableNumber(order.table_number != null ? order.table_number.toString() : "");
+    }
+  }, [order, isEditingCustomer]);
 
   // Obtener productos para añadir
   const { data: productsData } = useQuery({
@@ -190,6 +204,14 @@ const OrderDetailPage = () => {
     onSuccess: () => {
       invalidateAllOrderQueries();
       navigate("/pedidos");
+    },
+  });
+
+  const updateOrderMutation = useMutation({
+    mutationFn: (data) => ordersService.updateOrder(id, data),
+    onSuccess: () => {
+      invalidateAllOrderQueries();
+      setIsEditingCustomer(false);
     },
   });
 
@@ -345,19 +367,102 @@ const OrderDetailPage = () => {
 
       {/* Información del cliente */}
       <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-        <h3 className="font-bold text-light mb-4 flex items-center gap-2">
-          <User className="w-5 h-5 text-secondary" />
-          Cliente
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-light flex items-center gap-2">
+            <User className="w-5 h-5 text-secondary" />
+            Cliente
+          </h3>
+          {!isEditingCustomer ? (
+            <button
+              onClick={() => setIsEditingCustomer(true)}
+              className="p-2 text-gray hover:text-secondary hover:bg-gray/10 rounded-lg transition-colors"
+              title="Editar cliente y mesa"
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setIsEditingCustomer(false);
+                  setEditedCustomerName(order.customer_name || "");
+                  setEditedTableNumber(order.table_number?.toString() || "");
+                }}
+                className="p-2 text-gray hover:text-red-400 hover:bg-gray/10 rounded-lg transition-colors"
+                title="Cancelar"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => {
+                  updateOrderMutation.mutate({
+                    customer_name: editedCustomerName,
+                    table_number: parseInt(editedTableNumber),
+                  });
+                }}
+                disabled={updateOrderMutation.isPending || !editedCustomerName.trim() || !editedTableNumber}
+                className="p-2 text-gray hover:text-secondary hover:bg-gray/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Guardar cambios"
+              >
+                {updateOrderMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          )}
+        </div>
         <div className="space-y-2">
-          <p className="text-light font-medium">
-            {order.customer_name || "Sin nombre"}
-          </p>
-          {order.customer_phone && (
-            <p className="text-gray text-sm flex items-center gap-2">
-              <Phone className="w-4 h-4" />
-              {order.customer_phone}
-            </p>
+          {isEditingCustomer ? (
+            <>
+              <div>
+                <label className="block text-xs text-gray mb-1">Nombre del cliente</label>
+                <input
+                  type="text"
+                  value={editedCustomerName}
+                  onChange={(e) => setEditedCustomerName(e.target.value)}
+                  className="w-full px-3 py-2 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                  placeholder="Nombre del cliente"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray mb-1">Mesa/Barra</label>
+                <select
+                  value={editedTableNumber}
+                  onChange={(e) => setEditedTableNumber(e.target.value)}
+                  className="w-full px-3 py-2 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                >
+                  <option value="">Selecciona una mesa o barra</option>
+                  <option value="0">Barra</option>
+                  {[1, 2, 3, 4, 5].map((tableNum) => (
+                    <option key={tableNum} value={tableNum}>
+                      Mesa {tableNum}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-light font-medium">
+                {order.customer_name || "Sin nombre"}
+              </p>
+              {order.customer_phone && (
+                <p className="text-gray text-sm flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  {order.customer_phone}
+                </p>
+              )}
+              {order.table_number != null && order.table_number !== undefined && (
+                <div className="mt-3">
+                  <p className="text-xs text-gray mb-2">{order.table_number === 0 ? 'Barra' : 'Mesa'}:</p>
+                  <span className="w-10 h-10 flex items-center justify-center bg-secondary/20 text-secondary rounded-lg text-base font-bold border-2 border-secondary/30">
+                    {order.table_number === 0 ? 'B' : order.table_number}
+                  </span>
+                </div>
+              )}
+            </>
           )}
           {order.customer_notes && (
             <div className="mt-3 p-3 bg-secondary/10 border border-secondary/20 rounded-lg">

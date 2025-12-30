@@ -154,6 +154,14 @@ const OrderCard = ({ order, onUpdateStatus }) => {
             </span>
           )}
         </div>
+        {order.table_number != null && order.table_number !== undefined && (
+          <div className="flex items-center gap-1.5 mt-2">
+            <span className="text-xs text-gray">{order.table_number === 0 ? 'Barra' : 'Mesa'}:</span>
+            <span className="w-6 h-6 flex items-center justify-center bg-secondary/20 text-secondary rounded text-xs font-bold">
+              {order.table_number === 0 ? 'B' : order.table_number}
+            </span>
+          </div>
+        )}
         {order.customer_notes && (
           <p className="text-xs text-secondary mt-1 bg-secondary/10 px-2 py-1 rounded">
             📝 {order.customer_notes}

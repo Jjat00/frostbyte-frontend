@@ -192,11 +192,21 @@ const OrdersHistoryPage = () => {
                       </span>
                     </div>
 
-                    {order.items_count > 0 && (
-                      <p className="text-xs text-gray mt-1">
-                        {order.items_count} producto{order.items_count > 1 ? 's' : ''}
-                      </p>
-                    )}
+                    <div className="flex items-center gap-3 mt-1">
+                      {order.items_count > 0 && (
+                        <p className="text-xs text-gray">
+                          {order.items_count} producto{order.items_count > 1 ? 's' : ''}
+                        </p>
+                      )}
+                      {order.table_number != null && order.table_number !== undefined && (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-gray">{order.table_number === 0 ? 'Barra' : 'Mesa'}:</span>
+                          <span className="w-5 h-5 flex items-center justify-center bg-secondary/20 text-secondary rounded text-xs font-bold">
+                            {order.table_number === 0 ? 'B' : order.table_number}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-3">
