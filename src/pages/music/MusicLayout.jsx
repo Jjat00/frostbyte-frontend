@@ -8,6 +8,8 @@ import {
   X,
   Home,
   Store,
+  Package,
+  ShoppingCart,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -35,6 +37,24 @@ const MusicLayout = () => {
       path: '/',
       icon: Store,
       external: true,
+    },
+    {
+      name: 'Inventario',
+      shortName: 'Inventario',
+      path: '/inventario',
+      icon: Package,
+    },
+    {
+      name: 'Pedidos',
+      shortName: 'Pedidos',
+      path: '/pedidos',
+      icon: ShoppingCart,
+    },
+    {
+      name: 'Productos',
+      shortName: 'Productos',
+      path: '/productos',
+      icon: Store,
     },
     {
       name: 'Solicitudes de Canciones',

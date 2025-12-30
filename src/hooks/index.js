@@ -4,3 +4,6 @@ export { useProducts, useProduct, useProductsByCategory, productKeys } from './u
 // Categories hooks
 export { useCategories, useCategory, categoryKeys } from './useCategories';
 
+// Music hooks
+export { useSongRequestsNotification } from './useSongRequestsNotification';
+

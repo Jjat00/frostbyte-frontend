@@ -12,10 +12,12 @@ import {
   Music,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useSongRequestsNotification } from '@/hooks';
 
 const HomePage = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
 
   const handleLogout = async () => {
     await logout();
@@ -150,12 +152,25 @@ const HomePage = () => {
 
                 <div className="relative z-10">
                   {/* Icon */}
-                  <div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${module.color} mb-4`}>
+                  <div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${module.color} mb-4 relative`}>
                     <Icon className="w-8 h-8 text-dark" />
+                    {module.id === 'music' && hasPendingRequests && (
+                      <>
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-dark-secondary animate-pulse" />
+                        <span className="absolute -top-2 -right-2 w-6 h-6 bg-green-500/20 rounded-full animate-ping" />
+                      </>
+                    )}
                   </div>
 
                   {/* Title and Description */}
-                  <h3 className="text-2xl font-bold text-light mb-2">{module.title}</h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-2xl font-bold text-light">{module.title}</h3>
+                    {module.id === 'music' && hasPendingRequests && (
+                      <span className="px-2 py-0.5 text-xs font-bold bg-green-500 text-dark rounded-full animate-pulse">
+                        {pendingCount}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-gray mb-6">{module.description}</p>
 
                   {/* Features */}

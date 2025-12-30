@@ -12,14 +12,17 @@ import {
   Home,
   BarChart3,
   Store,
+  Music,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useSongRequestsNotification } from '@/hooks';
 
 const OrdersLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
 
   const handleLogout = async () => {
     await logout();
@@ -64,6 +67,13 @@ const OrdersLayout = () => {
       shortName: 'Stats',
       path: '/pedidos/estadisticas',
       icon: BarChart3,
+    },
+    {
+      name: 'Música',
+      shortName: 'Música',
+      path: '/musica',
+      icon: Music,
+      hasNotification: true,
     },
   ];
 
@@ -168,8 +178,18 @@ const OrdersLayout = () => {
                         }`
                       }
                     >
-                      <item.icon className="w-5 h-5" />
-                      <span className="font-medium">{item.name}</span>
+                      <div className="relative">
+                        <item.icon className="w-5 h-5" />
+                        {item.hasNotification && hasPendingRequests && (
+                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-secondary animate-pulse" />
+                        )}
+                      </div>
+                      <span className="font-medium flex-1">{item.name}</span>
+                      {item.hasNotification && hasPendingRequests && (
+                        <span className="px-1.5 py-0.5 text-xs font-bold bg-green-500 text-dark rounded-full">
+                          {pendingCount}
+                        </span>
+                      )}
                     </NavLink>
                   );
                 })}
@@ -238,8 +258,18 @@ const OrdersLayout = () => {
                   }`
                 }
               >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.name}</span>
+                <div className="relative">
+                  <item.icon className="w-5 h-5" />
+                  {item.hasNotification && hasPendingRequests && (
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-secondary animate-pulse" />
+                  )}
+                </div>
+                <span className="font-medium flex-1">{item.name}</span>
+                {item.hasNotification && hasPendingRequests && (
+                  <span className="px-1.5 py-0.5 text-xs font-bold bg-green-500 text-dark rounded-full">
+                    {pendingCount}
+                  </span>
+                )}
               </NavLink>
             );
           })}
@@ -307,7 +337,12 @@ const OrdersLayout = () => {
                   end={item.end}
                   className={baseClasses}
                 >
-                  <item.icon className={`w-5 h-5 ${active ? 'text-secondary' : ''}`} />
+                  <div className="relative">
+                    <item.icon className={`w-5 h-5 ${active ? 'text-secondary' : ''}`} />
+                    {item.hasNotification && hasPendingRequests && (
+                      <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-dark-secondary animate-pulse" />
+                    )}
+                  </div>
                   <span className="text-[10px] font-medium">{item.shortName}</span>
                 </NavLink>
               );
