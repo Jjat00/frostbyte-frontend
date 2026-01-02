@@ -108,6 +108,11 @@ const Header = () => {
 
   const navItems = [
     {
+      name: "Frostbyte Play",
+      href: "/game",
+      external: false,
+    },
+    {
       name: "Ubicación",
       href: "https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu",
       external: true,
@@ -167,14 +172,25 @@ const Header = () => {
 
                 {navItems.map((item) => (
                   <NavigationMenuItem key={item.name}>
-                    <NavigationMenuLink
-                      href={item.href}
-                      target={item.external ? "_blank" : undefined}
-                      rel={item.external ? "noopener noreferrer" : undefined}
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
-                    >
-                      {item.name}
-                    </NavigationMenuLink>
+                    {item.external ? (
+                      <NavigationMenuLink
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                      >
+                        {item.name}
+                      </NavigationMenuLink>
+                    ) : (
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to={item.href}
+                          className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                        >
+                          {item.name}
+                        </Link>
+                      </NavigationMenuLink>
+                    )}
                   </NavigationMenuItem>
                 ))}
                 <NavigationMenuItem>
@@ -289,6 +305,13 @@ const Header = () => {
               🍷 Vinos
             </a>
             <div className="border-t border-gray/20 pt-4 space-y-4">
+              <Link
+                to="/game"
+                className="block text-primary hover:text-primary/80 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎮 Frostbyte Play
+              </Link>
               <Link
                 to="/login"
                 className="flex items-center gap-2 text-secondary hover:text-primary transition-colors duration-300 font-medium"

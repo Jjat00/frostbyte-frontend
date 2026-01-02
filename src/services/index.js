@@ -4,4 +4,5 @@ export { authService } from './auth.service';
 export { inventoryService } from './inventory.service';
 export { ordersService } from './orders.service';
 export { musicService } from './music.service';
+export { gamesService } from './games.service';
 export { apiClient, ENDPOINTS } from './api';

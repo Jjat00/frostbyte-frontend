@@ -1,0 +1,349 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Users, 
+  Copy, 
+  Check, 
+  Play, 
+  Loader2, 
+  AlertCircle,
+  Share2,
+  Settings,
+  RefreshCw,
+  Wifi
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { gamesService } from '@/services';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useGameRoomWebSocket } from '@/hooks/useGameRoomWebSocket';
+import GamePlaying from '@/components/game/GamePlaying';
+import GameResults from '@/components/game/GameResults';
+
+const GameRoomPage = () => {
+  const { roomId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [selectedRounds, setSelectedRounds] = useState(3);
+  const [playerName, setPlayerName] = useState('');
+
+  // Obtener datos iniciales de la sala
+  const { data: initialRoom, isLoading: isLoadingInitial, error: initialError } = useQuery({
+    queryKey: ['gameRoom', roomId],
+    queryFn: () => gamesService.getRoomStatus(roomId),
+    enabled: !!roomId,
+  });
+
+  // Estado local para la sala (actualizado por WebSocket)
+  const [room, setRoom] = useState(initialRoom);
+  const isLoading = isLoadingInitial && !room;
+  const error = initialError;
+
+  // WebSocket para actualizaciones en tiempo real
+  const { isConnected: wsConnected } = useGameRoomWebSocket(
+    roomId,
+    (updatedRoomData) => {
+      // Actualizar estado cuando llega actualización por WebSocket
+      setRoom(updatedRoomData);
+      // También actualizar React Query cache
+      queryClient.setQueryData(['gameRoom', roomId], updatedRoomData);
+    },
+    !!roomId && !error // Habilitar WebSocket solo si hay roomId y no hay error
+  );
+
+  // Sincronizar con datos iniciales cuando cargan
+  useEffect(() => {
+    if (initialRoom) {
+      setRoom(initialRoom);
+    }
+  }, [initialRoom]);
+
+  // Mutation para configurar rondas
+  const configureMutation = useMutation({
+    mutationFn: (rounds) => gamesService.configureRoom(roomId, rounds),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['gameRoom', roomId]);
+    },
+  });
+
+  // Mutation para iniciar juego
+  const startMutation = useMutation({
+    mutationFn: () => gamesService.startGame(roomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['gameRoom', roomId]);
+    },
+  });
+
+  // Copiar link de la sala
+  const copyRoomLink = () => {
+    if (room?.room_link) {
+      const fullUrl = `${window.location.origin}/game/join/${room.room_link}`;
+      navigator.clipboard.writeText(fullUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
+  // Compartir link
+  const shareRoomLink = async () => {
+    if (room?.room_link) {
+      const fullUrl = `${window.location.origin}/game/join/${room.room_link}`;
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: '¡Únete a mi Duelo Frostbyte!',
+            text: 'Vamos a jugar Duelo Frostbyte. Únete a mi sala!',
+            url: fullUrl,
+          });
+        } catch (err) {
+          // Usuario canceló el share
+        }
+      } else {
+        copyRoomLink();
+      }
+    }
+  };
+
+  // Obtener nombre del jugador actual
+  useEffect(() => {
+    const deviceId = localStorage.getItem('frostbyte_device_id');
+    if (room?.participants && deviceId) {
+      const currentPlayer = room.participants.find(p => p.player_device_id === deviceId);
+      if (currentPlayer) {
+        setPlayerName(currentPlayer.player_name);
+      }
+    }
+  }, [room]);
+
+  // Handler para configurar rondas
+  const handleConfigureRounds = () => {
+    configureMutation.mutate(selectedRounds);
+  };
+
+  // Handler para iniciar juego
+  const handleStartGame = () => {
+    if (room?.participant_count < 2) {
+      return;
+    }
+    startMutation.mutate();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-dark flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !room) {
+    return (
+      <div className="min-h-screen bg-dark flex items-center justify-center p-4">
+        <div className="text-center">
+          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-light mb-2">Error</h2>
+          <p className="text-gray mb-4">
+            {error?.message || 'No se pudo cargar la sala'}
+          </p>
+          <Button onClick={() => navigate('/game')}>Volver</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Si el juego está jugando, mostrar componente de juego
+  if (room.status === 'playing') {
+    return <GamePlaying room={room} roomId={roomId} />;
+  }
+
+  // Si el juego está finalizado, mostrar resultados
+  if (room.status === 'finished') {
+    return <GameResults room={room} roomId={roomId} />;
+  }
+
+  // Estado: waiting o configuring (lobby)
+  return (
+    <div className="min-h-screen bg-dark p-4 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-2xl mx-auto relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <h1 className="text-4xl font-bold text-light tracking-wider">
+              Duelo Frostbyte
+            </h1>
+            {wsConnected && (
+              <Wifi className="w-5 h-5 text-green-400" title="Conectado en tiempo real" />
+            )}
+          </div>
+          <p className="text-gray">Sala: {room.room_code}</p>
+          <p className="text-sm text-gray/70">Mesa {room.table_number}</p>
+        </motion.div>
+
+        {/* Room Info Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6 mb-6 shadow-2xl shadow-primary/10"
+        >
+          {/* Share Link Section */}
+          <div className="mb-6">
+            <label className="text-sm text-gray font-medium mb-2 block">
+              Comparte este link con tus amigos
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={`${window.location.origin}/game/join/${room.room_link}`}
+                readOnly
+                className="flex-1 px-4 py-2 bg-dark border border-gray/20 rounded-lg text-light text-sm"
+              />
+              <Button
+                onClick={copyRoomLink}
+                variant="outline"
+                size="icon"
+                className="border-gray/20"
+              >
+                {copiedLink ? (
+                  <Check className="w-5 h-5 text-green-400" />
+                ) : (
+                  <Copy className="w-5 h-5" />
+                )}
+              </Button>
+              <Button
+                onClick={shareRoomLink}
+                variant="outline"
+                size="icon"
+                className="border-gray/20"
+              >
+                <Share2 className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Participants Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
+                <span className="text-light font-medium">
+                  Jugadores ({room.participant_count})
+                </span>
+              </div>
+              {room.participant_count < 2 && (
+                <span className="text-sm text-yellow-400">
+                  Mínimo 2 jugadores
+                </span>
+              )}
+            </div>
+            <div className="space-y-2">
+              <AnimatePresence>
+                {room.participants?.map((participant, index) => (
+                  <motion.div
+                    key={participant.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="p-3 bg-dark rounded-lg border border-gray/10"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-light">{participant.player_name}</span>
+                      {participant.player_name === playerName && (
+                        <span className="text-xs text-primary">(Tú)</span>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Configure Rounds Section */}
+          {room.status === 'waiting' && (
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Settings className="w-5 h-5 text-primary" />
+                <span className="text-light font-medium">Configurar rondas</span>
+              </div>
+              <div className="flex gap-2">
+                {[1, 3, 5].map((rounds) => (
+                  <button
+                    key={rounds}
+                    onClick={() => setSelectedRounds(rounds)}
+                    className={`flex-1 py-2 px-4 rounded-lg border transition-all ${
+                      selectedRounds === rounds
+                        ? 'bg-primary text-dark border-primary font-bold'
+                        : 'bg-dark text-gray border-gray/20 hover:border-primary/50'
+                    }`}
+                  >
+                    {rounds} {rounds === 1 ? 'ronda' : 'rondas'}
+                  </button>
+                ))}
+              </div>
+              <Button
+                onClick={handleConfigureRounds}
+                disabled={configureMutation.isPending || room.total_rounds === selectedRounds}
+                className="w-full mt-4 bg-gradient-to-r from-primary to-secondary text-dark font-bold"
+              >
+                {configureMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Configurando...
+                  </>
+                ) : (
+                  'Confirmar rondas'
+                )}
+              </Button>
+            </div>
+          )}
+
+          {/* Start Game Button */}
+          {room.status === 'configuring' && room.participant_count >= 2 && (
+            <Button
+              onClick={handleStartGame}
+              disabled={startMutation.isPending}
+              className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold text-lg py-6"
+              size="lg"
+            >
+              {startMutation.isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Iniciando...
+                </>
+              ) : (
+                <>
+                  <Play className="w-5 h-5 mr-2" />
+                  ¡Comenzar juego!
+                </>
+              )}
+            </Button>
+          )}
+
+          {/* Waiting Message */}
+          {room.status === 'waiting' && room.participant_count >= 2 && room.total_rounds > 0 && (
+            <div className="text-center text-gray/70 text-sm">
+              Esperando configuración de rondas...
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+export default GameRoomPage;
+
