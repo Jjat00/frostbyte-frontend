@@ -195,9 +195,12 @@ const GameRoomPage = () => {
   const startMutation = useMutation({
     mutationFn: () => gamesService.startGame(roomId),
     onSuccess: (data) => {
-      // NO actualizar React Query cache ni estado local aquí
-      // Dejar que el WebSocket maneje la actualización para evitar condiciones de carrera
-      // El WebSocket enviará una actualización que actualizará el estado de forma segura
+      // Actualizar React Query cache para que GamePlaying tenga los datos actualizados
+      queryClient.setQueryData(["gameRoom", roomId], data);
+      // También actualizar el estado local para respuesta inmediata
+      if (mountedRef.current) {
+        setRoom(data);
+      }
     },
   });
 
