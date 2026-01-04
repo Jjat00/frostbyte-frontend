@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Trophy, RefreshCw, Home, Award, LogOut, Play } from 'lucide-react';
+import { Trophy, RefreshCw, Home, Award, LogOut, Play, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -106,6 +106,14 @@ const GameResults = ({ room, roomId }) => {
     }
     navigate('/game/duelo-frostbyte/play');
   };
+
+  // Mutation para terminar juego
+  const terminateMutation = useMutation({
+    mutationFn: () => gamesService.terminateRoom(roomId),
+    onSuccess: () => {
+      navigate('/game/duelo-frostbyte/play');
+    },
+  });
 
   const getRankEmoji = (index) => {
     switch (index) {
@@ -235,25 +243,48 @@ const GameResults = ({ room, roomId }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="flex gap-4 justify-center"
+          className="space-y-4"
         >
+          <div className="flex gap-4 justify-center">
+            <Button
+              onClick={handleNewGame}
+              disabled={rematchMutation.isPending || !room.order_is_active}
+              size="lg"
+              className="bg-gradient-to-r from-primary to-secondary text-dark font-bold"
+            >
+              <Play className="w-5 h-5 mr-2" />
+              Nuevo juego
+            </Button>
+            <Button
+              onClick={handleExitRoom}
+              variant="outline"
+              size="lg"
+              className="border-red-400/50 text-red-400 hover:bg-red-400/20 hover:border-red-400"
+            >
+              <LogOut className="w-5 h-5 mr-2" />
+              Salir del juego
+            </Button>
+          </div>
+          
+          {/* Terminate Game Button */}
           <Button
-            onClick={handleNewGame}
-            disabled={rematchMutation.isPending || !room.order_is_active}
-            size="lg"
-            className="bg-gradient-to-r from-primary to-secondary text-dark font-bold"
-          >
-            <Play className="w-5 h-5 mr-2" />
-            Nuevo juego
-          </Button>
-          <Button
-            onClick={handleExitRoom}
+            onClick={() => terminateMutation.mutate()}
+            disabled={terminateMutation.isPending}
             variant="outline"
+            className="w-full border-red-500/50 text-red-400 hover:bg-red-500/20 hover:border-red-400"
             size="lg"
-            className="border-red-400/50 text-red-400 hover:bg-red-400/20 hover:border-red-400"
           >
-            <LogOut className="w-5 h-5 mr-2" />
-            Salir del juego
+            {terminateMutation.isPending ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Terminando...
+              </>
+            ) : (
+              <>
+                <X className="w-5 h-5 mr-2" />
+                Terminar juego
+              </>
+            )}
           </Button>
         </motion.div>
 

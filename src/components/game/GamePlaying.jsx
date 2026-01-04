@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gamesService } from '@/services';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const GamePlaying = ({ room, roomId }) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [currentRound, setCurrentRound] = useState(room.current_round || 1);
   const [gameState, setGameState] = useState('waiting'); // waiting, countdown, ready, finished
@@ -52,6 +55,14 @@ const GamePlaying = ({ room, roomId }) => {
       gamesService.disqualifyParticipant(roomId, currentRound, currentParticipant?.id),
     onSuccess: () => {
       queryClient.invalidateQueries(['gameRoom', roomId]);
+    },
+  });
+
+  // Mutation para terminar juego
+  const terminateMutation = useMutation({
+    mutationFn: () => gamesService.terminateRoom(roomId),
+    onSuccess: () => {
+      navigate('/game/duelo-frostbyte/play');
     },
   });
 
@@ -261,6 +272,29 @@ const GamePlaying = ({ room, roomId }) => {
             Toca la pantalla lo más rápido que puedas cuando veas la señal
           </motion.p>
         )}
+
+        {/* Terminate Game Button */}
+        <div className="mt-8">
+          <Button
+            onClick={() => terminateMutation.mutate()}
+            disabled={terminateMutation.isPending}
+            variant="outline"
+            className="w-full border-red-500/50 text-red-400 hover:bg-red-500/20 hover:border-red-400"
+            size="lg"
+          >
+            {terminateMutation.isPending ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Terminando...
+              </>
+            ) : (
+              <>
+                <X className="w-5 h-5 mr-2" />
+                Terminar juego
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

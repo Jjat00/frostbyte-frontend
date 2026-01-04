@@ -522,28 +522,26 @@ const GameRoomPage = () => {
             </div>
           )}
 
-          {/* Terminate Game Button - Available in waiting or configuring */}
-          {(room.status === "waiting" || room.status === "configuring") && (
-            <Button
-              onClick={() => terminateMutation.mutate()}
-              disabled={terminateMutation.isPending}
-              variant="outline"
-              className="w-full mb-3 border-red-500/50 text-red-400 hover:bg-red-500/20 hover:border-red-400"
-              size="lg"
-            >
-              {terminateMutation.isPending ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Terminando...
-                </>
-              ) : (
-                <>
-                  <X className="w-5 h-5 mr-2" />
-                  Terminar juego
-                </>
-              )}
-            </Button>
-          )}
+          {/* Terminate Game Button - Available in all states */}
+          <Button
+            onClick={() => terminateMutation.mutate()}
+            disabled={terminateMutation.isPending}
+            variant="outline"
+            className="w-full mb-3 border-red-500/50 text-red-400 hover:bg-red-500/20 hover:border-red-400"
+            size="lg"
+          >
+            {terminateMutation.isPending ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Terminando...
+              </>
+            ) : (
+              <>
+                <X className="w-5 h-5 mr-2" />
+                Terminar juego
+              </>
+            )}
+          </Button>
 
           {/* Start Game Button */}
           {room.status === "configuring" && room.participant_count >= 2 && (
