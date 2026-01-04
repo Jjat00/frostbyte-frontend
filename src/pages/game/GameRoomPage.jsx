@@ -83,17 +83,21 @@ const GameRoomPage = () => {
       }
 
       // Actualizar estado cuando llega actualización por WebSocket
+      // Verificar una vez más que el componente sigue montado (doble verificación)
+      if (!mountedRef.current) {
+        return;
+      }
+
       setRoom(updatedRoomData);
-      // También actualizar React Query cache
+      // También actualizar React Query cache (esto es seguro siempre)
       queryClient.setQueryData(["gameRoom", roomId], updatedRoomData);
       // Sincronizar selectedRounds solo si las rondas están confirmadas (status === 'configuring')
       if (
         updatedRoomData.total_rounds &&
-        updatedRoomData.status === "configuring"
+        updatedRoomData.status === "configuring" &&
+        mountedRef.current
       ) {
-        if (mountedRef.current) {
-          setSelectedRounds(updatedRoomData.total_rounds);
-        }
+        setSelectedRounds(updatedRoomData.total_rounds);
       }
     },
     !!roomId && !error && room?.status !== "playing", // Deshabilitar WebSocket cuando el juego está jugando
@@ -128,6 +132,11 @@ const GameRoomPage = () => {
   // Sincronizar selectedRounds cuando room cambia (desde WebSocket u otras fuentes)
   // Solo sincronizar si las rondas están confirmadas (status === 'configuring')
   useEffect(() => {
+    // Solo sincronizar si el componente está montado y no está en estado 'playing'
+    if (!mountedRef.current || room?.status === "playing") {
+      return;
+    }
+
     if (room?.total_rounds && room?.status === "configuring") {
       setSelectedRounds(room.total_rounds);
     } else if (room?.status === "waiting") {
@@ -164,6 +173,16 @@ const GameRoomPage = () => {
   const configureMutation = useMutation({
     mutationFn: (rounds) => gamesService.configureRoom(roomId, rounds),
     onSuccess: (data) => {
+      // Solo actualizar si el componente está montado
+      if (!mountedRef.current) {
+        return;
+      }
+
+      // Verificar que el status no sea 'playing' antes de actualizar
+      if (data.status === "playing") {
+        return;
+      }
+
       // Actualizar estado local inmediatamente para respuesta rápida
       setRoom(data);
       setSelectedRounds(data.total_rounds);
@@ -185,6 +204,13 @@ const GameRoomPage = () => {
   const terminateMutation = useMutation({
     mutationFn: () => gamesService.terminateRoom(roomId),
     onSuccess: (data) => {
+      // Solo actualizar si el componente está montado
+      if (!mountedRef.current) {
+        // Redirigir de todas formas
+        navigate("/game/duelo-frostbyte/play");
+        return;
+      }
+
       setRoom(data);
       queryClient.setQueryData(["gameRoom", roomId], data);
       // Redirigir a la página de escaneo QR después de terminar
@@ -194,11 +220,15 @@ const GameRoomPage = () => {
 
   // Copiar link de la sala
   const copyRoomLink = () => {
-    if (room?.room_link) {
+    if (room?.room_link && mountedRef.current) {
       const fullUrl = `${window.location.origin}/game/join/${room.room_link}`;
       navigator.clipboard.writeText(fullUrl);
       setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
+      setTimeout(() => {
+        if (mountedRef.current) {
+          setCopiedLink(false);
+        }
+      }, 2000);
     }
   };
 
@@ -224,12 +254,17 @@ const GameRoomPage = () => {
 
   // Obtener nombre del jugador actual
   useEffect(() => {
+    // Solo actualizar si el componente está montado
+    if (!mountedRef.current || room?.status === "playing") {
+      return;
+    }
+
     const deviceId = localStorage.getItem("frostbyte_device_id");
     if (room?.participants && deviceId) {
       const currentPlayer = room.participants.find(
         (p) => p.player_device_id === deviceId
       );
-      if (currentPlayer) {
+      if (currentPlayer && mountedRef.current) {
         setPlayerName(currentPlayer.player_name);
       }
     }

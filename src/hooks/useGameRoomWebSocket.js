@@ -84,13 +84,7 @@ export function useGameRoomWebSocket(
         }
       }
 
-      // Agregar device_id como query param para que el servidor pueda identificarlo
-      const deviceId = localStorage.getItem("frostbyte_device_id");
-      const wsUrlWithDevice = deviceId
-        ? `${wsUrl}?device_id=${encodeURIComponent(deviceId)}`
-        : wsUrl;
-
-      const ws = new WebSocket(wsUrlWithDevice);
+      const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
       ws.onopen = () => {
