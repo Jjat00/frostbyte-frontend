@@ -37,17 +37,36 @@ export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true, onTem
     }
 
     try {
-      // Obtener la URL base (ws://localhost:8000 o wss://...)
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const host = window.location.hostname;
-      // Para desarrollo, usar el mismo puerto del backend (8000)
-      // En producción, usar el mismo host y puerto del frontend
-      let port = window.location.port;
-      if (!port || port === '5173' || port === '3000') {
-        // Si estamos en desarrollo (Vite/React dev server), usar puerto del backend
-        port = import.meta.env.VITE_WS_PORT || '8000';
+      // Construir URL de WebSocket
+      let wsUrl;
+      
+      // Si hay una URL de WebSocket configurada explícitamente, usarla
+      const wsBaseUrl = import.meta.env.VITE_WS_URL;
+      if (wsBaseUrl) {
+        // Asegurar que termine con / pero no tenga // al final
+        const base = wsBaseUrl.replace(/\/+$/, '');
+        wsUrl = `${base}/ws/game/room/${roomId}/`;
+      } else {
+        // Construir desde API_BASE_URL si está disponible
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+        if (apiBaseUrl) {
+          // Convertir http:// a ws:// y https:// a wss://
+          const wsProtocol = apiBaseUrl.startsWith('https') ? 'wss:' : 'ws:';
+          const urlWithoutProtocol = apiBaseUrl.replace(/^https?:\/\//, '');
+          // Remover /api/v1 si existe
+          const urlWithoutApi = urlWithoutProtocol.replace(/\/api\/v1.*$/, '');
+          wsUrl = `${wsProtocol}//${urlWithoutApi}/ws/game/room/${roomId}/`;
+        } else {
+          // Fallback: desarrollo local
+          const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          const host = window.location.hostname;
+          let port = window.location.port;
+          if (!port || port === '5173' || port === '3000') {
+            port = import.meta.env.VITE_WS_PORT || '8000';
+          }
+          wsUrl = `${protocol}//${host}:${port}/ws/game/room/${roomId}/`;
+        }
       }
-      const wsUrl = `${protocol}//${host}:${port}/ws/game/room/${roomId}/`;
 
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
