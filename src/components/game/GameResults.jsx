@@ -84,8 +84,10 @@ const GameResults = ({ room, roomId }) => {
   const rematchMutation = useMutation({
     mutationFn: () => gamesService.rematch(roomId),
     onSuccess: (data) => {
+      // Actualizar cache de React Query
       queryClient.setQueryData(['gameRoom', roomId], data);
       queryClient.invalidateQueries(['gameRoom', roomId]);
+      // El WebSocket actualizará el estado y GameRoomPage mostrará el lobby automáticamente
     },
   });
 
@@ -225,7 +227,7 @@ const GameResults = ({ room, roomId }) => {
         >
           <Button
             onClick={handleRematch}
-            disabled={rematchMutation.isPending || !room.order?.is_active}
+            disabled={rematchMutation.isPending || !room.order_is_active}
             variant="outline"
             size="lg"
             className="border-gray/20"
@@ -244,7 +246,7 @@ const GameResults = ({ room, roomId }) => {
         </motion.div>
 
         {/* Message if order is not active */}
-        {!room.order?.is_active && (
+        {!room.order_is_active && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

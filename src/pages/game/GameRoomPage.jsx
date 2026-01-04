@@ -27,7 +27,8 @@ const GameRoomPage = () => {
   const queryClient = useQueryClient();
   
   const [copiedLink, setCopiedLink] = useState(false);
-  const [selectedRounds, setSelectedRounds] = useState(3);
+  const [selectedRounds, setSelectedRounds] = useState(null); // Inicializar en null en lugar de 3
+  const [tempSelectedRounds, setTempSelectedRounds] = useState(null); // Selección temporal de otros jugadores
   const [playerName, setPlayerName] = useState('');
 
   // Obtener datos iniciales de la sala
@@ -43,37 +44,71 @@ const GameRoomPage = () => {
   const error = initialError;
 
   // WebSocket para actualizaciones en tiempo real
-  const { isConnected: wsConnected } = useGameRoomWebSocket(
+  const { isConnected: wsConnected, sendMessage } = useGameRoomWebSocket(
     roomId,
     (updatedRoomData) => {
       // Actualizar estado cuando llega actualización por WebSocket
       setRoom(updatedRoomData);
       // También actualizar React Query cache
       queryClient.setQueryData(['gameRoom', roomId], updatedRoomData);
+      // Sincronizar selectedRounds solo si las rondas están confirmadas (status === 'configuring')
+      if (updatedRoomData.total_rounds && updatedRoomData.status === 'configuring') {
+        setSelectedRounds(updatedRoomData.total_rounds);
+      }
     },
-    !!roomId && !error // Habilitar WebSocket solo si hay roomId y no hay error
+    !!roomId && !error, // Habilitar WebSocket solo si hay roomId y no hay error
+    (rounds) => {
+      // Cuando otro jugador selecciona rondas temporalmente
+      setTempSelectedRounds(rounds);
+      // Limpiar después de un tiempo
+      setTimeout(() => setTempSelectedRounds(null), 5000);
+    }
   );
 
   // Sincronizar con datos iniciales cuando cargan
   useEffect(() => {
     if (initialRoom) {
       setRoom(initialRoom);
+      // Solo sincronizar selectedRounds si las rondas están confirmadas
+      if (initialRoom.total_rounds && initialRoom.status === 'configuring') {
+        setSelectedRounds(initialRoom.total_rounds);
+      } else {
+        setSelectedRounds(null);
+      }
     }
   }, [initialRoom]);
+
+  // Sincronizar selectedRounds cuando room cambia (desde WebSocket u otras fuentes)
+  // Solo sincronizar si las rondas están confirmadas (status === 'configuring')
+  useEffect(() => {
+    if (room?.total_rounds && room?.status === 'configuring') {
+      setSelectedRounds(room.total_rounds);
+    } else if (room?.status === 'waiting') {
+      // Si estamos en waiting, no sincronizar desde el servidor
+      // Mantener la selección local del usuario
+    }
+  }, [room?.total_rounds, room?.status]);
 
   // Mutation para configurar rondas
   const configureMutation = useMutation({
     mutationFn: (rounds) => gamesService.configureRoom(roomId, rounds),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['gameRoom', roomId]);
+    onSuccess: (data) => {
+      // Actualizar estado local inmediatamente para respuesta rápida
+      setRoom(data);
+      setSelectedRounds(data.total_rounds);
+      queryClient.setQueryData(['gameRoom', roomId], data);
+      // El WebSocket también actualizará, pero esto es para respuesta inmediata
     },
   });
 
   // Mutation para iniciar juego
   const startMutation = useMutation({
     mutationFn: () => gamesService.startGame(roomId),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['gameRoom', roomId]);
+    onSuccess: (data) => {
+      // Actualizar estado local inmediatamente para que ambos jugadores vean el cambio
+      setRoom(data);
+      queryClient.setQueryData(['gameRoom', roomId], data);
+      // El WebSocket también actualizará, pero esto es para respuesta inmediata
     },
   });
 
@@ -118,9 +153,20 @@ const GameRoomPage = () => {
     }
   }, [room]);
 
+  // Handler para seleccionar rondas (temporal, sin confirmar)
+  const handleSelectRounds = (rounds) => {
+    setSelectedRounds(rounds);
+    // Enviar selección temporal a otros jugadores vía WebSocket
+    if (sendMessage && wsConnected) {
+      sendMessage({ type: 'temp_round_selection', rounds });
+    }
+  };
+
   // Handler para configurar rondas
   const handleConfigureRounds = () => {
-    configureMutation.mutate(selectedRounds);
+    if (selectedRounds) {
+      configureMutation.mutate(selectedRounds);
+    }
   };
 
   // Handler para iniciar juego
@@ -273,30 +319,39 @@ const GameRoomPage = () => {
           </div>
 
           {/* Configure Rounds Section */}
-          {room.status === 'waiting' && (
+          {(room.status === 'waiting' || room.status === 'configuring') && (
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <Settings className="w-5 h-5 text-primary" />
                 <span className="text-light font-medium">Configurar rondas</span>
               </div>
               <div className="flex gap-2">
-                {[1, 3, 5].map((rounds) => (
-                  <button
-                    key={rounds}
-                    onClick={() => setSelectedRounds(rounds)}
-                    className={`flex-1 py-2 px-4 rounded-lg border transition-all ${
-                      selectedRounds === rounds
-                        ? 'bg-primary text-dark border-primary font-bold'
-                        : 'bg-dark text-gray border-gray/20 hover:border-primary/50'
-                    }`}
-                  >
-                    {rounds} {rounds === 1 ? 'ronda' : 'rondas'}
-                  </button>
-                ))}
+                {[1, 3, 5].map((rounds) => {
+                  // Prioridad: confirmado del servidor > selección local > selección temporal de otro
+                  const isConfirmed = room.total_rounds === rounds && room.status === 'configuring';
+                  const isSelected = !isConfirmed && selectedRounds === rounds;
+                  const isTempSelected = !isConfirmed && !isSelected && tempSelectedRounds === rounds;
+                  
+                  return (
+                    <button
+                      key={rounds}
+                      onClick={() => handleSelectRounds(rounds)}
+                      className={`flex-1 py-2 px-4 rounded-lg border transition-all ${
+                        isConfirmed || isSelected
+                          ? 'bg-primary text-dark border-primary font-bold'
+                          : isTempSelected
+                          ? 'bg-primary/50 text-light border-primary/50'
+                          : 'bg-dark text-gray border-gray/20 hover:border-primary/50'
+                      }`}
+                    >
+                      {rounds} {rounds === 1 ? 'ronda' : 'rondas'}
+                    </button>
+                  );
+                })}
               </div>
               <Button
                 onClick={handleConfigureRounds}
-                disabled={configureMutation.isPending || room.total_rounds === selectedRounds}
+                disabled={configureMutation.isPending || !selectedRounds}
                 className="w-full mt-4 bg-gradient-to-r from-primary to-secondary text-dark font-bold"
               >
                 {configureMutation.isPending ? (
@@ -305,7 +360,9 @@ const GameRoomPage = () => {
                     Configurando...
                   </>
                 ) : (
-                  'Confirmar rondas'
+                  room.status === 'configuring' && room.total_rounds === selectedRounds
+                    ? 'Rondas confirmadas'
+                    : 'Confirmar rondas'
                 )}
               </Button>
             </div>

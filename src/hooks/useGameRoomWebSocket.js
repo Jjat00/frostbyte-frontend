@@ -5,8 +5,9 @@ import { useEffect, useRef, useState, useCallback } from 'react';
  * @param {number|string} roomId - ID de la sala
  * @param {Function} onRoomUpdate - Callback cuando se recibe actualización de la sala
  * @param {boolean} enabled - Si la conexión está habilitada
+ * @param {Function} onTempRoundSelection - Callback cuando otro jugador selecciona rondas temporalmente
  */
-export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true) {
+export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true, onTempRoundSelection = null) {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
   const wsRef = useRef(null);
@@ -14,8 +15,26 @@ export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true) {
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
 
+  const onRoomUpdateRef = useRef(onRoomUpdate);
+  const onTempRoundSelectionRef = useRef(onTempRoundSelection);
+  
+  // Mantener la referencia actualizada sin recrear el callback
+  useEffect(() => {
+    onRoomUpdateRef.current = onRoomUpdate;
+  }, [onRoomUpdate]);
+
+  useEffect(() => {
+    onTempRoundSelectionRef.current = onTempRoundSelection;
+  }, [onTempRoundSelection]);
+
   const connect = useCallback(() => {
     if (!enabled || !roomId) return;
+
+    // Limpiar conexión anterior si existe
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
 
     try {
       // Obtener la URL base (ws://localhost:8000 o wss://...)
@@ -53,10 +72,16 @@ export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true) {
           }
           
           if (data.type === 'room_update' && data.data) {
-            onRoomUpdate(data.data);
+            console.log('WebSocket: Room update recibido', data.data.status);
+            onRoomUpdateRef.current(data.data);
+          } else if (data.type === 'temp_round_selection' && data.rounds && onTempRoundSelectionRef.current) {
+            // Selección temporal de otro jugador
+            onTempRoundSelectionRef.current(data.rounds);
+          } else if (data.type !== 'pong') {
+            console.warn('WebSocket: Mensaje con formato inesperado', data);
           }
         } catch (err) {
-          console.error('Error parsing WebSocket message:', err);
+          console.error('Error parsing WebSocket message:', err, event.data);
         }
       };
 
@@ -69,8 +94,8 @@ export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true) {
       ws.onclose = () => {
         setIsConnected(false);
         
-        // Intentar reconectar si no fue un cierre intencional
-        if (enabled && reconnectAttemptsRef.current < maxReconnectAttempts) {
+        // Solo intentar reconectar si no fue un cierre intencional y el hook sigue habilitado
+        if (enabled && reconnectAttemptsRef.current < maxReconnectAttempts && wsRef.current === ws) {
           reconnectAttemptsRef.current += 1;
           const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 10000);
           
@@ -85,7 +110,7 @@ export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true) {
       setError('Error al crear conexión WebSocket');
       setIsConnected(false);
     }
-  }, [roomId, enabled, onRoomUpdate]);
+  }, [roomId, enabled]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -115,7 +140,8 @@ export function useGameRoomWebSocket(roomId, onRoomUpdate, enabled = true) {
     return () => {
       disconnect();
     };
-  }, [enabled, roomId, connect, disconnect]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, roomId]);
 
   // Heartbeat para mantener la conexión viva
   useEffect(() => {
