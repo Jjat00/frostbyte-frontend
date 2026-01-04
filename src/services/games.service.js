@@ -136,6 +136,15 @@ export const gamesService = {
     return response.data;
   },
 
+  /**
+   * Terminar la sala y el juego para todos los jugadores
+   * @param {number|string} roomId - ID de la sala
+   */
+  async terminateRoom(roomId) {
+    const response = await apiClient.post(`${BASE_URL}/${roomId}/terminate/`);
+    return response.data;
+  },
+
   // ============= MESAS =============
 
   /**

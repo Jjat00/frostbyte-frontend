@@ -104,7 +104,7 @@ const GameResults = ({ room, roomId }) => {
         console.error('Error al salir de la sala:', error);
       }
     }
-    navigate('/game');
+    navigate('/game/duelo-frostbyte/play');
   };
 
   const getRankEmoji = (index) => {
