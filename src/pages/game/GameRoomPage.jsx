@@ -1,41 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, 
-  Copy, 
-  Check, 
-  Play, 
-  Loader2, 
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Users,
+  Copy,
+  Check,
+  Play,
+  Loader2,
   AlertCircle,
   Share2,
   Settings,
   RefreshCw,
   Wifi,
   LogOut,
-  X
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { gamesService } from '@/services';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useGameRoomWebSocket } from '@/hooks/useGameRoomWebSocket';
-import GamePlaying from '@/components/game/GamePlaying';
-import GameResults from '@/components/game/GameResults';
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { gamesService } from "@/services";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGameRoomWebSocket } from "@/hooks/useGameRoomWebSocket";
+import GamePlaying from "@/components/game/GamePlaying";
+import GameResults from "@/components/game/GameResults";
 
 const GameRoomPage = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  
+
   const [copiedLink, setCopiedLink] = useState(false);
   const [selectedRounds, setSelectedRounds] = useState(null); // Inicializar en null en lugar de 3
   const [tempSelectedRounds, setTempSelectedRounds] = useState(null); // Selección temporal de otros jugadores
-  const [playerName, setPlayerName] = useState('');
+  const [playerName, setPlayerName] = useState("");
+  const mountedRef = useRef(true);
 
   // Obtener datos iniciales de la sala
-  const { data: initialRoom, isLoading: isLoadingInitial, error: initialError } = useQuery({
-    queryKey: ['gameRoom', roomId],
+  const {
+    data: initialRoom,
+    isLoading: isLoadingInitial,
+    error: initialError,
+  } = useQuery({
+    queryKey: ["gameRoom", roomId],
     queryFn: () => gamesService.getRoomStatus(roomId),
     enabled: !!roomId,
   });
@@ -45,25 +50,46 @@ const GameRoomPage = () => {
   const isLoading = isLoadingInitial && !room;
   const error = initialError;
 
+  // Efecto para limpiar cuando el componente se desmonta
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   // WebSocket para actualizaciones en tiempo real
   const { isConnected: wsConnected, sendMessage } = useGameRoomWebSocket(
     roomId,
     (updatedRoomData) => {
+      // Solo actualizar estado si el componente está montado y no estamos cambiando a 'playing'
+      if (!mountedRef.current || updatedRoomData.status === "playing") {
+        return;
+      }
       // Actualizar estado cuando llega actualización por WebSocket
       setRoom(updatedRoomData);
       // También actualizar React Query cache
-      queryClient.setQueryData(['gameRoom', roomId], updatedRoomData);
+      queryClient.setQueryData(["gameRoom", roomId], updatedRoomData);
       // Sincronizar selectedRounds solo si las rondas están confirmadas (status === 'configuring')
-      if (updatedRoomData.total_rounds && updatedRoomData.status === 'configuring') {
+      if (
+        updatedRoomData.total_rounds &&
+        updatedRoomData.status === "configuring"
+      ) {
         setSelectedRounds(updatedRoomData.total_rounds);
       }
     },
-    !!roomId && !error, // Habilitar WebSocket solo si hay roomId y no hay error
+    !!roomId && !error && room?.status !== "playing", // Deshabilitar WebSocket cuando el juego está jugando
     (rounds) => {
+      // Solo actualizar si el componente está montado
+      if (!mountedRef.current) return;
       // Cuando otro jugador selecciona rondas temporalmente
       setTempSelectedRounds(rounds);
       // Limpiar después de un tiempo
-      setTimeout(() => setTempSelectedRounds(null), 5000);
+      setTimeout(() => {
+        if (mountedRef.current) {
+          setTempSelectedRounds(null);
+        }
+      }, 5000);
     }
   );
 
@@ -72,7 +98,7 @@ const GameRoomPage = () => {
     if (initialRoom) {
       setRoom(initialRoom);
       // Solo sincronizar selectedRounds si las rondas están confirmadas
-      if (initialRoom.total_rounds && initialRoom.status === 'configuring') {
+      if (initialRoom.total_rounds && initialRoom.status === "configuring") {
         setSelectedRounds(initialRoom.total_rounds);
       } else {
         setSelectedRounds(null);
@@ -83,9 +109,9 @@ const GameRoomPage = () => {
   // Sincronizar selectedRounds cuando room cambia (desde WebSocket u otras fuentes)
   // Solo sincronizar si las rondas están confirmadas (status === 'configuring')
   useEffect(() => {
-    if (room?.total_rounds && room?.status === 'configuring') {
+    if (room?.total_rounds && room?.status === "configuring") {
       setSelectedRounds(room.total_rounds);
-    } else if (room?.status === 'waiting') {
+    } else if (room?.status === "waiting") {
       // Si estamos en waiting, no sincronizar desde el servidor
       // Mantener la selección local del usuario
     }
@@ -93,9 +119,9 @@ const GameRoomPage = () => {
 
   // Redirigir si el juego fue terminado (todos los participantes fueron eliminados)
   useEffect(() => {
-    if (room?.status === 'finished' && room?.participant_count === 0) {
+    if (room?.status === "finished" && room?.participant_count === 0) {
       // El juego fue terminado por "Terminar juego", redirigir a todos los jugadores
-      navigate('/game/duelo-frostbyte/play');
+      navigate("/game/duelo-frostbyte/play");
     }
   }, [room?.status, room?.participant_count, navigate]);
 
@@ -106,7 +132,7 @@ const GameRoomPage = () => {
       // Actualizar estado local inmediatamente para respuesta rápida
       setRoom(data);
       setSelectedRounds(data.total_rounds);
-      queryClient.setQueryData(['gameRoom', roomId], data);
+      queryClient.setQueryData(["gameRoom", roomId], data);
       // El WebSocket también actualizará, pero esto es para respuesta inmediata
     },
   });
@@ -115,10 +141,11 @@ const GameRoomPage = () => {
   const startMutation = useMutation({
     mutationFn: () => gamesService.startGame(roomId),
     onSuccess: (data) => {
-      // Actualizar estado local inmediatamente para que ambos jugadores vean el cambio
+      // Actualizar React Query cache primero (esto es seguro siempre)
+      queryClient.setQueryData(["gameRoom", roomId], data);
+      // Actualizar estado local - esto causará que el componente se desmonte y renderice GamePlaying
+      // React manejará el desmontaje correctamente
       setRoom(data);
-      queryClient.setQueryData(['gameRoom', roomId], data);
-      // El WebSocket también actualizará, pero esto es para respuesta inmediata
     },
   });
 
@@ -126,9 +153,9 @@ const GameRoomPage = () => {
     mutationFn: () => gamesService.terminateRoom(roomId),
     onSuccess: (data) => {
       setRoom(data);
-      queryClient.setQueryData(['gameRoom', roomId], data);
+      queryClient.setQueryData(["gameRoom", roomId], data);
       // Redirigir a la página de escaneo QR después de terminar
-      navigate('/game/duelo-frostbyte/play');
+      navigate("/game/duelo-frostbyte/play");
     },
   });
 
@@ -149,8 +176,8 @@ const GameRoomPage = () => {
       if (navigator.share) {
         try {
           await navigator.share({
-            title: '¡Únete a mi Duelo Frostbyte!',
-            text: 'Vamos a jugar Duelo Frostbyte. Únete a mi sala!',
+            title: "¡Únete a mi Duelo Frostbyte!",
+            text: "Vamos a jugar Duelo Frostbyte. Únete a mi sala!",
             url: fullUrl,
           });
         } catch (err) {
@@ -164,9 +191,11 @@ const GameRoomPage = () => {
 
   // Obtener nombre del jugador actual
   useEffect(() => {
-    const deviceId = localStorage.getItem('frostbyte_device_id');
+    const deviceId = localStorage.getItem("frostbyte_device_id");
     if (room?.participants && deviceId) {
-      const currentPlayer = room.participants.find(p => p.player_device_id === deviceId);
+      const currentPlayer = room.participants.find(
+        (p) => p.player_device_id === deviceId
+      );
       if (currentPlayer) {
         setPlayerName(currentPlayer.player_name);
       }
@@ -178,7 +207,7 @@ const GameRoomPage = () => {
     setSelectedRounds(rounds);
     // Enviar selección temporal a otros jugadores vía WebSocket
     if (sendMessage && wsConnected) {
-      sendMessage({ type: 'temp_round_selection', rounds });
+      sendMessage({ type: "temp_round_selection", rounds });
     }
   };
 
@@ -212,27 +241,29 @@ const GameRoomPage = () => {
           <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-light mb-2">Error</h2>
           <p className="text-gray mb-4">
-            {error?.message || 'No se pudo cargar la sala'}
+            {error?.message || "No se pudo cargar la sala"}
           </p>
-          <Button onClick={() => navigate('/#frostbyte-play')}>Volver al menú</Button>
+          <Button onClick={() => navigate("/#frostbyte-play")}>
+            Volver al menú
+          </Button>
         </div>
       </div>
     );
   }
 
   // Si el juego está jugando, mostrar componente de juego
-  if (room.status === 'playing') {
+  if (room.status === "playing") {
     return <GamePlaying room={room} roomId={roomId} />;
   }
 
   // Si el juego está finalizado, mostrar resultados (solo si no fue terminado con "Terminar juego")
   // Si participant_count === 0, significa que fue terminado con "Terminar juego" y el useEffect redirigirá
-  if (room.status === 'finished' && room.participant_count > 0) {
+  if (room.status === "finished" && room.participant_count > 0) {
     return <GameResults room={room} roomId={roomId} />;
   }
-  
+
   // Si el juego fue terminado (sin participantes), el useEffect redirigirá
-  if (room.status === 'finished' && room.participant_count === 0) {
+  if (room.status === "finished" && room.participant_count === 0) {
     return null; // El useEffect redirigirá
   }
 
@@ -257,7 +288,10 @@ const GameRoomPage = () => {
               Duelo Frostbyte
             </h1>
             {wsConnected && (
-              <Wifi className="w-5 h-5 text-green-400" title="Conectado en tiempo real" />
+              <Wifi
+                className="w-5 h-5 text-green-400"
+                title="Conectado en tiempo real"
+              />
             )}
           </div>
           <p className="text-gray">Sala: {room.room_code}</p>
@@ -324,9 +358,10 @@ const GameRoomPage = () => {
             <div className="space-y-2">
               <AnimatePresence>
                 {room.participants?.map((participant, index) => {
-                  const deviceId = localStorage.getItem('frostbyte_device_id');
-                  const isCurrentPlayer = participant.player_device_id === deviceId;
-                  
+                  const deviceId = localStorage.getItem("frostbyte_device_id");
+                  const isCurrentPlayer =
+                    participant.player_device_id === deviceId;
+
                   return (
                     <motion.div
                       key={participant.id}
@@ -338,7 +373,9 @@ const GameRoomPage = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-light">{participant.player_name}</span>
+                          <span className="text-light">
+                            {participant.player_name}
+                          </span>
                           {isCurrentPlayer && (
                             <span className="text-xs text-primary">(Tú)</span>
                           )}
@@ -348,12 +385,18 @@ const GameRoomPage = () => {
                             onClick={async () => {
                               if (deviceId && roomId) {
                                 try {
-                                  await gamesService.leaveRoom(roomId, deviceId);
+                                  await gamesService.leaveRoom(
+                                    roomId,
+                                    deviceId
+                                  );
                                 } catch (error) {
-                                  console.error('Error al salir de la sala:', error);
+                                  console.error(
+                                    "Error al salir de la sala:",
+                                    error
+                                  );
                                 }
                               }
-                              navigate('/game/duelo-frostbyte/play');
+                              navigate("/game/duelo-frostbyte/play");
                             }}
                             variant="ghost"
                             size="sm"
@@ -372,32 +415,39 @@ const GameRoomPage = () => {
           </div>
 
           {/* Configure Rounds Section */}
-          {(room.status === 'waiting' || room.status === 'configuring') && (
+          {(room.status === "waiting" || room.status === "configuring") && (
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <Settings className="w-5 h-5 text-primary" />
-                <span className="text-light font-medium">Configurar rondas</span>
+                <span className="text-light font-medium">
+                  Configurar rondas
+                </span>
               </div>
               <div className="flex gap-2">
                 {[1, 3, 5].map((rounds) => {
                   // Prioridad: confirmado del servidor > selección local > selección temporal de otro
-                  const isConfirmed = room.total_rounds === rounds && room.status === 'configuring';
+                  const isConfirmed =
+                    room.total_rounds === rounds &&
+                    room.status === "configuring";
                   const isSelected = !isConfirmed && selectedRounds === rounds;
-                  const isTempSelected = !isConfirmed && !isSelected && tempSelectedRounds === rounds;
-                  
+                  const isTempSelected =
+                    !isConfirmed &&
+                    !isSelected &&
+                    tempSelectedRounds === rounds;
+
                   return (
                     <button
                       key={rounds}
                       onClick={() => handleSelectRounds(rounds)}
                       className={`flex-1 py-2 px-4 rounded-lg border transition-all ${
                         isConfirmed || isSelected
-                          ? 'bg-primary text-dark border-primary font-bold'
+                          ? "bg-primary text-dark border-primary font-bold"
                           : isTempSelected
-                          ? 'bg-primary/50 text-light border-primary/50'
-                          : 'bg-dark text-gray border-gray/20 hover:border-primary/50'
+                          ? "bg-primary/50 text-light border-primary/50"
+                          : "bg-dark text-gray border-gray/20 hover:border-primary/50"
                       }`}
                     >
-                      {rounds} {rounds === 1 ? 'ronda' : 'rondas'}
+                      {rounds} {rounds === 1 ? "ronda" : "rondas"}
                     </button>
                   );
                 })}
@@ -412,17 +462,18 @@ const GameRoomPage = () => {
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Configurando...
                   </>
+                ) : room.status === "configuring" &&
+                  room.total_rounds === selectedRounds ? (
+                  "Rondas confirmadas"
                 ) : (
-                  room.status === 'configuring' && room.total_rounds === selectedRounds
-                    ? 'Rondas confirmadas'
-                    : 'Confirmar rondas'
+                  "Confirmar rondas"
                 )}
               </Button>
             </div>
           )}
 
           {/* Terminate Game Button - Available in waiting or configuring */}
-          {(room.status === 'waiting' || room.status === 'configuring') && (
+          {(room.status === "waiting" || room.status === "configuring") && (
             <Button
               onClick={() => terminateMutation.mutate()}
               disabled={terminateMutation.isPending}
@@ -445,7 +496,7 @@ const GameRoomPage = () => {
           )}
 
           {/* Start Game Button */}
-          {room.status === 'configuring' && room.participant_count >= 2 && (
+          {room.status === "configuring" && room.participant_count >= 2 && (
             <Button
               onClick={handleStartGame}
               disabled={startMutation.isPending}
@@ -467,11 +518,13 @@ const GameRoomPage = () => {
           )}
 
           {/* Waiting Message */}
-          {room.status === 'waiting' && room.participant_count >= 2 && room.total_rounds > 0 && (
-            <div className="text-center text-gray/70 text-sm">
-              Esperando configuración de rondas...
-            </div>
-          )}
+          {room.status === "waiting" &&
+            room.participant_count >= 2 &&
+            room.total_rounds > 0 && (
+              <div className="text-center text-gray/70 text-sm">
+                Esperando configuración de rondas...
+              </div>
+            )}
         </motion.div>
       </div>
     </div>
@@ -479,4 +532,3 @@ const GameRoomPage = () => {
 };
 
 export default GameRoomPage;
-
