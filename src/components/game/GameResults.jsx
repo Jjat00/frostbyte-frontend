@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Trophy, RefreshCw, Home, Award } from 'lucide-react';
+import { Trophy, RefreshCw, Home, Award, LogOut, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -80,7 +80,7 @@ const GameResults = ({ room, roomId }) => {
     }
   }, [room]);
 
-  // Mutation para revancha
+  // Mutation para nuevo juego (rematch)
   const rematchMutation = useMutation({
     mutationFn: () => gamesService.rematch(roomId),
     onSuccess: (data) => {
@@ -91,8 +91,20 @@ const GameResults = ({ room, roomId }) => {
     },
   });
 
-  const handleRematch = () => {
+  const handleNewGame = () => {
     rematchMutation.mutate();
+  };
+
+  const handleExitRoom = async () => {
+    const deviceId = localStorage.getItem('frostbyte_device_id');
+    if (deviceId) {
+      try {
+        await gamesService.leaveRoom(roomId, deviceId);
+      } catch (error) {
+        console.error('Error al salir de la sala:', error);
+      }
+    }
+    navigate('/game');
   };
 
   const getRankEmoji = (index) => {
@@ -226,22 +238,22 @@ const GameResults = ({ room, roomId }) => {
           className="flex gap-4 justify-center"
         >
           <Button
-            onClick={handleRematch}
+            onClick={handleNewGame}
             disabled={rematchMutation.isPending || !room.order_is_active}
-            variant="outline"
-            size="lg"
-            className="border-gray/20"
-          >
-            <RefreshCw className="w-5 h-5 mr-2" />
-            Revancha Chill
-          </Button>
-          <Button
-            onClick={() => navigate('/game')}
             size="lg"
             className="bg-gradient-to-r from-primary to-secondary text-dark font-bold"
           >
-            <Home className="w-5 h-5 mr-2" />
-            Volver
+            <Play className="w-5 h-5 mr-2" />
+            Nuevo juego
+          </Button>
+          <Button
+            onClick={handleExitRoom}
+            variant="outline"
+            size="lg"
+            className="border-red-400/50 text-red-400 hover:bg-red-400/20 hover:border-red-400"
+          >
+            <LogOut className="w-5 h-5 mr-2" />
+            Salir del juego
           </Button>
         </motion.div>
 
@@ -252,7 +264,7 @@ const GameResults = ({ room, roomId }) => {
             animate={{ opacity: 1 }}
             className="text-center text-gray/70 mt-4 text-sm"
           >
-            El pedido ya no está activo. No se puede hacer revancha.
+            El pedido ya no está activo. No se puede iniciar un nuevo juego.
           </motion.p>
         )}
       </div>

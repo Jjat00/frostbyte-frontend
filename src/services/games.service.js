@@ -116,6 +116,18 @@ export const gamesService = {
   },
 
   /**
+   * Salir de la sala
+   * @param {number|string} roomId - ID de la sala
+   * @param {string} playerDeviceId - ID único del dispositivo
+   */
+  async leaveRoom(roomId, playerDeviceId) {
+    const response = await apiClient.post(`${BASE_URL}/${roomId}/leave/`, {
+      player_device_id: playerDeviceId,
+    });
+    return response.data;
+  },
+
+  /**
    * Revancha - Crear nueva partida
    * @param {number|string} roomId - ID de la sala
    */

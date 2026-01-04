@@ -11,7 +11,8 @@ import {
   Share2,
   Settings,
   RefreshCw,
-  Wifi
+  Wifi,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
@@ -297,23 +298,50 @@ const GameRoomPage = () => {
             </div>
             <div className="space-y-2">
               <AnimatePresence>
-                {room.participants?.map((participant, index) => (
-                  <motion.div
-                    key={participant.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="p-3 bg-dark rounded-lg border border-gray/10"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-light">{participant.player_name}</span>
-                      {participant.player_name === playerName && (
-                        <span className="text-xs text-primary">(Tú)</span>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
+                {room.participants?.map((participant, index) => {
+                  const deviceId = localStorage.getItem('frostbyte_device_id');
+                  const isCurrentPlayer = participant.player_device_id === deviceId;
+                  
+                  return (
+                    <motion.div
+                      key={participant.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="p-3 bg-dark rounded-lg border border-gray/10"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-light">{participant.player_name}</span>
+                          {isCurrentPlayer && (
+                            <span className="text-xs text-primary">(Tú)</span>
+                          )}
+                        </div>
+                        {isCurrentPlayer && (
+                          <Button
+                            onClick={async () => {
+                              if (deviceId && roomId) {
+                                try {
+                                  await gamesService.leaveRoom(roomId, deviceId);
+                                } catch (error) {
+                                  console.error('Error al salir de la sala:', error);
+                                }
+                              }
+                              navigate('/game');
+                            }}
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-400 hover:text-red-300 hover:bg-red-400/20"
+                            title="Salir del juego"
+                          >
+                            <LogOut className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </AnimatePresence>
             </div>
           </div>
