@@ -179,11 +179,10 @@ const GameRoomPage = () => {
   const startMutation = useMutation({
     mutationFn: () => gamesService.startGame(roomId),
     onSuccess: (data) => {
-      // Actualizar React Query cache primero (esto es seguro siempre)
+      // Actualizar React Query cache
       queryClient.setQueryData(["gameRoom", roomId], data);
-      // Actualizar estado local - esto causará que el componente se desmonte y renderice GamePlaying
-      // React manejará el desmontaje correctamente
-      setRoom(data);
+      // NO actualizar estado local aquí - dejar que React Query y el useEffect lo sincronicen
+      // Esto evita condiciones de carrera durante el desmontaje
     },
   });
 
