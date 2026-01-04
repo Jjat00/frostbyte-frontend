@@ -27,7 +27,7 @@ const QRScanPage = () => {
     e.preventDefault();
     
     if (!qrCode.trim()) {
-      setError('Por favor ingresa el código QR de la mesa');
+      setError('Por favor selecciona tu mesa');
       return;
     }
 
@@ -100,7 +100,7 @@ const QRScanPage = () => {
           <h1 className="text-3xl font-bold text-light tracking-wider mb-2">
             Duelo Frostbyte
           </h1>
-          <p className="text-gray">Escanea el QR de tu mesa para jugar</p>
+          <p className="text-gray">Selecciona tu mesa para jugar</p>
         </div>
 
         {/* Form Card */}
@@ -122,7 +122,7 @@ const QRScanPage = () => {
             <div className="space-y-2">
               <label htmlFor="qr_code" className="text-sm text-gray font-medium flex items-center gap-2">
                 <QrCode className="w-4 h-4" />
-                Código QR de la mesa
+                Selecciona tu mesa
               </label>
               <input
                 id="qr_code"
@@ -134,7 +134,7 @@ const QRScanPage = () => {
                 disabled={isLoading}
               />
               <p className="text-xs text-gray/70">
-                Escanea el código QR que está en tu mesa o ingrésalo manualmente
+                Selecciona tu mesa del menú o ingresa el código manualmente
               </p>
             </div>
 

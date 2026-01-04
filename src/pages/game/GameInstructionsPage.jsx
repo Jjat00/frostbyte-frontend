@@ -16,7 +16,7 @@ const GameInstructionsPage = () => {
         {
           icon: <Users className="w-6 h-6" />,
           title: 'Reúne a tus amigos',
-          description: 'Escanea el QR de tu mesa y comparte el link con tus amigos para jugar juntos.',
+          description: 'Selecciona tu mesa y comparte el link con tus amigos para jugar juntos.',
         },
         {
           icon: <Clock className="w-6 h-6" />,

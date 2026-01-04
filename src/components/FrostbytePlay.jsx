@@ -81,8 +81,8 @@ const FrostbytePlay = () => {
                 </h3>
                 <p className="text-gray/70 mb-4">
                   Juego de reflejos ultra rápido. Compite con tus amigos para
-                  ver quién reacciona más rápido. Escanea el QR de tu mesa y
-                  comparte el link con tus amigos.
+                  ver quién reacciona más rápido. Selecciona tu mesa y comparte
+                  el link con tus amigos.
                 </p>
                 <ul className="text-gray/60 space-y-2 mb-6">
                   <li className="flex items-center gap-2">
