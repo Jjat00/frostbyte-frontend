@@ -45,7 +45,8 @@ const GameRoomPage = () => {
   });
 
   // Estado local para la sala (actualizado por WebSocket)
-  const [room, setRoomState] = useState(initialRoom);
+  // Inicializar con null en lugar de undefined para evitar problemas con React
+  const [room, setRoomState] = useState(initialRoom || null);
   const isLoading = isLoadingInitial && !room;
   const error = initialError;
 
@@ -134,6 +135,14 @@ const GameRoomPage = () => {
     }
   }, [room?.total_rounds, room?.status]);
 
+  // Redirigir si el juego fue terminado (todos los participantes fueron eliminados)
+  useEffect(() => {
+    if (room?.status === "finished" && room?.participant_count === 0) {
+      // El juego fue terminado por "Terminar juego", redirigir a todos los jugadores
+      navigate("/game/duelo-frostbyte/play");
+    }
+  }, [room?.status, room?.participant_count, navigate]);
+
   // Marcar componente como desmontándose cuando el status cambia a 'playing'
   // Esto previene actualizaciones de estado después del desmontaje
   useEffect(() => {
@@ -149,19 +158,6 @@ const GameRoomPage = () => {
       }
     }
   }, [room?.status]);
-
-  // Early return si el status es 'playing'
-  if (room?.status === "playing") {
-    return <GamePlaying room={room} roomId={roomId} />;
-  }
-
-  // Redirigir si el juego fue terminado (todos los participantes fueron eliminados)
-  useEffect(() => {
-    if (room?.status === "finished" && room?.participant_count === 0) {
-      // El juego fue terminado por "Terminar juego", redirigir a todos los jugadores
-      navigate("/game/duelo-frostbyte/play");
-    }
-  }, [room?.status, room?.participant_count, navigate]);
 
   // Mutation para configurar rondas
   const configureMutation = useMutation({
@@ -286,6 +282,11 @@ const GameRoomPage = () => {
         </div>
       </div>
     );
+  }
+
+  // Early return si el status es 'playing' - después de verificar que room existe
+  if (room.status === "playing") {
+    return <GamePlaying room={room} roomId={roomId} />;
   }
 
   // Si el juego está finalizado, mostrar resultados (solo si no fue terminado con "Terminar juego")
