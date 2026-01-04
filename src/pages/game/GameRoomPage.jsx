@@ -540,6 +540,29 @@ const GameRoomPage = () => {
                 Esperando configuración de rondas...
               </div>
             )}
+
+          {/* Botón para salir cuando solo hay un jugador */}
+          {room.participant_count < 2 && (
+            <Button
+              onClick={async () => {
+                const deviceId = localStorage.getItem("frostbyte_device_id");
+                if (deviceId && roomId) {
+                  try {
+                    await gamesService.leaveRoom(roomId, deviceId);
+                  } catch (error) {
+                    console.error("Error al salir de la sala:", error);
+                  }
+                }
+                navigate("/game/duelo-frostbyte/play");
+              }}
+              variant="outline"
+              className="w-full mt-4 border-red-500/50 text-red-400 hover:bg-red-500/20 hover:border-red-400"
+              size="lg"
+            >
+              <LogOut className="w-5 h-5 mr-2" />
+              Salir de la sala
+            </Button>
+          )}
         </div>
       </div>
     </div>
