@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Loader2, AlertCircle, Users } from 'lucide-react';
+import { Loader2, AlertCircle, Users, ArrowLeft, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
 
@@ -65,6 +65,22 @@ const JoinRoomPage = () => {
         transition={{ duration: 0.5 }}
         className="relative z-10 w-full max-w-md"
       >
+        {/* Back Button */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-6"
+        >
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/#frostbyte-play')}
+            className="text-gray hover:text-light"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al menú
+          </Button>
+        </motion.div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <motion.div

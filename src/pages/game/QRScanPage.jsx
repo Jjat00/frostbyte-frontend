@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { QrCode, Loader2, AlertCircle, Camera } from 'lucide-react';
+import { QrCode, Loader2, AlertCircle, Camera, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
 
@@ -71,6 +71,22 @@ const QRScanPage = () => {
         transition={{ duration: 0.5 }}
         className="relative z-10 w-full max-w-md"
       >
+        {/* Back Button */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-6"
+        >
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/game/duelo-frostbyte/instrucciones')}
+            className="text-gray hover:text-light"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver a instrucciones
+          </Button>
+        </motion.div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <motion.div

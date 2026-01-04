@@ -24,6 +24,8 @@ import CategoriesPage from "./pages/products/CategoriesPage";
 import MusicLayout from "./pages/music/MusicLayout";
 import SongRequestsPage from "./pages/music/SongRequestsPage";
 // Módulo de Juegos
+import GamesListPage from "./pages/game/GamesListPage";
+import GameInstructionsPage from "./pages/game/GameInstructionsPage";
 import QRScanPage from "./pages/game/QRScanPage";
 import JoinRoomPage from "./pages/game/JoinRoomPage";
 import GameRoomPage from "./pages/game/GameRoomPage";
@@ -178,6 +180,14 @@ export const router = createBrowserRouter([
   // Juego Duelo Frostbyte (público)
   {
     path: "/game",
+    element: <GamesListPage />,
+  },
+  {
+    path: "/game/:gameId/instrucciones",
+    element: <GameInstructionsPage />,
+  },
+  {
+    path: "/game/duelo-frostbyte/play",
     element: <QRScanPage />,
   },
   {

@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   Snowflake,
   Coffee,
@@ -10,9 +11,12 @@ import {
   Zap,
   Heart,
   Music,
+  Play,
 } from "lucide-react";
 
 const QuickNav = () => {
+  const navigate = useNavigate();
+  
   const sections = [
     {
       name: "Desguayabator",
@@ -20,6 +24,14 @@ const QuickNav = () => {
       icon: Heart,
       gradient: "from-emerald-400 to-cyan-500",
       description: "¡Cura guayabos!",
+      featured: true,
+    },
+    {
+      name: "Frostbyte Play",
+      href: "#frostbyte-play",
+      icon: Play,
+      gradient: "from-primary to-secondary",
+      description: "Juegos divertidos",
       featured: true,
     },
     {
@@ -95,10 +107,14 @@ const QuickNav = () => {
     },
   ];
 
-  const handleClick = (href) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const handleClick = (href, isRoute = false) => {
+    if (isRoute) {
+      navigate(href);
+    } else {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
@@ -136,22 +152,26 @@ const QuickNav = () => {
               transition={{ duration: 0.4, delay: index * 0.05 }}
               whileHover={{ y: -5, scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleClick(section.href)}
+              onClick={() => handleClick(section.href, section.isRoute)}
               className={`group relative flex flex-col items-center gap-2 p-4 bg-dark-secondary/50 border rounded-2xl transition-all duration-300 ${
                 section.featured
-                  ? "border-emerald-500/50 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20"
+                  ? section.name === "Frostbyte Play"
+                    ? "border-primary/50 hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+                    : "border-emerald-500/50 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20"
                   : "border-gray/20 hover:border-primary/50"
               } hover:bg-dark-secondary`}
             >
               <div
-                className={`w-12 h-12 bg-linear-to-br ${section.gradient} rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}
+                className={`w-12 h-12 bg-gradient-to-br ${section.gradient} rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}
               >
                 <section.icon className="text-dark" size={24} />
               </div>
               <span
                 className={`font-semibold text-sm transition-colors duration-300 ${
                   section.featured
-                    ? "text-emerald-400 group-hover:text-emerald-300"
+                    ? section.name === "Frostbyte Play"
+                      ? "text-primary group-hover:text-primary/80"
+                      : "text-emerald-400 group-hover:text-emerald-300"
                     : "text-light group-hover:text-primary"
                 }`}
               >
@@ -159,7 +179,11 @@ const QuickNav = () => {
               </span>
               <span
                 className={`text-xs hidden md:block ${
-                  section.featured ? "text-emerald-400/70" : "text-gray"
+                  section.featured 
+                    ? section.name === "Frostbyte Play"
+                      ? "text-primary/70"
+                      : "text-emerald-400/70"
+                    : "text-gray"
                 }`}
               >
                 {section.description}

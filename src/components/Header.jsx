@@ -108,11 +108,6 @@ const Header = () => {
 
   const navItems = [
     {
-      name: "Frostbyte Play",
-      href: "/game",
-      external: false,
-    },
-    {
       name: "Ubicación",
       href: "https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu",
       external: true,
@@ -168,6 +163,18 @@ const Header = () => {
                       ))}
                     </ul>
                   </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                {/* Frostbyte Play - Featured */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to="/game"
+                      className="bg-gradient-to-r from-primary to-secondary text-dark font-bold px-6 py-2 rounded-lg hover:opacity-90 transition-opacity mx-2"
+                    >
+                      🎮 Frostbyte Play
+                    </Link>
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 {navItems.map((item) => (
@@ -307,11 +314,14 @@ const Header = () => {
             <div className="border-t border-gray/20 pt-4 space-y-4">
               <Link
                 to="/game"
-                className="block text-primary hover:text-primary/80 transition-colors duration-300 font-medium"
+                className="block bg-gradient-to-r from-primary to-secondary text-dark font-bold px-4 py-3 rounded-lg text-center hover:opacity-90 transition-opacity"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🎮 Frostbyte Play
               </Link>
+              <p className="text-xs text-gray/60 text-center px-4">
+                ¡Diviértete jugando mientras esperas tu pedido!
+              </p>
               <Link
                 to="/login"
                 className="flex items-center gap-2 text-secondary hover:text-primary transition-colors duration-300 font-medium"

@@ -195,7 +195,7 @@ const GameRoomPage = () => {
           <p className="text-gray mb-4">
             {error?.message || 'No se pudo cargar la sala'}
           </p>
-          <Button onClick={() => navigate('/game')}>Volver</Button>
+          <Button onClick={() => navigate('/#frostbyte-play')}>Volver al menú</Button>
         </div>
       </div>
     );
@@ -328,7 +328,7 @@ const GameRoomPage = () => {
                                   console.error('Error al salir de la sala:', error);
                                 }
                               }
-                              navigate('/game');
+                              navigate('/#frostbyte-play');
                             }}
                             variant="ghost"
                             size="sm"

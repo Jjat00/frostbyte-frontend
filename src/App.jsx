@@ -20,6 +20,7 @@ import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
+import FrostbytePlay from "@/components/FrostbytePlay";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Vinos />
           <Desguayabator />
           <SolicitarCancion />
+          <FrostbytePlay />
           <Features />
           {/* <Gallery /> */}
           {/* <Contact /> */}
