@@ -140,9 +140,22 @@ const GameRoomPage = () => {
   useEffect(() => {
     if (room?.status === "playing") {
       // Marcar como desmontado inmediatamente para prevenir actualizaciones
+      // Esto previene que cualquier actualización de estado (del WebSocket o mutations)
+      // intente actualizar el DOM después de que el componente comience a desmontarse
       mountedRef.current = false;
+    } else {
+      // Asegurarse de que mountedRef esté en true cuando el componente está activo
+      if (!mountedRef.current) {
+        mountedRef.current = true;
+      }
     }
   }, [room?.status]);
+
+  // Early return si el status es 'playing' - antes de cualquier render de motion.div
+  // Esto previene que las animaciones intenten ejecutarse mientras el componente se desmonta
+  if (room?.status === "playing") {
+    return <GamePlaying room={room} roomId={roomId} />;
+  }
 
   // Redirigir si el juego fue terminado (todos los participantes fueron eliminados)
   useEffect(() => {
@@ -278,11 +291,6 @@ const GameRoomPage = () => {
     );
   }
 
-  // Si el juego está jugando, mostrar componente de juego
-  if (room.status === "playing") {
-    return <GamePlaying room={room} roomId={roomId} />;
-  }
-
   // Si el juego está finalizado, mostrar resultados (solo si no fue terminado con "Terminar juego")
   // Si participant_count === 0, significa que fue terminado con "Terminar juego" y el useEffect redirigirá
   if (room.status === "finished" && room.participant_count > 0) {
@@ -305,11 +313,7 @@ const GameRoomPage = () => {
 
       <div className="max-w-2xl mx-auto relative z-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
+        <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
             <h1 className="text-4xl font-bold text-light tracking-wider">
               Duelo Frostbyte
@@ -323,15 +327,10 @@ const GameRoomPage = () => {
           </div>
           <p className="text-gray">Sala: {room.room_code}</p>
           <p className="text-sm text-gray/70">Mesa {room.table_number}</p>
-        </motion.div>
+        </div>
 
         {/* Room Info Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6 mb-6 shadow-2xl shadow-primary/10"
-        >
+        <div className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6 mb-6 shadow-2xl shadow-primary/10">
           {/* Share Link Section */}
           <div className="mb-6">
             <label className="text-sm text-gray font-medium mb-2 block">
@@ -552,7 +551,7 @@ const GameRoomPage = () => {
                 Esperando configuración de rondas...
               </div>
             )}
-        </motion.div>
+        </div>
       </div>
     </div>
   );
