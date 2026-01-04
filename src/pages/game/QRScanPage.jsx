@@ -1,17 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { QrCode, Loader2, AlertCircle, Camera, ArrowLeft } from 'lucide-react';
+import { QrCode, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
+import { useQuery } from '@tanstack/react-query';
 
 const QRScanPage = () => {
   const navigate = useNavigate();
-  const [qrCode, setQrCode] = useState('');
+  const [selectedTableNumber, setSelectedTableNumber] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showScanner, setShowScanner] = useState(false);
+
+  // Obtener mesas desde la API
+  const { data: tablesData, isLoading: isLoadingTables } = useQuery({
+    queryKey: ['tables'],
+    queryFn: async () => {
+      const data = await gamesService.getTables();
+      return Array.isArray(data) ? data : data.results || [];
+    },
+  });
+
+  // Filtrar solo mesas 1-5 (excluir barra que es 0) y ordenar
+  const availableTables = useMemo(() => {
+    if (!tablesData) return [];
+    return tablesData
+      .filter(table => table.table_number > 0 && table.table_number <= 5 && table.is_active)
+      .sort((a, b) => a.table_number - b.table_number);
+  }, [tablesData]);
+
+  // Obtener el qr_code de la mesa seleccionada
+  const selectedQrCode = useMemo(() => {
+    if (!selectedTableNumber) return '';
+    const table = availableTables.find(t => t.table_number === parseInt(selectedTableNumber));
+    return table?.qr_code || '';
+  }, [selectedTableNumber, availableTables]);
 
   // Generar ID único del dispositivo (almacenar en localStorage)
   const getDeviceId = () => {
@@ -26,8 +50,13 @@ const QRScanPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!qrCode.trim()) {
+    if (!selectedTableNumber) {
       setError('Por favor selecciona tu mesa');
+      return;
+    }
+
+    if (!selectedQrCode) {
+      setError('Error al obtener el código de la mesa seleccionada');
       return;
     }
 
@@ -42,7 +71,7 @@ const QRScanPage = () => {
     try {
       const deviceId = getDeviceId();
       const roomData = await gamesService.createRoomFromQR({
-        qr_code: qrCode.trim(),
+        qr_code: selectedQrCode,
         player_name: playerName.trim(),
         player_device_id: deviceId,
       });
@@ -118,23 +147,34 @@ const QRScanPage = () => {
               </motion.div>
             )}
 
-            {/* QR Code Input */}
+            {/* Table Selection */}
             <div className="space-y-2">
-              <label htmlFor="qr_code" className="text-sm text-gray font-medium flex items-center gap-2">
+              <label htmlFor="table_number" className="text-sm text-gray font-medium flex items-center gap-2">
                 <QrCode className="w-4 h-4" />
                 Selecciona tu mesa
               </label>
-              <input
-                id="qr_code"
-                type="text"
-                value={qrCode}
-                onChange={(e) => setQrCode(e.target.value.toUpperCase())}
-                placeholder="Ej: FROSTBYTE-ABC12345"
-                className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light placeholder-gray/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                disabled={isLoading}
-              />
+              {isLoadingTables ? (
+                <div className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg flex items-center justify-center">
+                  <Loader2 className="w-5 h-5 animate-spin text-gray" />
+                </div>
+              ) : (
+                <select
+                  id="table_number"
+                  value={selectedTableNumber}
+                  onChange={(e) => setSelectedTableNumber(e.target.value)}
+                  className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
+                  disabled={isLoading || isLoadingTables}
+                >
+                  <option value="">Selecciona una mesa</option>
+                  {availableTables.map((table) => (
+                    <option key={table.id} value={table.table_number}>
+                      Mesa {table.table_number}
+                    </option>
+                  ))}
+                </select>
+              )}
               <p className="text-xs text-gray/70">
-                Selecciona tu mesa del menú o ingresa el código manualmente
+                Selecciona tu mesa del menú desplegable
               </p>
             </div>
 
