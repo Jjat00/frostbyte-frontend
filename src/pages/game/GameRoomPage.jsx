@@ -75,10 +75,16 @@ const GameRoomPage = () => {
         return;
       }
 
-      // Si el status es 'playing', no hacer nada (el componente se desmontará y GamePlaying lo manejará)
+      // Si el status es 'playing', actualizar tanto el cache como el estado local
+      // para que GameRoomPage detecte el cambio y renderice GamePlaying
       if (updatedRoomData.status === "playing") {
-        // NO actualizar React Query cache aquí - puede causar condiciones de carrera
-        // GamePlaying obtendrá los datos directamente del servidor o del WebSocket propio
+        // Actualizar React Query cache para que GamePlaying pueda usar estos datos
+        queryClient.setQueryData(["gameRoom", roomId], updatedRoomData);
+        // También actualizar el estado local si el componente está montado
+        // Esto permite que GameRoomPage detecte el cambio y renderice GamePlaying
+        if (mountedRef.current) {
+          setRoom(updatedRoomData);
+        }
         return;
       }
 
@@ -117,13 +123,13 @@ const GameRoomPage = () => {
 
   // Sincronizar con datos iniciales cuando cargan
   useEffect(() => {
-    // Solo sincronizar si el componente está montado y no está en estado 'playing'
-    if (initialRoom && mountedRef.current && initialRoom.status !== "playing") {
+    // Sincronizar siempre con initialRoom si está disponible y el componente está montado
+    if (initialRoom && mountedRef.current) {
       setRoom(initialRoom);
       // Solo sincronizar selectedRounds si las rondas están confirmadas
       if (initialRoom.total_rounds && initialRoom.status === "configuring") {
         setSelectedRounds(initialRoom.total_rounds);
-      } else {
+      } else if (initialRoom.status !== "configuring") {
         setSelectedRounds(null);
       }
     }
