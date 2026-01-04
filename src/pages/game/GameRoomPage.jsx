@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -46,9 +46,17 @@ const GameRoomPage = () => {
   });
 
   // Estado local para la sala (actualizado por WebSocket)
-  const [room, setRoom] = useState(initialRoom);
+  const [room, setRoomState] = useState(initialRoom);
   const isLoading = isLoadingInitial && !room;
   const error = initialError;
+
+  // Función wrapper para setRoom que verifica si el componente está montado
+  // Esto previene errores de DOM cuando el componente se desmonta mientras hay actualizaciones pendientes
+  const setRoom = useCallback((newRoom) => {
+    if (mountedRef.current) {
+      setRoomState(newRoom);
+    }
+  }, []);
 
   // Efecto para limpiar cuando el componente se desmonta
   useEffect(() => {
@@ -62,10 +70,18 @@ const GameRoomPage = () => {
   const { isConnected: wsConnected, sendMessage } = useGameRoomWebSocket(
     roomId,
     (updatedRoomData) => {
-      // Solo actualizar estado si el componente está montado y no estamos cambiando a 'playing'
-      if (!mountedRef.current || updatedRoomData.status === "playing") {
+      // Solo actualizar estado si el componente está montado
+      if (!mountedRef.current) {
         return;
       }
+
+      // Si el status es 'playing', no actualizar el estado local (el componente se desmontará)
+      // Pero sí actualizar el cache de React Query para que GamePlaying lo use
+      if (updatedRoomData.status === "playing") {
+        queryClient.setQueryData(["gameRoom", roomId], updatedRoomData);
+        return;
+      }
+
       // Actualizar estado cuando llega actualización por WebSocket
       setRoom(updatedRoomData);
       // También actualizar React Query cache
@@ -75,7 +91,9 @@ const GameRoomPage = () => {
         updatedRoomData.total_rounds &&
         updatedRoomData.status === "configuring"
       ) {
-        setSelectedRounds(updatedRoomData.total_rounds);
+        if (mountedRef.current) {
+          setSelectedRounds(updatedRoomData.total_rounds);
+        }
       }
     },
     !!roomId && !error && room?.status !== "playing", // Deshabilitar WebSocket cuando el juego está jugando
@@ -116,6 +134,15 @@ const GameRoomPage = () => {
       // Mantener la selección local del usuario
     }
   }, [room?.total_rounds, room?.status]);
+
+  // Marcar componente como desmontándose cuando el status cambia a 'playing'
+  // Esto previene actualizaciones de estado después del desmontaje
+  useEffect(() => {
+    if (room?.status === "playing") {
+      // Marcar como desmontado inmediatamente para prevenir actualizaciones
+      mountedRef.current = false;
+    }
+  }, [room?.status]);
 
   // Redirigir si el juego fue terminado (todos los participantes fueron eliminados)
   useEffect(() => {
