@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
   Copy,
@@ -151,8 +150,7 @@ const GameRoomPage = () => {
     }
   }, [room?.status]);
 
-  // Early return si el status es 'playing' - antes de cualquier render de motion.div
-  // Esto previene que las animaciones intenten ejecutarse mientras el componente se desmonta
+  // Early return si el status es 'playing'
   if (room?.status === "playing") {
     return <GamePlaying room={room} roomId={roomId} />;
   }
@@ -382,61 +380,52 @@ const GameRoomPage = () => {
               )}
             </div>
             <div className="space-y-2">
-              <AnimatePresence>
-                {room.participants?.map((participant, index) => {
-                  const deviceId = localStorage.getItem("frostbyte_device_id");
-                  const isCurrentPlayer =
-                    participant.player_device_id === deviceId;
+              {room.participants?.map((participant) => {
+                const deviceId = localStorage.getItem("frostbyte_device_id");
+                const isCurrentPlayer =
+                  participant.player_device_id === deviceId;
 
-                  return (
-                    <motion.div
-                      key={participant.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={false}
-                      transition={{ delay: index * 0.1 }}
-                      className="p-3 bg-dark rounded-lg border border-gray/10"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-light">
-                            {participant.player_name}
-                          </span>
-                          {isCurrentPlayer && (
-                            <span className="text-xs text-primary">(Tú)</span>
-                          )}
-                        </div>
+                return (
+                  <div
+                    key={participant.id}
+                    className="p-3 bg-dark rounded-lg border border-gray/10"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-light">
+                          {participant.player_name}
+                        </span>
                         {isCurrentPlayer && (
-                          <Button
-                            onClick={async () => {
-                              if (deviceId && roomId) {
-                                try {
-                                  await gamesService.leaveRoom(
-                                    roomId,
-                                    deviceId
-                                  );
-                                } catch (error) {
-                                  console.error(
-                                    "Error al salir de la sala:",
-                                    error
-                                  );
-                                }
-                              }
-                              navigate("/game/duelo-frostbyte/play");
-                            }}
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-400 hover:text-red-300 hover:bg-red-400/20"
-                            title="Salir del juego"
-                          >
-                            <LogOut className="w-4 h-4" />
-                          </Button>
+                          <span className="text-xs text-primary">(Tú)</span>
                         )}
                       </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
+                      {isCurrentPlayer && (
+                        <Button
+                          onClick={async () => {
+                            if (deviceId && roomId) {
+                              try {
+                                await gamesService.leaveRoom(roomId, deviceId);
+                              } catch (error) {
+                                console.error(
+                                  "Error al salir de la sala:",
+                                  error
+                                );
+                              }
+                            }
+                            navigate("/game/duelo-frostbyte/play");
+                          }}
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-400 hover:text-red-300 hover:bg-red-400/20"
+                          title="Salir del juego"
+                        >
+                          <LogOut className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
