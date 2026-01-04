@@ -11,12 +11,12 @@ import {
   Zap,
   Heart,
   Music,
-  Play,
+  Gamepad2,
 } from "lucide-react";
 
 const QuickNav = () => {
   const navigate = useNavigate();
-  
+
   const sections = [
     {
       name: "Desguayabator",
@@ -24,14 +24,6 @@ const QuickNav = () => {
       icon: Heart,
       gradient: "from-emerald-400 to-cyan-500",
       description: "¡Cura guayabos!",
-      featured: true,
-    },
-    {
-      name: "Frostbyte Play",
-      href: "#frostbyte-play",
-      icon: Play,
-      gradient: "from-primary to-secondary",
-      description: "Juegos divertidos",
       featured: true,
     },
     {
@@ -103,6 +95,14 @@ const QuickNav = () => {
       icon: Music,
       gradient: "from-purple-400 to-pink-500",
       description: "Pide tu canción",
+      featured: true,
+    },
+    {
+      name: "Frostbyte Play",
+      href: "#frostbyte-play",
+      icon: Gamepad2,
+      gradient: "from-primary to-secondary",
+      description: "Juegos divertidos",
       featured: true,
     },
   ];
@@ -179,7 +179,7 @@ const QuickNav = () => {
               </span>
               <span
                 className={`text-xs hidden md:block ${
-                  section.featured 
+                  section.featured
                     ? section.name === "Frostbyte Play"
                       ? "text-primary/70"
                       : "text-emerald-400/70"

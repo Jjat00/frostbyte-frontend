@@ -165,12 +165,12 @@ const Header = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                {/* Frostbyte Play - Featured */}
+                {/* Frostbyte Play */}
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
                     <Link
                       to="/game"
-                      className="bg-gradient-to-r from-primary to-secondary text-dark font-bold px-6 py-2 rounded-lg hover:opacity-90 transition-opacity mx-2"
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
                     >
                       🎮 Frostbyte Play
                     </Link>
@@ -314,14 +314,11 @@ const Header = () => {
             <div className="border-t border-gray/20 pt-4 space-y-4">
               <Link
                 to="/game"
-                className="block bg-gradient-to-r from-primary to-secondary text-dark font-bold px-4 py-3 rounded-lg text-center hover:opacity-90 transition-opacity"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🎮 Frostbyte Play
               </Link>
-              <p className="text-xs text-gray/60 text-center px-4">
-                ¡Diviértete jugando mientras esperas tu pedido!
-              </p>
               <Link
                 to="/login"
                 className="flex items-center gap-2 text-secondary hover:text-primary transition-colors duration-300 font-medium"
