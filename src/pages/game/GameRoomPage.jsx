@@ -75,13 +75,15 @@ const GameRoomPage = () => {
         return;
       }
 
-      // Si el status es 'playing', actualizar tanto el cache como el estado local
-      // para que GameRoomPage detecte el cambio y renderice GamePlaying
-      if (updatedRoomData.status === "playing") {
-        // Actualizar React Query cache para que GamePlaying pueda usar estos datos
+      // Si el status es 'playing' o 'finished', actualizar tanto el cache como el estado local
+      if (
+        updatedRoomData.status === "playing" ||
+        updatedRoomData.status === "finished"
+      ) {
+        // Actualizar React Query cache
         queryClient.setQueryData(["gameRoom", roomId], updatedRoomData);
         // También actualizar el estado local si el componente está montado
-        // Esto permite que GameRoomPage detecte el cambio y renderice GamePlaying
+        // Esto permite que GameRoomPage detecte el cambio y renderice GamePlaying o GameResults
         if (mountedRef.current) {
           setRoom(updatedRoomData);
         }
@@ -159,21 +161,15 @@ const GameRoomPage = () => {
     }
   }, [room?.status, room?.participant_count, navigate]);
 
-  // Marcar componente como desmontándose cuando el status cambia a 'playing'
-  // Esto previene actualizaciones de estado después del desmontaje
+  // NO marcar como desmontado cuando el status es 'playing'
+  // Necesitamos seguir recibiendo actualizaciones para detectar cuando cambia a 'finished'
+  // El componente sigue montado, solo renderiza GamePlaying en lugar del lobby
   useEffect(() => {
-    if (room?.status === "playing") {
-      // Marcar como desmontado inmediatamente para prevenir actualizaciones
-      // Esto previene que cualquier actualización de estado (del WebSocket o mutations)
-      // intente actualizar el DOM después de que el componente comience a desmontarse
-      mountedRef.current = false;
-    } else {
-      // Asegurarse de que mountedRef esté en true cuando el componente está activo
-      if (!mountedRef.current) {
-        mountedRef.current = true;
-      }
+    // Asegurarse de que mountedRef esté en true cuando el componente está activo
+    if (!mountedRef.current) {
+      mountedRef.current = true;
     }
-  }, [room?.status]);
+  }, []);
 
   // Mutation para configurar rondas
   const configureMutation = useMutation({
