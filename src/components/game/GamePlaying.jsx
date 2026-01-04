@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { gamesService } from '@/services';
+import { useGameRoomWebSocket } from '@/hooks/useGameRoomWebSocket';
 import { Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -120,27 +121,25 @@ const GamePlaying = ({ room, roomId }) => {
     }
   };
 
-  // Verificar si la ronda terminó (todos respondieron)
-  useEffect(() => {
-    if (gameState === 'finished' && roundInfo) {
-      // Polling para verificar si todos respondieron
-      const checkInterval = setInterval(async () => {
-        const updatedRoom = await gamesService.getRoomStatus(roomId);
-        if (updatedRoom.status === 'finished') {
-          // Juego terminado, el componente GameResults se mostrará automáticamente
-          clearInterval(checkInterval);
-        } else if (updatedRoom.current_round > currentRound) {
-          // Nueva ronda
-          setCurrentRound(updatedRoom.current_round);
-          setGameState('waiting');
-          clearInterval(checkInterval);
-        }
-      }, 1000);
-
-      return () => clearInterval(checkInterval);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState, roundInfo, currentRound]);
+  // WebSocket para actualizaciones en tiempo real de la sala
+  useGameRoomWebSocket(
+    roomId,
+    (updatedRoomData) => {
+      // Si el juego terminó, invalidar queries para que GameRoomPage detecte el cambio
+      if (updatedRoomData.status === 'finished') {
+        queryClient.invalidateQueries(['gameRoom', roomId]);
+        // También actualizar el cache para respuesta inmediata
+        queryClient.setQueryData(['gameRoom', roomId], updatedRoomData);
+      } else if (updatedRoomData.current_round > currentRound) {
+        // Nueva ronda
+        setCurrentRound(updatedRoomData.current_round);
+        setGameState('waiting');
+        // Actualizar el cache también
+        queryClient.setQueryData(['gameRoom', roomId], updatedRoomData);
+      }
+    },
+    true // enabled
+  );
 
   return (
     <div className="min-h-screen bg-dark flex items-center justify-center p-4 relative overflow-hidden">
