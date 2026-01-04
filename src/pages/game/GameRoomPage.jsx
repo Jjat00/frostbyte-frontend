@@ -332,7 +332,7 @@ const GameRoomPage = () => {
                       key={participant.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
+                      exit={false}
                       transition={{ delay: index * 0.1 }}
                       className="p-3 bg-dark rounded-lg border border-gray/10"
                     >
