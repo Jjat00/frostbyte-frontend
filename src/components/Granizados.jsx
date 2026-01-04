@@ -286,7 +286,7 @@ const Granizados = () => {
               </div>
 
               {/* Shots disponibles */}
-              <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mx-auto max-w-full">
                 {poisonShots.map((shot) => (
                   <PoisonOption key={shot.name} {...shot} />
                 ))}
@@ -298,18 +298,18 @@ const Granizados = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
-                className="mt-8 text-center"
+                className="mt-8 flex justify-center"
               >
-                <div className="inline-flex items-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-4 sm:px-6 py-3 border border-purple-500/30">
-                  <span className="text-light font-semibold text-sm sm:text-base">
+                <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-purple-500/30">
+                  <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                     🍹 Granizado
                   </span>
-                  <Plus className="text-purple-400" size={20} />
-                  <span className="text-light font-semibold text-sm sm:text-base">
+                  <Plus className="text-purple-400 flex-shrink-0" size={20} />
+                  <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                     🥃 Shot
                   </span>
-                  <span className="text-purple-400 text-xl sm:text-2xl">=</span>
-                  <span className="text-purple-400 font-bold text-sm sm:text-base">
+                  <span className="text-purple-400 text-xl sm:text-2xl flex-shrink-0">=</span>
+                  <span className="text-purple-400 font-bold text-sm sm:text-base whitespace-nowrap">
                     ☠️ ENVENENADO
                   </span>
                 </div>
