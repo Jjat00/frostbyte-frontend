@@ -75,10 +75,10 @@ const GameRoomPage = () => {
         return;
       }
 
-      // Si el status es 'playing', no actualizar el estado local (el componente se desmontará)
-      // Pero sí actualizar el cache de React Query para que GamePlaying lo use
+      // Si el status es 'playing', no hacer nada (el componente se desmontará y GamePlaying lo manejará)
       if (updatedRoomData.status === "playing") {
-        queryClient.setQueryData(["gameRoom", roomId], updatedRoomData);
+        // NO actualizar React Query cache aquí - puede causar condiciones de carrera
+        // GamePlaying obtendrá los datos directamente del servidor o del WebSocket propio
         return;
       }
 
@@ -113,7 +113,8 @@ const GameRoomPage = () => {
 
   // Sincronizar con datos iniciales cuando cargan
   useEffect(() => {
-    if (initialRoom) {
+    // Solo sincronizar si el componente está montado y no está en estado 'playing'
+    if (initialRoom && mountedRef.current && initialRoom.status !== "playing") {
       setRoom(initialRoom);
       // Solo sincronizar selectedRounds si las rondas están confirmadas
       if (initialRoom.total_rounds && initialRoom.status === "configuring") {
@@ -122,7 +123,7 @@ const GameRoomPage = () => {
         setSelectedRounds(null);
       }
     }
-  }, [initialRoom]);
+  }, [initialRoom, setRoom]);
 
   // Sincronizar selectedRounds cuando room cambia (desde WebSocket u otras fuentes)
   // Solo sincronizar si las rondas están confirmadas (status === 'configuring')
@@ -175,10 +176,9 @@ const GameRoomPage = () => {
   const startMutation = useMutation({
     mutationFn: () => gamesService.startGame(roomId),
     onSuccess: (data) => {
-      // Actualizar React Query cache
-      queryClient.setQueryData(["gameRoom", roomId], data);
-      // NO actualizar estado local aquí - dejar que React Query y el useEffect lo sincronicen
-      // Esto evita condiciones de carrera durante el desmontaje
+      // NO actualizar React Query cache ni estado local aquí
+      // Dejar que el WebSocket maneje la actualización para evitar condiciones de carrera
+      // El WebSocket enviará una actualización que actualizará el estado de forma segura
     },
   });
 
