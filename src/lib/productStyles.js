@@ -88,6 +88,18 @@ const productStyles = {
     visualGradient: "from-yellow-400 via-amber-500 to-orange-400",
     secondaryGradient: "from-transparent via-yellow-300/20 to-transparent",
   },
+  cereza: {
+    icon: Cherry,
+    gradient: "from-red-500 to-pink-600",
+    visualGradient: "from-red-400 via-rose-500 to-pink-600",
+    secondaryGradient: "from-transparent via-red-300/20 to-transparent",
+  },
+  "maracumango-con-alcohol": {
+    icon: Citrus,
+    gradient: "from-amber-400 to-orange-600",
+    visualGradient: "from-yellow-400 via-amber-500 to-orange-500",
+    secondaryGradient: "from-transparent via-amber-300/20 to-transparent",
+  },
   "granizado-con-alcohol-de-maracuya": {
     icon: Citrus,
     gradient: "from-yellow-300 to-orange-400",
