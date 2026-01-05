@@ -123,7 +123,8 @@ const productStyles = {
   "fresa-frappe": {
     icon: Cherry,
     gradient: "from-red-500 to-pink-600",
-    image: "https://images.unsplash.com/photo-1651170021822-fa88d243d2f3",
+    image:
+      "https://d1uz88p17r663j.cloudfront.net/original/627ca9b9fa1544e1da395162aa87c505_FRAPPE_DE_FRESA_CON_LECHERA.jpg",
   },
   brownie: {
     icon: Candy,
