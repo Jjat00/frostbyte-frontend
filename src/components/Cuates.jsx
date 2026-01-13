@@ -91,9 +91,17 @@ const cuatesStyles = {
 
 const getCuatesStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
-  return cuatesStyles[slug] || {
+  const localStyles = cuatesStyles[slug] || {
     icon: Citrus,
     gradient: "from-lime-400 to-green-500",
+  };
+
+  // Priorizar image_url de la API sobre estilos locales
+  return {
+    ...localStyles,
+    image: product.image_url && product.image_url.trim() !== ''
+      ? product.image_url
+      : localStyles.image
   };
 };
 

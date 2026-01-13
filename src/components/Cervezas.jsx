@@ -2,7 +2,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Beer, Crown, Sparkles, Star } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
-import { getProductStyles } from "@/lib/productStyles";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -97,9 +96,17 @@ const cervezasStyles = {
 
 const getCervezaStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
-  return cervezasStyles[slug] || {
+  const localStyles = cervezasStyles[slug] || {
     icon: Beer,
     gradient: "from-yellow-400 to-amber-500",
+  };
+
+  // Priorizar image_url de la API sobre estilos locales
+  return {
+    ...localStyles,
+    image: product.image_url && product.image_url.trim() !== ''
+      ? product.image_url
+      : localStyles.image
   };
 };
 

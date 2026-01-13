@@ -18,8 +18,6 @@ import {
   Flame,
   Anchor,
   GlassWater,
-  Grape,
-  Apple,
 } from "lucide-react";
 
 /**
@@ -221,6 +219,9 @@ export function getProductStyles(product, categorySlug) {
   const categoryStyles = categoryDefaults[categorySlug] || {};
 
   // Combinar: específicos > categoría > defaults generales
+  // Prioridad para imagen: product.image_url de API > specificStyles.image hardcodeado
+  const hasApiImage = product.image_url && product.image_url.trim() !== '';
+
   return {
     icon: specificStyles.icon || categoryStyles.icon || Citrus,
     gradient:
@@ -231,7 +232,7 @@ export function getProductStyles(product, categorySlug) {
       specificStyles.visualGradient || categoryStyles.visualGradient,
     secondaryGradient:
       specificStyles.secondaryGradient || categoryStyles.secondaryGradient,
-    image: specificStyles.image || product.image_url || null,
+    image: hasApiImage ? product.image_url : (specificStyles.image || null),
     hasOptions: specificStyles.hasOptions || false,
     brand: specificStyles.brand,
     licor: specificStyles.licor,

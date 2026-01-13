@@ -24,6 +24,7 @@ const ProductsListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showInactive, setShowInactive] = useState(false);
+  const [imageErrors, setImageErrors] = useState({});
 
   // Obtener categorías
   const { data: categoriesData } = useQuery({
@@ -305,6 +306,9 @@ const ProductsListPage = () => {
                     ? Math.min(...product.variants.map(v => parseFloat(v.price)))
                     : 0;
 
+                  const hasImageUrl = product.image_url && product.image_url.trim() !== '';
+                  const shouldShowImage = hasImageUrl && !imageErrors[product.id];
+
                   return (
                     <motion.tr
                       key={product.id}
@@ -316,13 +320,20 @@ const ProductsListPage = () => {
                     >
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          {product.image_url && (
-                            <img
-                              src={product.image_url}
-                              alt={product.name}
-                              className="w-12 h-12 rounded-lg object-cover"
-                            />
-                          )}
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray/10 flex items-center justify-center shrink-0">
+                            {shouldShowImage ? (
+                              <img
+                                src={product.image_url}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                                onError={() => {
+                                  setImageErrors(prev => ({ ...prev, [product.id]: true }));
+                                }}
+                              />
+                            ) : (
+                              <Package className="w-6 h-6 text-gray" />
+                            )}
+                          </div>
                           <div>
                             <p className="font-medium text-light">{product.name}</p>
                             {product.is_coming_soon && (
