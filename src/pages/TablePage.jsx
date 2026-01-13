@@ -19,6 +19,7 @@ import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
+import { env } from "@/config/env";
 
 function TablePage() {
   const { tableNumber } = useParams();
@@ -26,12 +27,13 @@ function TablePage() {
   useEffect(() => {
     if (tableNumber) {
       // Registrar visita a la mesa o barra
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const apiUrl = env.API_BASE_URL;
 
       // Si es "barra", usar table_number: 0, sino usar el número de la mesa
-      const tableNum = tableNumber.toLowerCase() === "barra" ? 0 : parseInt(tableNumber);
+      const tableNum =
+        tableNumber.toLowerCase() === "barra" ? 0 : parseInt(tableNumber);
 
-      fetch(`${apiUrl}/api/v1/tables/register-visit/`, {
+      fetch(`${apiUrl}/tables/register-visit/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,7 +47,8 @@ function TablePage() {
     }
   }, [tableNumber]);
 
-  const displayName = tableNumber?.toLowerCase() === "barra" ? "Barra" : `Mesa ${tableNumber}`;
+  const displayName =
+    tableNumber?.toLowerCase() === "barra" ? "Barra" : `Mesa ${tableNumber}`;
 
   return (
     <>
