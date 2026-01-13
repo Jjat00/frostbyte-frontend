@@ -166,9 +166,17 @@ const coctelesStyles = {
 
 const getCoctelStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
-  return coctelesStyles[slug] || {
+  const localStyles = coctelesStyles[slug] || {
     icon: Martini,
     gradient: "from-secondary to-primary",
+  };
+
+  // Priorizar image_url de la API sobre estilos locales
+  return {
+    ...localStyles,
+    image: product.image_url && product.image_url.trim() !== ''
+      ? product.image_url
+      : localStyles.image
   };
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronDown,
@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { env } from "@/config/env";
 
 // Icono de TikTok personalizado
 const TikTokIcon = ({ size = 20 }) => (
@@ -73,6 +74,28 @@ const ProductFloatCard = ({
 );
 
 const Hero = () => {
+  const [motivationalPhrase, setMotivationalPhrase] = useState("");
+  const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
+
+  useEffect(() => {
+    const fetchMotivationalPhrase = async () => {
+      try {
+        const response = await fetch(`${env.API_BASE_URL}/motivational/phrase/`);
+        const data = await response.json();
+
+        if (response.ok && data.phrase) {
+          setMotivationalPhrase(data.phrase);
+        }
+      } catch (error) {
+        console.error('Error al obtener la frase motivacional:', error);
+      } finally {
+        setIsLoadingPhrase(false);
+      }
+    };
+
+    fetchMotivationalPhrase();
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       <div className="absolute inset-0 bg-linear-to-b from-dark via-dark-secondary to-dark"></div>
@@ -115,6 +138,21 @@ const Hero = () => {
                 DIMENSIÓN FROSTBYTE
               </span>
             </motion.h1>
+
+            {!isLoadingPhrase && motivationalPhrase && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                className="relative"
+              >
+                <div className="px-6 py-3 bg-linear-to-r from-primary/10 via-secondary/10 to-primary/10 border border-primary/30 rounded-2xl backdrop-blur-sm">
+                  <p className="text-primary text-base md:text-lg font-semibold text-center italic">
+                    "{motivationalPhrase}"
+                  </p>
+                </div>
+              </motion.div>
+            )}
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}

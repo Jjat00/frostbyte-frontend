@@ -87,9 +87,17 @@ const vinosStyles = {
 
 const getVinoStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
-  return vinosStyles[slug] || {
+  const localStyles = vinosStyles[slug] || {
     icon: Wine,
     gradient: "from-red-500 to-red-700",
+  };
+
+  // Priorizar image_url de la API sobre estilos locales
+  return {
+    ...localStyles,
+    image: product.image_url && product.image_url.trim() !== ''
+      ? product.image_url
+      : localStyles.image
   };
 };
 

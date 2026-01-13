@@ -100,12 +100,18 @@ const sodasStyles = {
 
 const getSodaStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
-  return (
-    sodasStyles[slug] || {
-      icon: Cherry,
-      gradient: "from-primary to-secondary",
-    }
-  );
+  const localStyles = sodasStyles[slug] || {
+    icon: Cherry,
+    gradient: "from-primary to-secondary",
+  };
+
+  // Priorizar image_url de la API sobre estilos locales
+  return {
+    ...localStyles,
+    image: product.image_url && product.image_url.trim() !== ''
+      ? product.image_url
+      : localStyles.image
+  };
 };
 
 const SodasMicheladas = () => {
