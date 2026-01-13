@@ -1,6 +1,7 @@
 import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "./App";
+import TablePage from "./pages/TablePage";
 import LoginPage from "./pages/auth/LoginPage";
 import HomePage from "./pages/HomePage";
 import InventoryLayout from "./pages/inventory/InventoryLayout";
@@ -52,6 +53,11 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  // Mesa con tracking
+  {
+    path: "/mesa/:tableNumber",
+    element: <TablePage />,
   },
   // Login
   {
