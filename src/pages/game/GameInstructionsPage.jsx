@@ -67,11 +67,11 @@ const GameInstructionsPage = () => {
         >
           <Button
             variant="ghost"
-            onClick={() => navigate('/#frostbyte-play')}
+            onClick={() => navigate(-1)}
             className="text-gray hover:text-light"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al menú
+            Volver
           </Button>
         </motion.div>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Snowflake,
   Coffee,
@@ -16,6 +16,10 @@ import {
 
 const QuickNav = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Detectar si estamos en una ruta de mesa
+  const isTableRoute = location.pathname.startsWith('/mesa/');
 
   const sections = [
     {
@@ -143,7 +147,9 @@ const QuickNav = () => {
         </motion.div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 md:gap-4">
-          {sections.map((section, index) => (
+          {sections
+            .filter(section => isTableRoute || section.name !== "Frostbyte Play")
+            .map((section, index) => (
             <motion.button
               key={section.name}
               initial={{ opacity: 0, y: 30 }}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +44,10 @@ ListItem.displayName = "ListItem";
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Detectar si estamos en una ruta de mesa
+  const isTableRoute = location.pathname.startsWith('/mesa/');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -165,17 +169,19 @@ const Header = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                {/* Frostbyte Play */}
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      to="/game"
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
-                    >
-                      🎮 Frostbyte Play
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+                {/* Frostbyte Play - Solo mostrar en rutas de mesa */}
+                {isTableRoute && (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/game"
+                        className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                      >
+                        🎮 Frostbyte Play
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )}
 
                 {navItems.map((item) => (
                   <NavigationMenuItem key={item.name}>
@@ -312,13 +318,16 @@ const Header = () => {
               🍷 Vinos
             </a>
             <div className="border-t border-gray/20 pt-4 space-y-4">
-              <Link
-                to="/game"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🎮 Frostbyte Play
-              </Link>
+              {/* Frostbyte Play - Solo mostrar en rutas de mesa */}
+              {isTableRoute && (
+                <Link
+                  to="/game"
+                  className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  🎮 Frostbyte Play
+                </Link>
+              )}
               <Link
                 to="/login"
                 className="flex items-center gap-2 text-secondary hover:text-primary transition-colors duration-300 font-medium"

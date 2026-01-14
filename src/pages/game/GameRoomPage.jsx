@@ -316,8 +316,8 @@ const GameRoomPage = () => {
           <p className="text-gray mb-4">
             {error?.message || "No se pudo cargar la sala"}
           </p>
-          <Button onClick={() => navigate("/#frostbyte-play")}>
-            Volver al menú
+          <Button onClick={() => navigate("/game")}>
+            Ver juegos
           </Button>
         </div>
       </div>

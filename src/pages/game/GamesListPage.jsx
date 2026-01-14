@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, ArrowLeft, Gamepad2 } from 'lucide-react';
+import { Play, ArrowLeft, Gamepad2, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const GamesListPage = () => {
@@ -13,6 +13,7 @@ const GamesListPage = () => {
       name: 'Duelo Frostbyte',
       description: 'Juego de reflejos ultra rápido. Compite con tus amigos para ver quién reacciona más rápido.',
       icon: '⚡',
+      minPlayers: 2,
       available: true,
     },
     // Futuros juegos se agregarán aquí
@@ -36,11 +37,11 @@ const GamesListPage = () => {
         >
           <Button
             variant="ghost"
-            onClick={() => navigate('/#frostbyte-play')}
+            onClick={() => navigate(-1)}
             className="text-gray hover:text-light"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al menú
+            Volver
           </Button>
         </motion.div>
 
@@ -108,9 +109,19 @@ const GamesListPage = () => {
                 <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent mb-2 text-center">
                   {game.name}
                 </h3>
-                <p className="text-gray/70 text-center mb-6">
+                <p className="text-gray/70 text-center mb-4">
                   {game.description}
                 </p>
+                {game.minPlayers && (
+                  <div className="flex items-center justify-center gap-2 mb-6">
+                    <div className="flex items-center gap-1 px-3 py-1.5 bg-violet-500/20 border border-violet-500/30 rounded-full">
+                      <Users className="w-4 h-4 text-violet-400" />
+                      <span className="text-sm text-violet-300 font-medium">
+                        Mínimo {game.minPlayers} jugadores
+                      </span>
+                    </div>
+                  </div>
+                )}
                 {game.available ? (
                   <Button
                     className="w-full bg-gradient-to-r from-violet-500 via-purple-500 to-amber-500 text-white font-bold hover:shadow-2xl hover:shadow-violet-500/50 transition-all"
