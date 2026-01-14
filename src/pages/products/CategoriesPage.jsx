@@ -158,7 +158,7 @@ const CategoriesPage = () => {
             Categorías
           </h1>
           <p className="text-gray">
-            Gestiona las categorías de productos del menú
+            Gestiona las categorías de productos de la carta
           </p>
         </div>
         <button

@@ -15,7 +15,7 @@ import Shots from "@/components/Shots";
 import Micheladas from "@/components/Micheladas";
 import QuickNav from "@/components/QuickNav";
 import Desguayabator from "@/components/Desguayabator";
-import ScrollToMenu from "@/components/ScrollToMenu";
+import ScrollToCarta from "@/components/ScrollToMenu";
 import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
@@ -52,7 +52,7 @@ function App() {
           {/* <Contact /> */}
         </main>
         <Footer />
-        <ScrollToMenu />
+        <ScrollToCarta />
         <Toaster />
       </div>
     </>

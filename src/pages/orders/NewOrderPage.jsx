@@ -165,7 +165,7 @@ const NewOrderPage = () => {
           </button>
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-light">Nuevo Pedido</h1>
-            <p className="text-sm text-gray">Selecciona productos del menú</p>
+            <p className="text-sm text-gray">Selecciona productos de la carta</p>
           </div>
         </div>
         {/* Indicador de items en carrito para desktop pequeño/mediano */}
@@ -310,7 +310,7 @@ const NewOrderPage = () => {
               <div className="text-center py-8">
                 <ShoppingCart className="w-12 h-12 text-gray/30 mx-auto mb-3" />
                 <p className="text-gray text-sm">El carrito está vacío</p>
-                <p className="text-gray/60 text-xs">Agrega productos del menú</p>
+                <p className="text-gray/60 text-xs">Agrega productos de la carta</p>
               </div>
             ) : (
               <AnimatePresence>
@@ -515,7 +515,7 @@ const NewOrderPage = () => {
                       <div className="text-center py-8">
                         <ShoppingCart className="w-12 h-12 text-gray/30 mx-auto mb-3" />
                         <p className="text-gray text-sm">El carrito está vacío</p>
-                        <p className="text-gray/60 text-xs">Agrega productos del menú</p>
+                        <p className="text-gray/60 text-xs">Agrega productos de la carta</p>
                       </div>
                     ) : (
                       <>

@@ -39,7 +39,7 @@ export default function GamesAdminPage() {
 
   const navItems = [
     { name: 'Home', shortName: 'Home', path: '/home', icon: Home },
-    { name: 'Menú', shortName: 'Menú', path: '/', icon: Store, external: true },
+    { name: 'Carta', shortName: 'Carta', path: '/', icon: Store, external: true },
     { name: 'Pedidos', shortName: 'Pedidos', path: '/pedidos', icon: ShoppingCart },
     { name: 'Inventario', shortName: 'Inventario', path: '/inventario', icon: Package },
     { name: 'Música', shortName: 'Música', path: '/musica', icon: Music, hasNotification: true },

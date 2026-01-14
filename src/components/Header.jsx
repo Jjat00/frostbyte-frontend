@@ -228,7 +228,7 @@ const Header = () => {
               }
               className="ml-6 bg-gradient-to-r from-primary to-secondary text-dark font-bold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
             >
-              Ver Menú
+              Ver Carta
             </Button>
           </div>
 
@@ -364,7 +364,7 @@ const Header = () => {
               }}
               className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold"
             >
-              Ver Menú
+              Ver Carta
             </Button>
           </motion.div>
         )}

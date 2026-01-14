@@ -56,7 +56,7 @@ const PublicRoute = ({ children }) => {
 };
 
 export const router = createBrowserRouter([
-  // Ruta principal - Menú público
+  // Ruta principal - Carta pública
   {
     path: "/",
     element: <App />,

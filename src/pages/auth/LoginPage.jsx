@@ -167,7 +167,7 @@ const LoginPage = () => {
               href="/"
               className="text-sm text-gray hover:text-primary transition-colors"
             >
-              ← Volver al menú
+              ← Volver a la carta
             </a>
           </div>
         </div>

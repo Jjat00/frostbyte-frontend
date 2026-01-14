@@ -60,7 +60,7 @@ const HomePage = () => {
     {
       id: 'products',
       title: 'Productos',
-      description: 'Gestiona productos del menú, categorías y variantes',
+      description: 'Gestiona productos de la carta, categorías y variantes',
       icon: Store,
       path: '/productos',
       color: 'from-primary to-secondary',

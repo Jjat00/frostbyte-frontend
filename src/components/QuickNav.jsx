@@ -143,7 +143,7 @@ const QuickNav = () => {
             </span>
             <Zap className="text-primary" size={20} />
           </div>
-          <p className="text-gray text-sm">Explora nuestro menú completo</p>
+          <p className="text-gray text-sm">Explora nuestra carta completa</p>
         </motion.div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 md:gap-4">

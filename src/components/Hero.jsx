@@ -80,14 +80,16 @@ const Hero = () => {
   useEffect(() => {
     const fetchMotivationalPhrase = async () => {
       try {
-        const response = await fetch(`${env.API_BASE_URL}/motivational/phrase/`);
+        const response = await fetch(
+          `${env.API_BASE_URL}/motivational/phrase/`
+        );
         const data = await response.json();
 
         if (response.ok && data.phrase) {
           setMotivationalPhrase(data.phrase);
         }
       } catch (error) {
-        console.error('Error al obtener la frase motivacional:', error);
+        console.error("Error al obtener la frase motivacional:", error);
       } finally {
         setIsLoadingPhrase(false);
       }
@@ -179,7 +181,7 @@ const Hero = () => {
                 }
                 className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
               >
-                Explorar Menú
+                Explorar Carta
               </Button>
               <Button
                 asChild

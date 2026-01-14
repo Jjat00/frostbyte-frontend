@@ -37,8 +37,8 @@ const ProductsLayout = () => {
       icon: Home,
     },
     {
-      name: 'Menú',
-      shortName: 'Menú',
+      name: 'Carta',
+      shortName: 'Carta',
       path: '/',
       icon: Store,
       external: true,
