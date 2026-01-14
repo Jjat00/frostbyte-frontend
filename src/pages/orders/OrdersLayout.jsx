@@ -13,6 +13,7 @@ import {
   BarChart3,
   Store,
   Music,
+  Gamepad2,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -74,6 +75,12 @@ const OrdersLayout = () => {
       path: '/musica',
       icon: Music,
       hasNotification: true,
+    },
+    {
+      name: 'Juegos',
+      shortName: 'Juegos',
+      path: '/juegos-admin',
+      icon: Gamepad2,
     },
   ];
 

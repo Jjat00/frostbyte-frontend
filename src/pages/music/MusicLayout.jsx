@@ -10,6 +10,7 @@ import {
   Store,
   Package,
   ShoppingCart,
+  Gamepad2,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -62,6 +63,12 @@ const MusicLayout = () => {
       path: '/musica',
       icon: Music,
       end: true,
+    },
+    {
+      name: 'Juegos',
+      shortName: 'Juegos',
+      path: '/juegos-admin',
+      icon: Gamepad2,
     },
   ];
 
