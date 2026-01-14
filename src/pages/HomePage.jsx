@@ -10,6 +10,7 @@ import {
   ShoppingCart,
   Store,
   Music,
+  Gamepad2,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -84,6 +85,21 @@ const HomePage = () => {
         { icon: Music, text: 'Solicitudes' },
         { icon: ClipboardList, text: 'Gestionar Estados' },
         { icon: BarChart3, text: 'Historial' },
+      ],
+    },
+    {
+      id: 'games',
+      title: 'Juegos',
+      description: 'Administra salas de juego activas por mesa',
+      icon: Gamepad2,
+      path: '/juegos-admin',
+      color: 'from-violet-500 to-amber-500',
+      bgColor: 'bg-violet-500/10',
+      borderColor: 'border-violet-500/30',
+      features: [
+        { icon: Gamepad2, text: 'Salas Activas' },
+        { icon: ClipboardList, text: 'Terminar Salas' },
+        { icon: BarChart3, text: 'Estadísticas' },
       ],
     },
   ];
@@ -217,7 +233,7 @@ const HomePage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray">Módulos</p>
-                <p className="text-2xl font-bold text-light">4</p>
+                <p className="text-2xl font-bold text-light">5</p>
               </div>
               <Package className="w-8 h-8 text-primary/50" />
             </div>

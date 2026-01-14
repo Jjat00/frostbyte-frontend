@@ -30,6 +30,7 @@ import GameInstructionsPage from "./pages/game/GameInstructionsPage";
 import QRScanPage from "./pages/game/QRScanPage";
 import JoinRoomPage from "./pages/game/JoinRoomPage";
 import GameRoomPage from "./pages/game/GameRoomPage";
+import GamesAdminPage from "./pages/game/GamesAdminPage";
 import { authService } from "./services/auth.service";
 
 // Componente para rutas protegidas
@@ -182,6 +183,15 @@ export const router = createBrowserRouter([
         element: <SongRequestsPage />,
       },
     ],
+  },
+  // Panel de administración de juegos (protegido)
+  {
+    path: "/juegos-admin",
+    element: (
+      <ProtectedRoute>
+        <GamesAdminPage />
+      </ProtectedRoute>
+    ),
   },
   // Juego Duelo Frostbyte (público)
   {

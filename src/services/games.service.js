@@ -163,6 +163,39 @@ export const gamesService = {
     const response = await apiClient.get(`${TABLES_URL}/${tableId}/`);
     return response.data;
   },
+
+  // ============= ADMINISTRACIÓN (solo usuarios autenticados) =============
+
+  /**
+   * Obtener todas las salas con filtros (admin only)
+   * @param {Object} params - Filtros opcionales
+   * @param {string} params.status - Filtrar por estado (waiting, configuring, playing, etc.)
+   * @param {number} params.table_number - Filtrar por número de mesa
+   * @param {boolean} params.active_only - Solo salas activas (true/false)
+   */
+  async getAdminRooms(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/`, { params });
+    return response.data;
+  },
+
+  /**
+   * Obtener estadísticas para panel de admin
+   */
+  async getAdminStats() {
+    const response = await apiClient.get(`${BASE_URL}/admin-stats/`);
+    return response.data;
+  },
+
+  /**
+   * Limpiar todas las salas activas de una mesa (admin only)
+   * @param {number} tableNumber - Número de mesa (0=Barra, 1-5=Mesas)
+   */
+  async cleanTable(tableNumber) {
+    const response = await apiClient.post(`${BASE_URL}/clean-table/`, {
+      table_number: tableNumber,
+    });
+    return response.data;
+  },
 };
 
 export default gamesService;
