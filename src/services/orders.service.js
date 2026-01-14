@@ -98,6 +98,15 @@ export const ordersService = {
   },
 
   /**
+   * Obtener pedidos con pagos pendientes (sin importar la fecha)
+   * @returns {Promise<{orders: Array, total_orders: number, total_pending: string}>}
+   */
+  async getPendingPayments() {
+    const response = await apiClient.get(`${BASE_URL}/pending_payments/`);
+    return response.data;
+  },
+
+  /**
    * Obtener estadísticas de pedidos
    * @param {string} date - Periodo (today, yesterday, week, month, last_month, year)
    * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado

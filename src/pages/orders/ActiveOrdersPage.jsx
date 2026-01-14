@@ -17,6 +17,7 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  Banknote,
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
 
@@ -265,12 +266,25 @@ const ActiveOrdersPage = () => {
     staleTime: 5000,
   });
 
-  const isLoading = loadingActive || loadingDelivered;
+  // Obtener pedidos con pagos pendientes (sin importar fecha)
+  const {
+    data: pendingPaymentsData,
+    isLoading: loadingPendingPayments,
+    refetch: refetchPendingPayments,
+  } = useQuery({
+    queryKey: ["pending-payments"],
+    queryFn: () => ordersService.getPendingPayments(),
+    refetchInterval: 10000,
+    staleTime: 5000,
+  });
+
+  const isLoading = loadingActive || loadingDelivered || loadingPendingPayments;
   const isError = false;
 
   // Combinar pedidos activos y entregados
   const allActiveOrders = activeOrders || [];
   const allDeliveredOrders = deliveredOrders?.results || deliveredOrders || [];
+  const allPendingPayments = pendingPaymentsData?.orders || [];
 
   // Separar pedidos entregados por estado de pago
   const deliveredPaid = allDeliveredOrders.filter((o) => o.is_paid);
@@ -278,7 +292,9 @@ const ActiveOrdersPage = () => {
 
   // Todos los pedidos para mostrar
   const allOrders =
-    filter === "delivered"
+    filter === "pending_payments"
+      ? allPendingPayments
+      : filter === "delivered"
       ? deliveredTab === "paid"
         ? deliveredPaid
         : deliveredUnpaid
@@ -289,6 +305,7 @@ const ActiveOrdersPage = () => {
   const refetch = () => {
     refetchActive();
     refetchDelivered();
+    refetchPendingPayments();
   };
 
   // Mutación para actualizar estado
@@ -298,6 +315,7 @@ const ActiveOrdersPage = () => {
       // Invalidar todas las queries relacionadas inmediatamente
       queryClient.invalidateQueries({ queryKey: ["active-orders"] });
       queryClient.invalidateQueries({ queryKey: ["delivered-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["pending-payments"] });
       queryClient.invalidateQueries({ queryKey: ["orders-stats"] });
       queryClient.invalidateQueries({ queryKey: ["orders-history"] });
     },
@@ -317,6 +335,7 @@ const ActiveOrdersPage = () => {
     delivered: allDeliveredOrders?.length || 0,
     deliveredPaid: deliveredPaid?.length || 0,
     deliveredUnpaid: deliveredUnpaid?.length || 0,
+    pending_payments: pendingPaymentsData?.total_orders || 0,
   };
 
   if (isLoading) {
@@ -379,6 +398,7 @@ const ActiveOrdersPage = () => {
           { key: "preparing", label: "Preparando", color: "blue" },
           { key: "ready", label: "Listos", color: "green" },
           { key: "delivered", label: "Entregados", color: "emerald" },
+          { key: "pending_payments", label: "Deudas", color: "red", icon: Banknote },
         ].map((item) => (
           <button
             key={item.key}
@@ -399,10 +419,13 @@ const ActiveOrdersPage = () => {
                   ? "bg-green-500/20 text-green-400 border border-green-500/30"
                   : item.color === "emerald"
                   ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                  : item.color === "red"
+                  ? "bg-red-500/20 text-red-400 border border-red-500/30"
                   : "bg-secondary/20 text-secondary border border-secondary/30"
                 : "bg-gray/10 text-gray hover:text-light border border-transparent"
             }`}
           >
+            {item.icon && <item.icon className="w-4 h-4" />}
             {item.label}
             <span
               className={`px-1.5 py-0.5 rounded-full text-xs ${
@@ -485,6 +508,28 @@ const ActiveOrdersPage = () => {
         </>
       )}
 
+      {/* Header de Deudas con total pendiente */}
+      {filter === "pending_payments" && pendingPaymentsData?.total_pending && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Banknote className="w-6 h-6 text-red-400" />
+            <div>
+              <p className="text-sm text-gray">Total pendiente por cobrar</p>
+              <p className="text-xl font-bold text-red-400">
+                {new Intl.NumberFormat("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 0,
+                }).format(pendingPaymentsData.total_pending)}
+              </p>
+            </div>
+          </div>
+          <span className="text-sm text-gray">
+            {pendingPaymentsData.total_orders} pedido{pendingPaymentsData.total_orders !== 1 ? 's' : ''}
+          </span>
+        </div>
+      )}
+
       {/* Grid de pedidos */}
       {allOrders.length === 0 ? (
         <motion.div
@@ -492,7 +537,17 @@ const ActiveOrdersPage = () => {
           animate={{ opacity: 1 }}
           className="text-center py-12"
         >
-          {filter === "delivered" ? (
+          {filter === "pending_payments" ? (
+            <>
+              <CheckCircle className="w-16 h-16 text-green-400/50 mx-auto mb-4" />
+              <p className="text-light font-medium mb-2">
+                ¡No hay deudas pendientes!
+              </p>
+              <p className="text-gray text-sm mb-4">
+                Todos los pedidos están pagados
+              </p>
+            </>
+          ) : filter === "delivered" ? (
             deliveredTab === "paid" ? (
               <>
                 <CheckCircle className="w-16 h-16 text-green-400/50 mx-auto mb-4" />
