@@ -90,10 +90,18 @@ const ProductCard = ({ product, index, styles }) => {
       <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20">
         <div className="h-48 overflow-hidden relative">
           <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
-          <GradientVisual
-            gradient={styles.visualGradient || styles.gradient}
-            secondaryGradient={styles.secondaryGradient}
-          />
+          {styles.image ? (
+            <img
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              src={styles.image}
+            />
+          ) : (
+            <GradientVisual
+              gradient={styles.visualGradient || styles.gradient}
+              secondaryGradient={styles.secondaryGradient}
+            />
+          )}
         </div>
 
         <div className="p-6 flex flex-col grow relative z-20 -mt-12">
