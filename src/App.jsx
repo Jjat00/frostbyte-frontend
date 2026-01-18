@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
@@ -20,8 +20,22 @@ import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
+import { env } from "@/config/env";
 
 function App() {
+  useEffect(() => {
+    // Registrar visita a la página principal
+    fetch(`${env.API_BASE_URL}/pages/register-visit/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ path: "/" }),
+    }).catch((error) => {
+      console.error("Error al registrar visita:", error);
+    });
+  }, []);
+
   return (
     <>
       <Helmet>
