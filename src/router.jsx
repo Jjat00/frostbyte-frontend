@@ -24,6 +24,9 @@ import CategoriesPage from "./pages/products/CategoriesPage";
 // Módulo de Música
 import MusicLayout from "./pages/music/MusicLayout";
 import SongRequestsPage from "./pages/music/SongRequestsPage";
+// Módulo de Feedback
+import FeedbackLayout from "./pages/feedback/FeedbackLayout";
+import FeedbackListPage from "./pages/feedback/FeedbackListPage";
 // Módulo de Juegos
 import GamesListPage from "./pages/game/GamesListPage";
 import GameInstructionsPage from "./pages/game/GameInstructionsPage";
@@ -181,6 +184,21 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <SongRequestsPage />,
+      },
+    ],
+  },
+  // Panel de feedback (protegido)
+  {
+    path: "/feedback",
+    element: (
+      <ProtectedRoute>
+        <FeedbackLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <FeedbackListPage />,
       },
     ],
   },

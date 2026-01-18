@@ -20,6 +20,7 @@ import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
+import FeedbackSection from "@/components/FeedbackSection";
 import { env } from "@/config/env";
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
           <Vinos />
           <Desguayabator />
           <SolicitarCancion />
+          <FeedbackSection />
           <Features />
           {/* <Gallery /> */}
           {/* <Contact /> */}

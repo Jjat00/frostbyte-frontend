@@ -108,6 +108,11 @@ const Header = () => {
       href: "#vinos",
       description: "Copas de Gato Negro y Casillero del Diablo.",
     },
+    {
+      title: "💬 Tu Opinion",
+      href: "#feedback",
+      description: "Dejanos tu feedback, sugerencias o comentarios.",
+    },
   ];
 
   const navItems = [
@@ -316,6 +321,13 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               🍷 Vinos
+            </a>
+            <a
+              href="#feedback"
+              className="block text-teal-400 hover:text-teal-300 transition-colors duration-300 font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              💬 Tu Opinion
             </a>
             <div className="border-t border-gray/20 pt-4 space-y-4">
               {/* Frostbyte Play - Solo mostrar en rutas de mesa */}

@@ -19,6 +19,7 @@ import Vinos from "@/components/Vinos";
 import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
+import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import { env } from "@/config/env";
 
@@ -76,6 +77,7 @@ function TablePage() {
           <Vinos />
           <Desguayabator />
           <SolicitarCancion />
+          <FeedbackSection />
           <FrostbytePlay />
           <Features />
         </main>

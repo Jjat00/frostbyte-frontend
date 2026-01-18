@@ -12,6 +12,7 @@ import {
   Heart,
   Music,
   Gamepad2,
+  MessageSquare,
 } from "lucide-react";
 
 const QuickNav = () => {
@@ -102,6 +103,14 @@ const QuickNav = () => {
       featured: true,
     },
     {
+      name: "Tu Opinion",
+      href: "#feedback",
+      icon: MessageSquare,
+      gradient: "from-teal-400 to-cyan-500",
+      description: "Dejanos tu feedback",
+      featured: true,
+    },
+    {
       name: "Frostbyte Play",
       href: "#frostbyte-play",
       icon: Gamepad2,
@@ -163,6 +172,8 @@ const QuickNav = () => {
                 section.featured
                   ? section.name === "Frostbyte Play"
                     ? "border-primary/50 hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+                    : section.name === "Tu Opinion"
+                    ? "border-teal-500/50 hover:border-teal-400 hover:shadow-lg hover:shadow-teal-500/20"
                     : "border-emerald-500/50 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20"
                   : "border-gray/20 hover:border-primary/50"
               } hover:bg-dark-secondary`}
@@ -177,6 +188,8 @@ const QuickNav = () => {
                   section.featured
                     ? section.name === "Frostbyte Play"
                       ? "text-primary group-hover:text-primary/80"
+                      : section.name === "Tu Opinion"
+                      ? "text-teal-400 group-hover:text-teal-300"
                       : "text-emerald-400 group-hover:text-emerald-300"
                     : "text-light group-hover:text-primary"
                 }`}
@@ -188,6 +201,8 @@ const QuickNav = () => {
                   section.featured
                     ? section.name === "Frostbyte Play"
                       ? "text-primary/70"
+                      : section.name === "Tu Opinion"
+                      ? "text-teal-400/70"
                       : "text-emerald-400/70"
                     : "text-gray"
                 }`}

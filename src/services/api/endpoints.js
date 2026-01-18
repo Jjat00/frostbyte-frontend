@@ -19,6 +19,10 @@ export const ENDPOINTS = {
   // Song Requests
   SONG_REQUESTS: '/song-requests/',
   SONG_REQUEST_DETAIL: (id) => `/song-requests/${id}/`,
+
+  // Feedback
+  FEEDBACK: '/feedback/',
+  FEEDBACK_DETAIL: (id) => `/feedback/${id}/`,
 };
 
 export default ENDPOINTS;

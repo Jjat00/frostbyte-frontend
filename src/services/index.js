@@ -5,4 +5,5 @@ export { inventoryService } from './inventory.service';
 export { ordersService } from './orders.service';
 export { musicService } from './music.service';
 export { gamesService } from './games.service';
+export { feedbackService } from './feedback.service';
 export { apiClient, ENDPOINTS } from './api';
