@@ -27,6 +27,16 @@ import SongRequestsPage from "./pages/music/SongRequestsPage";
 // Módulo de Feedback
 import FeedbackLayout from "./pages/feedback/FeedbackLayout";
 import FeedbackListPage from "./pages/feedback/FeedbackListPage";
+// Módulo de Gastos
+import {
+  ExpensesLayout,
+  ExpensesDashboard,
+  ExpensesListPage,
+  ExpenseFormPage,
+  ExpenseDetailPage,
+  CategoriesPage as ExpenseCategoriesPage,
+  RecurringPage,
+} from "./pages/expenses";
 // Módulo de Juegos
 import GamesListPage from "./pages/game/GamesListPage";
 import GameInstructionsPage from "./pages/game/GameInstructionsPage";
@@ -199,6 +209,45 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <FeedbackListPage />,
+      },
+    ],
+  },
+  // Panel de gastos operativos (protegido)
+  {
+    path: "/gastos",
+    element: (
+      <ProtectedRoute>
+        <ExpensesLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <ExpensesDashboard />,
+      },
+      {
+        path: "lista",
+        element: <ExpensesListPage />,
+      },
+      {
+        path: "nuevo",
+        element: <ExpenseFormPage />,
+      },
+      {
+        path: ":id",
+        element: <ExpenseDetailPage />,
+      },
+      {
+        path: "editar/:id",
+        element: <ExpenseFormPage />,
+      },
+      {
+        path: "categorias",
+        element: <ExpenseCategoriesPage />,
+      },
+      {
+        path: "recurrentes",
+        element: <RecurringPage />,
       },
     ],
   },

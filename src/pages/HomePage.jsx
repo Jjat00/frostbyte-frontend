@@ -12,6 +12,8 @@ import {
   Music,
   Gamepad2,
   MessageSquare,
+  Wallet,
+  RefreshCw,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -116,6 +118,21 @@ const HomePage = () => {
         { icon: Gamepad2, text: 'Salas Activas' },
         { icon: ClipboardList, text: 'Terminar Salas' },
         { icon: BarChart3, text: 'Estadísticas' },
+      ],
+    },
+    {
+      id: 'expenses',
+      title: 'Gastos',
+      description: 'Registra gastos operativos: nomina, servicios, alquiler',
+      icon: Wallet,
+      path: '/gastos',
+      color: 'from-emerald-500 to-teal-500',
+      bgColor: 'bg-emerald-500/10',
+      borderColor: 'border-emerald-500/30',
+      features: [
+        { icon: BarChart3, text: 'Dashboard' },
+        { icon: ClipboardList, text: 'Lista de Gastos' },
+        { icon: RefreshCw, text: 'Recurrentes' },
       ],
     },
   ];
@@ -249,7 +266,7 @@ const HomePage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray">Módulos</p>
-                <p className="text-2xl font-bold text-light">6</p>
+                <p className="text-2xl font-bold text-light">7</p>
               </div>
               <Package className="w-8 h-8 text-primary/50" />
             </div>
