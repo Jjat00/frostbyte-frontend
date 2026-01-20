@@ -145,7 +145,9 @@ const OrdersStatsPage = () => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    // Agregar T12:00:00 para evitar problemas de zona horaria
+    // cuando JavaScript interpreta fechas YYYY-MM-DD como UTC
+    const date = new Date(dateString + 'T12:00:00');
     return date.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
   };
 
