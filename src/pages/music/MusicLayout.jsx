@@ -17,7 +17,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 const MusicLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuthStore();
+  const { user, logout, isAdmin } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -25,7 +25,7 @@ const MusicLayout = () => {
     navigate('/login');
   };
 
-  const navItems = [
+  const allNavItems = [
     {
       name: 'Home',
       shortName: 'Home',
@@ -44,6 +44,7 @@ const MusicLayout = () => {
       shortName: 'Inventario',
       path: '/inventario',
       icon: Package,
+      adminOnly: true,
     },
     {
       name: 'Pedidos',
@@ -71,6 +72,9 @@ const MusicLayout = () => {
       icon: Gamepad2,
     },
   ];
+
+  // Filtrar items según el rol
+  const navItems = allNavItems.filter(item => !item.adminOnly || isAdmin());
 
   const isActive = (path, end) => {
     if (end) {

@@ -20,7 +20,7 @@ import { useSongRequestsNotification } from '@/hooks';
 const ProductsLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuthStore();
+  const { user, logout, isAdmin } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
 
@@ -29,7 +29,7 @@ const ProductsLayout = () => {
     navigate('/login');
   };
 
-  const navItems = [
+  const allNavItems = [
     {
       name: 'Home',
       shortName: 'Home',
@@ -55,12 +55,14 @@ const ProductsLayout = () => {
       shortName: 'Nuevo',
       path: '/productos/nuevo',
       icon: PlusCircle,
+      adminOnly: true,
     },
     {
       name: 'Categorías',
       shortName: 'Categorías',
       path: '/productos/categorias',
       icon: Tag,
+      adminOnly: true,
     },
     {
       name: 'Música',
@@ -76,6 +78,9 @@ const ProductsLayout = () => {
       icon: Gamepad2,
     },
   ];
+
+  // Filtrar items según el rol
+  const navItems = allNavItems.filter(item => !item.adminOnly || isAdmin());
 
   const isActive = (path, end) => {
     if (end) {

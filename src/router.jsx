@@ -45,6 +45,7 @@ import JoinRoomPage from "./pages/game/JoinRoomPage";
 import GameRoomPage from "./pages/game/GameRoomPage";
 import GamesAdminPage from "./pages/game/GamesAdminPage";
 import { authService } from "./services/auth.service";
+import AdminRoute from "./components/AdminRoute";
 
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children }) => {
@@ -102,7 +103,9 @@ export const router = createBrowserRouter([
     path: "/inventario",
     element: (
       <ProtectedRoute>
-        <InventoryLayout />
+        <AdminRoute>
+          <InventoryLayout />
+        </AdminRoute>
       </ProtectedRoute>
     ),
     children: [
@@ -151,7 +154,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "estadisticas",
-        element: <OrdersStatsPage />,
+        element: (
+          <AdminRoute>
+            <OrdersStatsPage />
+          </AdminRoute>
+        ),
       },
     ],
   },
@@ -170,15 +177,27 @@ export const router = createBrowserRouter([
       },
       {
         path: "nuevo",
-        element: <ProductFormPage />,
+        element: (
+          <AdminRoute>
+            <ProductFormPage />
+          </AdminRoute>
+        ),
       },
       {
         path: "editar/:slug",
-        element: <ProductFormPage />,
+        element: (
+          <AdminRoute>
+            <ProductFormPage />
+          </AdminRoute>
+        ),
       },
       {
         path: "categorias",
-        element: <CategoriesPage />,
+        element: (
+          <AdminRoute>
+            <CategoriesPage />
+          </AdminRoute>
+        ),
       },
     ],
   },
@@ -217,7 +236,9 @@ export const router = createBrowserRouter([
     path: "/gastos",
     element: (
       <ProtectedRoute>
-        <ExpensesLayout />
+        <AdminRoute>
+          <ExpensesLayout />
+        </AdminRoute>
       </ProtectedRoute>
     ),
     children: [
@@ -251,7 +272,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // Panel de administración de juegos (protegido)
+  // Panel de administración de juegos (empleados y admin)
   {
     path: "/juegos-admin",
     element: (

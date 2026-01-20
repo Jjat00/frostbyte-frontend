@@ -20,7 +20,7 @@ import { useSongRequestsNotification } from '@/hooks';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const { user, logout, isAdmin } = useAuthStore();
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
 
   const handleLogout = async () => {
@@ -28,7 +28,7 @@ const HomePage = () => {
     navigate('/login');
   };
 
-  const modules = [
+  const allModules = [
     {
       id: 'inventory',
       title: 'Inventario',
@@ -136,6 +136,10 @@ const HomePage = () => {
       ],
     },
   ];
+
+  const modules = isAdmin() 
+    ? allModules 
+    : allModules.filter(m => ['orders', 'products', 'music', 'feedback', 'games'].includes(m.id));
 
   return (
     <div className="min-h-screen bg-dark">

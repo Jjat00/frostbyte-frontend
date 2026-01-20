@@ -21,7 +21,7 @@ import { useSongRequestsNotification } from '@/hooks';
 const OrdersLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuthStore();
+  const { user, logout, isAdmin } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
 
@@ -30,7 +30,7 @@ const OrdersLayout = () => {
     navigate('/login');
   };
 
-  const navItems = [
+  const allNavItems = [
     {
       name: 'Home',
       shortName: 'Home',
@@ -68,6 +68,7 @@ const OrdersLayout = () => {
       shortName: 'Stats',
       path: '/pedidos/estadisticas',
       icon: BarChart3,
+      adminOnly: true,
     },
     {
       name: 'Música',
@@ -83,6 +84,9 @@ const OrdersLayout = () => {
       icon: Gamepad2,
     },
   ];
+
+  // Filtrar items según el rol
+  const navItems = allNavItems.filter(item => !item.adminOnly || isAdmin());
 
   const isActive = (path, end) => {
     if (end) {

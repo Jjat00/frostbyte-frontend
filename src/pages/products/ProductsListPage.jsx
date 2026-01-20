@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 import { productsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const ProductsListPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showInactive, setShowInactive] = useState(false);
@@ -138,13 +140,15 @@ const ProductsListPage = () => {
             Gestiona los productos y sus variantes
           </p>
         </div>
-        <button
-          onClick={() => navigate('/productos/nuevo')}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all"
-        >
-          <Plus className="w-5 h-5" />
-          Nuevo Producto
-        </button>
+        {isAdmin() && (
+          <button
+            onClick={() => navigate('/productos/nuevo')}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all"
+          >
+            <Plus className="w-5 h-5" />
+            Nuevo Producto
+          </button>
+        )}
       </div>
 
       {/* Estadísticas */}
@@ -371,35 +375,37 @@ const ProductsListPage = () => {
                         </div>
                       </td>
                       <td className="px-4 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => handleToggleActive(product)}
-                            disabled={toggleActiveMutation.isPending}
-                            className="p-2 text-gray hover:text-secondary hover:bg-secondary/10 rounded-lg transition-colors"
-                            title={product.is_active ? 'Desactivar' : 'Activar'}
-                          >
-                            {product.is_active ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => navigate(`/productos/editar/${product.slug}`)}
-                            className="p-2 text-gray hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                            title="Editar"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(product)}
-                            disabled={deleteMutation.isPending}
-                            className="p-2 text-gray hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                            title="Eliminar"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                        {isAdmin() && (
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleToggleActive(product)}
+                              disabled={toggleActiveMutation.isPending}
+                              className="p-2 text-gray hover:text-secondary hover:bg-secondary/10 rounded-lg transition-colors"
+                              title={product.is_active ? 'Desactivar' : 'Activar'}
+                            >
+                              {product.is_active ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => navigate(`/productos/editar/${product.slug}`)}
+                              className="p-2 text-gray hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                              title="Editar"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(product)}
+                              disabled={deleteMutation.isPending}
+                              className="p-2 text-gray hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                              title="Eliminar"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </motion.tr>
                   );
