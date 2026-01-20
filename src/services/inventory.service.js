@@ -132,6 +132,14 @@ export const inventoryService = {
   },
 
   /**
+   * Revertir orden a pendiente
+   */
+  async revertOrderToPending(id) {
+    const response = await apiClient.post(`${BASE_URL}/purchase-orders/${id}/revert_to_pending/`);
+    return response.data;
+  },
+
+  /**
    * Eliminar orden
    */
   async deleteOrder(id) {

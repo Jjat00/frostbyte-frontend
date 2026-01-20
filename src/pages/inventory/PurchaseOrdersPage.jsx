@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Search,
   Pencil,
+  RotateCcw,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
 
@@ -131,8 +132,8 @@ const PurchaseOrdersPage = () => {
   const [newItem, setNewItem] = useState({ raw_material: '', quantity_needed: '', estimated_unit_price: '' });
   const [editItemModal, setEditItemModal] = useState(null);
   const [editItemData, setEditItemData] = useState({
-    quantity_purchased: '',
-    actual_unit_price: '',
+    quantity: '',
+    unit_price: '',
     supplier: '',
   });
 
@@ -172,6 +173,17 @@ const PurchaseOrdersPage = () => {
   // Marcar orden como comprada
   const markPurchasedMutation = useMutation({
     mutationFn: (id) => inventoryService.markOrderPurchased(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['purchase-orders']);
+      queryClient.invalidateQueries(['materials']);
+      queryClient.invalidateQueries(['low-stock']);
+      queryClient.invalidateQueries(['inventory-stats']);
+    },
+  });
+
+  // Revertir orden a pendiente
+  const revertToPendingMutation = useMutation({
+    mutationFn: (id) => inventoryService.revertOrderToPending(id),
     onSuccess: () => {
       queryClient.invalidateQueries(['purchase-orders']);
       queryClient.invalidateQueries(['materials']);
@@ -237,8 +249,8 @@ const PurchaseOrdersPage = () => {
       queryClient.invalidateQueries(['low-stock']);
       setEditItemModal(null);
       setEditItemData({
-        quantity_purchased: '',
-        actual_unit_price: '',
+        quantity: '',
+        unit_price: '',
         supplier: '',
       });
     },
@@ -363,24 +375,42 @@ const PurchaseOrdersPage = () => {
 
   const handleOpenEditItem = (order, item) => {
     setEditItemModal({ order, item });
-    setEditItemData({
-      quantity_purchased: item.quantity_purchased || item.quantity_needed || '',
-      actual_unit_price: item.actual_unit_price || item.estimated_unit_price || '',
-      supplier: item.supplier || '',
-    });
+    // Cargar valores según el estado del item
+    if (item.is_purchased) {
+      setEditItemData({
+        quantity: item.quantity_purchased || '',
+        unit_price: item.actual_unit_price || '',
+        supplier: item.supplier || '',
+      });
+    } else {
+      setEditItemData({
+        quantity: item.quantity_needed || '',
+        unit_price: item.estimated_unit_price || '',
+        supplier: item.supplier || '',
+      });
+    }
   };
 
   const handleUpdateItem = () => {
     if (!editItemModal) return;
     
     const dataToUpdate = {};
+    const isPurchased = editItemModal.item.is_purchased;
     
-    // Solo enviar cantidad comprada, precio real y proveedor
-    if (editItemData.quantity_purchased) {
-      dataToUpdate.quantity_purchased = parseFloat(editItemData.quantity_purchased);
+    // Enviar campos según el estado del item
+    if (editItemData.quantity) {
+      if (isPurchased) {
+        dataToUpdate.quantity_purchased = parseFloat(editItemData.quantity);
+      } else {
+        dataToUpdate.quantity_needed = parseFloat(editItemData.quantity);
+      }
     }
-    if (editItemData.actual_unit_price) {
-      dataToUpdate.actual_unit_price = parseFloat(editItemData.actual_unit_price);
+    if (editItemData.unit_price) {
+      if (isPurchased) {
+        dataToUpdate.actual_unit_price = parseFloat(editItemData.unit_price);
+      } else {
+        dataToUpdate.estimated_unit_price = parseFloat(editItemData.unit_price);
+      }
     }
     if (editItemData.supplier !== undefined) {
       dataToUpdate.supplier = editItemData.supplier;
@@ -837,6 +867,22 @@ const PurchaseOrdersPage = () => {
                               <span className="sm:hidden">Todo comprado</span>
                             </button>
                           </div>
+                        )}
+                        
+                        {order.status === 'purchased' && (
+                          <button
+                            onClick={() => revertToPendingMutation.mutate(order.id)}
+                            disabled={revertToPendingMutation.isPending}
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-yellow-500/20 text-yellow-400 font-medium rounded-lg hover:bg-yellow-500/30 transition-colors"
+                          >
+                            {revertToPendingMutation.isPending ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <RotateCcw className="w-4 h-4" />
+                            )}
+                            <span className="hidden sm:inline">Revertir a pendiente</span>
+                            <span className="sm:hidden">Revertir</span>
+                          </button>
                         )}
                       </div>
                     </div>
@@ -1325,38 +1371,49 @@ const PurchaseOrdersPage = () => {
               </div>
 
               <div className="space-y-4">
-                {editItemModal.item.is_purchased && (
+                {editItemModal.item.is_purchased ? (
                   <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
                     <p className="text-xs text-green-400 flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" />
                       Modificar estos valores actualizará el stock y precio del material
                     </p>
                   </div>
+                ) : (
+                  <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <p className="text-xs text-yellow-400 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      Editando valores estimados (el item aún no ha sido comprado)
+                    </p>
+                  </div>
                 )}
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Cantidad</label>
+                  <label className="text-sm text-gray mb-1.5 block">
+                    {editItemModal.item.is_purchased ? 'Cantidad comprada' : 'Cantidad necesaria'}
+                  </label>
                   <input
                     type="number"
                     step="0.01"
                     inputMode="decimal"
-                    value={editItemData.quantity_purchased}
-                    onChange={(e) => setEditItemData({ ...editItemData, quantity_purchased: e.target.value })}
+                    value={editItemData.quantity}
+                    onChange={(e) => setEditItemData({ ...editItemData, quantity: e.target.value })}
                     className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
-                    placeholder="Cantidad comprada"
+                    placeholder={editItemModal.item.is_purchased ? 'Cantidad comprada' : 'Cantidad necesaria'}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Precio unitario (COP)</label>
+                  <label className="text-sm text-gray mb-1.5 block">
+                    {editItemModal.item.is_purchased ? 'Precio real (COP)' : 'Precio estimado (COP)'}
+                  </label>
                   <input
                     type="number"
                     step="0.01"
                     inputMode="decimal"
-                    value={editItemData.actual_unit_price}
-                    onChange={(e) => setEditItemData({ ...editItemData, actual_unit_price: e.target.value })}
+                    value={editItemData.unit_price}
+                    onChange={(e) => setEditItemData({ ...editItemData, unit_price: e.target.value })}
                     className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
-                    placeholder="Precio por unidad"
+                    placeholder={editItemModal.item.is_purchased ? 'Precio real por unidad' : 'Precio estimado por unidad'}
                   />
                 </div>
 
@@ -1372,11 +1429,13 @@ const PurchaseOrdersPage = () => {
                 </div>
 
                 {/* Subtotal calculado */}
-                {editItemData.quantity_purchased && editItemData.actual_unit_price && (
-                  <div className="bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/20 rounded-lg p-4">
-                    <p className="text-sm text-gray">Subtotal</p>
+                {editItemData.quantity && editItemData.unit_price && (
+                  <div className="bg-linear-to-r from-secondary/10 to-secondary/5 border border-secondary/20 rounded-lg p-4">
+                    <p className="text-sm text-gray">
+                      Subtotal {editItemModal.item.is_purchased ? '' : '(estimado)'}
+                    </p>
                     <p className="text-xl font-bold text-light">
-                      {formatCurrency(parseFloat(editItemData.quantity_purchased) * parseFloat(editItemData.actual_unit_price))}
+                      {formatCurrency(parseFloat(editItemData.quantity) * parseFloat(editItemData.unit_price))}
                     </p>
                   </div>
                 )}
