@@ -18,4 +18,6 @@ thumb
 sketch
 .env
 dist/
+.claude
+.mcp.json
 # End of https://www.toptal.com/developers/gitignore/api/react
