@@ -15,6 +15,9 @@ import {
   Wallet,
   RefreshCw,
   ExternalLink,
+  TrendingUp,
+  PieChart,
+  DollarSign,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -134,6 +137,21 @@ const HomePage = () => {
         { icon: BarChart3, text: 'Dashboard' },
         { icon: ClipboardList, text: 'Lista de Gastos' },
         { icon: RefreshCw, text: 'Recurrentes' },
+      ],
+    },
+    {
+      id: 'analytics',
+      title: 'Estadisticas',
+      description: 'Dashboard ejecutivo con ingresos vs gastos y tendencias',
+      icon: TrendingUp,
+      path: '/analytics',
+      color: 'from-indigo-500 to-purple-500',
+      bgColor: 'bg-indigo-500/10',
+      borderColor: 'border-indigo-500/30',
+      features: [
+        { icon: DollarSign, text: 'Ingresos vs Gastos' },
+        { icon: PieChart, text: 'Distribucion' },
+        { icon: BarChart3, text: 'Tendencias' },
       ],
     },
   ];

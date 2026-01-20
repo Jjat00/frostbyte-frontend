@@ -37,6 +37,8 @@ import {
   CategoriesPage as ExpenseCategoriesPage,
   RecurringPage,
 } from "./pages/expenses";
+// Módulo de Estadísticas
+import { AnalyticsLayout, FinancialDashboard } from "./pages/analytics";
 // Módulo de Juegos
 import GamesListPage from "./pages/game/GamesListPage";
 import GameInstructionsPage from "./pages/game/GameInstructionsPage";
@@ -269,6 +271,23 @@ export const router = createBrowserRouter([
       {
         path: "recurrentes",
         element: <RecurringPage />,
+      },
+    ],
+  },
+  // Panel de estadísticas financieras (admin only)
+  {
+    path: "/analytics",
+    element: (
+      <ProtectedRoute>
+        <AdminRoute>
+          <AnalyticsLayout />
+        </AdminRoute>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <FinancialDashboard />,
       },
     ],
   },
