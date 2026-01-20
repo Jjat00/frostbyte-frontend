@@ -151,14 +151,6 @@ const PurchaseOrdersPage = () => {
 
   const materials = materialsData?.results || materialsData || [];
 
-  // Generar orden desde stock bajo
-  const generateMutation = useMutation({
-    mutationFn: () => inventoryService.generateFromLowStock(),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['purchase-orders']);
-    },
-  });
-
   // Crear orden manual
   const createOrderMutation = useMutation({
     mutationFn: (data) => inventoryService.createPurchaseOrder(data),
@@ -548,30 +540,16 @@ const PurchaseOrdersPage = () => {
             </h1>
             <p className="text-sm text-gray">Compras de materia prima</p>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => {
-                setNewOrderItems([{ raw_material: '', quantity_needed: '', estimated_unit_price: '' }]);
-                setCreateModal(true);
-              }}
-              className="flex items-center gap-1 px-3 py-2 bg-secondary/20 text-secondary font-medium rounded-lg hover:bg-secondary/30 transition-all text-sm"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Manual</span>
-            </button>
-            <button
-              onClick={() => generateMutation.mutate()}
-              disabled={generateMutation.isPending}
-              className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-50 text-sm"
-            >
-              {generateMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Plus className="w-4 h-4" />
-              )}
-              <span className="hidden sm:inline">Stock Bajo</span>
-            </button>
-          </div>
+          <button
+            onClick={() => {
+              setNewOrderItems([{ raw_material: '', quantity_needed: '', estimated_unit_price: '' }]);
+              setCreateModal(true);
+            }}
+            className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Nueva Orden</span>
+          </button>
         </div>
       </div>
 
@@ -618,14 +596,6 @@ const PurchaseOrdersPage = () => {
             >
               <Plus className="w-5 h-5" />
               Crear orden manual
-            </button>
-            <button
-              onClick={() => generateMutation.mutate()}
-              disabled={generateMutation.isPending}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary/20 text-primary font-medium rounded-lg hover:bg-primary/30 transition-colors text-sm"
-            >
-              <Plus className="w-5 h-5" />
-              Desde stock bajo
             </button>
           </div>
         </div>
