@@ -262,21 +262,23 @@ const SolicitarCancion = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 20 }}
-                        className="bg-dark-secondary border border-gray/20 rounded-xl p-4 flex items-center justify-between hover:border-primary/50 transition-all duration-300"
+                        className="bg-dark-secondary border border-gray/20 rounded-xl p-4 hover:border-primary/50 transition-all duration-300"
                       >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <Music className="text-primary" size={20} />
-                            <h4 className="text-light font-semibold text-lg">
-                              {request.song_name}
-                            </h4>
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                          <div className="flex items-start gap-3 flex-1">
+                            <Music className="text-primary flex-shrink-0 mt-1" size={20} />
+                            <div className="flex-1">
+                              <h4 className="text-light font-semibold text-base sm:text-lg break-words">
+                                {request.song_name}
+                              </h4>
+                              <p className="text-gray text-sm break-words">
+                                {request.artist_name}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-gray text-sm ml-8">
-                            {request.artist_name}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          {getStatusBadge(request.status)}
+                          <div className="flex items-center self-start flex-shrink-0">
+                            {getStatusBadge(request.status)}
+                          </div>
                         </div>
                       </motion.div>
                     ))}

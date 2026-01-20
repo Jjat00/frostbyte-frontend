@@ -147,75 +147,77 @@ const FeedbackCard = ({ feedback, onUpdateStatus }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-dark-secondary border-2 ${status.bgClass} rounded-xl p-5 hover:shadow-lg transition-all duration-300`}
+      className={`bg-dark-secondary border-2 ${status.bgClass} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300`}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <div className={`w-10 h-10 rounded-lg ${feedbackType.bgColor} flex items-center justify-center`}>
-              <TypeIcon className={`w-5 h-5 ${feedbackType.color}`} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-light">
-                  {feedback.customer_name || 'Anonimo'}
-                </h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${feedbackType.bgColor} ${feedbackType.color}`}>
-                  {feedbackType.label}
-                </span>
-              </div>
-              <StarRating rating={feedback.rating} />
-            </div>
+      {/* Header con badge de estado */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 flex-shrink-0 rounded-lg ${feedbackType.bgColor} flex items-center justify-center`}>
+            <TypeIcon className={`w-5 h-5 ${feedbackType.color}`} />
           </div>
-
-          <p className="text-light text-sm mt-3 leading-relaxed">
-            "{feedback.comment}"
-          </p>
-
-          {feedback.admin_notes && (
-            <div className="mt-3 p-3 bg-dark rounded-lg border border-gray/20">
-              <p className="text-xs text-gray mb-1">Notas del admin:</p>
-              <p className="text-sm text-light">{feedback.admin_notes}</p>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-base sm:text-lg font-bold text-light truncate">
+                {feedback.customer_name || 'Anonimo'}
+              </h3>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${feedbackType.bgColor} ${feedbackType.color} whitespace-nowrap`}>
+                {feedbackType.label}
+              </span>
             </div>
-          )}
+            <StarRating rating={feedback.rating} />
+          </div>
         </div>
 
-        <div className={`px-3 py-1 rounded-full text-xs font-medium ${status.badgeClass} flex items-center gap-1.5 ml-4`}>
-          <StatusIcon className="w-3.5 h-3.5" />
+        <div className={`px-3 py-1 rounded-full text-xs font-medium ${status.badgeClass} flex items-center gap-1.5 self-start whitespace-nowrap`}>
+          <StatusIcon className="w-3.5 h-3.5 flex-shrink-0" />
           {status.label}
         </div>
       </div>
 
-      <div className="flex items-center gap-4 text-xs text-gray mb-4">
+      {/* Contenido */}
+      <div className="mb-4">
+        <p className="text-light text-sm leading-relaxed break-words">
+          "{feedback.comment}"
+        </p>
+
+        {feedback.admin_notes && (
+          <div className="mt-3 p-3 bg-dark rounded-lg border border-gray/20">
+            <p className="text-xs text-gray mb-1">Notas del admin:</p>
+            <p className="text-sm text-light break-words">{feedback.admin_notes}</p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 text-xs text-gray mb-4">
         <div className="flex items-center gap-1.5">
-          <Calendar className="w-3.5 h-3.5" />
+          <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
           <span>{formatDate(feedback.created_at)}</span>
         </div>
         {feedback.reviewed_at && (
           <div className="flex items-center gap-1.5">
-            <Eye className="w-3.5 h-3.5" />
+            <Eye className="w-3.5 h-3.5 flex-shrink-0" />
             <span>Revisado: {formatDate(feedback.reviewed_at)}</span>
           </div>
         )}
       </div>
 
       {/* Botones de accion segun el estado */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         {feedback.status === 'pending' && (
           <>
             <button
               onClick={() => handleStatusChange('reviewed')}
-              className="flex-1 px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              className="flex-1 px-3 sm:px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
-              <Eye className="w-4 h-4" />
-              Marcar Revisado
+              <Eye className="w-4 h-4 flex-shrink-0" />
+              <span className="whitespace-nowrap">Marcar Revisado</span>
             </button>
             <button
               onClick={() => handleStatusChange('archived')}
-              className="px-4 py-2 bg-gray/20 text-gray border border-gray/30 rounded-lg hover:bg-gray/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              className="px-3 sm:px-4 py-2 bg-gray/20 text-gray border border-gray/30 rounded-lg hover:bg-gray/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
-              <Archive className="w-4 h-4" />
-              Archivar
+              <Archive className="w-4 h-4 flex-shrink-0" />
+              <span>Archivar</span>
             </button>
           </>
         )}
@@ -224,17 +226,17 @@ const FeedbackCard = ({ feedback, onUpdateStatus }) => {
           <>
             <button
               onClick={() => handleStatusChange('responded')}
-              className="flex-1 px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              className="flex-1 px-3 sm:px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
-              <CheckCircle className="w-4 h-4" />
-              Marcar Respondido
+              <CheckCircle className="w-4 h-4 flex-shrink-0" />
+              <span className="whitespace-nowrap">Marcar Respondido</span>
             </button>
             <button
               onClick={() => handleStatusChange('archived')}
-              className="px-4 py-2 bg-gray/20 text-gray border border-gray/30 rounded-lg hover:bg-gray/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              className="px-3 sm:px-4 py-2 bg-gray/20 text-gray border border-gray/30 rounded-lg hover:bg-gray/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
-              <Archive className="w-4 h-4" />
-              Archivar
+              <Archive className="w-4 h-4 flex-shrink-0" />
+              <span>Archivar</span>
             </button>
           </>
         )}
@@ -298,18 +300,18 @@ const FeedbackListPage = () => {
     <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-light mb-2 flex items-center gap-3">
-              <MessageSquare className="w-8 h-8 text-teal-400" />
-              Feedback de Clientes
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-light mb-2 flex items-center gap-2 sm:gap-3">
+              <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-teal-400 flex-shrink-0" />
+              <span className="truncate">Feedback de Clientes</span>
             </h1>
-            <p className="text-gray">Gestiona los comentarios y opiniones de los clientes</p>
+            <p className="text-gray text-sm sm:text-base">Gestiona los comentarios y opiniones de los clientes</p>
           </div>
           <button
             onClick={() => refetch()}
             disabled={isRefetching}
-            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors flex-shrink-0"
             title="Actualizar"
           >
             <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
