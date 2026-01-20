@@ -256,7 +256,12 @@ const PurchaseOrdersPage = () => {
   };
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('es-CO', {
+    if (!date) return '';
+    // Si es solo fecha (YYYY-MM-DD), agregar hora para evitar problemas de zona horaria
+    const dateStr = typeof date === 'string' && date.length === 10 
+      ? date + 'T12:00:00' 
+      : date;
+    return new Date(dateStr).toLocaleDateString('es-CO', {
       day: '2-digit',
       month: 'short',
     });
