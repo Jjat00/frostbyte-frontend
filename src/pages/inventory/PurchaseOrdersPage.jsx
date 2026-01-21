@@ -9,6 +9,8 @@ import {
   Loader2,
   Package,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ShoppingCart,
   CheckCircle,
   XCircle,
@@ -18,6 +20,7 @@ import {
   Search,
   Pencil,
   RotateCcw,
+  Calendar,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
 
@@ -137,10 +140,19 @@ const PurchaseOrdersPage = () => {
     supplier: '',
   });
 
-  // Obtener órdenes
+  // Estado para el filtro de mes
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return { month: now.getMonth() + 1, year: now.getFullYear() };
+  });
+
+  // Obtener órdenes filtradas por mes
   const { data, isLoading } = useQuery({
-    queryKey: ['purchase-orders'],
-    queryFn: () => inventoryService.getPurchaseOrders(),
+    queryKey: ['purchase-orders', selectedMonth.month, selectedMonth.year],
+    queryFn: () => inventoryService.getPurchaseOrders({ 
+      month: selectedMonth.month, 
+      year: selectedMonth.year 
+    }),
   });
 
   // Obtener materiales para crear orden
@@ -439,6 +451,40 @@ const PurchaseOrdersPage = () => {
 
   const completedOrdersCount = orders.filter(order => order.status === 'purchased').length;
 
+  // Navegación de meses
+  const goToPreviousMonth = () => {
+    setSelectedMonth(prev => {
+      if (prev.month === 1) {
+        return { month: 12, year: prev.year - 1 };
+      }
+      return { month: prev.month - 1, year: prev.year };
+    });
+  };
+
+  const goToNextMonth = () => {
+    setSelectedMonth(prev => {
+      if (prev.month === 12) {
+        return { month: 1, year: prev.year + 1 };
+      }
+      return { month: prev.month + 1, year: prev.year };
+    });
+  };
+
+  const goToCurrentMonth = () => {
+    const now = new Date();
+    setSelectedMonth({ month: now.getMonth() + 1, year: now.getFullYear() });
+  };
+
+  const monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+
+  const isCurrentMonth = () => {
+    const now = new Date();
+    return selectedMonth.month === now.getMonth() + 1 && selectedMonth.year === now.getFullYear();
+  };
+
   // Order Item Card for Mobile
   const OrderItemCard = ({ item, order }) => (
     <div className="bg-dark/50 rounded-lg p-3 mb-2">
@@ -545,10 +591,44 @@ const PurchaseOrdersPage = () => {
               setNewOrderItems([{ raw_material: '', quantity_needed: '', estimated_unit_price: '' }]);
               setCreateModal(true);
             }}
-            className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm"
+            className="flex items-center gap-1 px-3 py-2 bg-linear-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Nueva Orden</span>
+          </button>
+        </div>
+
+        {/* Navegación de mes */}
+        <div className="flex items-center justify-between bg-dark-secondary border border-gray/20 rounded-xl p-3">
+          <button
+            onClick={goToPreviousMonth}
+            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-secondary" />
+              <span className="text-light font-medium">
+                {monthNames[selectedMonth.month - 1]} {selectedMonth.year}
+              </span>
+            </div>
+            {!isCurrentMonth() && (
+              <button
+                onClick={goToCurrentMonth}
+                className="text-xs px-2 py-1 bg-secondary/20 text-secondary rounded-lg hover:bg-secondary/30 transition-colors"
+              >
+                Ir a hoy
+              </button>
+            )}
+          </div>
+          
+          <button
+            onClick={goToNextMonth}
+            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+          >
+            <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>
