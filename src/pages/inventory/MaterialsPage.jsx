@@ -92,6 +92,7 @@ const MaterialsPage = () => {
   const handleEdit = (material) => {
     setShowEditModal(material);
     setEditData({
+      name: material.name,
       current_stock: material.current_stock,
       cost_per_unit: material.cost_per_unit,
       minimum_stock: material.minimum_stock,
@@ -343,11 +344,18 @@ const MaterialsPage = () => {
                 </button>
               </div>
 
-              <div className="mb-4 p-3 bg-dark/50 rounded-lg">
-                <p className="font-bold text-light">{showEditModal.name}</p>
-              </div>
-
               <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-gray mb-1.5 block">Nombre del Material</label>
+                  <input
+                    type="text"
+                    value={editData.name || ''}
+                    onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    placeholder="Nombre del material"
+                  />
+                </div>
+
                 <div>
                   <label className="text-sm text-gray mb-1.5 block">Unidad de Medida</label>
                   <select
