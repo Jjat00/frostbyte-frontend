@@ -171,7 +171,7 @@ const CategoriesPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-light">Categorias de Gastos</h1>
           <p className="text-gray text-sm mt-1">
@@ -181,7 +181,7 @@ const CategoriesPage = () => {
 
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" />
           Nueva Categoria
@@ -330,7 +330,7 @@ const CategoriesPage = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-gray mb-2">Icono</label>
                     <select

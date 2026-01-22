@@ -220,11 +220,11 @@ const RecurringPage = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => generateAllMutation.mutate()}
             disabled={generateAllMutation.isPending}
-            className="flex items-center gap-2 px-4 py-2 bg-green-500/20 text-green-400 rounded-lg font-medium hover:bg-green-500/30 transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-green-500/20 text-green-400 rounded-lg font-medium hover:bg-green-500/30 transition-colors disabled:opacity-50 w-full sm:w-auto"
           >
             {generateAllMutation.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -236,7 +236,7 @@ const RecurringPage = () => {
 
           <button
             onClick={() => openModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" />
             Nueva Plantilla
@@ -282,12 +282,12 @@ const RecurringPage = () => {
                   due ? "border-yellow-500/50" : "border-gray/10"
                 }`}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className={`p-3 rounded-xl border ${colorClass}`}>
                     <IconComponent className="w-6 h-6" />
                   </div>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 w-full">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-light">{template.name}</h3>
                       {!template.is_active && (
@@ -306,7 +306,7 @@ const RecurringPage = () => {
                     <p className="text-sm text-gray mt-1">{template.description}</p>
                   </div>
 
-                  <div className="text-right">
+                  <div className="w-full sm:w-auto sm:text-right">
                     <p className="text-xl font-bold text-light">
                       {formatCurrency(template.amount)}
                     </p>
@@ -315,7 +315,7 @@ const RecurringPage = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                       onClick={() => generateMutation.mutate(template.id)}
                       disabled={generateMutation.isPending}
@@ -344,7 +344,7 @@ const RecurringPage = () => {
                 </div>
 
                 {template.next_due_date && (
-                  <div className="mt-4 pt-4 border-t border-gray/10 flex items-center gap-2 text-sm text-gray">
+                  <div className="mt-4 pt-4 border-t border-gray/10 flex flex-wrap items-center gap-2 text-sm text-gray">
                     <Calendar className="w-4 h-4" />
                     Proxima fecha: {template.next_due_date}
                     {template.last_generated_at && (
@@ -454,7 +454,7 @@ const RecurringPage = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-gray mb-2">Recurrencia</label>
                     <select

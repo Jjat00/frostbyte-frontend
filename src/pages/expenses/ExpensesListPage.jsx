@@ -155,7 +155,7 @@ const ExpensesListPage = () => {
 
         <Link
           to="/gastos/nuevo"
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
         >
           Nuevo Gasto
         </Link>
@@ -176,7 +176,7 @@ const ExpensesListPage = () => {
 
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${
+          className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-colors w-full sm:w-auto ${
             showFilters || statusFilter || categoryFilter
               ? "bg-primary/20 border-primary/50 text-primary"
               : "bg-dark-secondary border-gray/20 text-gray hover:text-light"
@@ -279,12 +279,12 @@ const ExpensesListPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-dark-secondary rounded-xl p-4 border border-gray/10 hover:border-gray/20 transition-colors"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className={`p-3 rounded-lg border ${colorClass}`}>
                     <IconComponent className="w-5 h-5" />
                   </div>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 w-full">
                     <div className="flex items-center gap-2 mb-1">
                       <p className="font-medium text-light truncate">
                         {expense.description}
@@ -295,7 +295,7 @@ const ExpensesListPage = () => {
                         {statusStyle.label}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-gray">
+                    <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray">
                       <span>{expense.category_name}</span>
                       <span>-</span>
                       <span>{expense.expense_date}</span>
@@ -310,7 +310,7 @@ const ExpensesListPage = () => {
                     </div>
                   </div>
 
-                  <div className="text-right">
+                  <div className="w-full sm:w-auto sm:text-right">
                     <p className="text-lg font-bold text-light">
                       {formatCurrency(expense.amount)}
                     </p>
@@ -321,7 +321,7 @@ const ExpensesListPage = () => {
                     )}
                   </div>
 
-                  <div className="relative">
+                  <div className="relative self-start sm:self-auto">
                     <button
                       onClick={() =>
                         setSelectedExpense(
@@ -335,56 +335,63 @@ const ExpensesListPage = () => {
 
                     <AnimatePresence>
                       {selectedExpense === expense.id && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="absolute right-0 top-full mt-1 w-48 bg-dark-secondary border border-gray/20 rounded-lg shadow-xl z-10 overflow-hidden"
-                        >
-                          <Link
-                            to={`/gastos/${expense.id}`}
-                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray hover:text-light hover:bg-gray/10 transition-colors"
+                        <>
+                          {/* Backdrop para cerrar al hacer click afuera */}
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setSelectedExpense(null)}
+                          />
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="fixed sm:absolute right-4 sm:right-0 bottom-20 sm:bottom-auto sm:top-full sm:mt-1 w-[calc(100%-2rem)] sm:w-48 bg-dark border sm:bg-dark-secondary border-gray/20 rounded-lg shadow-2xl z-50 overflow-hidden"
                           >
-                            <Eye className="w-4 h-4" />
-                            Ver detalle
-                          </Link>
+                            <Link
+                              to={`/gastos/${expense.id}`}
+                              className="flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-gray hover:text-light hover:bg-gray/10 transition-colors"
+                            >
+                              <Eye className="w-4 h-4" />
+                              Ver detalle
+                            </Link>
 
-                          {expense.status === "pending" && (
-                            <>
-                              <button
-                                onClick={() =>
-                                  markPaidMutation.mutate({
-                                    id: expense.id,
-                                    paymentMethod: "cash",
-                                  })
+                            {expense.status === "pending" && (
+                              <>
+                                <button
+                                  onClick={() =>
+                                    markPaidMutation.mutate({
+                                      id: expense.id,
+                                      paymentMethod: "cash",
+                                    })
+                                  }
+                                  className="w-full flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-green-400 hover:bg-green-500/10 transition-colors"
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                  Marcar pagado
+                                </button>
+                                <button
+                                  onClick={() => cancelMutation.mutate(expense.id)}
+                                  className="w-full flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-yellow-400 hover:bg-yellow-500/10 transition-colors"
+                                >
+                                  <XCircle className="w-4 h-4" />
+                                  Cancelar
+                                </button>
+                              </>
+                            )}
+
+                            <button
+                              onClick={() => {
+                                if (confirm("¿Eliminar este gasto?")) {
+                                  deleteMutation.mutate(expense.id);
                                 }
-                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-green-400 hover:bg-green-500/10 transition-colors"
-                              >
-                                <CheckCircle className="w-4 h-4" />
-                                Marcar pagado
-                              </button>
-                              <button
-                                onClick={() => cancelMutation.mutate(expense.id)}
-                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-yellow-400 hover:bg-yellow-500/10 transition-colors"
-                              >
-                                <XCircle className="w-4 h-4" />
-                                Cancelar
-                              </button>
-                            </>
-                          )}
-
-                          <button
-                            onClick={() => {
-                              if (confirm("¿Eliminar este gasto?")) {
-                                deleteMutation.mutate(expense.id);
-                              }
-                            }}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Eliminar
-                          </button>
-                        </motion.div>
+                              }}
+                              className="w-full flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              Eliminar
+                            </button>
+                          </motion.div>
+                        </>
                       )}
                     </AnimatePresence>
                   </div>

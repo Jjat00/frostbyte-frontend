@@ -130,7 +130,7 @@ const ExpenseDetailPage = () => {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
@@ -174,12 +174,12 @@ const ExpenseDetailPage = () => {
       >
         {/* Header */}
         <div className="p-6 border-b border-gray/10">
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             <div className={`p-4 rounded-xl border ${colorClass}`}>
               <IconComponent className="w-8 h-8" />
             </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
                 <h2 className="text-xl font-bold text-light">
                   {expense.description}
                 </h2>
@@ -191,7 +191,7 @@ const ExpenseDetailPage = () => {
               </div>
               <p className="text-gray">{expense.category?.name}</p>
             </div>
-            <div className="text-right">
+            <div className="sm:text-right">
               <p className="text-3xl font-bold text-light">
                 {formatCurrency(expense.amount)}
               </p>
@@ -201,7 +201,7 @@ const ExpenseDetailPage = () => {
 
         {/* Details */}
         <div className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
               <Calendar className="w-5 h-5 text-gray" />
               <div>
@@ -272,7 +272,7 @@ const ExpenseDetailPage = () => {
 
         {/* Actions */}
         {expense.status === "pending" && (
-          <div className="p-6 border-t border-gray/10 flex items-center gap-3">
+          <div className="p-6 border-t border-gray/10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
               onClick={() => markPaidMutation.mutate({ paymentMethod: "cash" })}
               disabled={markPaidMutation.isPending}

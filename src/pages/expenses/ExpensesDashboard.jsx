@@ -91,14 +91,14 @@ const ExpensesDashboard = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Date filter */}
-          <div className="flex bg-dark-secondary rounded-lg p-1">
+          <div className="flex flex-wrap bg-dark-secondary rounded-lg p-1">
             {dateFilterOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => setDateFilter(option.value)}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                className={`px-2.5 py-1.5 text-xs sm:px-3 sm:text-sm font-medium rounded-md transition-colors ${
                   dateFilter === option.value
                     ? "bg-primary text-dark"
                     : "text-gray hover:text-light"
@@ -111,7 +111,7 @@ const ExpensesDashboard = () => {
 
           <Link
             to="/gastos/nuevo"
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
           >
             <PlusCircle className="w-4 h-4" />
             <span className="hidden sm:inline">Nuevo Gasto</span>
