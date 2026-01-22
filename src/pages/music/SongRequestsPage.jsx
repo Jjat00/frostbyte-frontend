@@ -179,11 +179,36 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
         )}
         
         {request.status === 'completed' && (
-          <p className="text-sm text-gray italic">Esta canción ya fue reproducida</p>
+          <>
+            <p className="text-sm text-gray italic flex-1">Esta canción ya fue reproducida</p>
+            <button
+              onClick={() => handleStatusChange('pending')}
+              className="px-3 sm:px-4 py-2 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+            >
+              <Clock className="w-4 h-4 flex-shrink-0" />
+              <span>Pendiente</span>
+            </button>
+          </>
         )}
         
         {request.status === 'cancelled' && (
-          <p className="text-sm text-gray italic">Esta solicitud fue cancelada</p>
+          <>
+            <p className="text-sm text-gray italic flex-1">Esta solicitud fue cancelada</p>
+            <button
+              onClick={() => handleStatusChange('pending')}
+              className="px-3 sm:px-4 py-2 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+            >
+              <Clock className="w-4 h-4 flex-shrink-0" />
+              <span>Pendiente</span>
+            </button>
+            <button
+              onClick={() => handleStatusChange('playing')}
+              className="px-3 sm:px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+            >
+              <Play className="w-4 h-4 flex-shrink-0" />
+              <span>Reproducir</span>
+            </button>
+          </>
         )}
       </div>
     </motion.div>
