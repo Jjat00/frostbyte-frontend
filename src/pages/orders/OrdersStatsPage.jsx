@@ -35,6 +35,7 @@ import {
   ChevronRight,
   TrendingDown,
   Package,
+  Armchair,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 
@@ -120,6 +121,12 @@ const OrdersStatsPage = () => {
     enabled: !isLoading, // Esperar a que las stats principales carguen
   });
 
+  // Obtener estadísticas de mesas
+  const { data: tableStats, isLoading: isLoadingTables } = useQuery({
+    queryKey: ['table-stats'],
+    queryFn: () => ordersService.getTableStats(),
+  });
+
   const formatCurrency = (value) => {
     if (!value) return '$0';
     const num = parseFloat(value);
@@ -195,7 +202,7 @@ const OrdersStatsPage = () => {
     return periodLabels[period] || 'Hoy';
   };
 
-  if (isLoading || isLoadingRevenue || isLoadingProducts) {
+  if (isLoading || isLoadingRevenue || isLoadingProducts || isLoadingTables) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin text-secondary" />
@@ -414,6 +421,65 @@ const OrdersStatsPage = () => {
             </div>
           </div>
         </>
+      )}
+
+      {/* Gráfica de Mesas Más Frecuentadas */}
+      {tableStats?.tables && tableStats.tables.length > 0 && (
+        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+          <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
+            <Armchair className="w-5 h-5 text-purple-400" />
+            Mesas Más Frecuentadas
+          </h2>
+          <p className="text-sm text-gray mb-4">
+            Total de visitas registradas: <span className="text-light font-medium">{tableStats.total_visits}</span>
+          </p>
+          <div className="h-64 md:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={tableStats.tables
+                  .sort((a, b) => b.visit_count - a.visit_count)
+                  .map((table) => ({
+                    ...table,
+                    name: table.table_name,
+                  }))}
+                margin={{ top: 5, right: 30, left: 20, bottom: 60 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis
+                  dataKey="name"
+                  stroke="#9CA3AF"
+                  style={{ fontSize: '12px' }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                  interval={0}
+                />
+                <YAxis
+                  stroke="#9CA3AF"
+                  style={{ fontSize: '12px' }}
+                  allowDecimals={false}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB',
+                  }}
+                  formatter={(value) => [`${value} visitas`, 'Visitas']}
+                  labelFormatter={(label) => `Mesa: ${label}`}
+                />
+                <Legend />
+                <Bar
+                  dataKey="visit_count"
+                  name="Visitas"
+                  fill="#A855F7"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       )}
 
       {/* Desglose por estado */}

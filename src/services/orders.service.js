@@ -148,6 +148,15 @@ export const ordersService = {
     return response.data;
   },
 
+  /**
+   * Obtener estadísticas de visitas por mesa
+   * @returns {Promise<{tables: Array<{table_number: number, table_name: string, visit_count: number}>, total_visits: number}>}
+   */
+  async getTableStats() {
+    const response = await apiClient.get('/tables/stats/');
+    return response.data;
+  },
+
   // ============= ORDER ITEMS =============
 
   /**
