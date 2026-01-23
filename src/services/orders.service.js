@@ -157,6 +157,34 @@ export const ordersService = {
     return response.data;
   },
 
+  /**
+   * Obtener ventas por hora del día (para identificar horarios pico)
+   * @param {string} date - Periodo (today, yesterday, week, month, last_month, year)
+   * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
+   * @param {string} end_date - Fecha fin (YYYY-MM-DD) para rango personalizado
+   */
+  async getSalesByHour(date = 'month', start_date = null, end_date = null) {
+    const params = { date };
+    if (start_date) params.start_date = start_date;
+    if (end_date) params.end_date = end_date;
+    const response = await apiClient.get(`${BASE_URL}/sales_by_hour/`, { params });
+    return response.data;
+  },
+
+  /**
+   * Obtener ventas por día de la semana
+   * @param {string} date - Periodo (today, yesterday, week, month, last_month, year)
+   * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
+   * @param {string} end_date - Fecha fin (YYYY-MM-DD) para rango personalizado
+   */
+  async getSalesByWeekday(date = 'month', start_date = null, end_date = null) {
+    const params = { date };
+    if (start_date) params.start_date = start_date;
+    if (end_date) params.end_date = end_date;
+    const response = await apiClient.get(`${BASE_URL}/sales_by_weekday/`, { params });
+    return response.data;
+  },
+
   // ============= ORDER ITEMS =============
 
   /**

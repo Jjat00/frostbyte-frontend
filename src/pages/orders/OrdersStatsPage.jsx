@@ -36,6 +36,7 @@ import {
   TrendingDown,
   Package,
   Armchair,
+  Receipt,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 
@@ -210,6 +211,11 @@ const OrdersStatsPage = () => {
     );
   }
 
+  // Calcular ticket promedio
+  const ticketPromedio = stats?.total_orders > 0
+    ? parseFloat(stats.total_revenue) / stats.total_orders
+    : 0;
+
   const totalActive =
     (stats?.by_status?.pending || 0) +
     (stats?.by_status?.preparing || 0) +
@@ -236,7 +242,7 @@ const OrdersStatsPage = () => {
       </div>
 
       {/* Stats principales */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
         <StatCard
           title="Total Pedidos"
           value={stats?.total_orders || 0}
@@ -249,6 +255,13 @@ const OrdersStatsPage = () => {
           subtitle={`${stats?.total_paid_items || 0} items pagados`}
           icon={DollarSign}
           color="green"
+        />
+        <StatCard
+          title="Ticket Promedio"
+          value={formatCurrency(ticketPromedio)}
+          subtitle="Por pedido"
+          icon={Receipt}
+          color="primary"
         />
         <StatCard
           title="Pedidos Activos"

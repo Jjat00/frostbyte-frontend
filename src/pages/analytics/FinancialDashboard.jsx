@@ -32,8 +32,11 @@ import {
   Calendar,
   CalendarRange,
   Activity,
+  Clock,
+  CalendarDays,
 } from 'lucide-react';
 import { analyticsService } from '@/services/analytics.service';
+import { ordersService } from '@/services/orders.service';
 
 // Colores para el pie chart
 const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16'];
@@ -122,6 +125,18 @@ const FinancialDashboard = () => {
     queryFn: () => analyticsService.getComparison(),
   });
 
+  // Obtener ventas por hora (último mes para datos significativos)
+  const { data: salesByHour, isLoading: isLoadingHourly } = useQuery({
+    queryKey: ['sales-by-hour-analytics'],
+    queryFn: () => ordersService.getSalesByHour('month'),
+  });
+
+  // Obtener ventas por día de semana (último mes)
+  const { data: salesByWeekday, isLoading: isLoadingWeekday } = useQuery({
+    queryKey: ['sales-by-weekday-analytics'],
+    queryFn: () => ordersService.getSalesByWeekday('month'),
+  });
+
   const formatCurrency = (value) => {
     if (!value && value !== 0) return '$0';
     const num = parseFloat(value);
@@ -147,6 +162,7 @@ const FinancialDashboard = () => {
   };
 
   const isLoading = isLoadingSummary || isLoadingBreakdown || isLoadingComparison ||
+    isLoadingHourly || isLoadingWeekday ||
     (viewMode === 'daily' && isLoadingDaily) ||
     (viewMode === 'monthly' && isLoadingTrend);
 
@@ -258,6 +274,114 @@ const FinancialDashboard = () => {
           color="blue"
           isNegativeGood={true}
         />
+      </div>
+
+      {/* Gráficas Estratégicas: Horarios Pico y Días de Semana */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        {/* Ventas por Hora del Día */}
+        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+          <h2 className="text-lg font-bold text-light mb-2 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-orange-400" />
+            Horarios Pico
+          </h2>
+          <p className="text-xs text-gray mb-4">Ingresos acumulados por hora del día (último mes)</p>
+          {salesByHour?.data && salesByHour.data.some(h => h.revenue > 0) ? (
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={salesByHour.data.filter(h => h.hour >= 8 && h.hour <= 23)}
+                  margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis
+                    dataKey="hour_label"
+                    stroke="#9CA3AF"
+                    style={{ fontSize: '10px' }}
+                    interval={1}
+                  />
+                  <YAxis
+                    stroke="#9CA3AF"
+                    tickFormatter={(value) => formatCurrency(value)}
+                    style={{ fontSize: '10px' }}
+                    width={50}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F9FAFB',
+                    }}
+                    formatter={(value) => [formatCurrencyFull(value), 'Ingresos']}
+                    labelFormatter={(label) => `Hora: ${label}`}
+                  />
+                  <Bar
+                    dataKey="revenue"
+                    name="Ingresos"
+                    fill="#F97316"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-64 flex items-center justify-center text-gray">
+              <p>No hay datos de horarios disponibles</p>
+            </div>
+          )}
+        </div>
+
+        {/* Ventas por Día de Semana */}
+        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+          <h2 className="text-lg font-bold text-light mb-2 flex items-center gap-2">
+            <CalendarDays className="w-5 h-5 text-cyan-400" />
+            Ventas por Día de Semana
+          </h2>
+          <p className="text-xs text-gray mb-4">Ingresos acumulados por día (último mes)</p>
+          {salesByWeekday?.data && salesByWeekday.data.some(d => d.revenue > 0) ? (
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={salesByWeekday.data}
+                  margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis
+                    dataKey="weekday_name"
+                    stroke="#9CA3AF"
+                    style={{ fontSize: '11px' }}
+                    tickFormatter={(value) => value.substring(0, 3)}
+                  />
+                  <YAxis
+                    stroke="#9CA3AF"
+                    tickFormatter={(value) => formatCurrency(value)}
+                    style={{ fontSize: '10px' }}
+                    width={50}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F9FAFB',
+                    }}
+                    formatter={(value) => [formatCurrencyFull(value), 'Ingresos']}
+                  />
+                  <Bar
+                    dataKey="revenue"
+                    name="Ingresos"
+                    fill="#06B6D4"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-64 flex items-center justify-center text-gray">
+              <p>No hay datos de días disponibles</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Grafica de Acumulados */}
