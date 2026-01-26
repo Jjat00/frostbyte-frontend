@@ -24,14 +24,14 @@ const ProductCard = ({ product, index, styles }) => {
     >
       <div className="relative flex flex-col items-center">
         {/* Círculo con anillo dorado */}
-        <div className="relative mb-4">
+        <div className="relative mb-4 lg:mb-6 xl:mb-8">
           {/* Anillo exterior dorado */}
-          <div className={`absolute inset-0 rounded-full border-4 ${styles.ringColor} shadow-2xl`}></div>
+          <div className={`absolute inset-0 rounded-full border-2 md:border-4 lg:border-[6px] xl:border-[8px] ${styles.ringColor} shadow-2xl`}></div>
           {/* Anillo interior */}
-          <div className={`absolute inset-2 rounded-full border-2 ${styles.ringColor} opacity-60`}></div>
+          <div className={`absolute inset-1 md:inset-2 lg:inset-4 xl:inset-5 rounded-full border md:border-2 lg:border-[4px] xl:border-[5px] ${styles.ringColor} opacity-60`}></div>
           
           {/* Contenedor de imagen circular */}
-          <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden bg-gradient-to-br from-purple-600/30 to-purple-900/30 flex items-center justify-center">
+          <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-64 lg:h-64 xl:w-72 xl:h-72 rounded-full overflow-hidden bg-gradient-to-br from-purple-600/30 to-purple-900/30 flex items-center justify-center">
             {styles.image ? (
               <img
                 alt={product.name}
@@ -49,7 +49,7 @@ const ProductCard = ({ product, index, styles }) => {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 + index * 0.1 }}
-              className="absolute -bottom-2 -right-2 w-16 h-16"
+              className="absolute -bottom-1 -right-1 md:-bottom-2 md:-right-2 w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24"
             >
               <div className={`w-full h-full rounded-full ${styles.splashBg} opacity-80 blur-sm`}></div>
             </motion.div>
@@ -57,17 +57,17 @@ const ProductCard = ({ product, index, styles }) => {
         </div>
 
         {/* Contenido del producto */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 md:space-y-3 lg:space-y-4 xl:space-y-5">
           {/* Nombre del producto */}
-          <div className={`inline-block px-6 py-2 ${styles.labelBg} rounded-lg shadow-lg`}>
-            <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">
+          <div className={`inline-block px-4 py-2 md:px-7 md:py-3 lg:px-10 lg:py-4 xl:px-12 xl:py-5 ${styles.labelBg} rounded-lg shadow-lg`}>
+            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-white uppercase tracking-wider">
               {product.name}
             </h3>
           </div>
 
           {/* Descripción */}
-          <div className="px-4">
-            <p className="text-white font-semibold text-sm md:text-base mb-1">
+          <div className="px-2 md:px-4">
+            <p className="text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-0.5">
               {product.description?.split(' ').slice(0, 3).join(' ') || 'Delicioso cóctel'}
             </p>
             <p className="text-white/90 text-xs md:text-sm uppercase tracking-wide">
@@ -76,8 +76,8 @@ const ProductCard = ({ product, index, styles }) => {
           </div>
 
           {/* Precio */}
-          <div className={`inline-block px-8 py-3 ${styles.priceButtonBg} rounded-full shadow-xl transform transition-all duration-300 group-hover:scale-110`}>
-            <span className="text-2xl md:text-3xl font-black text-white">
+          <div className={`inline-block px-6 py-2.5 md:px-10 md:py-4 lg:px-14 lg:py-6 xl:px-16 xl:py-7 ${styles.priceButtonBg} rounded-full shadow-xl transform transition-all duration-300 group-hover:scale-110`}>
+            <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -90,15 +90,15 @@ const ProductCard = ({ product, index, styles }) => {
 const ProductSkeleton = () => (
   <div className="flex flex-col items-center animate-pulse">
     {/* Círculo con anillo */}
-    <div className="relative mb-4">
-      <div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-white/10 border-4 border-white/20"></div>
+    <div className="relative mb-4 lg:mb-6 xl:mb-8">
+      <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-64 lg:h-64 xl:w-72 xl:h-72 rounded-full bg-white/10 border-2 md:border-4 lg:border-[6px] xl:border-[8px] border-white/20"></div>
     </div>
     {/* Contenido */}
-    <div className="text-center space-y-2 w-full">
-      <div className="h-10 bg-white/10 rounded-lg w-3/4 mx-auto"></div>
-      <div className="h-4 bg-white/10 rounded w-full mx-auto"></div>
-      <div className="h-4 bg-white/10 rounded w-2/3 mx-auto"></div>
-      <div className="h-12 bg-white/10 rounded-full w-32 mx-auto mt-4"></div>
+    <div className="text-center space-y-2 md:space-y-3 lg:space-y-4 xl:space-y-5 w-full">
+      <div className="h-10 md:h-12 lg:h-16 xl:h-20 bg-white/10 rounded-lg w-3/4 mx-auto"></div>
+      <div className="h-4 md:h-5 lg:h-6 xl:h-8 bg-white/10 rounded w-full mx-auto"></div>
+      <div className="h-4 md:h-5 lg:h-6 xl:h-8 bg-white/10 rounded w-2/3 mx-auto"></div>
+      <div className="h-12 md:h-16 lg:h-20 xl:h-24 bg-white/10 rounded-full w-32 md:w-40 lg:w-48 xl:w-56 mx-auto mt-3 md:mt-4"></div>
     </div>
   </div>
 );
@@ -197,12 +197,12 @@ const Cuates = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-7xl font-black text-white mb-4 drop-shadow-2xl uppercase tracking-wider">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white mb-4 drop-shadow-2xl uppercase tracking-wider">
             <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 bg-clip-text text-transparent">
               LOS CUATES
             </span>
           </h2>
-          <p className="text-white text-lg md:text-xl max-w-2xl mx-auto font-semibold drop-shadow-lg">
+          <p className="text-white text-base md:text-lg lg:text-xl max-w-2xl mx-auto font-semibold drop-shadow-lg">
             Cócteles listos para tomar con auténtico tequila mexicano.
             Refrescantes, prácticos y perfectos para cualquier ocasión.
           </p>
@@ -214,7 +214,7 @@ const Cuates = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16 max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10 md:gap-12 lg:gap-16 xl:gap-20 max-w-7xl mx-auto">
           {isLoading
             ? [...Array(3)].map((_, i) => <ProductSkeleton key={i} />)
             : products.map((product, index) => (
