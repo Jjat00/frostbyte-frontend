@@ -21,7 +21,6 @@ import Cervezas from "@/components/Cervezas";
 import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
-import PromoPopup from "@/components/PromoPopup";
 import { env } from "@/config/env";
 
 function App() {
@@ -71,7 +70,6 @@ function App() {
         <Footer />
         <ScrollToCarta />
         <Toaster />
-        <PromoPopup />
       </div>
     </>
   );

@@ -8,9 +8,6 @@ import {
   Flame,
   Citrus,
   Anchor,
-  Coffee,
-  Sparkles,
-  Tag,
 } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
@@ -241,68 +238,6 @@ const Granizados = () => {
             Error al cargar los productos. Por favor intenta de nuevo.
           </div>
         )}
-
-        {/* Banner Promoción Granizado de Café */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
-        >
-          <div className="relative bg-gradient-to-r from-amber-950/80 via-amber-900/60 to-orange-950/80 border-2 border-amber-500/50 rounded-2xl overflow-hidden">
-            {/* Efectos de fondo */}
-            <div className="absolute inset-0">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/20 rounded-full filter blur-[60px]" />
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-500/15 rounded-full filter blur-[40px]" />
-            </div>
-
-            <div className="relative z-10 p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                {/* Lado izquierdo - Info */}
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-amber-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
-                    <Coffee className="text-dark" size={28} />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="inline-flex items-center gap-1 bg-red-500/20 border border-red-400/50 rounded-full px-2 py-0.5 text-xs">
-                        <Tag size={10} className="text-red-400" />
-                        <span className="text-red-300 font-semibold">PROMO FIN DE SEMANA</span>
-                      </span>
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-light">
-                      Granizado de{" "}
-                      <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
-                        Café
-                      </span>
-                    </h3>
-                    <p className="text-amber-200/70 text-sm">
-                      Lleva 2 por <span className="font-bold text-amber-200">{formatPrice(12000)}</span>
-                      <span className="text-gray line-through ml-2 text-xs">{formatPrice(16000)}</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Lado derecho - Ahorro */}
-                <div className="flex items-center gap-3">
-                  <div className="text-center sm:text-right">
-                    <div className="text-amber-300/60 text-xs">Cada uno a</div>
-                    <div className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
-                      {formatPrice(6000)}
-                    </div>
-                  </div>
-                  <div className="bg-green-500/20 border border-green-400/50 rounded-xl px-3 py-2">
-                    <Sparkles className="text-green-400 mx-auto mb-1" size={16} />
-                    <span className="text-green-400 font-bold text-sm block">
-                      -{formatPrice(4000)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {isLoading
