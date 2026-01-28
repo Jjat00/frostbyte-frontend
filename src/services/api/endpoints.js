@@ -15,6 +15,9 @@ export const ENDPOINTS = {
   // Variants
   VARIANTS: '/variants/',
   VARIANT_DETAIL: (id) => `/variants/${id}/`,
+
+  // Upload
+  UPLOAD_IMAGE: '/upload/image/',
   
   // Song Requests
   SONG_REQUESTS: '/song-requests/',

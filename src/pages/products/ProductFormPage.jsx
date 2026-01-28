@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { productsService, variantsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 
 const ProductFormPage = () => {
   const navigate = useNavigate();
@@ -317,18 +318,21 @@ const ProductFormPage = () => {
               )}
             </div>
 
-            {/* URL de imagen */}
-            <div>
+            {/* Imagen del producto */}
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray mb-2">
-                URL de Imagen
+                Imagen del Producto
               </label>
-              <input
-                type="url"
-                name="image_url"
+              <ImageUpload
                 value={formData.image_url}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
-                placeholder="https://ejemplo.com/imagen.jpg"
+                onChange={(url) => {
+                  setFormData((prev) => ({ ...prev, image_url: url }));
+                  if (errors.image_url) {
+                    setErrors((prev) => ({ ...prev, image_url: null }));
+                  }
+                }}
+                error={errors.image_url}
+                disabled={saveProductMutation.isPending}
               />
             </div>
 
