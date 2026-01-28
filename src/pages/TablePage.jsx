@@ -21,7 +21,6 @@ import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
-import PromoPopup from "@/components/PromoPopup";
 import { env } from "@/config/env";
 
 function TablePage() {
@@ -85,7 +84,6 @@ function TablePage() {
         <Footer />
         <ScrollToCarta />
         <Toaster />
-        <PromoPopup />
       </div>
     </>
   );
