@@ -326,7 +326,7 @@ const AIImageGeneratorPage = () => {
         </motion.div>
       )}
 
-      {/* Zona de resultado: imágenes originales + lugar de la generada (loading o imagen) */}
+      {/* Zona de resultado: imágenes originales + imagen generada */}
       {showResultArea && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -335,8 +335,8 @@ const AIImageGeneratorPage = () => {
         >
           {hasGenerated && (
             <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
+              <div className="flex items-center justify-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
                 <p className="text-sm text-green-400 font-medium">
                   Imagen generada exitosamente
                 </p>
@@ -344,35 +344,37 @@ const AIImageGeneratorPage = () => {
             </div>
           )}
 
-          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6">
+          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 sm:p-8">
             {/* Imágenes originales */}
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-light flex items-center gap-2 mb-3">
+            <div className="mb-8">
+              <h3 className="text-lg font-bold text-light text-center mb-4">
                 Imágenes originales
               </h3>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
                 {displayOriginalUrl && (
-                  <div className="flex-1 min-w-[200px] max-w-sm">
-                    <p className="text-xs text-gray mb-1.5">Original</p>
-                    <div className="bg-dark border border-gray/20 rounded-xl overflow-hidden aspect-square flex items-center justify-center">
+                  <div className="flex flex-col items-center w-full sm:w-auto sm:min-w-[220px] sm:max-w-[280px]">
+                    <p className="text-xs text-gray mb-2 w-full text-center sm:text-left">
+                      Original
+                    </p>
+                    <div className="w-full aspect-square max-w-[280px] bg-dark border border-gray/20 rounded-xl overflow-hidden flex items-center justify-center p-2">
                       <img
                         src={displayOriginalUrl}
                         alt="Imagen original"
-                        className="w-full h-full object-contain"
+                        className="max-w-full max-h-full w-auto h-auto object-contain"
                       />
                     </div>
                   </div>
                 )}
                 {displayReferenceUrl && (
-                  <div className="flex-1 min-w-[200px] max-w-sm">
-                    <p className="text-xs text-gray mb-1.5">
+                  <div className="flex flex-col items-center w-full sm:w-auto sm:min-w-[220px] sm:max-w-[280px]">
+                    <p className="text-xs text-gray mb-2 w-full text-center sm:text-left">
                       Referencia de estilo
                     </p>
-                    <div className="bg-dark border border-gray/20 rounded-xl overflow-hidden aspect-square flex items-center justify-center">
+                    <div className="w-full aspect-square max-w-[280px] bg-dark border border-gray/20 rounded-xl overflow-hidden flex items-center justify-center p-2">
                       <img
                         src={displayReferenceUrl}
                         alt="Referencia de estilo"
-                        className="w-full h-full object-contain"
+                        className="max-w-full max-h-full w-auto h-auto object-contain"
                       />
                     </div>
                   </div>
@@ -380,9 +382,9 @@ const AIImageGeneratorPage = () => {
               </div>
             </div>
 
-            {/* Donde va la imagen generada: loading inline o imagen */}
+            {/* Imagen generada (loading o resultado) */}
             <div>
-              <h3 className="text-lg font-bold text-light flex items-center gap-2 mb-3">
+              <h3 className="text-lg font-bold text-light text-center mb-4">
                 Imagen generada
               </h3>
               {isGenerating ? (
@@ -394,7 +396,7 @@ const AIImageGeneratorPage = () => {
                 />
               ) : hasGenerated ? (
                 <div
-                  className="rounded-xl border border-gray/20 overflow-hidden aspect-video flex items-center justify-center min-h-[280px] bg-dark/60"
+                  className="w-full rounded-xl border border-gray/20 overflow-hidden aspect-video min-h-[280px] bg-dark/60 flex items-center justify-center p-4"
                   style={
                     generatedData?.transparent_background
                       ? {
@@ -409,7 +411,7 @@ const AIImageGeneratorPage = () => {
                   <img
                     src={generatedData.generated_image_url}
                     alt="Imagen generada"
-                    className="w-full h-full object-contain"
+                    className="max-w-full max-h-full w-auto h-auto object-contain"
                   />
                 </div>
               ) : null}
@@ -417,7 +419,7 @@ const AIImageGeneratorPage = () => {
 
             {/* Prompt utilizado (solo cuando hay resultado) */}
             {hasGenerated && generatedData?.user_prompt && (
-              <div className="mt-4 bg-dark border border-gray/20 rounded-lg p-4">
+              <div className="mt-6 bg-dark border border-gray/20 rounded-lg p-4">
                 <h4 className="text-sm font-medium text-light mb-2">
                   Prompt utilizado
                 </h4>
