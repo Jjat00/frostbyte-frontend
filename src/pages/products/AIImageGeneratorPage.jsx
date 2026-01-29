@@ -1,24 +1,23 @@
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Sparkles,
   AlertCircle,
   CheckCircle2,
   Info,
-} from 'lucide-react';
-import { DualImageUploader } from '@/components/ai-generator/DualImageUploader';
-import { PromptBuilder } from '@/components/ai-generator/PromptBuilder';
-import { TransparencyToggle } from '@/components/ai-generator/TransparencyToggle';
-import { GenerationProgress } from '@/components/ai-generator/GenerationProgress';
-import { ImagePreview } from '@/components/ai-generator/ImagePreview';
-import { GeneratedImageActions } from '@/components/ai-generator/GeneratedImageActions';
+} from "lucide-react";
+import { DualImageUploader } from "@/components/ai-generator/DualImageUploader";
+import { PromptBuilder } from "@/components/ai-generator/PromptBuilder";
+import { TransparencyToggle } from "@/components/ai-generator/TransparencyToggle";
+import { GenerationProgress } from "@/components/ai-generator/GenerationProgress";
+import { GeneratedImageActions } from "@/components/ai-generator/GeneratedImageActions";
 import {
   useImageGeneration,
   useImageValidation,
-} from '@/hooks/useImageGeneration';
-import { cn } from '@/lib/utils';
+} from "@/hooks/useImageGeneration";
+import { cn } from "@/lib/utils";
 
 /**
  * Página principal para generación de imágenes de productos con IA
@@ -30,7 +29,7 @@ const AIImageGeneratorPage = () => {
   // Estado del formulario
   const [originalImage, setOriginalImage] = useState(null);
   const [referenceImage, setReferenceImage] = useState(null);
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("");
   const [transparent, setTransparent] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -48,7 +47,7 @@ const AIImageGeneratorPage = () => {
     reset,
   } = useImageGeneration({
     onSuccess: (data) => {
-      console.log('Imagen generada:', data);
+      console.log("Imagen generada:", data);
     },
   });
 
@@ -58,7 +57,7 @@ const AIImageGeneratorPage = () => {
 
     // Validar imagen original
     if (!originalImage) {
-      newErrors.original = 'Debes seleccionar una imagen original';
+      newErrors.original = "Debes seleccionar una imagen original";
     } else {
       const error = validateFile(originalImage);
       if (error) newErrors.original = error;
@@ -72,7 +71,7 @@ const AIImageGeneratorPage = () => {
 
     // Validar prompt (opcional, pero tiene límite)
     if (prompt && prompt.length > 500) {
-      newErrors.prompt = 'El prompt no puede exceder 500 caracteres';
+      newErrors.prompt = "El prompt no puede exceder 500 caracteres";
     }
 
     setErrors(newErrors);
@@ -118,7 +117,7 @@ const AIImageGeneratorPage = () => {
   const handleSaveToProduct = useCallback(() => {
     // TODO: Mostrar modal para seleccionar producto
     // Por ahora solo mostramos un placeholder
-    alert('Funcionalidad de guardar en producto próximamente');
+    alert("Funcionalidad de guardar en producto próximamente");
   }, []);
 
   const handleRegenerate = useCallback(() => {
@@ -133,7 +132,7 @@ const AIImageGeneratorPage = () => {
   const handleDiscard = useCallback(() => {
     if (
       window.confirm(
-        '¿Estás seguro de descartar esta imagen? Esta acción no se puede deshacer.'
+        "¿Estás seguro de descartar esta imagen? Esta acción no se puede deshacer.",
       )
     ) {
       reset();
@@ -143,7 +142,7 @@ const AIImageGeneratorPage = () => {
   const handleStartOver = useCallback(() => {
     setOriginalImage(null);
     setReferenceImage(null);
-    setPrompt('');
+    setPrompt("");
     setTransparent(false);
     setErrors({});
     reset();
@@ -152,20 +151,43 @@ const AIImageGeneratorPage = () => {
   // Estados de UI
   const isUploading = uploadProgress > 0 && uploadProgress < 100;
   const hasGenerated = !!generatedData;
+  const showResultArea = isUploading || isGenerating || hasGenerated;
+
+  // URLs para mostrar imágenes originales mientras se genera (object URLs)
+  const [originalPreviewUrl, setOriginalPreviewUrl] = useState(null);
+  const [referencePreviewUrl, setReferencePreviewUrl] = useState(null);
+
+  useEffect(() => {
+    if (showResultArea && !hasGenerated && originalImage) {
+      const url = URL.createObjectURL(originalImage);
+      setOriginalPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    if (hasGenerated) setOriginalPreviewUrl(null);
+  }, [showResultArea, hasGenerated, originalImage]);
+
+  useEffect(() => {
+    if (showResultArea && !hasGenerated && referenceImage) {
+      const url = URL.createObjectURL(referenceImage);
+      setReferencePreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    if (hasGenerated) setReferencePreviewUrl(null);
+  }, [showResultArea, hasGenerated, referenceImage]);
+
+  const displayOriginalUrl = hasGenerated
+    ? generatedData?.original_image_url
+    : originalPreviewUrl;
+  const displayReferenceUrl = hasGenerated
+    ? (generatedData?.reference_image_url ?? null)
+    : referencePreviewUrl;
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Progress overlay */}
-      <GenerationProgress
-        uploadProgress={uploadProgress}
-        isUploading={isUploading}
-        isGenerating={isGenerating}
-      />
-
       {/* Header */}
       <div className="flex items-center gap-4">
         <button
-          onClick={() => navigate('/productos')}
+          onClick={() => navigate("/productos")}
           className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -215,14 +237,13 @@ const AIImageGeneratorPage = () => {
         </div>
       </motion.div>
 
-      {!hasGenerated ? (
-        /* Formulario de generación */
+      {/* Formulario de generación (siempre visible hasta que haya resultado) */}
+      {!hasGenerated && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="space-y-6"
         >
-          {/* Upload de imágenes */}
           <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-6">
             <h2 className="text-xl font-bold text-light">
               1. Selecciona las Imágenes
@@ -236,7 +257,6 @@ const AIImageGeneratorPage = () => {
             />
           </div>
 
-          {/* Prompt builder */}
           <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
             <h2 className="text-xl font-bold text-light">
               2. Describe el Resultado Deseado
@@ -249,7 +269,6 @@ const AIImageGeneratorPage = () => {
             />
           </div>
 
-          {/* Transparency toggle */}
           <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
             <h2 className="text-xl font-bold text-light">
               3. Opciones Adicionales
@@ -261,23 +280,21 @@ const AIImageGeneratorPage = () => {
             />
           </div>
 
-          {/* Submit button */}
           <div className="flex items-center justify-between gap-4 pt-4">
             <button
-              onClick={() => navigate('/productos')}
+              onClick={() => navigate("/productos")}
               className="px-6 py-3 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
             >
               Cancelar
             </button>
-
             <button
               onClick={handleGenerate}
               disabled={isGenerating || !originalImage}
               className={cn(
-                'flex items-center gap-3 px-8 py-3 rounded-lg font-bold',
-                'transition-all disabled:opacity-50 disabled:cursor-not-allowed',
-                'bg-gradient-to-r from-secondary to-primary text-dark',
-                'hover:shadow-lg hover:shadow-secondary/30'
+                "flex items-center gap-3 px-8 py-3 rounded-lg font-bold",
+                "transition-all disabled:opacity-50 disabled:cursor-not-allowed",
+                "bg-gradient-to-r from-secondary to-primary text-dark",
+                "hover:shadow-lg hover:shadow-secondary/30",
               )}
             >
               <Sparkles className="w-5 h-5" />
@@ -285,7 +302,6 @@ const AIImageGeneratorPage = () => {
             </button>
           </div>
 
-          {/* Validation errors summary */}
           {Object.keys(errors).length > 0 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -308,55 +324,133 @@ const AIImageGeneratorPage = () => {
             </motion.div>
           )}
         </motion.div>
-      ) : (
-        /* Resultados */
+      )}
+
+      {/* Zona de resultado: imágenes originales + lugar de la generada (loading o imagen) */}
+      {showResultArea && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="space-y-6"
         >
-          {/* Success banner */}
-          <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-green-400" />
-              <p className="text-sm text-green-400 font-medium">
-                Imagen generada exitosamente
-              </p>
+          {hasGenerated && (
+            <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+                <p className="text-sm text-green-400 font-medium">
+                  Imagen generada exitosamente
+                </p>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Preview */}
           <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6">
-            <ImagePreview
-              originalUrl={generatedData.original_image_url}
-              generatedUrl={generatedData.generated_image_url}
-              prompt={generatedData.prompt}
-              transparent={generatedData.transparent_background}
-            />
+            {/* Imágenes originales */}
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-light flex items-center gap-2 mb-3">
+                Imágenes originales
+              </h3>
+              <div className="flex flex-wrap gap-4">
+                {displayOriginalUrl && (
+                  <div className="flex-1 min-w-[200px] max-w-sm">
+                    <p className="text-xs text-gray mb-1.5">Original</p>
+                    <div className="bg-dark border border-gray/20 rounded-xl overflow-hidden aspect-square flex items-center justify-center">
+                      <img
+                        src={displayOriginalUrl}
+                        alt="Imagen original"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
+                {displayReferenceUrl && (
+                  <div className="flex-1 min-w-[200px] max-w-sm">
+                    <p className="text-xs text-gray mb-1.5">
+                      Referencia de estilo
+                    </p>
+                    <div className="bg-dark border border-gray/20 rounded-xl overflow-hidden aspect-square flex items-center justify-center">
+                      <img
+                        src={displayReferenceUrl}
+                        alt="Referencia de estilo"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Donde va la imagen generada: loading inline o imagen */}
+            <div>
+              <h3 className="text-lg font-bold text-light flex items-center gap-2 mb-3">
+                Imagen generada
+              </h3>
+              {isGenerating ? (
+                <GenerationProgress
+                  uploadProgress={uploadProgress}
+                  isUploading={isUploading}
+                  isGenerating={isGenerating}
+                  inline
+                />
+              ) : hasGenerated ? (
+                <div
+                  className="rounded-xl border border-gray/20 overflow-hidden aspect-video flex items-center justify-center min-h-[280px] bg-dark/60"
+                  style={
+                    generatedData?.transparent_background
+                      ? {
+                          backgroundImage:
+                            "linear-gradient(45deg, #2a2a2a 25%, transparent 25%, transparent 75%, #2a2a2a 75%, #2a2a2a), linear-gradient(45deg, #2a2a2a 25%, transparent 25%, transparent 75%, #2a2a2a 75%, #2a2a2a)",
+                          backgroundPosition: "0 0, 10px 10px",
+                          backgroundSize: "20px 20px",
+                        }
+                      : {}
+                  }
+                >
+                  <img
+                    src={generatedData.generated_image_url}
+                    alt="Imagen generada"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            {/* Prompt utilizado (solo cuando hay resultado) */}
+            {hasGenerated && generatedData?.user_prompt && (
+              <div className="mt-4 bg-dark border border-gray/20 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-light mb-2">
+                  Prompt utilizado
+                </h4>
+                <p className="text-xs text-gray italic">
+                  {generatedData.user_prompt}
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* Actions */}
-          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6">
-            <GeneratedImageActions
-              imageUrl={generatedData.generated_image_url}
-              generationId={generatedData.id}
-              onDownload={handleDownload}
-              onSaveToProduct={handleSaveToProduct}
-              onRegenerate={handleRegenerate}
-              onDiscard={handleDiscard}
-              isSaving={isSaving}
-            />
-          </div>
-
-          {/* Start over button */}
-          <div className="flex justify-center">
-            <button
-              onClick={handleStartOver}
-              className="px-6 py-2.5 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
-            >
-              Generar Nueva Imagen
-            </button>
-          </div>
+          {hasGenerated && (
+            <>
+              <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6">
+                <GeneratedImageActions
+                  imageUrl={generatedData.generated_image_url}
+                  generationId={generatedData.id}
+                  onDownload={handleDownload}
+                  onSaveToProduct={handleSaveToProduct}
+                  onRegenerate={handleRegenerate}
+                  onDiscard={handleDiscard}
+                  isSaving={isSaving}
+                />
+              </div>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleStartOver}
+                  className="px-6 py-2.5 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                >
+                  Generar Nueva Imagen
+                </button>
+              </div>
+            </>
+          )}
         </motion.div>
       )}
     </div>

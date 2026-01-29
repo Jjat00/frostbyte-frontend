@@ -1,25 +1,27 @@
-import { Loader2, Sparkles, ImageIcon, Wand2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Loader2, Sparkles, ImageIcon, Wand2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 /**
- * Componente que muestra el progreso de generación de imagen
- * @param {Object} props
- * @param {number} props.uploadProgress - Progreso de subida (0-100)
- * @param {boolean} props.isUploading - Si está subiendo archivos
- * @param {boolean} props.isGenerating - Si está generando con IA
+ * Componente que muestra el progreso de generación de imagen.
+ * @param {boolean} props.inline - Si es true, se muestra en el lugar donde irá la imagen (no popup)
  */
 export function GenerationProgress({
   uploadProgress = 0,
   isUploading = false,
   isGenerating = false,
+  inline = false,
 }) {
   if (!isUploading && !isGenerating) return null;
+
+  const wrapperClass = inline
+    ? "min-h-[280px] flex items-center justify-center rounded-xl border border-gray/20 bg-dark/60"
+    : "fixed inset-0 z-50 flex items-center justify-center bg-dark/90 backdrop-blur-sm";
 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-dark/90 backdrop-blur-sm"
+      className={wrapperClass}
     >
       <div className="bg-dark-secondary border border-gray/20 rounded-xl p-8 max-w-md w-full mx-4">
         <div className="flex flex-col items-center gap-6">
@@ -28,7 +30,7 @@ export function GenerationProgress({
             {isUploading && (
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               >
                 <ImageIcon className="w-16 h-16 text-primary" />
               </motion.div>
@@ -43,7 +45,7 @@ export function GenerationProgress({
                 transition={{
                   duration: 3,
                   repeat: Infinity,
-                  ease: 'easeInOut',
+                  ease: "easeInOut",
                 }}
               >
                 <Wand2 className="w-16 h-16 text-secondary" />
@@ -88,13 +90,13 @@ export function GenerationProgress({
           {/* Title */}
           <div className="text-center">
             <h3 className="text-xl font-bold text-light mb-2">
-              {isUploading && 'Subiendo imágenes...'}
-              {isGenerating && 'Generando imagen con IA'}
+              {isUploading && "Subiendo imágenes..."}
+              {isGenerating && "Generando imagen con IA"}
             </h3>
             <p className="text-sm text-gray">
-              {isUploading && 'Preparando los archivos para procesamiento'}
+              {isUploading && "Preparando los archivos para procesamiento"}
               {isGenerating &&
-                'Esto puede tomar hasta 2 minutos. Por favor espera...'}
+                "Esto puede tomar hasta 2 minutos. Por favor espera..."}
             </p>
           </div>
 
@@ -143,7 +145,8 @@ export function GenerationProgress({
           {isGenerating && (
             <div className="bg-dark border border-gray/20 rounded-lg p-4 w-full">
               <p className="text-xs text-gray italic text-center">
-                La IA está analizando tu imagen y aplicando mejoras profesionales...
+                La IA está analizando tu imagen y aplicando mejoras
+                profesionales...
               </p>
             </div>
           )}
