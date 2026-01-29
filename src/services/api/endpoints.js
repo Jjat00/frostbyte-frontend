@@ -18,7 +18,16 @@ export const ENDPOINTS = {
 
   // Upload
   UPLOAD_IMAGE: '/upload/image/',
-  
+
+  // AI Image Generation
+  AI_GENERATE_IMAGE: '/ai/generations/',
+  AI_GENERATION_HISTORY: '/ai/generations/',
+  AI_GENERATION_DETAIL: (id) => `/ai/generations/${id}/`,
+  AI_SAVE_TO_PRODUCT: (generationId) => `/ai/generations/${generationId}/save_to_product/`,
+  AI_REGENERATE: (generationId) => `/ai/generations/${generationId}/regenerate/`,
+  AI_QUOTA_STATUS: '/ai/generations/quota_status/',
+  AI_STATS: '/ai/generations/stats/',
+
   // Song Requests
   SONG_REQUESTS: '/song-requests/',
   SONG_REQUEST_DETAIL: (id) => `/song-requests/${id}/`,

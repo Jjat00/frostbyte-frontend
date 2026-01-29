@@ -21,6 +21,7 @@ import ProductsLayout from "./pages/products/ProductsLayout";
 import ProductsListPage from "./pages/products/ProductsListPage";
 import ProductFormPage from "./pages/products/ProductFormPage";
 import CategoriesPage from "./pages/products/CategoriesPage";
+import AIImageGeneratorPage from "./pages/products/AIImageGeneratorPage";
 // Módulo de Música
 import MusicLayout from "./pages/music/MusicLayout";
 import SongRequestsPage from "./pages/music/SongRequestsPage";
@@ -198,6 +199,14 @@ export const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <CategoriesPage />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "generador-ia",
+        element: (
+          <AdminRoute>
+            <AIImageGeneratorPage />
           </AdminRoute>
         ),
       },

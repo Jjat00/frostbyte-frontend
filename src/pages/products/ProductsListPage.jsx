@@ -14,6 +14,7 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
+  Sparkles,
 } from 'lucide-react';
 import { productsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
@@ -141,13 +142,22 @@ const ProductsListPage = () => {
           </p>
         </div>
         {isAdmin() && (
-          <button
-            onClick={() => navigate('/productos/nuevo')}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all"
-          >
-            <Plus className="w-5 h-5" />
-            Nuevo Producto
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/productos/generador-ia')}
+              className="flex items-center gap-2 px-4 py-2.5 bg-dark-secondary border border-secondary/30 text-secondary font-semibold rounded-lg hover:bg-secondary/10 transition-all"
+            >
+              <Sparkles className="w-5 h-5" />
+              Generador IA
+            </button>
+            <button
+              onClick={() => navigate('/productos/nuevo')}
+              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all"
+            >
+              <Plus className="w-5 h-5" />
+              Nuevo Producto
+            </button>
+          </div>
         )}
       </div>
 
