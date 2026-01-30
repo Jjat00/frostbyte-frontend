@@ -30,6 +30,8 @@ const categoryDefaults = {
     visualGradient: "from-cyan-300 via-blue-400 to-indigo-500",
     secondaryGradient: "from-transparent via-cyan-200/20 to-transparent",
     accentColor: "primary",
+    ringColor: "border-cyan-400",
+    labelBg: "bg-gradient-to-r from-cyan-500 to-blue-600",
   },
   frappes: {
     icon: Coffee,
@@ -67,54 +69,94 @@ const categoryDefaults = {
  * Estilos específicos por producto (basado en slug o nombre)
  */
 const productStyles = {
-  // Granizados
+  // Granizados (estilo Cuates: anillo + label por producto; image desde API o aquí)
   "mango-biche": {
     icon: Citrus,
     gradient: "from-lime-400 to-green-600",
     visualGradient: "from-lime-300 via-green-400 to-emerald-500",
     secondaryGradient: "from-transparent via-lime-200/20 to-transparent",
+    ringColor: "border-lime-400",
+    labelBg: "bg-gradient-to-r from-lime-500 to-emerald-600",
   },
   "mango-biche-con-alcohol": {
     icon: Citrus,
     gradient: "from-lime-400 to-green-600",
     visualGradient: "from-lime-300 via-green-400 to-emerald-500",
     secondaryGradient: "from-transparent via-lime-200/20 to-transparent",
+    ringColor: "border-lime-400",
+    labelBg: "bg-gradient-to-r from-lime-500 to-emerald-600",
   },
   maracuya: {
     icon: Citrus,
     gradient: "from-yellow-300 to-orange-400",
     visualGradient: "from-yellow-400 via-amber-500 to-orange-400",
     secondaryGradient: "from-transparent via-yellow-300/20 to-transparent",
+    ringColor: "border-amber-400",
+    labelBg: "bg-gradient-to-r from-amber-500 to-orange-500",
   },
   cereza: {
     icon: Cherry,
     gradient: "from-red-500 to-pink-600",
     visualGradient: "from-red-400 via-rose-500 to-pink-600",
     secondaryGradient: "from-transparent via-red-300/20 to-transparent",
+    ringColor: "border-rose-400",
+    labelBg: "bg-gradient-to-r from-red-500 to-pink-600",
   },
   "maracumango-con-alcohol": {
     icon: Citrus,
     gradient: "from-amber-400 to-orange-600",
     visualGradient: "from-yellow-400 via-amber-500 to-orange-500",
     secondaryGradient: "from-transparent via-amber-300/20 to-transparent",
+    ringColor: "border-amber-400",
+    labelBg: "bg-gradient-to-r from-amber-500 to-orange-600",
   },
   "granizado-con-alcohol-de-maracuya": {
     icon: Citrus,
     gradient: "from-yellow-300 to-orange-400",
     visualGradient: "from-yellow-400 via-amber-500 to-orange-400",
     secondaryGradient: "from-transparent via-yellow-300/20 to-transparent",
+    ringColor: "border-amber-400",
+    labelBg: "bg-gradient-to-r from-amber-500 to-orange-500",
   },
   lulo: {
     icon: Moon,
     gradient: "from-green-300 to-lime-500",
     visualGradient: "from-emerald-300 via-green-400 to-lime-400",
     secondaryGradient: "from-transparent via-green-200/20 to-transparent",
+    ringColor: "border-green-400",
+    labelBg: "bg-gradient-to-r from-green-500 to-lime-600",
   },
   fresa: {
     icon: Cherry,
     gradient: "from-red-400 to-pink-500",
     visualGradient: "from-red-300 via-pink-400 to-rose-500",
     secondaryGradient: "from-transparent via-red-200/20 to-transparent",
+    ringColor: "border-pink-400",
+    labelBg: "bg-gradient-to-r from-red-500 to-pink-500",
+  },
+  "bon-bon-bum": {
+    icon: Candy,
+    gradient: "from-red-400 to-pink-500",
+    visualGradient: "from-red-400 via-pink-500 to-rose-500",
+    secondaryGradient: "from-transparent via-red-200/20 to-transparent",
+    ringColor: "border-pink-400",
+    labelBg: "bg-gradient-to-r from-red-500 to-pink-500",
+  },
+  "bom-bom-bum-con-alcohol": {
+    icon: Candy,
+    gradient: "from-amber-400 to-red-500",
+    visualGradient: "from-yellow-400 via-amber-500 to-red-500",
+    secondaryGradient: "from-transparent via-amber-200/20 to-transparent",
+    ringColor: "border-amber-400",
+    labelBg: "bg-gradient-to-r from-amber-500 to-red-500",
+  },
+  "mora-azul-con-alcohol": {
+    icon: Moon,
+    gradient: "from-blue-400 to-indigo-600",
+    visualGradient: "from-blue-400 via-indigo-500 to-purple-600",
+    secondaryGradient: "from-transparent via-blue-200/20 to-transparent",
+    ringColor: "border-indigo-400",
+    labelBg: "bg-gradient-to-r from-blue-500 to-indigo-600",
   },
 
   // Frappés
@@ -220,7 +262,7 @@ export function getProductStyles(product, categorySlug) {
 
   // Combinar: específicos > categoría > defaults generales
   // Prioridad para imagen: product.image_url de API > specificStyles.image hardcodeado
-  const hasApiImage = product.image_url && product.image_url.trim() !== '';
+  const hasApiImage = product.image_url && product.image_url.trim() !== "";
 
   return {
     icon: specificStyles.icon || categoryStyles.icon || Citrus,
@@ -232,11 +274,17 @@ export function getProductStyles(product, categorySlug) {
       specificStyles.visualGradient || categoryStyles.visualGradient,
     secondaryGradient:
       specificStyles.secondaryGradient || categoryStyles.secondaryGradient,
-    image: hasApiImage ? product.image_url : (specificStyles.image || null),
+    image: hasApiImage ? product.image_url : specificStyles.image || null,
     hasOptions: specificStyles.hasOptions || false,
     brand: specificStyles.brand,
     licor: specificStyles.licor,
     accentColor: categoryStyles.accentColor || "primary",
+    ringColor:
+      specificStyles.ringColor || categoryStyles.ringColor || "border-cyan-400",
+    labelBg:
+      specificStyles.labelBg ||
+      categoryStyles.labelBg ||
+      "bg-gradient-to-r from-cyan-500 to-blue-600",
   };
 }
 

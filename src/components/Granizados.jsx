@@ -18,41 +18,6 @@ const formatPrice = (price) => {
   return `$${Number(price).toLocaleString("es-CO")}`;
 };
 
-const GradientVisual = ({ gradient, secondaryGradient }) => (
-  <div
-    className={`w-full h-full bg-linear-to-br ${gradient} relative overflow-hidden`}
-  >
-    {/* Efecto de textura de hielo */}
-    <div className="absolute inset-0 opacity-30">
-      <div className="absolute top-1/4 left-1/4 w-16 h-16 bg-white/40 rounded-full blur-xl"></div>
-      <div className="absolute top-1/2 right-1/3 w-12 h-12 bg-white/30 rounded-full blur-lg"></div>
-      <div className="absolute bottom-1/4 left-1/2 w-20 h-20 bg-white/25 rounded-full blur-2xl"></div>
-    </div>
-    {/* Burbujas decorativas */}
-    <div className="absolute top-4 right-6 w-3 h-3 bg-white/50 rounded-full"></div>
-    <div className="absolute top-8 right-12 w-2 h-2 bg-white/40 rounded-full"></div>
-    <div className="absolute bottom-6 left-8 w-4 h-4 bg-white/35 rounded-full"></div>
-    <div className="absolute bottom-12 left-4 w-2 h-2 bg-white/45 rounded-full"></div>
-    {/* Efecto de brillo */}
-    <div
-      className={`absolute inset-0 bg-linear-to-t ${
-        secondaryGradient || "from-transparent via-white/10 to-transparent"
-      } opacity-40`}
-    ></div>
-    {/* Patrón de cristales de hielo */}
-    <div
-      className="absolute inset-0 opacity-20"
-      style={{
-        backgroundImage: `radial-gradient(circle at 20% 30%, white 1px, transparent 1px),
-                          radial-gradient(circle at 80% 70%, white 1px, transparent 1px),
-                          radial-gradient(circle at 40% 80%, white 1px, transparent 1px),
-                          radial-gradient(circle at 60% 20%, white 1px, transparent 1px)`,
-        backgroundSize: "60px 60px",
-      }}
-    ></div>
-  </div>
-);
-
 const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   <motion.div
     whileHover={{ scale: 1.05, y: -5 }}
@@ -70,68 +35,92 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   </motion.div>
 );
 
+// Tarjeta estilo Cuates: círculo con anillo para destacar imágenes PNG
 const ProductCard = ({ product, index, styles }) => {
-  const Icon = styles.icon;
   const variants = product.variants || [];
-
-  // Buscar variantes por nombre
   const smallVariant = variants.find((v) => v.name === "Pequeño");
   const largeVariant = variants.find((v) => v.name === "Grande");
+  const ringColor = styles.ringColor || "border-cyan-400";
+  const labelBg =
+    styles.labelBg || "bg-gradient-to-r from-cyan-500 to-blue-600";
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      whileHover={{ y: -10 }}
-      className="group relative"
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ scale: 1.05 }}
+      className="group relative h-full flex flex-col"
     >
-      <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20">
-        <div className="h-48 overflow-hidden relative">
-          <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
+      <div className="relative flex flex-col items-center h-full">
+        {/* Con imagen: solo la imagen. Sin imagen: círculo con anillo y fondo */}
+        <div className="relative mb-4 shrink-0">
           {styles.image ? (
-            <img
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              src={styles.image}
-            />
+            <div className="relative w-90 h-90 md:w-90 md:h-90 flex items-center justify-center">
+              <img
+                alt={product.name}
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-2xl"
+                src={styles.image}
+              />
+            </div>
           ) : (
-            <GradientVisual
-              gradient={styles.visualGradient || styles.gradient}
-              secondaryGradient={styles.secondaryGradient}
-            />
+            <>
+              <div
+                className={`absolute inset-0 rounded-full border-4 ${ringColor} shadow-2xl`}
+              ></div>
+              <div
+                className={`absolute inset-2 rounded-full border-2 ${ringColor} opacity-60`}
+              ></div>
+              <div className="relative w-90 h-90 md:w-90 md:h-90 rounded-full overflow-hidden bg-linear-to-br from-cyan-600/30 to-blue-900/30 flex items-center justify-center">
+                <div
+                  className={`w-full h-full bg-linear-to-br ${styles.visualGradient || styles.gradient}`}
+                ></div>
+              </div>
+            </>
           )}
         </div>
 
-        <div className="p-6 flex flex-col grow relative z-20 -mt-12">
+        {/* Nombre: en móvil texto completo; en md+ altura fija para alinear */}
+        <div className="w-full min-h-0 md:min-h-16 flex items-center justify-center px-2 mb-3">
           <div
-            className={`w-12 h-12 bg-linear-to-br ${styles.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+            className={`inline-block px-4 py-2 ${labelBg} rounded-lg shadow-lg`}
           >
-            <Icon className="text-dark" size={24} />
+            <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center md:line-clamp-2">
+              {product.name}
+            </h3>
           </div>
-          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-primary transition-colors duration-300">
-            {product.name}
-          </h3>
-          <p className="text-gray mb-4 grow text-sm">{product.description}</p>
-          <div className="flex items-center justify-between gap-2 mt-auto pt-4 border-t border-gray/10">
-            {smallVariant && (
-              <div className="flex flex-col">
-                <span className="text-xs text-gray">{smallVariant.name}</span>
-                <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  {formatPrice(smallVariant.price)}
-                </span>
-              </div>
-            )}
-            {largeVariant && (
-              <div className="flex flex-col text-right">
-                <span className="text-xs text-gray">{largeVariant.name}</span>
-                <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  {formatPrice(largeVariant.price)}
-                </span>
-              </div>
-            )}
-          </div>
+        </div>
+
+        {/* Descripción: en móvil texto completo; en md+ 2 líneas para alineación */}
+        <div className="min-h-0 md:min-h-12 flex items-start justify-center px-2 mb-4 w-full">
+          <p className="text-gray text-sm md:text-base text-center max-w-xs md:max-w-full md:line-clamp-2">
+            {product.description}
+          </p>
+        </div>
+
+        {/* Precios al final — mt-auto los alinea al fondo de la tarjeta */}
+        <div className="mt-auto flex items-center justify-center gap-6 flex-wrap pt-2">
+          {smallVariant && (
+            <div className="flex flex-col items-center">
+              <span className="text-xs text-gray uppercase">
+                {smallVariant.name}
+              </span>
+              <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                {formatPrice(smallVariant.price)}
+              </span>
+            </div>
+          )}
+          {largeVariant && (
+            <div className="flex flex-col items-center">
+              <span className="text-xs text-gray uppercase">
+                {largeVariant.name}
+              </span>
+              <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                {formatPrice(largeVariant.price)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
@@ -139,16 +128,19 @@ const ProductCard = ({ product, index, styles }) => {
 };
 
 const ProductSkeleton = () => (
-  <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full animate-pulse">
-    <div className="h-48 bg-gray/20"></div>
-    <div className="p-6 -mt-12">
-      <div className="w-12 h-12 bg-gray/30 rounded-xl mb-4"></div>
-      <div className="h-6 bg-gray/20 rounded mb-2 w-3/4"></div>
-      <div className="h-4 bg-gray/20 rounded mb-4 w-full"></div>
-      <div className="flex justify-between pt-4 border-t border-gray/10">
-        <div className="h-8 bg-gray/20 rounded w-20"></div>
-        <div className="h-8 bg-gray/20 rounded w-20"></div>
-      </div>
+  <div className="flex flex-col items-center h-full animate-pulse">
+    <div className="relative mb-4 shrink-0">
+      <div className="w-56 h-56 md:w-52 md:h-52 rounded-full bg-dark border-4 border-gray/30"></div>
+    </div>
+    <div className="min-h-0 md:min-h-16 w-full flex justify-center mb-3">
+      <div className="h-10 bg-gray/20 rounded-lg w-3/4"></div>
+    </div>
+    <div className="min-h-0 md:min-h-12 w-full flex justify-center mb-4">
+      <div className="h-4 bg-gray/20 rounded w-full max-w-xs mx-auto"></div>
+    </div>
+    <div className="mt-auto flex gap-6 pt-2">
+      <div className="h-8 bg-gray/20 rounded w-16"></div>
+      <div className="h-8 bg-gray/20 rounded w-16"></div>
     </div>
   </div>
 );
@@ -239,9 +231,9 @@ const Granizados = () => {
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-8 max-w-7xl mx-auto items-stretch">
           {isLoading
-            ? [...Array(4)].map((_, i) => <ProductSkeleton key={i} />)
+            ? [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
             : products.map((product, index) => (
                 <ProductCard
                   key={product.id}
@@ -312,11 +304,13 @@ const Granizados = () => {
                   <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                     🍹 Granizado
                   </span>
-                  <Plus className="text-purple-400 flex-shrink-0" size={20} />
+                  <Plus className="text-purple-400 shrink-0" size={20} />
                   <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                     🥃 Shot
                   </span>
-                  <span className="text-purple-400 text-xl sm:text-2xl flex-shrink-0">=</span>
+                  <span className="text-purple-400 text-xl sm:text-2xl shrink-0">
+                    =
+                  </span>
                   <span className="text-purple-400 font-bold text-sm sm:text-base whitespace-nowrap">
                     ☠️ ENVENENADO
                   </span>
