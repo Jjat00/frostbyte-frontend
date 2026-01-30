@@ -37,13 +37,16 @@ const AIImageGeneratorPage = () => {
   const { validateFile } = useImageValidation();
   const {
     isGenerating,
-    isSaving,
+    isSavingToR2,
+    isSavingToProduct,
+    isDiscarding,
     uploadProgress,
     generatedData,
     generateImage,
+    saveToR2,
     saveToProduct,
+    discardGeneration,
     downloadImage,
-    regenerateImage,
     reset,
   } = useImageGeneration({
     onSuccess: (data) => {
@@ -114,30 +117,31 @@ const AIImageGeneratorPage = () => {
     }
   }, [generatedData, downloadImage]);
 
+  const handleSaveToR2 = useCallback(() => {
+    if (generatedData?.id) {
+      saveToR2(generatedData.id);
+    }
+  }, [generatedData, saveToR2]);
+
   const handleSaveToProduct = useCallback(() => {
     // TODO: Mostrar modal para seleccionar producto
     // Por ahora solo mostramos un placeholder
     alert("Funcionalidad de guardar en producto próximamente");
   }, []);
 
-  const handleRegenerate = useCallback(() => {
-    if (generatedData?.id) {
-      regenerateImage({
-        generationId: generatedData.id,
-        params: { prompt: prompt.trim(), transparent },
-      });
-    }
-  }, [generatedData, prompt, transparent, regenerateImage]);
-
   const handleDiscard = useCallback(() => {
     if (
       window.confirm(
-        "¿Estás seguro de descartar esta imagen? Esta acción no se puede deshacer.",
+        "¿Estás seguro de descartar esta imagen? Se eliminará permanentemente.",
       )
     ) {
-      reset();
+      if (generatedData?.id && !generatedData?.is_saved_to_r2) {
+        discardGeneration(generatedData.id);
+      } else {
+        reset();
+      }
     }
-  }, [reset]);
+  }, [generatedData, discardGeneration, reset]);
 
   const handleStartOver = useCallback(() => {
     setOriginalImage(null);
@@ -436,11 +440,14 @@ const AIImageGeneratorPage = () => {
                 <GeneratedImageActions
                   imageUrl={generatedData.generated_image_url}
                   generationId={generatedData.id}
+                  isSavedToR2={generatedData.is_saved_to_r2}
                   onDownload={handleDownload}
+                  onSaveToR2={handleSaveToR2}
                   onSaveToProduct={handleSaveToProduct}
-                  onRegenerate={handleRegenerate}
                   onDiscard={handleDiscard}
-                  isSaving={isSaving}
+                  isSavingToR2={isSavingToR2}
+                  isSavingToProduct={isSavingToProduct}
+                  isDiscarding={isDiscarding}
                 />
               </div>
               <div className="flex justify-center">

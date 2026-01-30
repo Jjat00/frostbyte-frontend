@@ -1,4 +1,4 @@
-import { Download, Save, RefreshCw, Trash2, ExternalLink } from 'lucide-react';
+import { Download, Save, Cloud, Trash2, ExternalLink, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -6,58 +6,29 @@ import { cn } from '@/lib/utils';
  * Componente con acciones para imagen generada
  * @param {Object} props
  * @param {string} props.imageUrl - URL de la imagen generada
- * @param {number} props.generationId - ID de la generación
+ * @param {string} props.generationId - ID de la generación
+ * @param {boolean} props.isSavedToR2 - Si ya está guardado en R2
  * @param {Function} props.onDownload - Callback para descargar
+ * @param {Function} props.onSaveToR2 - Callback para guardar en R2
  * @param {Function} props.onSaveToProduct - Callback para guardar en producto
- * @param {Function} props.onRegenerate - Callback para regenerar
  * @param {Function} props.onDiscard - Callback para descartar
- * @param {boolean} props.isSaving - Estado de guardado
- * @param {boolean} props.isRegenerating - Estado de regeneración
+ * @param {boolean} props.isSavingToR2 - Estado de guardado en R2
+ * @param {boolean} props.isSavingToProduct - Estado de guardado en producto
+ * @param {boolean} props.isDiscarding - Estado de descarte
  */
 export function GeneratedImageActions({
   imageUrl,
   generationId,
+  isSavedToR2 = false,
   onDownload,
+  onSaveToR2,
   onSaveToProduct,
-  onRegenerate,
   onDiscard,
-  isSaving = false,
-  isRegenerating = false,
+  isSavingToR2 = false,
+  isSavingToProduct = false,
+  isDiscarding = false,
 }) {
-  const actions = [
-    {
-      id: 'download',
-      label: 'Descargar',
-      icon: Download,
-      onClick: onDownload,
-      variant: 'secondary',
-      disabled: false,
-    },
-    {
-      id: 'save',
-      label: isSaving ? 'Guardando...' : 'Guardar en Producto',
-      icon: Save,
-      onClick: onSaveToProduct,
-      variant: 'primary',
-      disabled: isSaving,
-    },
-    {
-      id: 'regenerate',
-      label: isRegenerating ? 'Regenerando...' : 'Regenerar',
-      icon: RefreshCw,
-      onClick: onRegenerate,
-      variant: 'ghost',
-      disabled: isRegenerating,
-    },
-    {
-      id: 'discard',
-      label: 'Descartar',
-      icon: Trash2,
-      onClick: onDiscard,
-      variant: 'danger',
-      disabled: isSaving || isRegenerating,
-    },
-  ];
+  const isProcessing = isSavingToR2 || isSavingToProduct || isDiscarding;
 
   return (
     <motion.div
@@ -65,62 +36,83 @@ export function GeneratedImageActions({
       animate={{ opacity: 1, y: 0 }}
       className="space-y-4"
     >
+      {/* Status banner */}
+      {isSavedToR2 ? (
+        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 flex items-center justify-center gap-2">
+          <CheckCircle className="w-4 h-4 text-green-400" />
+          <span className="text-sm text-green-400 font-medium">
+            Imagen guardada permanentemente
+          </span>
+        </div>
+      ) : (
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 flex items-center justify-center gap-2">
+          <Cloud className="w-4 h-4 text-yellow-400" />
+          <span className="text-sm text-yellow-400">
+            Imagen temporal - guárdala para conservarla
+          </span>
+        </div>
+      )}
+
       {/* Primary actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {actions
-          .filter((a) => a.variant === 'primary' || a.variant === 'secondary')
-          .map((action) => (
-            <button
-              key={action.id}
-              onClick={action.onClick}
-              disabled={action.disabled}
-              className={cn(
-                'flex items-center justify-center gap-2 px-6 py-3 rounded-lg',
-                'font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed',
-                action.variant === 'primary' &&
-                  'bg-gradient-to-r from-secondary to-primary text-dark hover:shadow-lg hover:shadow-secondary/30',
-                action.variant === 'secondary' &&
-                  'bg-dark-secondary border border-gray/20 text-light hover:bg-dark'
-              )}
-            >
-              <action.icon
-                className={cn(
-                  'w-5 h-5',
-                  action.disabled && action.id === 'save' && 'animate-spin'
-                )}
-              />
-              <span>{action.label}</span>
-            </button>
-          ))}
+        <button
+          onClick={onDownload}
+          disabled={isProcessing}
+          className={cn(
+            'flex items-center justify-center gap-2 px-6 py-3 rounded-lg',
+            'font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed',
+            'bg-dark-secondary border border-gray/20 text-light hover:bg-dark'
+          )}
+        >
+          <Download className="w-5 h-5" />
+          <span>Descargar</span>
+        </button>
+
+        <button
+          onClick={onSaveToProduct}
+          disabled={isProcessing}
+          className={cn(
+            'flex items-center justify-center gap-2 px-6 py-3 rounded-lg',
+            'font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed',
+            'bg-gradient-to-r from-secondary to-primary text-dark hover:shadow-lg hover:shadow-secondary/30'
+          )}
+        >
+          <Save className={cn('w-5 h-5', isSavingToProduct && 'animate-spin')} />
+          <span>{isSavingToProduct ? 'Guardando...' : 'Guardar en Producto'}</span>
+        </button>
       </div>
 
       {/* Secondary actions */}
       <div className="flex items-center gap-3">
-        {actions
-          .filter((a) => a.variant === 'ghost' || a.variant === 'danger')
-          .map((action) => (
+        {!isSavedToR2 && (
+          <>
             <button
-              key={action.id}
-              onClick={action.onClick}
-              disabled={action.disabled}
+              onClick={onSaveToR2}
+              disabled={isProcessing}
               className={cn(
                 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm',
                 'transition-all disabled:opacity-50 disabled:cursor-not-allowed',
-                action.variant === 'ghost' &&
-                  'text-gray hover:text-light hover:bg-gray/10',
-                action.variant === 'danger' &&
-                  'text-red-400 hover:text-red-300 hover:bg-red-500/10'
+                'text-secondary hover:text-secondary/80 hover:bg-secondary/10'
               )}
             >
-              <action.icon
-                className={cn(
-                  'w-4 h-4',
-                  action.disabled && action.id === 'regenerate' && 'animate-spin'
-                )}
-              />
-              <span>{action.label}</span>
+              <Cloud className={cn('w-4 h-4', isSavingToR2 && 'animate-pulse')} />
+              <span>{isSavingToR2 ? 'Guardando...' : 'Guardar en la nube'}</span>
             </button>
-          ))}
+
+            <button
+              onClick={onDiscard}
+              disabled={isProcessing}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm',
+                'transition-all disabled:opacity-50 disabled:cursor-not-allowed',
+                'text-red-400 hover:text-red-300 hover:bg-red-500/10'
+              )}
+            >
+              <Trash2 className={cn('w-4 h-4', isDiscarding && 'animate-spin')} />
+              <span>{isDiscarding ? 'Descartando...' : 'Descartar'}</span>
+            </button>
+          </>
+        )}
 
         {/* View original link */}
         <a
@@ -137,9 +129,17 @@ export function GeneratedImageActions({
       {/* Info banner */}
       <div className="bg-dark-secondary/50 border border-gray/10 rounded-lg p-4">
         <p className="text-xs text-gray text-center">
-          <span className="font-medium text-light">Tip:</span> Puedes descargar
-          la imagen para usarla en otros lugares o guardarla directamente en un
-          producto existente.
+          {isSavedToR2 ? (
+            <>
+              <span className="font-medium text-light">Imagen guardada.</span>{' '}
+              Puedes descargarla o asignarla a un producto.
+            </>
+          ) : (
+            <>
+              <span className="font-medium text-light">Imagen temporal.</span>{' '}
+              Se eliminará automáticamente en 24 horas si no la guardas.
+            </>
+          )}
         </p>
       </div>
     </motion.div>

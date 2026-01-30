@@ -37,14 +37,19 @@ export function useImageGeneration({ onSuccess, onError } = {}) {
     },
   });
 
-  // Mutación para guardar a producto
-  const saveToProductMutation = useMutation({
-    mutationFn: ({ generationId, productId }) =>
-      aiImageService.saveToProduct(generationId, productId),
+  // Mutación para guardar en R2
+  const saveToR2Mutation = useMutation({
+    mutationFn: (generationId) => aiImageService.saveToR2(generationId),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', data.slug] });
-      toast.success('Imagen guardada en el producto');
+      queryClient.invalidateQueries({ queryKey: ['ai-history'] });
+      toast.success('Imagen guardada permanentemente');
+      // Actualizar los datos locales con las nuevas URLs
+      if (generateMutation.data) {
+        generateMutation.data.is_saved_to_r2 = true;
+        generateMutation.data.original_image_url = data.urls?.original;
+        generateMutation.data.reference_image_url = data.urls?.reference;
+        generateMutation.data.generated_image_url = data.urls?.generated;
+      }
     },
     onError: (error) => {
       const errorMessage =
@@ -53,20 +58,35 @@ export function useImageGeneration({ onSuccess, onError } = {}) {
     },
   });
 
-  // Mutación para regenerar
-  const regenerateMutation = useMutation({
-    mutationFn: ({ generationId, params }) =>
-      aiImageService.regenerateImage(generationId, params),
+  // Mutación para guardar a producto
+  const saveToProductMutation = useMutation({
+    mutationFn: ({ generationId, productId }) =>
+      aiImageService.saveToProduct(generationId, productId),
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['product', data.slug] });
       queryClient.invalidateQueries({ queryKey: ['ai-history'] });
-      toast.success('Imagen regenerada exitosamente');
-      onSuccess?.(data);
+      toast.success(`Imagen guardada en ${data.product_name}`);
     },
     onError: (error) => {
       const errorMessage =
-        error.response?.data?.error || 'Error al regenerar la imagen';
+        error.response?.data?.error || 'Error al guardar la imagen';
       toast.error(errorMessage);
-      onError?.(error);
+    },
+  });
+
+  // Mutación para descartar
+  const discardMutation = useMutation({
+    mutationFn: (generationId) => aiImageService.discardGeneration(generationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ai-history'] });
+      toast.success('Generación descartada');
+      generateMutation.reset();
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error || 'Error al descartar la generación';
+      toast.error(errorMessage);
     },
   });
 
@@ -82,15 +102,17 @@ export function useImageGeneration({ onSuccess, onError } = {}) {
   return {
     // Estados
     isGenerating: generateMutation.isPending,
-    isSaving: saveToProductMutation.isPending,
-    isRegenerating: regenerateMutation.isPending,
+    isSavingToR2: saveToR2Mutation.isPending,
+    isSavingToProduct: saveToProductMutation.isPending,
+    isDiscarding: discardMutation.isPending,
     uploadProgress,
     generatedData: generateMutation.data,
 
     // Acciones
     generateImage: generateMutation.mutate,
+    saveToR2: saveToR2Mutation.mutate,
     saveToProduct: saveToProductMutation.mutate,
-    regenerateImage: regenerateMutation.mutate,
+    discardGeneration: discardMutation.mutate,
     downloadImage,
 
     // Errores
@@ -100,8 +122,9 @@ export function useImageGeneration({ onSuccess, onError } = {}) {
     // Reset
     reset: () => {
       generateMutation.reset();
+      saveToR2Mutation.reset();
       saveToProductMutation.reset();
-      regenerateMutation.reset();
+      discardMutation.reset();
       setUploadProgress(0);
     },
   };

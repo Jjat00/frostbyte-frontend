@@ -2,7 +2,8 @@ import apiClient from './api/client';
 import { ENDPOINTS } from './api/endpoints';
 
 /**
- * Servicio para generación de imágenes con IA (OpenAI GPT Image)
+ * Servicio para generación de imágenes con IA (OpenAI GPT Image 1.5)
+ * Las imágenes se guardan temporalmente hasta que el usuario decida guardarlas en R2
  */
 export const aiImageService = {
   /**
@@ -19,7 +20,7 @@ export const aiImageService = {
     originalImage,
     referenceImage = null,
     prompt = '',
-    transparent = false,
+    transparent = true,
     onProgress = null,
   }) {
     const formData = new FormData();
@@ -55,6 +56,40 @@ export const aiImageService = {
   },
 
   /**
+   * Guardar generación permanentemente en R2
+   * @param {string} generationId - ID de la generación
+   * @returns {Promise<Object>} URLs de las imágenes guardadas
+   */
+  async saveToR2(generationId) {
+    const response = await apiClient.post(ENDPOINTS.AI_SAVE_TO_R2(generationId));
+    return response.data;
+  },
+
+  /**
+   * Guardar imagen generada a un producto (automáticamente guarda en R2)
+   * @param {string} generationId - ID de la generación
+   * @param {number} productId - ID del producto
+   * @returns {Promise<Object>}
+   */
+  async saveToProduct(generationId, productId) {
+    const response = await apiClient.post(
+      ENDPOINTS.AI_SAVE_TO_PRODUCT(generationId),
+      { product_id: productId }
+    );
+    return response.data;
+  },
+
+  /**
+   * Descartar generación y limpiar archivos temporales
+   * @param {string} generationId - ID de la generación
+   * @returns {Promise<Object>}
+   */
+  async discardGeneration(generationId) {
+    const response = await apiClient.delete(ENDPOINTS.AI_DISCARD(generationId));
+    return response.data;
+  },
+
+  /**
    * Obtener historial de generaciones
    * @param {Object} params - Parámetros de consulta
    * @param {number} params.page - Número de página
@@ -73,25 +108,11 @@ export const aiImageService = {
 
   /**
    * Obtener detalles de una generación específica
-   * @param {number} id - ID de la generación
+   * @param {string} id - ID de la generación
    * @returns {Promise<Object>}
    */
   async getGenerationById(id) {
     const response = await apiClient.get(ENDPOINTS.AI_GENERATION_DETAIL(id));
-    return response.data;
-  },
-
-  /**
-   * Guardar imagen generada a un producto
-   * @param {number} generationId - ID de la generación
-   * @param {number} productId - ID del producto
-   * @returns {Promise<Object>}
-   */
-  async saveToProduct(generationId, productId) {
-    const response = await apiClient.post(
-      ENDPOINTS.AI_SAVE_TO_PRODUCT(generationId),
-      { product_id: productId }
-    );
     return response.data;
   },
 
@@ -116,23 +137,6 @@ export const aiImageService = {
       console.error('Error al descargar imagen:', error);
       throw error;
     }
-  },
-
-  /**
-   * Regenerar imagen con nuevos parámetros
-   * @param {number} generationId - ID de la generación original
-   * @param {Object} newParams - Nuevos parámetros (prompt, transparent)
-   * @returns {Promise<Object>}
-   */
-  async regenerateImage(generationId, newParams = {}) {
-    const response = await apiClient.post(
-      ENDPOINTS.AI_REGENERATE(generationId),
-      newParams,
-      {
-        timeout: 120000, // 2 minutos
-      }
-    );
-    return response.data;
   },
 };
 

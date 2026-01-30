@@ -23,10 +23,10 @@ export const ENDPOINTS = {
   AI_GENERATE_IMAGE: '/ai/generations/',
   AI_GENERATION_HISTORY: '/ai/generations/',
   AI_GENERATION_DETAIL: (id) => `/ai/generations/${id}/`,
+  AI_SAVE_TO_R2: (generationId) => `/ai/generations/${generationId}/save_to_r2/`,
   AI_SAVE_TO_PRODUCT: (generationId) => `/ai/generations/${generationId}/save_to_product/`,
-  AI_REGENERATE: (generationId) => `/ai/generations/${generationId}/regenerate/`,
-  AI_QUOTA_STATUS: '/ai/generations/quota_status/',
-  AI_STATS: '/ai/generations/stats/',
+  AI_DISCARD: (generationId) => `/ai/generations/${generationId}/discard/`,
+  AI_TEMP_IMAGE: (generationId, type) => `/ai/generations/${generationId}/temp-image/${type}/`,
 
   // Song Requests
   SONG_REQUESTS: '/song-requests/',
