@@ -13,6 +13,7 @@ import { PromptBuilder } from "@/components/ai-generator/PromptBuilder";
 import { TransparencyToggle } from "@/components/ai-generator/TransparencyToggle";
 import { GenerationProgress } from "@/components/ai-generator/GenerationProgress";
 import { GeneratedImageActions } from "@/components/ai-generator/GeneratedImageActions";
+import { ProductSelectorModal } from "@/components/ai-generator/ProductSelectorModal";
 import {
   useImageGeneration,
   useImageValidation,
@@ -32,6 +33,9 @@ const AIImageGeneratorPage = () => {
   const [prompt, setPrompt] = useState("");
   const [transparent, setTransparent] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Estado del modal de selección de producto
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   // Hooks personalizados
   const { validateFile } = useImageValidation();
@@ -124,10 +128,24 @@ const AIImageGeneratorPage = () => {
   }, [generatedData, saveToR2]);
 
   const handleSaveToProduct = useCallback(() => {
-    // TODO: Mostrar modal para seleccionar producto
-    // Por ahora solo mostramos un placeholder
-    alert("Funcionalidad de guardar en producto próximamente");
+    setIsProductModalOpen(true);
   }, []);
+
+  const handleProductSelect = useCallback(
+    (productId) => {
+      if (generatedData?.id) {
+        saveToProduct(
+          { generationId: generatedData.id, productId },
+          {
+            onSuccess: () => {
+              setIsProductModalOpen(false);
+            },
+          }
+        );
+      }
+    },
+    [generatedData, saveToProduct]
+  );
 
   const handleDiscard = useCallback(() => {
     if (
@@ -462,6 +480,15 @@ const AIImageGeneratorPage = () => {
           )}
         </motion.div>
       )}
+
+      {/* Modal de selección de producto */}
+      <ProductSelectorModal
+        isOpen={isProductModalOpen}
+        onClose={() => setIsProductModalOpen(false)}
+        onSelect={handleProductSelect}
+        isLoading={isSavingToProduct}
+        generatedImageUrl={generatedData?.generated_image_url}
+      />
     </div>
   );
 };

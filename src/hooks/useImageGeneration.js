@@ -67,6 +67,10 @@ export function useImageGeneration({ onSuccess, onError } = {}) {
       queryClient.invalidateQueries({ queryKey: ['product', data.slug] });
       queryClient.invalidateQueries({ queryKey: ['ai-history'] });
       toast.success(`Imagen guardada en ${data.product_name}`);
+      // Actualizar el estado local para reflejar que está guardado en R2
+      if (generateMutation.data) {
+        generateMutation.data.is_saved_to_r2 = true;
+      }
     },
     onError: (error) => {
       const errorMessage =
