@@ -35,7 +35,7 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   </motion.div>
 );
 
-// Tarjeta estilo Cuates: círculo con anillo para destacar imágenes PNG
+// Tarjeta: imagen, título, descripción y precios con buen contraste
 const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
   const smallVariant = variants.find((v) => v.name === "Pequeño");
@@ -81,46 +81,44 @@ const ProductCard = ({ product, index, styles }) => {
           )}
         </div>
 
-        {/* Nombre: en móvil texto completo; en md+ altura fija para alinear */}
-        <div className="w-full min-h-0 md:min-h-16 flex items-center justify-center px-2 mb-3">
+        {/* Nombre del producto */}
+        <div className="w-full min-h-0 md:min-h-16 flex flex-col items-center px-2 mb-3">
           <div
             className={`inline-block px-4 py-2 ${labelBg} rounded-lg shadow-lg`}
           >
-            <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center md:line-clamp-2">
+            <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center md:line-clamp-2 drop-shadow-sm">
               {product.name}
             </h3>
           </div>
         </div>
 
-        {/* Descripción: en móvil texto completo; en md+ 2 líneas para alineación */}
-        <div className="min-h-0 md:min-h-12 flex items-start justify-center px-2 mb-4 w-full">
-          <p className="text-gray text-sm md:text-base text-center max-w-xs md:max-w-full md:line-clamp-2">
+        {/* Descripción y precios — solo texto con contraste */}
+        <div className="mt-auto w-full flex flex-col items-center px-2 text-center">
+          <p className="text-white text-sm md:text-base max-w-full md:line-clamp-2 font-medium tracking-tight mb-4 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
             {product.description}
           </p>
-        </div>
-
-        {/* Precios al final — mt-auto los alinea al fondo de la tarjeta */}
-        <div className="mt-auto flex items-center justify-center gap-6 flex-wrap pt-2">
-          {smallVariant && (
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-gray uppercase">
-                {smallVariant.name}
-              </span>
-              <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                {formatPrice(smallVariant.price)}
-              </span>
-            </div>
-          )}
-          {largeVariant && (
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-gray uppercase">
-                {largeVariant.name}
-              </span>
-              <span className="text-lg font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                {formatPrice(largeVariant.price)}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center justify-center gap-6 flex-wrap pt-2">
+            {smallVariant && (
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-slate-300 uppercase font-semibold tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {smallVariant.name}
+                </span>
+                <span className="text-lg font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+                  {formatPrice(smallVariant.price)}
+                </span>
+              </div>
+            )}
+            {largeVariant && (
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-slate-300 uppercase font-semibold tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {largeVariant.name}
+                </span>
+                <span className="text-lg font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+                  {formatPrice(largeVariant.price)}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -133,14 +131,14 @@ const ProductSkeleton = () => (
       <div className="w-56 h-56 md:w-52 md:h-52 rounded-full bg-dark border-4 border-gray/30"></div>
     </div>
     <div className="min-h-0 md:min-h-16 w-full flex justify-center mb-3">
-      <div className="h-10 bg-gray/20 rounded-lg w-3/4"></div>
+      <div className="h-10 bg-white/20 rounded-lg w-3/4"></div>
     </div>
-    <div className="min-h-0 md:min-h-12 w-full flex justify-center mb-4">
-      <div className="h-4 bg-gray/20 rounded w-full max-w-xs mx-auto"></div>
-    </div>
-    <div className="mt-auto flex gap-6 pt-2">
-      <div className="h-8 bg-gray/20 rounded w-16"></div>
-      <div className="h-8 bg-gray/20 rounded w-16"></div>
+    <div className="mt-auto w-full flex flex-col items-center px-2">
+      <div className="h-4 bg-white/15 rounded w-full max-w-xs mb-4"></div>
+      <div className="flex gap-6">
+        <div className="h-8 bg-white/15 rounded w-16"></div>
+        <div className="h-8 bg-white/15 rounded w-16"></div>
+      </div>
     </div>
   </div>
 );
@@ -199,12 +197,30 @@ const Granizados = () => {
   return (
     <section
       id="granizados"
-      className="py-20 bg-dark-secondary relative overflow-hidden"
+      className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-blue-950 to-indigo-950"
     >
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
+      {/* Patrón grid cyberpunk — sutil */}
+      <div className="absolute inset-0 opacity-20">
+        <div
+          className="absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage: `linear-gradient(rgba(34,211,238,0.08) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(34,211,238,0.08) 1px, transparent 1px)`,
+            backgroundSize: "32px 32px",
+          }}
+        />
       </div>
+
+      {/* Neon ambiental — cyan + magenta estilo Frostbyte */}
+      <div className="absolute inset-0 opacity-25">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-500/70 rounded-full filter blur-[100px]" />
+      </div>
+
+      {/* Líneas divisoras con toque neón */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-secondary/30 to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -214,19 +230,19 @@ const Granizados = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            <span className="bg-linear-to-r from-cyan-200 via-primary to-secondary bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(34,211,238,0.3)]">
               GRANIZADOS
             </span>
           </h2>
-          <p className="text-gray text-lg max-w-2xl mx-auto">
+          <p className="text-white text-lg max-w-2xl mx-auto font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
             Hielo triturado a la perfección con los sabores frutales más
             intensos.
           </p>
         </motion.div>
 
         {error && (
-          <div className="text-center text-red-400 mb-8">
+          <div className="text-center text-white bg-red-500/20 backdrop-blur-sm rounded-lg p-4 mb-8 border border-red-300">
             Error al cargar los productos. Por favor intenta de nuevo.
           </div>
         )}

@@ -51,6 +51,26 @@
   }
 }
 
+/* Balanceo de sogas del letrero (Granizados) */
+@keyframes sway-rope-left {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-22deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(-18deg);
+  }
+}
+@keyframes sway-rope-right {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(22deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(18deg);
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
