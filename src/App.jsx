@@ -7,18 +7,10 @@ import Features from "@/components/Features";
 // import Gallery from "@/components/Gallery";
 // import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import Granizados from "@/components/Granizados";
-import Frappes from "@/components/Frappes";
-import SodasMicheladas from "@/components/SodasMicheladas";
-import Mocktails from "@/components/Mocktails";
-import Shots from "@/components/Shots";
-import Micheladas from "@/components/Micheladas";
 import QuickNav from "@/components/QuickNav";
+import MenuSections from "@/components/MenuSections";
 import Desguayabator from "@/components/Desguayabator";
 import ScrollToCarta from "@/components/ScrollToMenu";
-import Vinos from "@/components/Vinos";
-import Cervezas from "@/components/Cervezas";
-import Cuates from "@/components/Cuates";
 import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import { env } from "@/config/env";
@@ -51,15 +43,8 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
-          <Granizados />
-          <Frappes />
-          <SodasMicheladas />
-          <Micheladas />
-          <Cervezas />
-          <Cuates />
-          <Mocktails />
-          <Shots />
-          <Vinos />
+          {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
+          <MenuSections />
           <Desguayabator />
           <SolicitarCancion />
           <FeedbackSection />
