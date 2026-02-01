@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -7,6 +7,8 @@ import {
   AlertCircle,
   CheckCircle2,
   Info,
+  GalleryHorizontalEnd,
+  PlusCircle,
 } from "lucide-react";
 import { DualImageUploader } from "@/components/ai-generator/DualImageUploader";
 import { PromptBuilder } from "@/components/ai-generator/PromptBuilder";
@@ -14,6 +16,7 @@ import { TransparencyToggle } from "@/components/ai-generator/TransparencyToggle
 import { GenerationProgress } from "@/components/ai-generator/GenerationProgress";
 import { GeneratedImageActions } from "@/components/ai-generator/GeneratedImageActions";
 import { ProductSelectorModal } from "@/components/ai-generator/ProductSelectorModal";
+import { GenerationGallery } from "@/components/ai-generator/GenerationGallery";
 import {
   useImageGeneration,
   useImageValidation,
@@ -26,6 +29,11 @@ import { cn } from "@/lib/utils";
  */
 const AIImageGeneratorPage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Tab activa (generator o gallery)
+  const activeTab = searchParams.get("tab") || "generator";
+  const setActiveTab = (tab) => setSearchParams({ tab });
 
   // Estado del formulario
   const [originalImage, setOriginalImage] = useState(null);
@@ -225,6 +233,48 @@ const AIImageGeneratorPage = () => {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-gray/20">
+        <button
+          onClick={() => setActiveTab("generator")}
+          className={cn(
+            "flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px",
+            activeTab === "generator"
+              ? "text-secondary border-secondary"
+              : "text-gray hover:text-light border-transparent"
+          )}
+        >
+          <PlusCircle className="w-4 h-4" />
+          Generar nueva
+        </button>
+        <button
+          onClick={() => setActiveTab("gallery")}
+          className={cn(
+            "flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px",
+            activeTab === "gallery"
+              ? "text-secondary border-secondary"
+              : "text-gray hover:text-light border-transparent"
+          )}
+        >
+          <GalleryHorizontalEnd className="w-4 h-4" />
+          Galería
+        </button>
+      </div>
+
+      {/* Gallery Tab */}
+      {activeTab === "gallery" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="py-2"
+        >
+          <GenerationGallery />
+        </motion.div>
+      )}
+
+      {/* Generator Tab - Info banner */}
+      {activeTab === "generator" && (
+        <>
       {/* Info banner */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -479,6 +529,8 @@ const AIImageGeneratorPage = () => {
             </>
           )}
         </motion.div>
+      )}
+        </>
       )}
 
       {/* Modal de selección de producto */}
