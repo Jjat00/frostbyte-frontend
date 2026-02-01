@@ -21,6 +21,7 @@ const SECTION_COMPONENTS = {
   frappes: Frappes,
   sodas: SodasMicheladas,
   "sodas-micheladas": SodasMicheladas,
+  "sodas-italianas": SodasMicheladas,
   mocktails: Mocktails,
   cocteles: Mocktails,
   shots: Shots,

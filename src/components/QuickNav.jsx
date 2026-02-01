@@ -52,7 +52,7 @@ const SECTION_CONFIG = {
     icon: Sparkles,
     gradient: "from-pink-400 to-red-500",
     description: "Italianas",
-    categorySlug: "sodas",
+    categorySlug: "sodas-italianas",
   },
   micheladas: {
     name: "Micheladas",
