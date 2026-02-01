@@ -2,7 +2,7 @@
 export { useProducts, useProduct, useProductsByCategory, productKeys } from './useProducts';
 
 // Categories hooks
-export { useCategories, useCategory, categoryKeys } from './useCategories';
+export { useCategories, useCategory, useActiveCategories, categoryKeys } from './useCategories';
 
 // Music hooks
 export { useSongRequestsNotification } from './useSongRequestsNotification';

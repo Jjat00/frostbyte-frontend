@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -14,111 +14,169 @@ import {
   Gamepad2,
   MessageSquare,
 } from "lucide-react";
+import { useActiveCategories } from "@/hooks";
+
+/**
+ * Configuración de navegación para cada sección
+ * categorySlug: slug de la categoría en la BD (null para secciones no-categoría)
+ */
+const SECTION_CONFIG = {
+  desguayabator: {
+    name: "Desguayabator",
+    href: "#desguayabator",
+    icon: Heart,
+    gradient: "from-emerald-400 to-cyan-500",
+    description: "¡Cura guayabos!",
+    featured: true,
+    categorySlug: null, // No es una categoría de productos
+  },
+  granizados: {
+    name: "Granizados",
+    href: "#granizados",
+    icon: Snowflake,
+    gradient: "from-cyan-400 to-blue-500",
+    description: "Hielo frutal",
+    categorySlug: "granizados",
+  },
+  frappes: {
+    name: "Frappés",
+    href: "#frappes",
+    icon: Coffee,
+    gradient: "from-amber-600 to-orange-700",
+    description: "Café helado",
+    categorySlug: "frappes",
+  },
+  sodas: {
+    name: "Sodas",
+    href: "#sodas",
+    icon: Sparkles,
+    gradient: "from-pink-400 to-red-500",
+    description: "Italianas",
+    categorySlug: "sodas",
+  },
+  micheladas: {
+    name: "Micheladas",
+    href: "#micheladas",
+    icon: Beer,
+    gradient: "from-orange-400 to-red-500",
+    description: "Cerveza picante",
+    categorySlug: "micheladas",
+  },
+  cervezas: {
+    name: "Cervezas",
+    href: "#cervezas",
+    icon: Beer,
+    gradient: "from-yellow-400 to-amber-500",
+    description: "Frías y refrescantes",
+    categorySlug: "cervezas",
+  },
+  cuates: {
+    name: "Cuates",
+    href: "#cuates",
+    icon: Sparkles,
+    gradient: "from-lime-400 to-green-500",
+    description: "Cóctel con tequila",
+    categorySlug: "cuates",
+  },
+  mocktails: {
+    name: "Cócteles",
+    href: "#mocktails",
+    icon: Wine,
+    gradient: "from-purple-400 to-pink-500",
+    description: "Clásicos",
+    categorySlug: "mocktails",
+  },
+  shots: {
+    name: "Shots",
+    href: "#shots",
+    icon: GlassWater,
+    gradient: "from-emerald-400 to-teal-500",
+    description: "Licores premium",
+    categorySlug: "shots",
+  },
+  vinos: {
+    name: "Vinos",
+    href: "#vinos",
+    icon: Wine,
+    gradient: "from-red-500 to-red-700",
+    description: "Tintos chilenos",
+    categorySlug: "vinos",
+  },
+  "solicitar-cancion": {
+    name: "Solicitar Canción",
+    href: "#solicitar-cancion",
+    icon: Music,
+    gradient: "from-purple-400 to-pink-500",
+    description: "Pide tu canción",
+    featured: true,
+    categorySlug: null,
+  },
+  feedback: {
+    name: "Tu Opinion",
+    href: "#feedback",
+    icon: MessageSquare,
+    gradient: "from-teal-400 to-cyan-500",
+    description: "Dejanos tu feedback",
+    featured: true,
+    categorySlug: null,
+  },
+  "frostbyte-play": {
+    name: "Frostbyte Play",
+    href: "#frostbyte-play",
+    icon: Gamepad2,
+    gradient: "from-primary to-secondary",
+    description: "Juegos divertidos",
+    featured: true,
+    categorySlug: null,
+  },
+};
+
+// Orden por defecto de las secciones en el QuickNav
+const DEFAULT_SECTION_ORDER = [
+  "desguayabator",
+  "granizados",
+  "frappes",
+  "sodas",
+  "micheladas",
+  "cervezas",
+  "cuates",
+  "mocktails",
+  "shots",
+  "vinos",
+  "solicitar-cancion",
+  "feedback",
+  "frostbyte-play",
+];
 
 const QuickNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: categoriesData } = useActiveCategories();
 
   // Detectar si estamos en una ruta de mesa
   const isTableRoute = location.pathname.startsWith('/mesa/');
 
-  const sections = [
-    {
-      name: "Desguayabator",
-      href: "#desguayabator",
-      icon: Heart,
-      gradient: "from-emerald-400 to-cyan-500",
-      description: "¡Cura guayabos!",
-      featured: true,
-    },
-    {
-      name: "Granizados",
-      href: "#granizados",
-      icon: Snowflake,
-      gradient: "from-cyan-400 to-blue-500",
-      description: "Hielo frutal",
-    },
-    {
-      name: "Frappés",
-      href: "#frappes",
-      icon: Coffee,
-      gradient: "from-amber-600 to-orange-700",
-      description: "Café helado",
-    },
-    {
-      name: "Sodas",
-      href: "#sodas",
-      icon: Sparkles,
-      gradient: "from-pink-400 to-red-500",
-      description: "Italianas",
-    },
-    {
-      name: "Micheladas",
-      href: "#micheladas",
-      icon: Beer,
-      gradient: "from-orange-400 to-red-500",
-      description: "Cerveza picante",
-    },
-    {
-      name: "Cervezas",
-      href: "#cervezas",
-      icon: Beer,
-      gradient: "from-yellow-400 to-amber-500",
-      description: "Frías y refrescantes",
-    },
-    {
-      name: "Cuates",
-      href: "#cuates",
-      icon: Sparkles,
-      gradient: "from-lime-400 to-green-500",
-      description: "Cóctel con tequila",
-    },
-    {
-      name: "Cócteles",
-      href: "#mocktails",
-      icon: Wine,
-      gradient: "from-purple-400 to-pink-500",
-      description: "Clásicos",
-    },
-    {
-      name: "Shots",
-      href: "#shots",
-      icon: GlassWater,
-      gradient: "from-emerald-400 to-teal-500",
-      description: "Licores premium",
-    },
-    {
-      name: "Vinos",
-      href: "#vinos",
-      icon: Wine,
-      gradient: "from-red-500 to-red-700",
-      description: "Tintos chilenos",
-    },
-    {
-      name: "Solicitar Canción",
-      href: "#solicitar-cancion",
-      icon: Music,
-      gradient: "from-purple-400 to-pink-500",
-      description: "Pide tu canción",
-      featured: true,
-    },
-    {
-      name: "Tu Opinion",
-      href: "#feedback",
-      icon: MessageSquare,
-      gradient: "from-teal-400 to-cyan-500",
-      description: "Dejanos tu feedback",
-      featured: true,
-    },
-    {
-      name: "Frostbyte Play",
-      href: "#frostbyte-play",
-      icon: Gamepad2,
-      gradient: "from-primary to-secondary",
-      description: "Juegos divertidos",
-      featured: true,
-    },
-  ];
+  // Obtener los slugs de categorías activas
+  const activeCategorySlugs = useMemo(() => {
+    if (!categoriesData?.results) return new Set();
+    return new Set(
+      categoriesData.results
+        .filter((cat) => cat.is_active)
+        .map((cat) => cat.slug)
+    );
+  }, [categoriesData]);
+
+  // Filtrar secciones según categorías activas
+  const sections = useMemo(() => {
+    return DEFAULT_SECTION_ORDER
+      .map((key) => SECTION_CONFIG[key])
+      .filter((section) => {
+        // Si no tiene categorySlug, siempre mostrar (son secciones especiales)
+        if (!section.categorySlug) return true;
+        // Si tiene categorySlug, solo mostrar si la categoría está activa
+        return activeCategorySlugs.has(section.categorySlug);
+      });
+  }, [activeCategorySlugs]);
 
   const handleClick = (href, isRoute = false) => {
     if (isRoute) {

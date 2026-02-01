@@ -7,6 +7,7 @@ import { categoriesService } from '@/services';
 export const categoryKeys = {
   all: ['categories'],
   lists: () => [...categoryKeys.all, 'list'],
+  active: () => [...categoryKeys.all, 'active'],
   details: () => [...categoryKeys.all, 'detail'],
   detail: (slug) => [...categoryKeys.details(), slug],
 };
@@ -20,6 +21,19 @@ export function useCategories(options = {}) {
     queryKey: categoryKeys.lists(),
     queryFn: () => categoriesService.getAll(),
     staleTime: 10 * 60 * 1000, // 10 minutos (las categorías cambian poco)
+    ...options,
+  });
+}
+
+/**
+ * Hook para obtener solo las categorías activas (para la carta pública)
+ * @param {Object} options - Opciones adicionales para useQuery
+ */
+export function useActiveCategories(options = {}) {
+  return useQuery({
+    queryKey: categoryKeys.active(),
+    queryFn: () => categoriesService.getAll({ active_only: true }),
+    staleTime: 5 * 60 * 1000, // 5 minutos
     ...options,
   });
 }
