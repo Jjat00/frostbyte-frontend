@@ -14,6 +14,7 @@ import {
   XCircle,
   X,
   Save,
+  Sparkles,
 } from 'lucide-react';
 import { categoriesService } from '@/services/categories.service';
 
@@ -68,6 +69,15 @@ const CategoriesPage = () => {
   const toggleActiveMutation = useMutation({
     mutationFn: ({ slug, isActive }) =>
       categoriesService.partialUpdate(slug, { is_active: !isActive }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+  });
+
+  // Mutación para toggle mostrar extras (ej: sección de envenenar en granizados)
+  const toggleExtrasMutation = useMutation({
+    mutationFn: ({ slug, showExtras }) =>
+      categoriesService.partialUpdate(slug, { show_extras: !showExtras }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
@@ -138,6 +148,13 @@ const CategoriesPage = () => {
     toggleActiveMutation.mutate({
       slug: category.slug,
       isActive: category.is_active,
+    });
+  };
+
+  const handleToggleExtras = (category) => {
+    toggleExtrasMutation.mutate({
+      slug: category.slug,
+      showExtras: category.show_extras,
     });
   };
 
@@ -393,13 +410,25 @@ const CategoriesPage = () => {
                   onClick={() => handleToggleActive(category)}
                   disabled={toggleActiveMutation.isPending}
                   className="flex-1 p-2 text-gray hover:text-secondary hover:bg-secondary/10 rounded-lg transition-colors text-xs"
-                  title={category.is_active ? 'Desactivar' : 'Activar'}
+                  title={category.is_active ? 'Ocultar sección' : 'Mostrar sección'}
                 >
                   {category.is_active ? (
                     <EyeOff className="w-4 h-4 mx-auto" />
                   ) : (
                     <Eye className="w-4 h-4 mx-auto" />
                   )}
+                </button>
+                <button
+                  onClick={() => handleToggleExtras(category)}
+                  disabled={toggleExtrasMutation.isPending}
+                  className={`flex-1 p-2 rounded-lg transition-colors text-xs ${
+                    category.show_extras
+                      ? 'text-purple-400 hover:text-purple-300 hover:bg-purple-500/10'
+                      : 'text-gray hover:text-purple-400 hover:bg-purple-500/10'
+                  }`}
+                  title={category.show_extras ? 'Ocultar extras' : 'Mostrar extras'}
+                >
+                  <Sparkles className="w-4 h-4 mx-auto" />
                 </button>
                 <button
                   onClick={() => handleEdit(category)}
