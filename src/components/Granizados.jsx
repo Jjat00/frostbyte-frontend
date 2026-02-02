@@ -189,7 +189,7 @@ const poisonShots = [
   },
 ];
 
-const Granizados = () => {
+const Granizados = ({ showExtras = true }) => {
   const { data, isLoading, error } = useProductsByCategory("granizados");
 
   const products = data?.results || [];
@@ -260,81 +260,83 @@ const Granizados = () => {
               ))}
         </div>
 
-        {/* Sección Envenenar */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-20"
-        >
-          <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
-            {/* Efectos de fondo */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[100px]"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-pink-500 rounded-full filter blur-[80px]"></div>
-            </div>
+        {/* Sección Envenenar - controlada por show_extras */}
+        {showExtras && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mt-20"
+          >
+            <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+              {/* Efectos de fondo */}
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[100px]"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-pink-500 rounded-full filter blur-[80px]"></div>
+              </div>
 
-            <div className="relative z-10">
-              {/* Header */}
-              <div className="text-center mb-8">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <Skull
-                    className="text-purple-400 hidden sm:block"
-                    size={32}
-                  />
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
-                    ¿QUIERES{" "}
-                    <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                      ENVENENARLO
+              <div className="relative z-10">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <Skull
+                      className="text-purple-400 hidden sm:block"
+                      size={32}
+                    />
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
+                      ¿QUIERES{" "}
+                      <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        ENVENENARLO
+                      </span>
+                      ?
+                    </h3>
+                    <Skull
+                      className="text-purple-400 hidden sm:block"
+                      size={32}
+                    />
+                  </div>
+                  <p className="text-gray text-base sm:text-lg max-w-2xl mx-auto">
+                    Agrega un shot de tu licor favorito a cualquier granizado y
+                    llévalo al siguiente nivel 🔥
+                  </p>
+                </div>
+
+                {/* Shots disponibles */}
+                <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mx-auto max-w-full">
+                  {poisonShots.map((shot) => (
+                    <PoisonOption key={shot.name} {...shot} />
+                  ))}
+                </div>
+
+                {/* Ejemplo visual */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-8 flex justify-center"
+                >
+                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-purple-500/30">
+                    <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
+                      🍹 Granizado
                     </span>
-                    ?
-                  </h3>
-                  <Skull
-                    className="text-purple-400 hidden sm:block"
-                    size={32}
-                  />
-                </div>
-                <p className="text-gray text-base sm:text-lg max-w-2xl mx-auto">
-                  Agrega un shot de tu licor favorito a cualquier granizado y
-                  llévalo al siguiente nivel 🔥
-                </p>
+                    <Plus className="text-purple-400 shrink-0" size={20} />
+                    <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
+                      🥃 Shot
+                    </span>
+                    <span className="text-purple-400 text-xl sm:text-2xl shrink-0">
+                      =
+                    </span>
+                    <span className="text-purple-400 font-bold text-sm sm:text-base whitespace-nowrap">
+                      ☠️ ENVENENADO
+                    </span>
+                  </div>
+                </motion.div>
               </div>
-
-              {/* Shots disponibles */}
-              <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mx-auto max-w-full">
-                {poisonShots.map((shot) => (
-                  <PoisonOption key={shot.name} {...shot} />
-                ))}
-              </div>
-
-              {/* Ejemplo visual */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-                className="mt-8 flex justify-center"
-              >
-                <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-purple-500/30">
-                  <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
-                    🍹 Granizado
-                  </span>
-                  <Plus className="text-purple-400 shrink-0" size={20} />
-                  <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
-                    🥃 Shot
-                  </span>
-                  <span className="text-purple-400 text-xl sm:text-2xl shrink-0">
-                    =
-                  </span>
-                  <span className="text-purple-400 font-bold text-sm sm:text-base whitespace-nowrap">
-                    ☠️ ENVENENADO
-                  </span>
-                </div>
-              </motion.div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </section>
   );

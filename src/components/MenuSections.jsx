@@ -39,14 +39,13 @@ const SECTION_COMPONENTS = {
 const MenuSections = () => {
   const { data: categoriesData, isLoading } = useActiveCategories();
 
-  // Obtener los slugs de las categorías activas ordenados por display_order
-  const activeSections = useMemo(() => {
+  // Obtener las categorías activas ordenadas por display_order
+  const activeCategories = useMemo(() => {
     if (!categoriesData?.results) return [];
 
     return categoriesData.results
       .filter((cat) => cat.is_active)
-      .sort((a, b) => a.display_order - b.display_order)
-      .map((cat) => cat.slug);
+      .sort((a, b) => a.display_order - b.display_order);
   }, [categoriesData]);
 
   // Mientras carga, no mostrar nada (las secciones tienen sus propios skeletons)
@@ -56,10 +55,15 @@ const MenuSections = () => {
 
   return (
     <>
-      {activeSections.map((slug) => {
-        const SectionComponent = SECTION_COMPONENTS[slug];
+      {activeCategories.map((category) => {
+        const SectionComponent = SECTION_COMPONENTS[category.slug];
         if (!SectionComponent) return null;
-        return <SectionComponent key={slug} />;
+        return (
+          <SectionComponent
+            key={category.slug}
+            showExtras={category.show_extras}
+          />
+        );
       })}
     </>
   );
