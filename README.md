@@ -1,6 +1,6 @@
 # Frostbyte Frontend
 
-Aplicación web para gestión de restaurante con menú digital público, sistema de pedidos, inventario, gastos operacionales y salas de juego interactivas.
+Aplicación web para gestión de negocios de bebidas preparadas (granizados, frappés, cócteles), bares y restaurantes. Incluye menú digital público, sistema de pedidos, inventario, gastos operacionales y salas de juego interactivas.
 
 ## Stack Tecnológico
 
@@ -54,7 +54,7 @@ src/
 - **Analytics**: Dashboard con métricas de ventas
 
 ### Generador de Imágenes IA
-- Generación de imágenes de productos con DALL-E
+- Generación de imágenes de productos con GPT Image 1.5
 - Galería de imágenes generadas
 - Control de límites de uso
 
