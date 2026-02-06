@@ -77,17 +77,12 @@ const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
 
   useEffect(() => {
-    // Diferir para no bloquear las requests críticas (categorías/productos)
-    // en servidores single-thread (Django dev server)
-    const timeout = setTimeout(() => {
-      fetch(`${env.API_BASE_URL}/motivational/phrase/`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.phrase) setMotivationalPhrase(data.phrase);
-        })
-        .catch(() => {});
-    }, 3000);
-    return () => clearTimeout(timeout);
+    fetch(`${env.API_BASE_URL}/motivational/phrase/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.phrase) setMotivationalPhrase(data.phrase);
+      })
+      .catch(() => {});
   }, []);
 
   return (
