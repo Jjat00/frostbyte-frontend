@@ -37,6 +37,7 @@ const ProductCard = ({ product, index, styles }) => {
                 alt={product.name}
                 className="w-full h-full object-contain scale-90 transition-transform duration-500 group-hover:scale-100 drop-shadow-2xl"
                 src={styles.image}
+                loading="lazy"
               />
             ) : (
               <div className={`w-full h-full bg-gradient-to-br ${styles.gradient}`}></div>

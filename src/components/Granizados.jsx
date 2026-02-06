@@ -62,6 +62,7 @@ const ProductCard = ({ product, index, styles }) => {
                 alt={product.name}
                 className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-2xl"
                 src={styles.image}
+                loading="lazy"
               />
             </div>
           ) : (

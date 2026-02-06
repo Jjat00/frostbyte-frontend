@@ -145,6 +145,8 @@ const Header = () => {
             <img
               src="/logo.png"
               alt="Frostbyte Logo"
+              width={40}
+              height={40}
               className="w-10 h-10 object-contain"
             />
             <span className="text-2xl font-bold text-light tracking-wider">

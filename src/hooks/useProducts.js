@@ -51,7 +51,7 @@ export function useProductsByCategory(categorySlug, options = {}) {
     queryKey: productKeys.byCategory(categorySlug),
     queryFn: () => productsService.getByCategory(categorySlug),
     enabled: !!categorySlug,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 60 * 1000, // 30 minutos - productos del menú público cambian poco
     ...options,
   });
 }

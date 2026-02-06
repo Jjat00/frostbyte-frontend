@@ -1,54 +1,77 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "./App";
-import TablePage from "./pages/TablePage";
-import LoginPage from "./pages/auth/LoginPage";
-import HomePage from "./pages/HomePage";
-import InventoryLayout from "./pages/inventory/InventoryLayout";
-import DashboardPage from "./pages/inventory/DashboardPage";
-import MaterialsPage from "./pages/inventory/MaterialsPage";
-import LowStockPage from "./pages/inventory/LowStockPage";
-import PurchaseOrdersPage from "./pages/inventory/PurchaseOrdersPage";
-// Módulo de Pedidos
-import OrdersLayout from "./pages/orders/OrdersLayout";
-import ActiveOrdersPage from "./pages/orders/ActiveOrdersPage";
-import NewOrderPage from "./pages/orders/NewOrderPage";
-import OrderDetailPage from "./pages/orders/OrderDetailPage";
-import OrdersHistoryPage from "./pages/orders/OrdersHistoryPage";
-import OrdersStatsPage from "./pages/orders/OrdersStatsPage";
-// Módulo de Productos
-import ProductsLayout from "./pages/products/ProductsLayout";
-import ProductsListPage from "./pages/products/ProductsListPage";
-import ProductFormPage from "./pages/products/ProductFormPage";
-import CategoriesPage from "./pages/products/CategoriesPage";
-import AIImageGeneratorPage from "./pages/products/AIImageGeneratorPage";
-// Módulo de Música
-import MusicLayout from "./pages/music/MusicLayout";
-import SongRequestsPage from "./pages/music/SongRequestsPage";
-// Módulo de Feedback
-import FeedbackLayout from "./pages/feedback/FeedbackLayout";
-import FeedbackListPage from "./pages/feedback/FeedbackListPage";
-// Módulo de Gastos
-import {
-  ExpensesLayout,
-  ExpensesDashboard,
-  ExpensesListPage,
-  ExpenseFormPage,
-  ExpenseDetailPage,
-  CategoriesPage as ExpenseCategoriesPage,
-  RecurringPage,
-} from "./pages/expenses";
-// Módulo de Estadísticas
-import { AnalyticsLayout, FinancialDashboard } from "./pages/analytics";
-// Módulo de Juegos
-import GamesListPage from "./pages/game/GamesListPage";
-import GameInstructionsPage from "./pages/game/GameInstructionsPage";
-import QRScanPage from "./pages/game/QRScanPage";
-import JoinRoomPage from "./pages/game/JoinRoomPage";
-import GameRoomPage from "./pages/game/GameRoomPage";
-import GamesAdminPage from "./pages/game/GamesAdminPage";
 import { authService } from "./services/auth.service";
-import AdminRoute from "./components/AdminRoute";
+
+// Lazy load de todas las rutas excepto la carta pública (/)
+const TablePage = lazy(() => import("./pages/TablePage"));
+const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+
+// Inventario
+const InventoryLayout = lazy(() => import("./pages/inventory/InventoryLayout"));
+const DashboardPage = lazy(() => import("./pages/inventory/DashboardPage"));
+const MaterialsPage = lazy(() => import("./pages/inventory/MaterialsPage"));
+const LowStockPage = lazy(() => import("./pages/inventory/LowStockPage"));
+const PurchaseOrdersPage = lazy(() => import("./pages/inventory/PurchaseOrdersPage"));
+
+// Pedidos
+const OrdersLayout = lazy(() => import("./pages/orders/OrdersLayout"));
+const ActiveOrdersPage = lazy(() => import("./pages/orders/ActiveOrdersPage"));
+const NewOrderPage = lazy(() => import("./pages/orders/NewOrderPage"));
+const OrderDetailPage = lazy(() => import("./pages/orders/OrderDetailPage"));
+const OrdersHistoryPage = lazy(() => import("./pages/orders/OrdersHistoryPage"));
+const OrdersStatsPage = lazy(() => import("./pages/orders/OrdersStatsPage"));
+
+// Productos
+const ProductsLayout = lazy(() => import("./pages/products/ProductsLayout"));
+const ProductsListPage = lazy(() => import("./pages/products/ProductsListPage"));
+const ProductFormPage = lazy(() => import("./pages/products/ProductFormPage"));
+const CategoriesPage = lazy(() => import("./pages/products/CategoriesPage"));
+const AIImageGeneratorPage = lazy(() => import("./pages/products/AIImageGeneratorPage"));
+
+// Música
+const MusicLayout = lazy(() => import("./pages/music/MusicLayout"));
+const SongRequestsPage = lazy(() => import("./pages/music/SongRequestsPage"));
+
+// Feedback
+const FeedbackLayout = lazy(() => import("./pages/feedback/FeedbackLayout"));
+const FeedbackListPage = lazy(() => import("./pages/feedback/FeedbackListPage"));
+
+// Gastos
+const ExpensesLayout = lazy(() => import("./pages/expenses/ExpensesLayout"));
+const ExpensesDashboard = lazy(() => import("./pages/expenses/ExpensesDashboard"));
+const ExpensesListPage = lazy(() => import("./pages/expenses/ExpensesListPage"));
+const ExpenseFormPage = lazy(() => import("./pages/expenses/ExpenseFormPage"));
+const ExpenseDetailPage = lazy(() => import("./pages/expenses/ExpenseDetailPage"));
+const ExpenseCategoriesPage = lazy(() => import("./pages/expenses/CategoriesPage"));
+const RecurringPage = lazy(() => import("./pages/expenses/RecurringPage"));
+
+// Estadísticas
+const AnalyticsLayout = lazy(() => import("./pages/analytics/AnalyticsLayout"));
+const FinancialDashboard = lazy(() => import("./pages/analytics/FinancialDashboard"));
+
+// Juegos
+const GamesListPage = lazy(() => import("./pages/game/GamesListPage"));
+const GameInstructionsPage = lazy(() => import("./pages/game/GameInstructionsPage"));
+const QRScanPage = lazy(() => import("./pages/game/QRScanPage"));
+const JoinRoomPage = lazy(() => import("./pages/game/JoinRoomPage"));
+const GameRoomPage = lazy(() => import("./pages/game/GameRoomPage"));
+const GamesAdminPage = lazy(() => import("./pages/game/GamesAdminPage"));
+
+const AdminRoute = lazy(() => import("./components/AdminRoute"));
+
+// Fallback de carga mínimo
+const PageLoader = () => (
+  <div className="min-h-screen bg-dark flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
+
+// Wrapper con Suspense para rutas lazy
+const Lazy = ({ children }) => (
+  <Suspense fallback={<PageLoader />}>{children}</Suspense>
+);
 
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children }) => {
@@ -73,7 +96,7 @@ const PublicRoute = ({ children }) => {
 };
 
 export const router = createBrowserRouter([
-  // Ruta principal - Carta pública
+  // Ruta principal - Carta pública (NO lazy - es la más visitada)
   {
     path: "/",
     element: <App />,
@@ -81,52 +104,78 @@ export const router = createBrowserRouter([
   // Mesa con tracking
   {
     path: "/mesa/:tableNumber",
-    element: <TablePage />,
+    element: (
+      <Lazy>
+        <TablePage />
+      </Lazy>
+    ),
   },
   // Login
   {
     path: "/login",
     element: (
-      <PublicRoute>
-        <LoginPage />
-      </PublicRoute>
+      <Lazy>
+        <PublicRoute>
+          <LoginPage />
+        </PublicRoute>
+      </Lazy>
     ),
   },
   // Home - Selección de módulos
   {
     path: "/home",
     element: (
-      <ProtectedRoute>
-        <HomePage />
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <HomePage />
+        </ProtectedRoute>
+      </Lazy>
     ),
   },
   // Panel de inventario (protegido)
   {
     path: "/inventario",
     element: (
-      <ProtectedRoute>
-        <AdminRoute>
-          <InventoryLayout />
-        </AdminRoute>
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <AdminRoute>
+            <InventoryLayout />
+          </AdminRoute>
+        </ProtectedRoute>
+      </Lazy>
     ),
     children: [
       {
         index: true,
-        element: <DashboardPage />,
+        element: (
+          <Lazy>
+            <DashboardPage />
+          </Lazy>
+        ),
       },
       {
         path: "materiales",
-        element: <MaterialsPage />,
+        element: (
+          <Lazy>
+            <MaterialsPage />
+          </Lazy>
+        ),
       },
       {
         path: "stock-bajo",
-        element: <LowStockPage />,
+        element: (
+          <Lazy>
+            <LowStockPage />
+          </Lazy>
+        ),
       },
       {
         path: "ordenes",
-        element: <PurchaseOrdersPage />,
+        element: (
+          <Lazy>
+            <PurchaseOrdersPage />
+          </Lazy>
+        ),
       },
     ],
   },
@@ -134,33 +183,53 @@ export const router = createBrowserRouter([
   {
     path: "/pedidos",
     element: (
-      <ProtectedRoute>
-        <OrdersLayout />
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <OrdersLayout />
+        </ProtectedRoute>
+      </Lazy>
     ),
     children: [
       {
         index: true,
-        element: <ActiveOrdersPage />,
+        element: (
+          <Lazy>
+            <ActiveOrdersPage />
+          </Lazy>
+        ),
       },
       {
         path: "nuevo",
-        element: <NewOrderPage />,
+        element: (
+          <Lazy>
+            <NewOrderPage />
+          </Lazy>
+        ),
       },
       {
         path: ":id",
-        element: <OrderDetailPage />,
+        element: (
+          <Lazy>
+            <OrderDetailPage />
+          </Lazy>
+        ),
       },
       {
         path: "historial",
-        element: <OrdersHistoryPage />,
+        element: (
+          <Lazy>
+            <OrdersHistoryPage />
+          </Lazy>
+        ),
       },
       {
         path: "estadisticas",
         element: (
-          <AdminRoute>
-            <OrdersStatsPage />
-          </AdminRoute>
+          <Lazy>
+            <AdminRoute>
+              <OrdersStatsPage />
+            </AdminRoute>
+          </Lazy>
         ),
       },
     ],
@@ -169,45 +238,59 @@ export const router = createBrowserRouter([
   {
     path: "/productos",
     element: (
-      <ProtectedRoute>
-        <ProductsLayout />
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <ProductsLayout />
+        </ProtectedRoute>
+      </Lazy>
     ),
     children: [
       {
         index: true,
-        element: <ProductsListPage />,
+        element: (
+          <Lazy>
+            <ProductsListPage />
+          </Lazy>
+        ),
       },
       {
         path: "nuevo",
         element: (
-          <AdminRoute>
-            <ProductFormPage />
-          </AdminRoute>
+          <Lazy>
+            <AdminRoute>
+              <ProductFormPage />
+            </AdminRoute>
+          </Lazy>
         ),
       },
       {
         path: "editar/:slug",
         element: (
-          <AdminRoute>
-            <ProductFormPage />
-          </AdminRoute>
+          <Lazy>
+            <AdminRoute>
+              <ProductFormPage />
+            </AdminRoute>
+          </Lazy>
         ),
       },
       {
         path: "categorias",
         element: (
-          <AdminRoute>
-            <CategoriesPage />
-          </AdminRoute>
+          <Lazy>
+            <AdminRoute>
+              <CategoriesPage />
+            </AdminRoute>
+          </Lazy>
         ),
       },
       {
         path: "generador-ia",
         element: (
-          <AdminRoute>
-            <AIImageGeneratorPage />
-          </AdminRoute>
+          <Lazy>
+            <AdminRoute>
+              <AIImageGeneratorPage />
+            </AdminRoute>
+          </Lazy>
         ),
       },
     ],
@@ -216,14 +299,20 @@ export const router = createBrowserRouter([
   {
     path: "/musica",
     element: (
-      <ProtectedRoute>
-        <MusicLayout />
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <MusicLayout />
+        </ProtectedRoute>
+      </Lazy>
     ),
     children: [
       {
         index: true,
-        element: <SongRequestsPage />,
+        element: (
+          <Lazy>
+            <SongRequestsPage />
+          </Lazy>
+        ),
       },
     ],
   },
@@ -231,14 +320,20 @@ export const router = createBrowserRouter([
   {
     path: "/feedback",
     element: (
-      <ProtectedRoute>
-        <FeedbackLayout />
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <FeedbackLayout />
+        </ProtectedRoute>
+      </Lazy>
     ),
     children: [
       {
         index: true,
-        element: <FeedbackListPage />,
+        element: (
+          <Lazy>
+            <FeedbackListPage />
+          </Lazy>
+        ),
       },
     ],
   },
@@ -246,40 +341,70 @@ export const router = createBrowserRouter([
   {
     path: "/gastos",
     element: (
-      <ProtectedRoute>
-        <AdminRoute>
-          <ExpensesLayout />
-        </AdminRoute>
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <AdminRoute>
+            <ExpensesLayout />
+          </AdminRoute>
+        </ProtectedRoute>
+      </Lazy>
     ),
     children: [
       {
         index: true,
-        element: <ExpensesDashboard />,
+        element: (
+          <Lazy>
+            <ExpensesDashboard />
+          </Lazy>
+        ),
       },
       {
         path: "lista",
-        element: <ExpensesListPage />,
+        element: (
+          <Lazy>
+            <ExpensesListPage />
+          </Lazy>
+        ),
       },
       {
         path: "nuevo",
-        element: <ExpenseFormPage />,
+        element: (
+          <Lazy>
+            <ExpenseFormPage />
+          </Lazy>
+        ),
       },
       {
         path: ":id",
-        element: <ExpenseDetailPage />,
+        element: (
+          <Lazy>
+            <ExpenseDetailPage />
+          </Lazy>
+        ),
       },
       {
         path: "editar/:id",
-        element: <ExpenseFormPage />,
+        element: (
+          <Lazy>
+            <ExpenseFormPage />
+          </Lazy>
+        ),
       },
       {
         path: "categorias",
-        element: <ExpenseCategoriesPage />,
+        element: (
+          <Lazy>
+            <ExpenseCategoriesPage />
+          </Lazy>
+        ),
       },
       {
         path: "recurrentes",
-        element: <RecurringPage />,
+        element: (
+          <Lazy>
+            <RecurringPage />
+          </Lazy>
+        ),
       },
     ],
   },
@@ -287,16 +412,22 @@ export const router = createBrowserRouter([
   {
     path: "/analytics",
     element: (
-      <ProtectedRoute>
-        <AdminRoute>
-          <AnalyticsLayout />
-        </AdminRoute>
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <AdminRoute>
+            <AnalyticsLayout />
+          </AdminRoute>
+        </ProtectedRoute>
+      </Lazy>
     ),
     children: [
       {
         index: true,
-        element: <FinancialDashboard />,
+        element: (
+          <Lazy>
+            <FinancialDashboard />
+          </Lazy>
+        ),
       },
     ],
   },
@@ -304,30 +435,52 @@ export const router = createBrowserRouter([
   {
     path: "/juegos-admin",
     element: (
-      <ProtectedRoute>
-        <GamesAdminPage />
-      </ProtectedRoute>
+      <Lazy>
+        <ProtectedRoute>
+          <GamesAdminPage />
+        </ProtectedRoute>
+      </Lazy>
     ),
   },
   // Juego Duelo Frostbyte (público)
   {
     path: "/game",
-    element: <GamesListPage />,
+    element: (
+      <Lazy>
+        <GamesListPage />
+      </Lazy>
+    ),
   },
   {
     path: "/game/:gameId/instrucciones",
-    element: <GameInstructionsPage />,
+    element: (
+      <Lazy>
+        <GameInstructionsPage />
+      </Lazy>
+    ),
   },
   {
     path: "/game/duelo-frostbyte/play",
-    element: <QRScanPage />,
+    element: (
+      <Lazy>
+        <QRScanPage />
+      </Lazy>
+    ),
   },
   {
     path: "/game/join/:roomLink",
-    element: <JoinRoomPage />,
+    element: (
+      <Lazy>
+        <JoinRoomPage />
+      </Lazy>
+    ),
   },
   {
     path: "/game/room/:roomId",
-    element: <GameRoomPage />,
+    element: (
+      <Lazy>
+        <GameRoomPage />
+      </Lazy>
+    ),
   },
 ]);

@@ -33,7 +33,7 @@ export function useActiveCategories(options = {}) {
   return useQuery({
     queryKey: categoryKeys.active(),
     queryFn: () => categoriesService.getAll({ active_only: true }),
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 30 * 60 * 1000, // 30 minutos - categorías cambian poco
     ...options,
   });
 }
