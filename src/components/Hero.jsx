@@ -75,27 +75,14 @@ const ProductFloatCard = ({
 
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
-  const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
 
   useEffect(() => {
-    const fetchMotivationalPhrase = async () => {
-      try {
-        const response = await fetch(
-          `${env.API_BASE_URL}/motivational/phrase/`
-        );
-        const data = await response.json();
-
-        if (response.ok && data.phrase) {
-          setMotivationalPhrase(data.phrase);
-        }
-      } catch (error) {
-        console.error("Error al obtener la frase motivacional:", error);
-      } finally {
-        setIsLoadingPhrase(false);
-      }
-    };
-
-    fetchMotivationalPhrase();
+    fetch(`${env.API_BASE_URL}/motivational/phrase/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.phrase) setMotivationalPhrase(data.phrase);
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -112,67 +99,45 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block"
-            >
+          <div className="space-y-6">
+            <div className="inline-block">
               <span className="px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-sm font-semibold tracking-wider">
                 REFRESCO HELADO PREMIUM
               </span>
-            </motion.div>
+            </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl md:text-7xl font-black text-light leading-tight"
-            >
+            <h1 className="text-5xl md:text-7xl font-black text-light leading-tight">
               ENTRA EN LA
               <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
                 DIMENSIÓN FROSTBYTE
               </span>
-            </motion.h1>
+            </h1>
 
-            {!isLoadingPhrase && motivationalPhrase && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35 }}
-                className="relative"
-              >
-                <div className="px-6 py-3 bg-linear-to-r from-primary/10 via-secondary/10 to-primary/10 border border-primary/30 rounded-2xl backdrop-blur-sm">
-                  <p className="text-primary text-base md:text-lg font-semibold text-center italic">
-                    "{motivationalPhrase}"
-                  </p>
-                </div>
-              </motion.div>
-            )}
+            {/* Espacio reservado para evitar CLS cuando llega la frase */}
+            <div className="min-h-[60px]">
+              {motivationalPhrase && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                  className="relative"
+                >
+                  <div className="px-6 py-3 bg-linear-to-r from-primary/10 via-secondary/10 to-primary/10 border border-primary/30 rounded-2xl backdrop-blur-sm">
+                    <p className="text-primary text-base md:text-lg font-semibold text-center italic">
+                      "{motivationalPhrase}"
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-gray text-lg md:text-xl leading-relaxed"
-            >
+            <p className="text-gray text-lg md:text-xl leading-relaxed">
               Experimenta bebidas heladas como nunca antes. Nuestros granizados
               y frappés combinan sabores innovadores con la frescura más intensa
               que puedas imaginar.
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4"
-            >
+            <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 onClick={() =>
                   document
@@ -197,14 +162,9 @@ const Hero = () => {
                   Cómo Llegar
                 </a>
               </Button>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex items-center gap-6 pt-4"
-            >
+            <div className="flex items-center gap-6 pt-4">
               <span className="text-gray text-sm">Síguenos:</span>
               <div className="flex gap-4">
                 {socialLinks.map((social, index) => (
@@ -225,15 +185,10 @@ const Hero = () => {
                   </motion.a>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative hidden md:block"
-          >
+          <div className="relative hidden md:block">
             <div className="relative w-full flex items-center justify-center">
               <div className="w-full max-w-sm">
                 <div className="grid grid-cols-2 gap-3">
@@ -315,23 +270,18 @@ const Hero = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-      >
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
         >
           <ChevronDown className="text-primary" size={40} />
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 };
