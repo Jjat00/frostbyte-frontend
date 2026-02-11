@@ -12,15 +12,21 @@ import {
   Gamepad2,
   TrendingUp,
   Wallet,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSongRequestsNotification } from "@/hooks";
+
+const SIDEBAR_WIDTH = 256; // w-64
+const SIDEBAR_COLLAPSED_WIDTH = 72; // w-18 (icon + padding)
 
 const AnalyticsLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
 
   const handleLogout = async () => {
@@ -29,53 +35,20 @@ const AnalyticsLayout = () => {
   };
 
   const navItems = [
-    {
-      name: "Home",
-      shortName: "Home",
-      path: "/home",
-      icon: Home,
-    },
-    {
-      name: "Carta",
-      shortName: "Carta",
-      path: "/",
-      icon: Store,
-      external: true,
-    },
-    {
-      name: "Dashboard",
-      shortName: "Dashboard",
-      path: "/analytics",
-      icon: BarChart3,
-      end: true,
-    },
-    {
-      name: "Gastos",
-      shortName: "Gastos",
-      path: "/gastos",
-      icon: Wallet,
-    },
-    {
-      name: "Musica",
-      shortName: "Musica",
-      path: "/musica",
-      icon: Music,
-      hasNotification: true,
-    },
-    {
-      name: "Juegos",
-      shortName: "Juegos",
-      path: "/juegos-admin",
-      icon: Gamepad2,
-    },
+    { name: "Home", shortName: "Home", path: "/home", icon: Home },
+    { name: "Carta", shortName: "Carta", path: "/", icon: Store, external: true },
+    { name: "Dashboard", shortName: "Dashboard", path: "/analytics", icon: BarChart3, end: true },
+    { name: "Gastos", shortName: "Gastos", path: "/gastos", icon: Wallet },
+    { name: "Musica", shortName: "Musica", path: "/musica", icon: Music, hasNotification: true },
+    { name: "Juegos", shortName: "Juegos", path: "/juegos-admin", icon: Gamepad2 },
   ];
 
   const isActive = (path, end) => {
-    if (end) {
-      return location.pathname === path;
-    }
+    if (end) return location.pathname === path;
     return location.pathname.startsWith(path);
   };
+
+  const sidebarWidth = collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH;
 
   return (
     <div className="min-h-screen bg-dark flex flex-col md:flex-row">
@@ -129,9 +102,7 @@ const AnalyticsLayout = () => {
               <div className="p-4 border-b border-gray/20">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-lg">
-                    {user?.first_name?.charAt(0) ||
-                      user?.username?.charAt(0) ||
-                      "U"}
+                    {user?.first_name?.charAt(0) || user?.username?.charAt(0) || "U"}
                   </div>
                   <div>
                     <p className="font-medium text-light">
@@ -209,42 +180,70 @@ const AnalyticsLayout = () => {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-64 h-screen bg-dark-secondary border-r border-gray/20 flex-col fixed left-0 top-0">
+      <motion.aside
+        animate={{ width: sidebarWidth }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+        className="hidden md:flex h-screen bg-dark-secondary border-r border-gray/20 flex-col fixed left-0 top-0 z-20 overflow-hidden"
+      >
         {/* Logo */}
-        <div className="p-5 border-b border-gray/20">
+        <div className={`border-b border-gray/20 ${collapsed ? "p-3" : "p-5"}`}>
           <NavLink
             to="/home"
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
+            className={`flex items-center hover:opacity-80 transition-opacity group ${collapsed ? "justify-center" : "gap-3"}`}
             title="Ir al Home"
           >
             <img
               src="/logo.png"
               alt="Frostbyte"
-              className="w-10 h-10 group-hover:scale-105 transition-transform"
+              className={`${collapsed ? "w-9 h-9" : "w-10 h-10"} group-hover:scale-105 transition-transform flex-shrink-0`}
             />
-            <div>
-              <h1 className="text-lg font-bold text-light tracking-wider group-hover:text-primary transition-colors">
-                FROSTBYTE
-              </h1>
-              <p className="text-xs text-gray flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" />
-                Estadisticas
-              </p>
-            </div>
+            {!collapsed && (
+              <div className="min-w-0">
+                <h1 className="text-lg font-bold text-light tracking-wider group-hover:text-primary transition-colors whitespace-nowrap">
+                  FROSTBYTE
+                </h1>
+                <p className="text-xs text-gray flex items-center gap-1 whitespace-nowrap">
+                  <TrendingUp className="w-3 h-3" />
+                  Estadisticas
+                </p>
+              </div>
+            )}
           </NavLink>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        <nav className={`flex-1 ${collapsed ? "p-2" : "p-3"} space-y-1 overflow-y-auto overflow-x-hidden`}>
           {navItems.map((item) => {
-            const baseClasses =
-              "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-gray/10";
+            const activeClass = "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30";
+            const baseClasses = `flex items-center rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-gray/10 ${
+              collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
+            }`;
+
+            const content = (isActiveState) => (
+              <>
+                <div className="relative flex-shrink-0">
+                  <item.icon className="w-5 h-5" />
+                  {item.hasNotification && hasPendingRequests && (
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-secondary animate-pulse" />
+                  )}
+                </div>
+                {!collapsed && (
+                  <>
+                    <span className="font-medium flex-1 whitespace-nowrap">{item.name}</span>
+                    {item.hasNotification && hasPendingRequests && (
+                      <span className="px-1.5 py-0.5 text-xs font-bold bg-green-500 text-dark rounded-full">
+                        {pendingCount}
+                      </span>
+                    )}
+                  </>
+                )}
+              </>
+            );
 
             if (item.external) {
               return (
-                <a key={item.path} href={item.path} className={baseClasses}>
-                  <item.icon className="w-5 h-5" />
-                  <span className="font-medium">{item.name}</span>
+                <a key={item.path} href={item.path} className={baseClasses} title={collapsed ? item.name : undefined}>
+                  {content(false)}
                 </a>
               );
             }
@@ -254,58 +253,81 @@ const AnalyticsLayout = () => {
                 key={item.path}
                 to={item.path}
                 end={item.end}
+                title={collapsed ? item.name : undefined}
                 className={({ isActive }) =>
-                  `${baseClasses} ${
-                    isActive
-                      ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30"
-                      : ""
-                  }`
+                  `${baseClasses} ${isActive ? activeClass : ""}`
                 }
               >
-                <div className="relative">
-                  <item.icon className="w-5 h-5" />
-                  {item.hasNotification && hasPendingRequests && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-secondary animate-pulse" />
-                  )}
-                </div>
-                <span className="font-medium flex-1">{item.name}</span>
-                {item.hasNotification && hasPendingRequests && (
-                  <span className="px-1.5 py-0.5 text-xs font-bold bg-green-500 text-dark rounded-full">
-                    {pendingCount}
-                  </span>
-                )}
+                {({ isActive: isActiveState }) => content(isActiveState)}
               </NavLink>
             );
           })}
         </nav>
 
         {/* User section */}
-        <div className="p-3 border-t border-gray/20">
-          <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold">
-              {user?.first_name?.charAt(0) || user?.username?.charAt(0) || "U"}
+        <div className={`border-t border-gray/20 ${collapsed ? "p-2" : "p-3"}`}>
+          {collapsed ? (
+            <div className="flex flex-col items-center gap-2">
+              <div
+                className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-sm cursor-default"
+                title={user?.full_name || user?.username}
+              >
+                {user?.first_name?.charAt(0) || user?.username?.charAt(0) || "U"}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                title="Cerrar sesion"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-light truncate">
-                {user?.full_name || user?.username}
-              </p>
-              <p className="text-xs text-gray">{user?.role_display}</p>
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-3 px-3 py-2 mb-2">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold flex-shrink-0">
+                  {user?.first_name?.charAt(0) || user?.username?.charAt(0) || "U"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-light truncate">
+                    {user?.full_name || user?.username}
+                  </p>
+                  <p className="text-xs text-gray">{user?.role_display}</p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="text-sm whitespace-nowrap">Cerrar sesion</span>
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Collapse toggle */}
+        <div className="border-t border-gray/20 p-2">
           <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            onClick={() => setCollapsed((prev) => !prev)}
+            className="w-full flex items-center justify-center p-2 text-gray hover:text-secondary hover:bg-gray/10 rounded-lg transition-colors"
+            title={collapsed ? "Expandir menu" : "Colapsar menu"}
           >
-            <LogOut className="w-5 h-5" />
-            <span className="text-sm">Cerrar sesion</span>
+            {collapsed ? (
+              <ChevronsRight className="w-5 h-5" />
+            ) : (
+              <ChevronsLeft className="w-5 h-5" />
+            )}
           </button>
         </div>
-      </aside>
+      </motion.aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen md:ml-64">
-        {/* Page content */}
-        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto">
+      <div
+        className="flex-1 flex flex-col min-h-screen md:transition-[margin-left] md:duration-[250ms] md:ease-in-out"
+        style={{ '--sidebar-w': `${sidebarWidth}px` }}
+      >
+        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto md:ml-[var(--sidebar-w)]">
           <Outlet />
         </main>
       </div>
@@ -325,9 +347,7 @@ const AnalyticsLayout = () => {
                 return (
                   <a key={item.path} href={item.path} className={baseClasses}>
                     <item.icon className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">
-                      {item.shortName}
-                    </span>
+                    <span className="text-[10px] font-medium">{item.shortName}</span>
                   </a>
                 );
               }
@@ -340,16 +360,12 @@ const AnalyticsLayout = () => {
                   className={baseClasses}
                 >
                   <div className="relative">
-                    <item.icon
-                      className={`w-5 h-5 ${active ? "text-primary" : ""}`}
-                    />
+                    <item.icon className={`w-5 h-5 ${active ? "text-primary" : ""}`} />
                     {item.hasNotification && hasPendingRequests && (
                       <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-dark-secondary animate-pulse" />
                     )}
                   </div>
-                  <span className="text-[10px] font-medium">
-                    {item.shortName}
-                  </span>
+                  <span className="text-[10px] font-medium">{item.shortName}</span>
                 </NavLink>
               );
             })}
