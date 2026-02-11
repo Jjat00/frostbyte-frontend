@@ -180,10 +180,11 @@ const AnalyticsLayout = () => {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
+      <div className="hidden md:block">
       <motion.aside
         animate={{ width: sidebarWidth }}
         transition={{ duration: 0.25, ease: "easeInOut" }}
-        className="hidden md:flex h-screen bg-dark-secondary border-r border-gray/20 flex-col fixed left-0 top-0 z-20 overflow-hidden"
+        className="flex h-screen bg-dark-secondary border-r border-gray/20 flex-col fixed left-0 top-0 z-20 overflow-hidden"
       >
         {/* Logo */}
         <div className={`border-b border-gray/20 ${collapsed ? "p-3" : "p-5"}`}>
@@ -321,6 +322,7 @@ const AnalyticsLayout = () => {
           </button>
         </div>
       </motion.aside>
+      </div>
 
       {/* Main content */}
       <div
