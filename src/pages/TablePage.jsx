@@ -13,6 +13,7 @@ import ScrollToCarta from "@/components/ScrollToMenu";
 import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
+import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import { env } from "@/config/env";
 
 function TablePage() {
@@ -58,6 +59,7 @@ function TablePage() {
         <main>
           <Hero />
           <QuickNav />
+          <SocialDiscountBanner />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
