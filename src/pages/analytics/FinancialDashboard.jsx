@@ -17,15 +17,14 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from 'recharts';
 import {
   TrendingUp,
-  TrendingDown,
   DollarSign,
   Wallet,
   Package,
   BarChart3,
-  Loader2,
   ArrowUpRight,
   ArrowDownRight,
   Minus,
@@ -34,800 +33,913 @@ import {
   Activity,
   Clock,
   CalendarDays,
+  Zap,
 } from 'lucide-react';
 import { analyticsService } from '@/services/analytics.service';
 import { ordersService } from '@/services/orders.service';
 
-// Colores para el pie chart
-const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16'];
+// Cyberpunk color palette for charts
+const CYBERPUNK_COLORS = ['#00e0ff', '#ff00d4', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899'];
 
-const StatCard = ({ title, value, subtitle, change, icon: Icon, color, isNegativeGood = false }) => {
-  const colorClasses = {
-    green: 'from-green-500/20 to-green-500/5 border-green-500/30 text-green-500',
-    blue: 'from-blue-500/20 to-blue-500/5 border-blue-500/30 text-blue-500',
-    yellow: 'from-yellow-500/20 to-yellow-500/5 border-yellow-500/30 text-yellow-500',
-    red: 'from-red-500/20 to-red-500/5 border-red-500/30 text-red-500',
-    purple: 'from-purple-500/20 to-purple-500/5 border-purple-500/30 text-purple-500',
-    primary: 'from-primary/20 to-primary/5 border-primary/30 text-primary',
-    secondary: 'from-secondary/20 to-secondary/5 border-secondary/30 text-secondary',
+// ─── Skeleton Components ────────────────────────────────────────
+
+const KPICardSkeleton = () => (
+  <div className="bg-dark-secondary/60 border border-gray/10 rounded-2xl p-5 animate-pulse relative overflow-hidden">
+    <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
+    <div className="flex items-start justify-between">
+      <div className="space-y-3 flex-1">
+        <div className="h-3 bg-gray/20 rounded w-24" />
+        <div className="h-8 bg-gray/15 rounded w-32" />
+        <div className="h-3 bg-gray/10 rounded w-20" />
+      </div>
+      <div className="w-11 h-11 bg-gray/15 rounded-xl" />
+    </div>
+  </div>
+);
+
+const ChartSkeleton = ({ height = 'h-72' }) => (
+  <div className={`bg-dark-secondary/60 border border-gray/10 rounded-2xl p-6 ${height} relative overflow-hidden`}>
+    <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
+    <div className="h-4 bg-gray/15 rounded w-40 mb-2" />
+    <div className="h-3 bg-gray/10 rounded w-56 mb-6" />
+    <div className="flex items-end justify-around h-[calc(100%-80px)] gap-2 px-4">
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={i}
+          className="bg-gray/10 rounded-t flex-1"
+          style={{ height: `${25 + Math.random() * 65}%` }}
+        />
+      ))}
+    </div>
+  </div>
+);
+
+// ─── Section Header ─────────────────────────────────────────────
+
+const SectionHeader = ({ icon: Icon, title, subtitle, action }) => (
+  <div className="flex items-center justify-between mb-5">
+    <div className="flex items-center gap-3">
+      <div className="p-2 rounded-xl bg-secondary/10 border border-secondary/20">
+        <Icon className="w-5 h-5 text-secondary" />
+      </div>
+      <div>
+        <h2 className="text-base md:text-lg font-bold text-light">{title}</h2>
+        {subtitle && <p className="text-xs text-gray mt-0.5">{subtitle}</p>}
+      </div>
+    </div>
+    {action && <div>{action}</div>}
+  </div>
+);
+
+// ─── Custom Tooltip ─────────────────────────────────────────────
+
+const CustomChartTooltip = ({ active, payload, label, formatter }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-dark-secondary/95 backdrop-blur-md border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_rgba(0,224,255,0.15)]">
+      <p className="text-xs text-secondary font-bold mb-2">{label}</p>
+      {payload.map((entry, index) => (
+        <div key={index} className="flex items-center justify-between gap-6 mb-1 last:mb-0">
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-xs text-gray">{entry.name}</span>
+          </div>
+          <span className="text-sm font-bold text-light">
+            {formatter ? formatter(entry.value) : entry.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ─── KPI Stat Card ──────────────────────────────────────────────
+
+const StatCard = ({ title, value, subtitle, change, icon: Icon, color, isNegativeGood = false, isPrimary = false, delay = 0 }) => {
+  const colorMap = {
+    green: { border: 'border-green-500/30', text: 'text-green-400', bg: 'from-green-500/15 to-green-500/5', glow: 'hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]', icon: 'text-green-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]' },
+    blue: { border: 'border-blue-500/30', text: 'text-blue-400', bg: 'from-blue-500/15 to-blue-500/5', glow: 'hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]', icon: 'text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]' },
+    red: { border: 'border-red-500/30', text: 'text-red-400', bg: 'from-red-500/15 to-red-500/5', glow: 'hover:shadow-[0_0_30px_rgba(239,68,68,0.2)]', icon: 'text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]' },
+    secondary: { border: 'border-secondary/40', text: 'text-secondary', bg: 'from-secondary/15 to-secondary/5', glow: 'hover:shadow-[0_0_30px_rgba(0,224,255,0.25)]', icon: 'text-secondary drop-shadow-[0_0_12px_rgba(0,224,255,0.7)]' },
+    primary: { border: 'border-primary/30', text: 'text-primary', bg: 'from-primary/15 to-primary/5', glow: 'hover:shadow-[0_0_30px_rgba(255,0,212,0.2)]', icon: 'text-primary drop-shadow-[0_0_10px_rgba(255,0,212,0.6)]' },
   };
 
+  const c = colorMap[color] || colorMap.secondary;
   const isPositive = isNegativeGood ? change < 0 : change > 0;
-  const isNeutral = change === 0;
+  const isNeutral = change === 0 || change === undefined;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gradient-to-br ${colorClasses[color]} border rounded-xl p-4 md:p-6`}
+      transition={{ duration: 0.5, delay }}
+      whileHover={{ scale: 1.02 }}
+      className={`
+        relative overflow-hidden group
+        bg-gradient-to-br ${c.bg}
+        border ${isPrimary ? 'border-2' : ''} ${c.border}
+        rounded-2xl ${isPrimary ? 'p-5 md:p-6' : 'p-4 md:p-5'}
+        transition-all duration-500 ${c.glow}
+      `}
     >
-      <div className="flex items-start justify-between">
-        <div className="min-w-0 flex-1">
-          <p className="text-gray text-xs md:text-sm font-medium mb-1 truncate">{title}</p>
-          <p className="text-xl md:text-3xl font-bold text-light truncate">{value}</p>
-          {subtitle && <p className="text-xs text-gray mt-1 md:mt-2">{subtitle}</p>}
-          {change !== undefined && (
-            <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${
-              isNeutral ? 'text-gray' : isPositive ? 'text-green-400' : 'text-red-400'
-            }`}>
-              {isNeutral ? (
-                <Minus className="w-3 h-3" />
-              ) : isPositive ? (
-                <ArrowUpRight className="w-3 h-3" />
-              ) : (
-                <ArrowDownRight className="w-3 h-3" />
-              )}
-              <span>{Math.abs(change)}% vs mes anterior</span>
-            </div>
-          )}
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,rgba(0,224,255,0.3)_1px,transparent_1px),linear-gradient(rgba(255,0,212,0.3)_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+      <div className="relative">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-gray text-xs md:text-sm font-medium">{title}</p>
+          <div className="p-2 rounded-xl bg-dark/50 border border-gray/10 flex-shrink-0">
+            <Icon className={`w-4 h-4 md:w-5 md:h-5 ${c.icon}`} />
+          </div>
         </div>
-        <div className={`p-2 md:p-3 rounded-lg bg-dark/50 flex-shrink-0 ml-2`}>
-          <Icon className="w-5 h-5 md:w-6 md:h-6" />
-        </div>
+        <p className={`${isPrimary ? 'text-[clamp(1.1rem,4vw,2.25rem)]' : 'text-[clamp(1rem,3.5vw,1.875rem)]'} font-bold text-light whitespace-nowrap`}>
+          {value}
+        </p>
+        {subtitle && <p className="text-xs text-gray mt-1.5">{subtitle}</p>}
+        {!isNeutral && change !== undefined && (
+          <div className={`inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold ${
+            isPositive
+              ? 'bg-green-500/10 border border-green-500/20 text-green-400'
+              : 'bg-red-500/10 border border-red-500/20 text-red-400'
+          }`}>
+            {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+            <span>{Math.abs(change)}%</span>
+            <span className="text-gray font-normal hidden sm:inline">vs anterior</span>
+          </div>
+        )}
+        {isNeutral && change !== undefined && (
+          <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-gray/10 border border-gray/20 text-gray">
+            <Minus className="w-3 h-3" />
+            <span>Sin cambio</span>
+          </div>
+        )}
       </div>
     </motion.div>
   );
 };
 
+// ─── Smart Insight Generator ────────────────────────────────────
+
+const generateInsight = (summary) => {
+  if (!summary) return '';
+  const { revenue, total_expenses, net_profit, profit_margin } = summary;
+  const parts = [];
+
+  if (net_profit?.value > 0 && profit_margin?.value > 20) {
+    parts.push(`Excelente rentabilidad con margen del ${profit_margin.value}%.`);
+  } else if (net_profit?.value > 0) {
+    parts.push(`Operacion positiva con margen del ${profit_margin?.value || 0}%.`);
+  } else if (net_profit?.value < 0) {
+    parts.push(`Alerta: el periodo muestra perdidas.`);
+  }
+
+  if (revenue?.change > 10) parts.push(`Ingresos crecieron ${revenue.change}%.`);
+  else if (revenue?.change < -10) parts.push(`Ingresos bajaron ${Math.abs(revenue.change)}%.`);
+
+  if (total_expenses?.change < 0) parts.push(`Gastos reducidos en ${Math.abs(total_expenses.change)}%.`);
+  else if (total_expenses?.change > 15) parts.push(`Gastos aumentaron ${total_expenses.change}%.`);
+
+  return parts.join(' ');
+};
+
+// ─── Main Dashboard ─────────────────────────────────────────────
+
 const FinancialDashboard = () => {
-  // Vista por defecto: mes actual (daily)
-  const [viewMode, setViewMode] = useState('daily'); // 'daily' | 'monthly'
+  const [viewMode, setViewMode] = useState('daily');
   const [trendMonths, setTrendMonths] = useState(12);
 
-  // Obtener resumen financiero
   const { data: summary, isLoading: isLoadingSummary } = useQuery({
     queryKey: ['financial-summary'],
     queryFn: () => analyticsService.getSummary(),
   });
 
-  // Obtener tendencia diaria (mes actual) - carga por defecto
   const { data: dailyTrend, isLoading: isLoadingDaily } = useQuery({
     queryKey: ['daily-trend'],
     queryFn: () => analyticsService.getDailyTrend(),
   });
 
-  // Obtener tendencia mensual - solo cuando se selecciona
   const { data: monthlyTrend, isLoading: isLoadingTrend } = useQuery({
     queryKey: ['monthly-trend', trendMonths],
     queryFn: () => analyticsService.getMonthlyTrend(trendMonths),
     enabled: viewMode === 'monthly',
   });
 
-  // Obtener desglose de gastos
   const { data: expensesBreakdown, isLoading: isLoadingBreakdown } = useQuery({
     queryKey: ['expenses-breakdown'],
     queryFn: () => analyticsService.getExpensesBreakdown(),
   });
 
-  // Obtener comparacion mensual
   const { data: comparison, isLoading: isLoadingComparison } = useQuery({
     queryKey: ['monthly-comparison'],
     queryFn: () => analyticsService.getComparison(),
   });
 
-  // Obtener ventas por hora (último mes para datos significativos)
   const { data: salesByHour, isLoading: isLoadingHourly } = useQuery({
     queryKey: ['sales-by-hour-analytics'],
     queryFn: () => ordersService.getSalesByHour('month'),
   });
 
-  // Obtener ventas por día de semana (último mes)
   const { data: salesByWeekday, isLoading: isLoadingWeekday } = useQuery({
     queryKey: ['sales-by-weekday-analytics'],
     queryFn: () => ordersService.getSalesByWeekday('month'),
   });
 
+  // ── Formatters ──
+
   const formatCurrency = (value) => {
     if (!value && value !== 0) return '$0';
     const num = parseFloat(value);
-    if (num >= 1000000) {
-      return `$${(num / 1000000).toFixed(1)}M`;
-    }
-    if (num >= 1000) {
-      return `$${(num / 1000).toFixed(0)}K`;
-    }
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(num);
+    if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `$${(num / 1000).toFixed(0)}K`;
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(num);
   };
 
   const formatCurrencyFull = (value) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(value || 0);
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value || 0);
   };
 
-  const isLoading = isLoadingSummary || isLoadingBreakdown || isLoadingComparison ||
-    isLoadingHourly || isLoadingWeekday ||
-    (viewMode === 'daily' && isLoadingDaily) ||
-    (viewMode === 'monthly' && isLoadingTrend);
+  // ── Derived data ──
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-      </div>
-    );
-  }
-
-  // Preparar datos para la grafica de barras de comparacion
   const comparisonData = comparison ? [
-    {
-      name: 'Ingresos',
-      'Mes Anterior': comparison.previous_month.revenue,
-      'Este Mes': comparison.current_month.revenue,
-    },
-    {
-      name: 'Gastos',
-      'Mes Anterior': comparison.previous_month.expenses,
-      'Este Mes': comparison.current_month.expenses,
-    },
-    {
-      name: 'Ganancia',
-      'Mes Anterior': comparison.previous_month.profit,
-      'Este Mes': comparison.current_month.profit,
-    },
+    { name: 'Ingresos', 'Mes Anterior': comparison.previous_month.revenue, 'Este Mes': comparison.current_month.revenue },
+    { name: 'Gastos', 'Mes Anterior': comparison.previous_month.expenses, 'Este Mes': comparison.current_month.expenses },
+    { name: 'Ganancia', 'Mes Anterior': comparison.previous_month.profit, 'Este Mes': comparison.current_month.profit },
   ] : [];
 
-  // Datos para la grafica principal segun el modo de vista
   const chartData = viewMode === 'daily' ? dailyTrend?.data : monthlyTrend?.data;
   const xAxisKey = viewMode === 'daily' ? 'date_label' : 'month_label';
+  const isChartLoading = viewMode === 'daily' ? isLoadingDaily : isLoadingTrend;
 
-  // Preparar datos para la grafica de barras de ganancias
   const profitData = chartData?.map(item => ({
     ...item,
-    profitColor: item.profit >= 0 ? '#10B981' : '#EF4444',
+    profitColor: item.profit >= 0 ? 'url(#profitPositive)' : 'url(#profitNegative)',
   })) || [];
 
-  // Calcular datos acumulados
   const accumulatedData = chartData?.reduce((acc, item, index) => {
-    const prevAccRevenue = index > 0 ? acc[index - 1].accumulated_revenue : 0;
-    const prevAccExpenses = index > 0 ? acc[index - 1].accumulated_expenses : 0;
-    const prevAccProfit = index > 0 ? acc[index - 1].accumulated_profit : 0;
-    
+    const prev = index > 0 ? acc[index - 1] : { accumulated_revenue: 0, accumulated_expenses: 0, accumulated_profit: 0 };
     acc.push({
       ...item,
-      accumulated_revenue: prevAccRevenue + item.revenue,
-      accumulated_expenses: prevAccExpenses + item.total_expenses,
-      accumulated_profit: prevAccProfit + item.profit,
+      accumulated_revenue: prev.accumulated_revenue + item.revenue,
+      accumulated_expenses: prev.accumulated_expenses + item.total_expenses,
+      accumulated_profit: prev.accumulated_profit + item.profit,
     });
     return acc;
   }, []) || [];
 
-  // Totales acumulados
-  const totalAccumulatedRevenue = accumulatedData.length > 0 
-    ? accumulatedData[accumulatedData.length - 1].accumulated_revenue 
+  const totalAccRevenue = accumulatedData.length > 0 ? accumulatedData[accumulatedData.length - 1].accumulated_revenue : 0;
+  const totalAccExpenses = accumulatedData.length > 0 ? accumulatedData[accumulatedData.length - 1].accumulated_expenses : 0;
+
+  const avgProfit = profitData.length > 0
+    ? profitData.reduce((sum, d) => sum + (d.profit || 0), 0) / profitData.length
     : 0;
-  const totalAccumulatedExpenses = accumulatedData.length > 0 
-    ? accumulatedData[accumulatedData.length - 1].accumulated_expenses 
+
+  // Peak hours detection
+  const peakHoursData = salesByHour?.data?.filter(h => h.hour >= 8 && h.hour <= 23) || [];
+  const sortedByRevenue = [...peakHoursData].sort((a, b) => b.revenue - a.revenue);
+  const top3Hours = sortedByRevenue.slice(0, 3).map(h => h.hour);
+
+  // Weekday average
+  const weekdayAvg = salesByWeekday?.data
+    ? salesByWeekday.data.reduce((s, d) => s + d.revenue, 0) / (salesByWeekday.data.length || 1)
     : 0;
+
+  // ── Render helpers ──
+
+  const chartContainerClass = 'bg-gradient-to-br from-dark-secondary/80 to-dark/60 border border-gray/15 rounded-2xl p-4 md:p-6 shadow-[inset_0_0_30px_rgba(0,224,255,0.03)]';
+
+  const ViewModeToggle = () => (
+    <div className="flex flex-wrap gap-2">
+      <div className="flex bg-dark/60 rounded-xl p-1 border border-gray/10">
+        {[
+          { key: 'daily', label: 'Este Mes', icon: Calendar },
+          { key: 'monthly', label: 'Tendencia', icon: CalendarRange },
+        ].map(({ key, label, icon: Ic }) => (
+          <button
+            key={key}
+            onClick={() => setViewMode(key)}
+            className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-300 ${
+              viewMode === key ? 'text-secondary' : 'text-gray hover:text-light'
+            }`}
+          >
+            {viewMode === key && (
+              <motion.div
+                layoutId="viewModeIndicator"
+                className="absolute inset-0 bg-secondary/15 border border-secondary/30 rounded-lg"
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              />
+            )}
+            <Ic className="w-3.5 h-3.5 relative z-10" />
+            <span className="relative z-10">{label}</span>
+          </button>
+        ))}
+      </div>
+      {viewMode === 'monthly' && (
+        <div className="flex gap-1">
+          {[6, 12, 24].map((months) => (
+            <button
+              key={months}
+              onClick={() => setTrendMonths(months)}
+              className={`px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all duration-300 ${
+                trendMonths === months
+                  ? 'bg-primary/15 text-primary border border-primary/30'
+                  : 'bg-gray/5 text-gray hover:text-light hover:bg-gray/10 border border-transparent'
+              }`}
+            >
+              {months}M
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3">
+    <div className="space-y-6 md:space-y-8 max-w-[1800px] mx-auto">
+      {/* ── Header ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between gap-3"
+      >
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-light flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-secondary" />
+          <h1 className="text-xl md:text-2xl font-bold text-light flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-secondary/10 border border-secondary/20">
+              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-secondary drop-shadow-[0_0_8px_rgba(0,224,255,0.6)]" />
+            </div>
             Dashboard Financiero
           </h1>
-          <p className="text-sm text-gray">
-            Resumen ejecutivo - {summary?.period?.current_month}
+          <p className="text-xs md:text-sm text-gray mt-1 ml-12">
+            {summary?.period?.current_month || 'Cargando periodo...'}
           </p>
         </div>
-      </div>
+      </motion.div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-        <StatCard
-          title="Ingresos Totales"
-          value={formatCurrency(summary?.revenue?.value)}
-          change={summary?.revenue?.change}
-          icon={DollarSign}
-          color="green"
-        />
-        <StatCard
-          title="Gastos Totales"
-          value={formatCurrency(summary?.total_expenses?.value)}
-          change={summary?.total_expenses?.change}
-          icon={Wallet}
-          color="red"
-          isNegativeGood={true}
-        />
-        <StatCard
-          title="Ganancia Neta"
-          value={formatCurrency(summary?.net_profit?.value)}
-          subtitle={`Margen: ${summary?.profit_margin?.value || 0}%`}
-          change={summary?.net_profit?.change}
-          icon={TrendingUp}
-          color={summary?.net_profit?.value >= 0 ? 'secondary' : 'red'}
-        />
-        <StatCard
-          title="Gastos Inventario"
-          value={formatCurrency(summary?.inventory_expenses?.value)}
-          change={summary?.inventory_expenses?.change}
-          icon={Package}
-          color="blue"
-          isNegativeGood={true}
-        />
-      </div>
+      {/* ── Executive Insight Banner ── */}
+      {!isLoadingSummary && summary && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-gradient-to-r from-secondary/8 via-primary/5 to-secondary/8 border border-secondary/15 rounded-2xl p-4 md:p-5 relative overflow-hidden"
+        >
+          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_30%_50%,rgba(0,224,255,0.4),transparent_50%),radial-gradient(circle_at_70%_50%,rgba(255,0,212,0.3),transparent_50%)]" />
+          <div className="relative flex items-start gap-3">
+            <Zap className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-sm font-bold text-light mb-1">Resumen Ejecutivo</h3>
+              <p className="text-xs md:text-sm text-gray leading-relaxed">
+                Ingresos de{' '}
+                <span className="text-secondary font-semibold">{formatCurrencyFull(summary?.revenue?.value)}</span>
+                {' '}con gastos de{' '}
+                <span className="text-red-400 font-semibold">{formatCurrencyFull(summary?.total_expenses?.value)}</span>
+                {' '}= ganancia neta de{' '}
+                <span className={`font-semibold ${summary?.net_profit?.value >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {formatCurrencyFull(summary?.net_profit?.value)}
+                </span>
+                {' '}({summary?.profit_margin?.value}% margen).
+                {' '}{generateInsight(summary)}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
-      {/* Gráficas Estratégicas: Horarios Pico y Días de Semana */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        {/* Ventas por Hora del Día */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-          <h2 className="text-lg font-bold text-light mb-2 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-orange-400" />
-            Horarios Pico
-          </h2>
-          <p className="text-xs text-gray mb-4">Ingresos acumulados por hora del día (último mes)</p>
-          {salesByHour?.data && salesByHour.data.some(h => h.revenue > 0) ? (
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={salesByHour.data.filter(h => h.hour >= 8 && h.hour <= 23)}
-                  margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis
-                    dataKey="hour_label"
-                    stroke="#9CA3AF"
-                    style={{ fontSize: '10px' }}
-                    interval={1}
-                  />
-                  <YAxis
-                    stroke="#9CA3AF"
-                    tickFormatter={(value) => formatCurrency(value)}
-                    style={{ fontSize: '10px' }}
-                    width={50}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB',
-                    }}
-                    formatter={(value) => [formatCurrencyFull(value), 'Ingresos']}
-                    labelFormatter={(label) => `Hora: ${label}`}
-                  />
-                  <Bar
-                    dataKey="revenue"
-                    name="Ingresos"
-                    fill="#F97316"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-gray">
-              <p>No hay datos de horarios disponibles</p>
-            </div>
+      {/* ══════════════════════════════════════════════════════════
+          SECTION 1: KPI Cards
+         ══════════════════════════════════════════════════════════ */}
+      {isLoadingSummary ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          {[...Array(4)].map((_, i) => <KPICardSkeleton key={i} />)}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          <StatCard
+            title="Ingresos Totales"
+            value={formatCurrency(summary?.revenue?.value)}
+            change={summary?.revenue?.change}
+            icon={DollarSign}
+            color="green"
+            delay={0}
+          />
+          <StatCard
+            title="Gastos Totales"
+            value={formatCurrency(summary?.total_expenses?.value)}
+            change={summary?.total_expenses?.change}
+            icon={Wallet}
+            color="red"
+            isNegativeGood
+            delay={0.05}
+          />
+          <StatCard
+            title="Ganancia Neta"
+            value={formatCurrency(summary?.net_profit?.value)}
+            subtitle={`Margen: ${summary?.profit_margin?.value || 0}%`}
+            change={summary?.net_profit?.change}
+            icon={TrendingUp}
+            color={summary?.net_profit?.value >= 0 ? 'secondary' : 'red'}
+            isPrimary
+            delay={0.1}
+          />
+          <StatCard
+            title="Gastos Inventario"
+            value={formatCurrency(summary?.inventory_expenses?.value)}
+            change={summary?.inventory_expenses?.change}
+            icon={Package}
+            color="blue"
+            isNegativeGood
+            delay={0.15}
+          />
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════
+          SECTION 2: Operational Patterns
+         ══════════════════════════════════════════════════════════ */}
+      <section>
+        <SectionHeader
+          icon={Clock}
+          title="Patrones Operativos"
+          subtitle="Horarios y dias de mayor actividad"
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          {/* Peak Hours */}
+          {isLoadingHourly ? <ChartSkeleton height="h-80" /> : (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className={chartContainerClass}
+            >
+              <h3 className="text-base font-bold text-light mb-1 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-orange-400" />
+                Horarios Pico
+              </h3>
+              <p className="text-xs text-gray mb-4">Ingresos acumulados por hora (ultimo mes)</p>
+              {peakHoursData.some(h => h.revenue > 0) ? (
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={peakHoursData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="hourNormal" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#00e0ff" stopOpacity={0.8} />
+                          <stop offset="100%" stopColor="#00e0ff" stopOpacity={0.25} />
+                        </linearGradient>
+                        <linearGradient id="hourPeak" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#ff00d4" />
+                          <stop offset="50%" stopColor="#00e0ff" />
+                          <stop offset="100%" stopColor="#00e0ff" stopOpacity={0.4} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
+                      <XAxis dataKey="hour_label" stroke="#9CA3AF" style={{ fontSize: '10px' }} interval={1} />
+                      <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '10px' }} width={50} />
+                      <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
+                      <Bar dataKey="revenue" name="Ingresos" radius={[6, 6, 0, 0]}>
+                        {peakHoursData.map((entry, index) => (
+                          <Cell key={index} fill={top3Hours.includes(entry.hour) ? 'url(#hourPeak)' : 'url(#hourNormal)'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-gray text-sm">
+                  No hay datos de horarios disponibles
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Weekday Sales */}
+          {isLoadingWeekday ? <ChartSkeleton height="h-80" /> : (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className={chartContainerClass}
+            >
+              <h3 className="text-base font-bold text-light mb-1 flex items-center gap-2">
+                <CalendarDays className="w-4 h-4 text-cyan-400" />
+                Ventas por Dia de Semana
+              </h3>
+              <p className="text-xs text-gray mb-4">Ingresos acumulados por dia (ultimo mes)</p>
+              {salesByWeekday?.data?.some(d => d.revenue > 0) ? (
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={salesByWeekday.data} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="weekdayAbove" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#10B981" stopOpacity={0.9} />
+                          <stop offset="100%" stopColor="#00e0ff" stopOpacity={0.3} />
+                        </linearGradient>
+                        <linearGradient id="weekdayBelow" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#6B7280" stopOpacity={0.6} />
+                          <stop offset="100%" stopColor="#374151" stopOpacity={0.3} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
+                      <XAxis
+                        dataKey="weekday_name"
+                        stroke="#9CA3AF"
+                        style={{ fontSize: '11px' }}
+                        tickFormatter={(v) => v.substring(0, 3)}
+                      />
+                      <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '10px' }} width={50} />
+                      <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
+                      <ReferenceLine y={weekdayAvg} stroke="#00e0ff" strokeDasharray="5 5" strokeOpacity={0.4} />
+                      <Bar dataKey="revenue" name="Ingresos" radius={[6, 6, 0, 0]}>
+                        {salesByWeekday.data.map((entry, index) => (
+                          <Cell key={index} fill={entry.revenue >= weekdayAvg ? 'url(#weekdayAbove)' : 'url(#weekdayBelow)'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-gray text-sm">
+                  No hay datos de dias disponibles
+                </div>
+              )}
+            </motion.div>
           )}
         </div>
+      </section>
 
-        {/* Ventas por Día de Semana */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-          <h2 className="text-lg font-bold text-light mb-2 flex items-center gap-2">
-            <CalendarDays className="w-5 h-5 text-cyan-400" />
-            Ventas por Día de Semana
-          </h2>
-          <p className="text-xs text-gray mb-4">Ingresos acumulados por día (último mes)</p>
-          {salesByWeekday?.data && salesByWeekday.data.some(d => d.revenue > 0) ? (
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={salesByWeekday.data}
-                  margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis
-                    dataKey="weekday_name"
-                    stroke="#9CA3AF"
-                    style={{ fontSize: '11px' }}
-                    tickFormatter={(value) => value.substring(0, 3)}
-                  />
-                  <YAxis
-                    stroke="#9CA3AF"
-                    tickFormatter={(value) => formatCurrency(value)}
-                    style={{ fontSize: '10px' }}
-                    width={50}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB',
-                    }}
-                    formatter={(value) => [formatCurrencyFull(value), 'Ingresos']}
-                  />
-                  <Bar
-                    dataKey="revenue"
-                    name="Ingresos"
-                    fill="#06B6D4"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-gray">
-              <p>No hay datos de días disponibles</p>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* ══════════════════════════════════════════════════════════
+          SECTION 3: Financial Trends
+         ══════════════════════════════════════════════════════════ */}
+      <section>
+        <SectionHeader
+          icon={Activity}
+          title="Tendencias Financieras"
+          subtitle="Evolucion de ingresos, gastos y ganancias"
+          action={<ViewModeToggle />}
+        />
 
-      {/* Grafica de Acumulados */}
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <h2 className="text-lg font-bold text-light flex items-center gap-2">
-            <Activity className="w-5 h-5 text-purple-400" />
-            Acumulado {viewMode === 'daily' ? 'del Mes' : 'por Periodo'}
-          </h2>
+        {/* Accumulated Chart */}
+        {isChartLoading ? <ChartSkeleton height="h-96" /> : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className={`${chartContainerClass} border-primary/15`}
+          >
+            <h3 className="text-base font-bold text-light mb-1 flex items-center gap-2">
+              <Activity className="w-4 h-4 text-purple-400" />
+              Acumulado {viewMode === 'daily' ? 'del Mes' : 'por Periodo'}
+            </h3>
 
-          <div className="flex flex-wrap gap-2">
-            {/* Toggle Vista */}
-            <div className="flex bg-dark/50 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('daily')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  viewMode === 'daily'
-                    ? 'bg-secondary/20 text-secondary'
-                    : 'text-gray hover:text-light'
-                }`}
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                Este Mes
-              </button>
-              <button
-                onClick={() => setViewMode('monthly')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  viewMode === 'monthly'
-                    ? 'bg-secondary/20 text-secondary'
-                    : 'text-gray hover:text-light'
-                }`}
-              >
-                <CalendarRange className="w-3.5 h-3.5" />
-                Tendencia
-              </button>
+            {/* Legend with totals */}
+            <div className="flex flex-wrap gap-4 mb-4 mt-3">
+              {[
+                { label: 'Ingresos', value: totalAccRevenue, color: '#10B981', dotClass: 'bg-green-500' },
+                { label: 'Gastos', value: totalAccExpenses, color: '#EF4444', dotClass: 'bg-red-500' },
+                { label: 'Balance', value: totalAccRevenue - totalAccExpenses, color: '#8B5CF6', dotClass: 'bg-purple-500' },
+              ].map(({ label, value, dotClass }) => (
+                <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark/40 border border-gray/10">
+                  <div className={`w-2.5 h-2.5 rounded-full ${dotClass}`} />
+                  <span className="text-xs text-gray">{label}:</span>
+                  <span className={`text-xs font-bold ${
+                    label === 'Balance' ? (value >= 0 ? 'text-purple-400' : 'text-red-400') :
+                    label === 'Gastos' ? 'text-red-400' : 'text-green-400'
+                  }`}>{formatCurrency(value)}</span>
+                </div>
+              ))}
             </div>
 
-            {/* Selector de meses (solo en vista mensual) */}
-            {viewMode === 'monthly' && (
-              <div className="flex gap-1">
-                {[6, 12, 24].map((months) => (
-                  <button
-                    key={months}
-                    onClick={() => setTrendMonths(months)}
-                    className={`px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                      trendMonths === months
-                        ? 'bg-primary/20 text-primary border border-primary/30'
-                        : 'bg-gray/10 text-gray hover:text-light hover:bg-gray/20'
-                    }`}
-                  >
-                    {months}M
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Totales */}
-        <div className="flex flex-wrap gap-4 mb-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span className="text-gray">Ingresos: </span>
-            <span className="text-green-400 font-medium">{formatCurrency(totalAccumulatedRevenue)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <span className="text-gray">Gastos: </span>
-            <span className="text-red-400 font-medium">{formatCurrency(totalAccumulatedExpenses)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-purple-500" />
-            <span className="text-gray">Balance: </span>
-            <span className={`font-medium ${totalAccumulatedRevenue - totalAccumulatedExpenses >= 0 ? 'text-purple-400' : 'text-red-400'}`}>
-              {formatCurrency(totalAccumulatedRevenue - totalAccumulatedExpenses)}
-            </span>
-          </div>
-        </div>
-
-        {accumulatedData && accumulatedData.length > 0 ? (
-          <div className="h-72 md:h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={accumulatedData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 60 }}
-              >
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis
-                  dataKey={xAxisKey}
-                  stroke="#9CA3AF"
-                  style={{ fontSize: '11px' }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                  interval={viewMode === 'daily' ? 'preserveStartEnd' : 0}
-                />
-                <YAxis
-                  stroke="#9CA3AF"
-                  tickFormatter={(value) => formatCurrency(value)}
-                  style={{ fontSize: '11px' }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1F2937',
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F9FAFB',
-                  }}
-                  formatter={(value, name) => [formatCurrencyFull(value), name]}
-                />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="accumulated_revenue"
-                  name="Ingresos Acumulados"
-                  stroke="#10B981"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorRevenue)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="accumulated_expenses"
-                  name="Gastos Acumulados"
-                  stroke="#EF4444"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorExpenses)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="accumulated_profit"
-                  name="Balance (Ingresos - Gastos)"
-                  stroke="#8B5CF6"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorProfit)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-72 md:h-80 flex items-center justify-center text-gray">
-            <p>No hay datos disponibles para este periodo</p>
-          </div>
-        )}
-      </div>
-
-      {/* Grafica de Lineas - Ingresos vs Gastos */}
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-        <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-secondary" />
-          {viewMode === 'daily' ? 'Ingresos vs Gastos - Este Mes' : 'Tendencia Mensual'}
-        </h2>
-
-        {chartData && chartData.length > 0 ? (
-          <div className="h-72 md:h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={chartData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 60 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis
-                  dataKey={xAxisKey}
-                  stroke="#9CA3AF"
-                  style={{ fontSize: '11px' }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                  interval={viewMode === 'daily' ? 'preserveStartEnd' : 0}
-                />
-                <YAxis
-                  stroke="#9CA3AF"
-                  tickFormatter={(value) => formatCurrency(value)}
-                  style={{ fontSize: '11px' }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1F2937',
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F9FAFB',
-                  }}
-                  formatter={(value) => formatCurrencyFull(value)}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="revenue"
-                  name="Ingresos"
-                  stroke="#10B981"
-                  strokeWidth={2}
-                  dot={{ fill: '#10B981', r: viewMode === 'daily' ? 2 : 3 }}
-                  activeDot={{ r: 5 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="inventory_expenses"
-                  name="Gastos Inventario"
-                  stroke="#3B82F6"
-                  strokeWidth={2}
-                  dot={{ fill: '#3B82F6', r: viewMode === 'daily' ? 2 : 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="operational_expenses"
-                  name="Gastos Operativos"
-                  stroke="#F59E0B"
-                  strokeWidth={2}
-                  dot={{ fill: '#F59E0B', r: viewMode === 'daily' ? 2 : 3 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-72 md:h-80 flex items-center justify-center text-gray">
-            <p>No hay datos disponibles para este periodo</p>
-          </div>
-        )}
-      </div>
-
-      {/* Fila de Pie Chart y Bar Chart Comparativo */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        {/* Pie Chart - Distribucion de Gastos */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-          <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
-            <Wallet className="w-5 h-5 text-yellow-400" />
-            Distribucion de Gastos
-          </h2>
-
-          {expensesBreakdown?.categories && expensesBreakdown.categories.length > 0 ? (
-            <>
-              <div className="h-64">
+            {accumulatedData.length > 0 ? (
+              <div className="h-72 md:h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={expensesBreakdown.categories}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="total"
-                      nameKey="name"
-                    >
-                      {expensesBreakdown.categories.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#1F2937',
-                        border: '1px solid #374151',
-                        borderRadius: '8px',
-                        color: '#F9FAFB',
-                      }}
-                      formatter={(value) => formatCurrencyFull(value)}
+                  <AreaChart data={accumulatedData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
+                    <defs>
+                      <linearGradient id="accRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10B981" stopOpacity={0.35} />
+                        <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="accExpenses" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="accProfit" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
+                    <XAxis
+                      dataKey={xAxisKey}
+                      stroke="#9CA3AF"
+                      style={{ fontSize: '11px' }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      interval={viewMode === 'daily' ? 'preserveStartEnd' : 0}
                     />
-                  </PieChart>
+                    <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '11px' }} />
+                    <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
+                    <Area type="monotone" dataKey="accumulated_revenue" name="Ingresos Acumulados" stroke="#10B981" strokeWidth={2.5} fillOpacity={1} fill="url(#accRevenue)" activeDot={{ r: 5, fill: '#10B981', stroke: '#0a0b14', strokeWidth: 2 }} />
+                    <Area type="monotone" dataKey="accumulated_expenses" name="Gastos Acumulados" stroke="#EF4444" strokeWidth={2} fillOpacity={1} fill="url(#accExpenses)" activeDot={{ r: 5, fill: '#EF4444', stroke: '#0a0b14', strokeWidth: 2 }} />
+                    <Area type="monotone" dataKey="accumulated_profit" name="Balance" stroke="#8B5CF6" strokeWidth={2} fillOpacity={1} fill="url(#accProfit)" activeDot={{ r: 5, fill: '#8B5CF6', stroke: '#0a0b14', strokeWidth: 2 }} />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
-
-              {/* Leyenda */}
-              <div className="mt-4 space-y-2 max-h-40 overflow-y-auto">
-                {expensesBreakdown.categories.map((category, index) => (
-                  <div key={category.slug} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      />
-                      <span className="text-gray">{category.name}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-light font-medium">{formatCurrency(category.total)}</span>
-                      <span className="text-gray text-xs ml-2">({category.percentage}%)</span>
-                    </div>
-                  </div>
-                ))}
+            ) : (
+              <div className="h-72 md:h-80 flex items-center justify-center text-gray text-sm">
+                No hay datos disponibles para este periodo
               </div>
-            </>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-gray">
-              <p>No hay gastos registrados este mes</p>
-            </div>
-          )}
-        </div>
-
-        {/* Bar Chart - Comparacion Mensual */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-          <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-purple-400" />
-            Comparacion Mensual
-          </h2>
-
-          {comparison ? (
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={comparisonData}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="name" stroke="#9CA3AF" style={{ fontSize: '12px' }} />
-                  <YAxis
-                    stroke="#9CA3AF"
-                    tickFormatter={(value) => formatCurrency(value)}
-                    style={{ fontSize: '11px' }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB',
-                    }}
-                    formatter={(value) => formatCurrencyFull(value)}
-                  />
-                  <Legend />
-                  <Bar dataKey="Mes Anterior" fill="#6B7280" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Este Mes" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-gray">
-              <p>No hay datos para comparar</p>
-            </div>
-          )}
-
-          {/* Cambios porcentuales */}
-          {comparison && (
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <div className="text-center p-2 bg-dark/50 rounded-lg">
-                <p className="text-xs text-gray mb-1">Ingresos</p>
-                <p className={`text-sm font-bold ${comparison.changes.revenue >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {comparison.changes.revenue >= 0 ? '+' : ''}{comparison.changes.revenue}%
-                </p>
-              </div>
-              <div className="text-center p-2 bg-dark/50 rounded-lg">
-                <p className="text-xs text-gray mb-1">Gastos</p>
-                <p className={`text-sm font-bold ${comparison.changes.expenses <= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {comparison.changes.expenses >= 0 ? '+' : ''}{comparison.changes.expenses}%
-                </p>
-              </div>
-              <div className="text-center p-2 bg-dark/50 rounded-lg">
-                <p className="text-xs text-gray mb-1">Ganancia</p>
-                <p className={`text-sm font-bold ${comparison.changes.profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {comparison.changes.profit >= 0 ? '+' : ''}{comparison.changes.profit}%
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Bar Chart - Ganancia Neta */}
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
-        <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-green-400" />
-          Ganancia Neta {viewMode === 'daily' ? 'por Dia' : 'por Mes'}
-        </h2>
-
-        {profitData && profitData.length > 0 ? (
-          <div className="h-64 md:h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={profitData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 60 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis
-                  dataKey={xAxisKey}
-                  stroke="#9CA3AF"
-                  style={{ fontSize: '11px' }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                  interval={viewMode === 'daily' ? 'preserveStartEnd' : 0}
-                />
-                <YAxis
-                  stroke="#9CA3AF"
-                  tickFormatter={(value) => formatCurrency(value)}
-                  style={{ fontSize: '11px' }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1F2937',
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F9FAFB',
-                  }}
-                  formatter={(value) => formatCurrencyFull(value)}
-                />
-                <Bar
-                  dataKey="profit"
-                  name="Ganancia Neta"
-                  radius={[4, 4, 0, 0]}
-                >
-                  {profitData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.profitColor} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-64 md:h-80 flex items-center justify-center text-gray">
-            <p>No hay datos de ganancia disponibles</p>
-          </div>
+            )}
+          </motion.div>
         )}
-      </div>
 
-      {/* Info adicional */}
-      <div className="bg-gradient-to-r from-secondary/10 to-primary/10 border border-secondary/20 rounded-xl p-4 md:p-6">
-        <div className="flex items-center gap-3 mb-2">
-          <TrendingUp className="w-5 h-5 text-secondary" />
-          <h3 className="font-bold text-light">Resumen Ejecutivo</h3>
+        {/* Revenue vs Expenses Line Chart */}
+        {isChartLoading ? <ChartSkeleton height="h-96" /> : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className={`${chartContainerClass} mt-4 md:mt-6`}
+          >
+            <h3 className="text-base font-bold text-light mb-4 flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-secondary" />
+              {viewMode === 'daily' ? 'Ingresos vs Gastos - Este Mes' : 'Tendencia Mensual'}
+            </h3>
+
+            {chartData?.length > 0 ? (
+              <div className="h-72 md:h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
+                    <XAxis
+                      dataKey={xAxisKey}
+                      stroke="#9CA3AF"
+                      style={{ fontSize: '11px' }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      interval={viewMode === 'daily' ? 'preserveStartEnd' : 0}
+                    />
+                    <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '11px' }} />
+                    <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      name="Ingresos"
+                      stroke="#00e0ff"
+                      strokeWidth={3}
+                      dot={{ fill: '#00e0ff', r: viewMode === 'daily' ? 2 : 4, strokeWidth: 2, stroke: '#0a0b14' }}
+                      activeDot={{ r: 6, className: 'drop-shadow-[0_0_8px_rgba(0,224,255,0.8)]' }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="inventory_expenses"
+                      name="Gastos Inventario"
+                      stroke="#8B5CF6"
+                      strokeWidth={2}
+                      strokeDasharray="5 5"
+                      dot={{ fill: '#8B5CF6', r: viewMode === 'daily' ? 1.5 : 3 }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="operational_expenses"
+                      name="Gastos Operativos"
+                      stroke="#F59E0B"
+                      strokeWidth={2}
+                      strokeDasharray="5 5"
+                      dot={{ fill: '#F59E0B', r: viewMode === 'daily' ? 1.5 : 3 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-72 md:h-80 flex items-center justify-center text-gray text-sm">
+                No hay datos disponibles para este periodo
+              </div>
+            )}
+          </motion.div>
+        )}
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          SECTION 4: Detailed Analysis
+         ══════════════════════════════════════════════════════════ */}
+      <section>
+        <SectionHeader
+          icon={BarChart3}
+          title="Analisis Detallado"
+          subtitle="Desglose por categorias y comparaciones"
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          {/* Expenses Pie Chart */}
+          {isLoadingBreakdown ? <ChartSkeleton /> : (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className={chartContainerClass}
+            >
+              <h3 className="text-base font-bold text-light mb-4 flex items-center gap-2">
+                <Wallet className="w-4 h-4 text-yellow-400" />
+                Distribucion de Gastos
+              </h3>
+
+              {expensesBreakdown?.categories?.length > 0 ? (
+                <>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={expensesBreakdown.categories}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={55}
+                          outerRadius={90}
+                          paddingAngle={3}
+                          dataKey="total"
+                          nameKey="name"
+                        >
+                          {expensesBreakdown.categories.map((_, index) => (
+                            <Cell key={index} fill={CYBERPUNK_COLORS[index % CYBERPUNK_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
+                        {/* Center text */}
+                        <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" fill="#e8f6ff" fontSize="18" fontWeight="bold" fontFamily="Orbitron">
+                          {formatCurrency(expensesBreakdown.total)}
+                        </text>
+                        <text x="50%" y="56%" textAnchor="middle" dominantBaseline="middle" fill="#8a8d9c" fontSize="11">
+                          Total
+                        </text>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Legend */}
+                  <div className="mt-3 space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                    {expensesBreakdown.categories.map((cat, index) => (
+                      <div key={cat.slug} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-lg hover:bg-gray/5 transition-colors">
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="w-3 h-3 rounded-full flex-shrink-0"
+                            style={{
+                              backgroundColor: CYBERPUNK_COLORS[index % CYBERPUNK_COLORS.length],
+                              boxShadow: `0 0 8px ${CYBERPUNK_COLORS[index % CYBERPUNK_COLORS.length]}40`,
+                            }}
+                          />
+                          <span className="text-gray text-xs">{cat.name}</span>
+                        </div>
+                        <div className="text-right flex items-center gap-2">
+                          <span className="text-light font-semibold text-xs">{formatCurrency(cat.total)}</span>
+                          <span className="text-gray text-xs opacity-70">({cat.percentage}%)</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-gray text-sm">
+                  No hay gastos registrados este mes
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Monthly Comparison */}
+          {isLoadingComparison ? <ChartSkeleton /> : (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className={chartContainerClass}
+            >
+              <h3 className="text-base font-bold text-light mb-4 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-purple-400" />
+                Comparacion Mensual
+              </h3>
+
+              {comparison ? (
+                <>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={comparisonData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
+                        <XAxis dataKey="name" stroke="#9CA3AF" style={{ fontSize: '12px' }} />
+                        <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '11px' }} />
+                        <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
+                        <Legend />
+                        <Bar dataKey="Mes Anterior" fill="#374151" radius={[6, 6, 0, 0]} opacity={0.6} />
+                        <Bar dataKey="Este Mes" radius={[6, 6, 0, 0]}>
+                          {comparisonData.map((entry, index) => {
+                            const improved = entry.name === 'Gastos'
+                              ? entry['Este Mes'] <= entry['Mes Anterior']
+                              : entry['Este Mes'] >= entry['Mes Anterior'];
+                            return <Cell key={index} fill={improved ? '#10B981' : '#EF4444'} />;
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Change badges */}
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    {[
+                      { label: 'Ingresos', val: comparison.changes.revenue, good: comparison.changes.revenue >= 0 },
+                      { label: 'Gastos', val: comparison.changes.expenses, good: comparison.changes.expenses <= 0 },
+                      { label: 'Ganancia', val: comparison.changes.profit, good: comparison.changes.profit >= 0 },
+                    ].map(({ label, val, good }) => (
+                      <div key={label} className="text-center p-2.5 bg-dark/50 rounded-xl border border-gray/10">
+                        <p className="text-xs text-gray mb-1">{label}</p>
+                        <p className={`text-sm font-bold ${good ? 'text-green-400' : 'text-red-400'}`}>
+                          {val >= 0 ? '+' : ''}{val}%
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-gray text-sm">
+                  No hay datos para comparar
+                </div>
+              )}
+            </motion.div>
+          )}
         </div>
-        <p className="text-gray text-sm">
-          En {summary?.period?.current_month}, los ingresos son de{' '}
-          <span className="text-secondary font-medium">{formatCurrencyFull(summary?.revenue?.value)}</span>
-          {' '}con gastos totales de{' '}
-          <span className="text-red-400 font-medium">{formatCurrencyFull(summary?.total_expenses?.value)}</span>,
-          {' '}resultando en una ganancia neta de{' '}
-          <span className={`font-medium ${summary?.net_profit?.value >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-            {formatCurrencyFull(summary?.net_profit?.value)}
-          </span>
-          {' '}({summary?.profit_margin?.value}% de margen).
-        </p>
-      </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          SECTION 5: Performance - Net Profit
+         ══════════════════════════════════════════════════════════ */}
+      <section>
+        <SectionHeader
+          icon={TrendingUp}
+          title="Rendimiento"
+          subtitle={`Ganancia neta ${viewMode === 'daily' ? 'por dia' : 'por mes'}`}
+        />
+
+        {isChartLoading ? <ChartSkeleton height="h-96" /> : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className={chartContainerClass}
+          >
+            {profitData.length > 0 ? (
+              <div className="h-64 md:h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={profitData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
+                    <defs>
+                      <linearGradient id="profitPositive" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10B981" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="#059669" stopOpacity={0.6} />
+                      </linearGradient>
+                      <linearGradient id="profitNegative" x1="0" y1="1" x2="0" y2="0">
+                        <stop offset="0%" stopColor="#EF4444" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="#DC2626" stopOpacity={0.6} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
+                    <XAxis
+                      dataKey={xAxisKey}
+                      stroke="#9CA3AF"
+                      style={{ fontSize: '11px' }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      interval={viewMode === 'daily' ? 'preserveStartEnd' : 0}
+                    />
+                    <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '11px' }} />
+                    <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
+                    {avgProfit !== 0 && (
+                      <ReferenceLine
+                        y={avgProfit}
+                        stroke="#00e0ff"
+                        strokeDasharray="5 5"
+                        strokeWidth={1.5}
+                        strokeOpacity={0.6}
+                        label={{
+                          value: `Prom: ${formatCurrency(avgProfit)}`,
+                          fill: '#00e0ff',
+                          fontSize: 10,
+                          position: 'insideTopRight',
+                        }}
+                      />
+                    )}
+                    <Bar dataKey="profit" name="Ganancia Neta" radius={[6, 6, 0, 0]}>
+                      {profitData.map((entry, index) => (
+                        <Cell key={index} fill={entry.profit >= 0 ? 'url(#profitPositive)' : 'url(#profitNegative)'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-64 md:h-80 flex items-center justify-center text-gray text-sm">
+                No hay datos de ganancia disponibles
+              </div>
+            )}
+          </motion.div>
+        )}
+      </section>
     </div>
   );
 };
