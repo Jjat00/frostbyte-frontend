@@ -28,6 +28,7 @@ import {
   Edit2,
   X,
   Save,
+  Percent,
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
 import { productsService } from "@/services/products.service";
@@ -212,6 +213,13 @@ const OrderDetailPage = () => {
     onSuccess: () => {
       invalidateAllOrderQueries();
       setIsEditingCustomer(false);
+    },
+  });
+
+  const applyDiscountMutation = useMutation({
+    mutationFn: (discount) => ordersService.updateOrder(id, { discount }),
+    onSuccess: () => {
+      invalidateAllOrderQueries();
     },
   });
 
@@ -658,12 +666,44 @@ const OrderDetailPage = () => {
             <span className="text-light">{formatCurrency(order.subtotal)}</span>
           </div>
           {order.discount > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-gray">Descuento</span>
-              <span className="text-red-400">
-                -{formatCurrency(order.discount)}
+            <div className="flex justify-between text-sm items-center">
+              <span className="text-gray flex items-center gap-1">
+                Descuento
+                <span className="text-xs text-primary/70">(10% social)</span>
               </span>
+              <div className="flex items-center gap-2">
+                <span className="text-red-400">
+                  -{formatCurrency(order.discount)}
+                </span>
+                <button
+                  onClick={() => applyDiscountMutation.mutate(0)}
+                  disabled={applyDiscountMutation.isPending}
+                  className="p-1 text-red-400/50 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                  title="Quitar descuento"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
+          )}
+          {order.discount == 0 && order.subtotal > 0 && order.status !== "cancelled" && (
+            <button
+              onClick={() => {
+                const discountAmount = Math.round(Number(order.subtotal) * 0.1);
+                applyDiscountMutation.mutate(discountAmount);
+              }}
+              disabled={applyDiscountMutation.isPending}
+              className="w-full flex items-center justify-center gap-2 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary/20 hover:border-primary/30 transition-all text-sm font-medium"
+            >
+              {applyDiscountMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <Percent className="w-4 h-4" />
+                  Aplicar 10% Descuento Social (-{formatCurrency(Math.round(Number(order.subtotal) * 0.1))})
+                </>
+              )}
+            </button>
           )}
           <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray/20">
             <span className="text-light">Total</span>
