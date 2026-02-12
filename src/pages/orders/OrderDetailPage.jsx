@@ -101,6 +101,7 @@ const OrderDetailPage = () => {
   const [isEditingCustomer, setIsEditingCustomer] = useState(false);
   const [editedCustomerName, setEditedCustomerName] = useState("");
   const [editedTableNumber, setEditedTableNumber] = useState("");
+  const [discountPercent, setDiscountPercent] = useState("");
 
   // Obtener detalle del pedido
   const {
@@ -665,45 +666,72 @@ const OrderDetailPage = () => {
             <span className="text-gray">Subtotal</span>
             <span className="text-light">{formatCurrency(order.subtotal)}</span>
           </div>
-          {order.discount > 0 && (
+          {order.discount > 0 ? (
             <div className="flex justify-between text-sm items-center">
-              <span className="text-gray flex items-center gap-1">
-                Descuento
-                <span className="text-xs text-primary/70">(10% social)</span>
-              </span>
+              <span className="text-gray">Descuento</span>
               <div className="flex items-center gap-2">
-                <span className="text-red-400">
+                <span className="text-red-400 font-medium">
                   -{formatCurrency(order.discount)}
                 </span>
-                <button
-                  onClick={() => applyDiscountMutation.mutate(0)}
-                  disabled={applyDiscountMutation.isPending}
-                  className="p-1 text-red-400/50 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                  title="Quitar descuento"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+                {order.status !== "cancelled" && (
+                  <button
+                    onClick={() => {
+                      applyDiscountMutation.mutate(0);
+                      setDiscountPercent("");
+                    }}
+                    disabled={applyDiscountMutation.isPending}
+                    className="p-1 text-red-400/50 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                    title="Quitar descuento"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
-          )}
-          {order.discount == 0 && order.subtotal > 0 && order.status !== "cancelled" && (
-            <button
-              onClick={() => {
-                const discountAmount = Math.round(Number(order.subtotal) * 0.1);
-                applyDiscountMutation.mutate(discountAmount);
-              }}
-              disabled={applyDiscountMutation.isPending}
-              className="w-full flex items-center justify-center gap-2 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary/20 hover:border-primary/30 transition-all text-sm font-medium"
-            >
-              {applyDiscountMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Percent className="w-4 h-4" />
-                  Aplicar 10% Descuento Social (-{formatCurrency(Math.round(Number(order.subtotal) * 0.1))})
-                </>
-              )}
-            </button>
+          ) : order.subtotal > 0 && order.status !== "cancelled" && (
+            <div className="flex items-center gap-2">
+              <span className="text-gray text-sm shrink-0">Descuento</span>
+              <div className="flex items-center gap-1.5 flex-1">
+                <div className="relative flex-1 max-w-[80px]">
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="10"
+                    value={discountPercent}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "" || (Number(val) >= 0 && Number(val) <= 100)) {
+                        setDiscountPercent(val);
+                      }
+                    }}
+                    className="w-full pl-2.5 pr-7 py-1.5 bg-dark border border-gray/20 rounded-lg text-sm text-light text-right focus:border-primary/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray text-sm">%</span>
+                </div>
+                {discountPercent && Number(discountPercent) > 0 && (
+                  <>
+                    <span className="text-red-400 text-sm shrink-0">
+                      -{formatCurrency(Math.round(Number(order.subtotal) * Number(discountPercent) / 100))}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const amount = Math.round(Number(order.subtotal) * Number(discountPercent) / 100);
+                        applyDiscountMutation.mutate(amount);
+                      }}
+                      disabled={applyDiscountMutation.isPending}
+                      className="p-1.5 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-colors shrink-0"
+                    >
+                      {applyDiscountMutation.isPending ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Check className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
           )}
           <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray/20">
             <span className="text-light">Total</span>
