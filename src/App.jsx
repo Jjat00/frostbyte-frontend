@@ -12,6 +12,7 @@ import Desguayabator from "@/components/Desguayabator";
 import ScrollToCarta from "@/components/ScrollToMenu";
 import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
+import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import { env } from "@/config/env";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
+          <SocialDiscountBanner />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
