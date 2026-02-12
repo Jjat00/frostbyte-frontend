@@ -8,7 +8,6 @@ import {
   Wine,
   Beer,
   GlassWater,
-  Zap,
   Heart,
   Music,
   Gamepad2,
@@ -204,13 +203,13 @@ const QuickNav = () => {
           className="text-center mb-8"
         >
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Zap className="text-primary" size={20} />
+            <Heart className="text-primary" size={20} fill="currentColor" />
             <span className="text-primary text-sm font-semibold tracking-widest uppercase">
-              Navegación Rápida
+              Nuestra Carta
             </span>
-            <Zap className="text-primary" size={20} />
+            <Heart className="text-primary" size={20} fill="currentColor" />
           </div>
-          <p className="text-gray text-sm">Explora nuestra carta completa</p>
+          <p className="text-gray text-sm">Explora y comparte con quienes mas quieres</p>
         </motion.div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 md:gap-4">

@@ -10,6 +10,7 @@ import {
   GlassWater,
   Beer,
   Sparkles,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
@@ -103,9 +104,9 @@ const Hero = () => {
       <div className="absolute inset-0 bg-linear-to-b from-dark via-dark-secondary to-dark"></div>
 
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px] animate-pulse"></div>
         <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px] animate-pulse"
+          className="absolute bottom-20 right-10 w-96 h-96 bg-rose-400 rounded-full filter blur-[120px] animate-pulse"
           style={{ animationDelay: "1s" }}
         ></div>
       </div>
@@ -124,8 +125,10 @@ const Hero = () => {
               transition={{ delay: 0.2 }}
               className="inline-block"
             >
-              <span className="px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-sm font-semibold tracking-wider">
-                REFRESCO HELADO PREMIUM
+              <span className="px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-sm font-semibold tracking-wider inline-flex items-center gap-2">
+                <Heart size={14} fill="currentColor" />
+                EDICION AMOR Y AMISTAD
+                <Heart size={14} fill="currentColor" />
               </span>
             </motion.div>
 
@@ -135,9 +138,9 @@ const Hero = () => {
               transition={{ delay: 0.3 }}
               className="text-5xl md:text-7xl font-black text-light leading-tight"
             >
-              ENTRA EN LA
+              CELEBRA CON
               <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                DIMENSIÓN FROSTBYTE
+                AMOR Y AMISTAD
               </span>
             </motion.h1>
 
@@ -162,9 +165,9 @@ const Hero = () => {
               transition={{ delay: 0.4 }}
               className="text-gray text-lg md:text-xl leading-relaxed"
             >
-              Experimenta bebidas heladas como nunca antes. Nuestros granizados
-              y frappés combinan sabores innovadores con la frescura más intensa
-              que puedas imaginar.
+              Brinda por quienes mas quieres con nuestras bebidas heladas
+              especiales. Granizados, frappes y cocteles para compartir en
+              este dia tan especial.
             </motion.p>
 
             <motion.div
@@ -237,7 +240,7 @@ const Hero = () => {
             <div className="relative w-full flex items-center justify-center">
               <div className="w-full max-w-sm">
                 <div className="grid grid-cols-2 gap-3">
-                  {/* Desguayabator destacado */}
+                  {/* Especial Amor y Amistad */}
                   <motion.button
                     type="button"
                     onClick={() =>
@@ -249,17 +252,17 @@ const Hero = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                     whileHover={{ y: -4 }}
-                    className="col-span-2 group w-full text-left bg-dark border border-emerald-500/40 rounded-2xl p-4 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300"
+                    className="col-span-2 group w-full text-left bg-dark border border-pink-500/40 rounded-2xl p-4 hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-linear-to-br from-emerald-400 to-cyan-500 group-hover:scale-110 transition-transform duration-300">
-                        <Sparkles className="text-dark" size={20} />
+                      <div className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-linear-to-br from-pink-400 to-rose-500 group-hover:scale-110 transition-transform duration-300">
+                        <Heart className="text-dark" size={20} fill="currentColor" />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-emerald-400 font-bold text-sm">
-                          Desguayabator
+                        <div className="text-pink-400 font-bold text-sm">
+                          Especial Amor y Amistad
                         </div>
-                        <div className="text-gray text-xs">Cura guayabos</div>
+                        <div className="text-gray text-xs">Celebra con Frostbyte</div>
                       </div>
                     </div>
                   </motion.button>
