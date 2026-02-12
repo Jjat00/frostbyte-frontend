@@ -1,31 +1,31 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Cpu, Zap, Shield, Sparkles } from 'lucide-react';
+import { Heart, Users, Gift, Sparkles } from 'lucide-react';
 
 const Features = () => {
   const features = [
     {
-      icon: Cpu,
-      title: 'ENFRIAMIENTO CUÁNTICO',
-      description: 'Tecnología de congelación avanzada para la consistencia perfecta en todo momento',
+      icon: Heart,
+      title: 'BEBIDAS PARA DOS',
+      description: 'Comparte nuestras bebidas especiales con esa persona que tanto quieres',
       color: 'primary',
     },
     {
-      icon: Zap,
-      title: 'ENERGÍA INSTANTÁNEA',
-      description: 'Repleto de ingredientes naturales para alimentar tu estilo de vida cyberpunk',
+      icon: Users,
+      title: 'PLANES CON AMIGOS',
+      description: 'El mejor lugar para celebrar con tu grupo de amigos este dia especial',
       color: 'secondary',
     },
     {
-      icon: Shield,
-      title: 'CALIDAD PREMIUM',
-      description: 'Solo los mejores ingredientes llegan a nuestra dimensión digital',
+      icon: Gift,
+      title: 'EDICION LIMITADA',
+      description: 'Sabores y promociones exclusivas para celebrar el amor y la amistad',
       color: 'primary',
     },
     {
       icon: Sparkles,
-      title: 'SABORES NEÓN',
-      description: 'Combinaciones de sabores únicas que no encontrarás en ningún otro lugar',
+      title: 'MOMENTOS UNICOS',
+      description: 'Crea recuerdos inolvidables con las mejores bebidas y el mejor ambiente',
       color: 'secondary',
     },
   ];
@@ -46,10 +46,10 @@ const Features = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            POR QUÉ <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">FROSTBYTE</span>
+            CELEBRA EN <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">FROSTBYTE</span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            No solo servimos bebidas, ofrecemos una experiencia
+            El lugar perfecto para celebrar el amor y la amistad
           </p>
         </motion.div>
 

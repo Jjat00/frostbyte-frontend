@@ -73,7 +73,7 @@ const ProductCard = ({ product, index, styles }) => {
               <div
                 className={`absolute inset-2 rounded-full border-2 ${ringColor} opacity-60`}
               ></div>
-              <div className="relative w-90 h-90 md:w-90 md:h-90 rounded-full overflow-hidden bg-linear-to-br from-cyan-600/30 to-blue-900/30 flex items-center justify-center">
+              <div className="relative w-90 h-90 md:w-90 md:h-90 rounded-full overflow-hidden bg-linear-to-br from-pink-600/30 to-rose-900/30 flex items-center justify-center">
                 <div
                   className={`w-full h-full bg-linear-to-br ${styles.visualGradient || styles.gradient}`}
                 ></div>
@@ -198,30 +198,30 @@ const Granizados = ({ showExtras = true }) => {
   return (
     <section
       id="granizados"
-      className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-blue-950 to-indigo-950"
+      className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-rose-950 to-pink-950"
     >
-      {/* Patrón grid cyberpunk — sutil */}
+      {/* Patron grid romantico */}
       <div className="absolute inset-0 opacity-20">
         <div
           className="absolute top-0 left-0 w-full h-full"
           style={{
-            backgroundImage: `linear-gradient(rgba(34,211,238,0.08) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(34,211,238,0.08) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgba(244,63,94,0.08) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(244,63,94,0.08) 1px, transparent 1px)`,
             backgroundSize: "32px 32px",
           }}
         />
       </div>
 
-      {/* Neon ambiental — cyan + magenta estilo Frostbyte */}
+      {/* Neon ambiental — rosa y rojo estilo Amor y Amistad */}
       <div className="absolute inset-0 opacity-25">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px]" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-500/70 rounded-full filter blur-[100px]" />
+        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-rose-400 rounded-full filter blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-rose-500/70 rounded-full filter blur-[100px]" />
       </div>
 
-      {/* Líneas divisoras con toque neón */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-secondary/30 to-transparent" />
+      {/* Lineas divisoras con toque rosa */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-pink-500/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-rose-400/30 to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -232,7 +232,7 @@ const Granizados = ({ showExtras = true }) => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            <span className="bg-linear-to-r from-cyan-200 via-primary to-secondary bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(34,211,238,0.3)]">
+            <span className="bg-linear-to-r from-pink-200 via-primary to-secondary bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(244,63,94,0.3)]">
               GRANIZADOS
             </span>
           </h2>

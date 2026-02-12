@@ -30,8 +30,8 @@ const SocialDiscountBanner = () => {
 
           {/* Contenedor principal */}
           <div className="relative bg-gradient-to-br from-dark-secondary/90 to-dark/90 border border-primary/30 rounded-2xl overflow-hidden">
-            {/* Línea de acento superior */}
-            <div className="h-1 bg-gradient-to-r from-primary via-secondary to-primary" />
+            {/* Linea de acento superior */}
+            <div className="h-1 bg-gradient-to-r from-pink-500 via-rose-400 to-pink-500" />
 
             <div className="p-5 sm:p-6">
               {/* Header: Porcentaje + Título */}

@@ -48,8 +48,8 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-gray leading-relaxed">
-              Experimenta el futuro de las bebidas heladas. Granizados y frappés
-              inspirados en el cyberpunk que superan los límites del sabor.
+              Celebra el amor y la amistad con las mejores bebidas heladas.
+              Granizados, frappes y cocteles para compartir con quienes mas quieres.
             </p>
           </motion.div>
 
@@ -103,7 +103,7 @@ const Footer = () => {
               Síguenos
             </span>
             <p className="text-gray mb-4">
-              Únete a nuestra comunidad cyberpunk en redes sociales
+              Unete a nuestra comunidad en redes sociales
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => (

@@ -5,12 +5,12 @@
   --color-dark-secondary: #1b1f3b;
   --color-light: #e8f6ff;
   --color-gray: #8a8d9c;
-  --color-primary: #ff00d4;
-  --color-secondary: #00e0ff;
+  --color-primary: #ff2d55;
+  --color-secondary: #ff85a1;
 
   --color-border: oklch(0.27 0.03 255);
   --color-input: oklch(0.27 0.03 255);
-  --color-ring: #ff00d4;
+  --color-ring: #ff2d55;
   --color-background: #0a0b14;
   --color-foreground: #e8f6ff;
 
@@ -103,10 +103,10 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ff00d4 0%, #00e0ff 100%);
+  background: linear-gradient(180deg, #ff2d55 0%, #ff85a1 100%);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #00e0ff 0%, #ff00d4 100%);
+  background: linear-gradient(180deg, #ff85a1 0%, #ff2d55 100%);
 }
