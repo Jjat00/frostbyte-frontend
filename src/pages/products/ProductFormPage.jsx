@@ -11,6 +11,7 @@ import {
   Loader2,
   AlertCircle,
   Package,
+  Sparkles,
 } from 'lucide-react';
 import { productsService, variantsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
@@ -37,6 +38,7 @@ const ProductFormPage = () => {
   ]);
 
   const [errors, setErrors] = useState({});
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
 
   // Obtener categorías
   const { data: categoriesData } = useQuery({
@@ -127,6 +129,23 @@ const ProductFormPage = () => {
       }
     },
   });
+
+  const handleSuggestDescription = async () => {
+    if (!formData.name.trim() || isGeneratingDescription) return;
+    setIsGeneratingDescription(true);
+    try {
+      const description = await productsService.suggestDescription(formData.name.trim());
+      setFormData((prev) => ({ ...prev, description }));
+      if (errors.description) {
+        setErrors((prev) => ({ ...prev, description: null }));
+      }
+    } catch (error) {
+      console.error('Error al sugerir descripción:', error);
+      alert('No se pudo generar la descripción. Inténtalo de nuevo.');
+    } finally {
+      setIsGeneratingDescription(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -338,9 +357,29 @@ const ProductFormPage = () => {
 
             {/* Descripción */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray mb-2">
-                Descripción *
-              </label>
+              <div className="flex items-center gap-3 mb-2">
+                <label className="text-sm font-medium text-gray">
+                  Descripción *
+                </label>
+                <button
+                  type="button"
+                  onClick={handleSuggestDescription}
+                  disabled={!formData.name.trim() || isGeneratingDescription}
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-secondary border border-secondary/30 rounded-lg hover:bg-secondary/10 hover:border-secondary/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-secondary/30"
+                >
+                  {isGeneratingDescription ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Generando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Sugerir con IA
+                    </>
+                  )}
+                </button>
+              </div>
               <textarea
                 name="description"
                 value={formData.description}
