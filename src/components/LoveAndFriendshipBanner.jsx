@@ -1,6 +1,14 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Heart, Sparkles, Gift, Users } from "lucide-react";
+import {
+  Heart,
+  Sparkles,
+  Gift,
+  Users,
+  CalendarHeart,
+  Clock,
+  Flame,
+} from "lucide-react";
 
 const FloatingHeart = ({ delay, x, size, duration }) => (
   <motion.div
@@ -106,7 +114,7 @@ const LoveAndFriendshipBanner = () => {
                     />
                   </motion.div>
                   <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-light leading-tight">
-                    DIA DE
+                    DÍA DE
                     <span className="block bg-gradient-to-r from-pink-500 via-rose-400 to-pink-500 bg-clip-text text-transparent">
                       AMOR Y AMISTAD
                     </span>
@@ -147,13 +155,10 @@ const LoveAndFriendshipBanner = () => {
                     <Heart className="text-white" size={22} fill="white" />
                   </div>
                   <h4 className="text-pink-400 font-bold text-sm mb-1">
-                    2x1 en Cocteles
+                    50% en 2do Coctel
                   </h4>
                   <p className="text-gray text-xs">
                     Comparte un coctel con tu persona favorita <br />{" "}
-                    <span className="text-pink-400 font-bold text-xs">
-                      aplica solo para parejas
-                    </span>
                   </p>
                 </motion.div>
 
@@ -168,10 +173,13 @@ const LoveAndFriendshipBanner = () => {
                     <Gift className="text-white" size={22} />
                   </div>
                   <h4 className="text-rose-400 font-bold text-sm mb-1">
-                    Granizado Especial
+                    Combo Pareja
                   </h4>
                   <p className="text-gray text-xs">
-                    Sabor exclusivo de edicion limitada
+                    2 granizados edicion especial por solo{" "}
+                    <span className="text-pink-400 font-bold text-xs">
+                      20.000
+                    </span>
                   </p>
                 </motion.div>
 
@@ -189,10 +197,36 @@ const LoveAndFriendshipBanner = () => {
                     Grupos de 4+
                   </h4>
                   <p className="text-gray text-xs">
-                    15% de descuento para grupos de amigos
+                    1 granizado gratis por cada 4 personas
                   </p>
                 </motion.div>
               </div>
+
+              {/* Franja de urgencia */}
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.65 }}
+                className="bg-gradient-to-r from-pink-500/10 via-rose-500/15 to-pink-500/10 border border-pink-500/25 rounded-xl p-4 mb-6"
+              >
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-center">
+                  <span className="flex items-center gap-1.5 text-pink-300 text-xs sm:text-sm font-semibold">
+                    <CalendarHeart size={16} className="text-pink-400" />
+                    Solo del 13 al 15 de septiembre
+                  </span>
+                  <span className="hidden sm:block w-1 h-1 bg-pink-500/50 rounded-full" />
+                  <span className="flex items-center gap-1.5 text-rose-300 text-xs sm:text-sm font-semibold">
+                    <Flame size={16} className="text-rose-400" />
+                    Hasta agotar existencias
+                  </span>
+                  <span className="hidden sm:block w-1 h-1 bg-pink-500/50 rounded-full" />
+                  <span className="flex items-center gap-1.5 text-pink-300 text-xs sm:text-sm font-semibold">
+                    <Clock size={16} className="text-pink-400" />
+                    Edicion limitada
+                  </span>
+                </div>
+              </motion.div>
 
               {/* CTA final */}
               <motion.div
@@ -221,6 +255,10 @@ const LoveAndFriendshipBanner = () => {
                     fill="currentColor"
                   />
                 </div>
+                <p className="text-gray/50 text-[10px] mt-3 italic">
+                  * Los descuentos y promociones no son acumulables. Solo se
+                  aplica un descuento por compra.
+                </p>
               </motion.div>
             </div>
           </div>
