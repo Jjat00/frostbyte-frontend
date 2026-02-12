@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutGrid } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 
 const ScrollToCarta = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -36,7 +36,7 @@ const ScrollToCarta = () => {
           className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-shadow duration-300"
           aria-label="Ir a la carta"
         >
-          <LayoutGrid className="text-dark" size={22} />
+          <ArrowUp className="text-dark" size={22} />
         </motion.button>
       )}
     </AnimatePresence>
