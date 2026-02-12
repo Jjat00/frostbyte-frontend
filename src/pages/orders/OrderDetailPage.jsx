@@ -29,6 +29,7 @@ import {
   X,
   Save,
   Percent,
+  Heart,
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
 import { productsService } from "@/services/products.service";
@@ -689,48 +690,77 @@ const OrderDetailPage = () => {
               </div>
             </div>
           ) : order.subtotal > 0 && order.status !== "cancelled" && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray text-sm shrink-0">Descuento</span>
-              <div className="flex items-center gap-1.5 flex-1">
-                <div className="relative flex-1 max-w-[80px]">
-                  <input
-                    type="number"
-                    min="1"
-                    max="100"
-                    placeholder="10"
-                    value={discountPercent}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === "" || (Number(val) >= 0 && Number(val) <= 100)) {
-                        setDiscountPercent(val);
-                      }
-                    }}
-                    className="w-full pl-2.5 pr-7 py-1.5 bg-dark border border-gray/20 rounded-lg text-sm text-light text-right focus:border-primary/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
-                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray text-sm">%</span>
-                </div>
-                {discountPercent && Number(discountPercent) > 0 && (
-                  <>
-                    <span className="text-red-400 text-sm shrink-0">
-                      -{formatCurrency(Math.round(Number(order.subtotal) * Number(discountPercent) / 100))}
-                    </span>
-                    <button
-                      onClick={() => {
-                        const amount = Math.round(Number(order.subtotal) * Number(discountPercent) / 100);
-                        applyDiscountMutation.mutate(amount);
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-gray text-sm shrink-0">Descuento</span>
+                <div className="flex items-center gap-1.5 flex-1">
+                  <div className="relative flex-1 max-w-[80px]">
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      placeholder="10"
+                      value={discountPercent}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "" || (Number(val) >= 0 && Number(val) <= 100)) {
+                          setDiscountPercent(val);
+                        }
                       }}
-                      disabled={applyDiscountMutation.isPending}
-                      className="p-1.5 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-colors shrink-0"
-                    >
-                      {applyDiscountMutation.isPending ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Check className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </>
-                )}
+                      className="w-full pl-2.5 pr-7 py-1.5 bg-dark border border-gray/20 rounded-lg text-sm text-light text-right focus:border-primary/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray text-sm">%</span>
+                  </div>
+                  {discountPercent && Number(discountPercent) > 0 && (
+                    <>
+                      <span className="text-red-400 text-sm shrink-0">
+                        -{formatCurrency(Math.round(Number(order.subtotal) * Number(discountPercent) / 100))}
+                      </span>
+                      <button
+                        onClick={() => {
+                          const amount = Math.round(Number(order.subtotal) * Number(discountPercent) / 100);
+                          applyDiscountMutation.mutate(amount);
+                        }}
+                        disabled={applyDiscountMutation.isPending}
+                        className="p-1.5 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-colors shrink-0"
+                      >
+                        {applyDiscountMutation.isPending ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Check className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
+              {/* Botón promo Amor y Amistad */}
+              {order.items?.length >= 2 && (
+                <button
+                  onClick={() => {
+                    const items = order.items || [];
+                    // Encontrar el item con el precio unitario más bajo (el "segundo" cóctel)
+                    const cheapest = items.reduce((min, item) =>
+                      Number(item.unit_price) < Number(min.unit_price) ? item : min
+                    , items[0]);
+                    const discountAmount = Math.round(Number(cheapest.unit_price) * 0.5);
+                    if (discountAmount > 0) {
+                      applyDiscountMutation.mutate(discountAmount);
+                    }
+                  }}
+                  disabled={applyDiscountMutation.isPending}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-pink-500/10 text-pink-400 border border-pink-500/20 rounded-lg hover:bg-pink-500/20 hover:border-pink-500/40 transition-all text-sm font-medium"
+                >
+                  {applyDiscountMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Heart className="w-4 h-4" fill="currentColor" />
+                      Promo Amor y Amistad — 50% en 2do cóctel
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           )}
           <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray/20">
