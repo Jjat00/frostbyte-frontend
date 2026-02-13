@@ -8,6 +8,8 @@ import {
   Flame,
   Citrus,
   Anchor,
+  Droplets,
+  Sparkles,
 } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
@@ -142,6 +144,68 @@ const ProductSkeleton = () => (
       </div>
     </div>
   </div>
+);
+
+// Datos de shots de sabores para personalizar
+const flavorShots = [
+  {
+    name: "Porrito",
+    flavor: "Verde",
+    licor: "Tequila",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-green-400 to-emerald-600",
+    textColor: "text-green-400",
+    borderColor: "border-green-500/30",
+  },
+  {
+    name: "Maracuyá",
+    flavor: "Amarillo",
+    licor: "Whisky",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-yellow-300 to-amber-500",
+    textColor: "text-yellow-400",
+    borderColor: "border-yellow-500/30",
+  },
+  {
+    name: "Fresita",
+    flavor: "Rojo",
+    licor: "Ron",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-red-400 to-rose-600",
+    textColor: "text-red-400",
+    borderColor: "border-red-500/30",
+  },
+  {
+    name: "Tentaxxion",
+    flavor: "Morado",
+    licor: "Vodka",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-purple-400 to-fuchsia-600",
+    textColor: "text-purple-400",
+    borderColor: "border-purple-500/30",
+  },
+];
+
+const FlavorOption = ({ name, flavor, licor, price, icon: Icon, gradient, textColor, borderColor }) => (
+  <motion.div
+    whileHover={{ scale: 1.05, y: -5 }}
+    whileTap={{ scale: 0.98 }}
+    className={`w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border ${borderColor} rounded-2xl p-4 text-center cursor-pointer hover:shadow-lg transition-all duration-300`}
+  >
+    <div
+      className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
+    >
+      <Icon className="text-dark" size={24} />
+    </div>
+    <h4 className={`${textColor} font-bold text-base`}>{name}</h4>
+    <p className="text-gray text-xs">{licor}</p>
+    <p className="text-gray text-xs mb-2">{flavor}</p>
+    <span className={`${textColor} font-bold text-sm`}>{price}</span>
+  </motion.div>
 );
 
 // Datos de shots para envenenar (estos podrían venir de la API también)
@@ -331,6 +395,89 @@ const Granizados = ({ showExtras = true }) => {
                     </span>
                     <span className="text-purple-400 font-bold text-sm sm:text-base whitespace-nowrap">
                       ☠️ ENVENENADO
+                    </span>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Sección Shots de Sabores */}
+        {showExtras && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mt-12"
+          >
+            <div className="relative bg-linear-to-br from-emerald-900/20 via-dark/60 to-cyan-900/20 border-2 border-cyan-500/30 rounded-3xl overflow-hidden">
+              {/* Banner image */}
+              <div className="relative h-48 sm:h-56 overflow-hidden">
+                <img
+                  src="/shots2.png"
+                  alt="Shots de Sabores"
+                  className="w-full h-full object-cover object-center"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-dark via-dark/70 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-r from-cyan-500/5 to-emerald-500/5" />
+              </div>
+
+              <div className="relative z-10 px-6 sm:px-10 pb-8 -mt-12">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <div className="flex items-center justify-center gap-3 mb-3">
+                    <Sparkles
+                      className="text-cyan-400 hidden sm:block"
+                      size={28}
+                    />
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
+                      SHOTS DE{" "}
+                      <span className="bg-linear-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                        SABORES
+                      </span>
+                    </h3>
+                    <Sparkles
+                      className="text-cyan-400 hidden sm:block"
+                      size={28}
+                    />
+                  </div>
+                  <p className="text-gray text-base sm:text-lg max-w-2xl mx-auto">
+                    Dale un toque extra de sabor a tu granizado con nuestros
+                    shots especiales 🔥
+                  </p>
+                </div>
+
+                {/* Flavor shots */}
+                <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mx-auto max-w-full">
+                  {flavorShots.map((shot) => (
+                    <FlavorOption key={shot.name} {...shot} />
+                  ))}
+                </div>
+
+                {/* Ejemplo visual */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-8 flex justify-center"
+                >
+                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-cyan-500/30">
+                    <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
+                      🍹 Granizado
+                    </span>
+                    <Plus className="text-cyan-400 shrink-0" size={20} />
+                    <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
+                      💧 Shot de Sabor
+                    </span>
+                    <span className="text-cyan-400 text-xl sm:text-2xl shrink-0">
+                      =
+                    </span>
+                    <span className="text-cyan-400 font-bold text-sm sm:text-base whitespace-nowrap">
+                      ✨ SABOR ÚNICO
                     </span>
                   </div>
                 </motion.div>

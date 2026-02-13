@@ -27,6 +27,7 @@ export const ENDPOINTS = {
   AI_SAVE_TO_PRODUCT: (generationId) => `/ai/generations/${generationId}/save_to_product/`,
   AI_DISCARD: (generationId) => `/ai/generations/${generationId}/discard/`,
   AI_TEMP_IMAGE: (generationId, type) => `/ai/generations/${generationId}/temp-image/${type}/`,
+  AI_SUGGEST_DESCRIPTION: '/ai/suggest-description/',
 
   // Song Requests
   SONG_REQUESTS: '/song-requests/',

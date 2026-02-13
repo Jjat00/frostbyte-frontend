@@ -1,7 +1,80 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Droplets } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
+
+// Datos de shots de sabores
+const flavorShots = [
+  {
+    name: "Porrito",
+    flavor: "Verde",
+    licor: "Tequila",
+    price: "$5.000",
+    gradient: "from-green-400 to-emerald-600",
+    textColor: "text-green-400",
+    borderColor: "border-green-500/40",
+    glowColor: "rgba(74, 222, 128, 0.3)",
+  },
+  {
+    name: "Maracuyá",
+    flavor: "Amarillo",
+    licor: "Whisky",
+    price: "$5.000",
+    gradient: "from-yellow-300 to-amber-500",
+    textColor: "text-yellow-400",
+    borderColor: "border-yellow-500/40",
+    glowColor: "rgba(250, 204, 21, 0.3)",
+  },
+  {
+    name: "Fresita",
+    flavor: "Rojo",
+    licor: "Ron",
+    price: "$5.000",
+    gradient: "from-red-400 to-rose-600",
+    textColor: "text-red-400",
+    borderColor: "border-red-500/40",
+    glowColor: "rgba(248, 113, 113, 0.3)",
+  },
+  {
+    name: "Tentaxxion",
+    flavor: "Morado",
+    licor: "Vodka",
+    price: "$5.000",
+    gradient: "from-purple-400 to-fuchsia-600",
+    textColor: "text-purple-400",
+    borderColor: "border-purple-500/40",
+    glowColor: "rgba(192, 132, 252, 0.3)",
+  },
+];
+
+const FlavorShotCard = ({ shot, index }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay: index * 0.1 }}
+    whileHover={{ y: -8, scale: 1.05 }}
+    className={`group relative bg-dark/60 backdrop-blur-sm border ${shot.borderColor} rounded-2xl p-5 text-center cursor-default hover:shadow-lg transition-all duration-300`}
+    style={{ "--glow": shot.glowColor }}
+  >
+    <div
+      className={`w-14 h-14 bg-linear-to-br ${shot.gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+    >
+      <Droplets className="text-dark" size={26} />
+    </div>
+    <h4 className={`text-lg font-black ${shot.textColor} mb-1`}>
+      {shot.name}
+    </h4>
+    <p className="text-gray/70 text-xs mb-1">{shot.licor}</p>
+    <p className="text-gray text-xs uppercase tracking-wider font-semibold mb-2">
+      {shot.flavor}
+    </p>
+    <span className={`${shot.textColor} font-bold text-sm`}>
+      {shot.price}
+    </span>
+  </motion.div>
+);
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -123,6 +196,55 @@ const Shots = () => {
                 />
               ))}
         </div>
+
+        {/* Sección Shots de Sabores */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="mt-20"
+        >
+          <div className="relative bg-linear-to-br from-dark-secondary/80 to-dark/80 border-2 border-primary/30 rounded-3xl overflow-hidden">
+            {/* Banner image */}
+            <div className="relative h-56 sm:h-72 md:h-80 overflow-hidden">
+              <img
+                src="/shots1.png"
+                alt="Shots de Sabores Frostbyte"
+                className="w-full h-full object-cover object-center"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-dark via-dark/60 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary/10 to-secondary/10" />
+
+              {/* Title overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <Droplets className="text-primary" size={28} />
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light">
+                    SHOTS DE{" "}
+                    <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      SABORES
+                    </span>
+                  </h3>
+                </div>
+                <p className="text-gray text-sm sm:text-base max-w-xl">
+                  Explosiones de sabor concentrado. Elige tu favorito y
+                  dale un twist único a tu experiencia.
+                </p>
+              </div>
+            </div>
+
+            {/* Flavor cards grid */}
+            <div className="p-6 sm:p-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {flavorShots.map((shot, index) => (
+                  <FlavorShotCard key={shot.name} shot={shot} index={index} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -101,6 +101,18 @@ export const productsService = {
     const response = await apiClient.get(ENDPOINTS.PRODUCT_VARIANTS(slug));
     return response.data;
   },
+
+  /**
+   * Sugerir descripción de producto con IA
+   * @param {string} productName - Nombre del producto
+   * @returns {Promise<string>} Descripción sugerida
+   */
+  async suggestDescription(productName) {
+    const response = await apiClient.post(ENDPOINTS.AI_SUGGEST_DESCRIPTION, {
+      product_name: productName,
+    });
+    return response.data.description;
+  },
 };
 
 /**
