@@ -144,7 +144,8 @@ const SodasMicheladas = () => {
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            Refrescantes, burbujeantes y llenas de sabor frutal.
+            Sodas italianas en Cumbal: refrescantes, burbujeantes y llenas de
+            sabor frutal en Frostbyte.
           </p>
         </motion.div>
 

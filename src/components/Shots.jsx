@@ -173,8 +173,8 @@ const Shots = () => {
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            Licores premium servidos puros. La mejor selección para brindar con
-            estilo.
+            Shots en Cumbal: licores premium servidos puros. La mejor selección
+            para brindar con estilo en Frostbyte.
           </p>
         </motion.div>
 

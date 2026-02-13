@@ -290,8 +290,8 @@ const Granizados = ({ showExtras = true }) => {
             </span>
           </h2>
           <p className="text-white text-lg max-w-2xl mx-auto font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
-            Hielo triturado a la perfección con los sabores frutales más
-            intensos.
+            Los mejores granizados en Cumbal. Hielo triturado a la perfección
+            con los sabores frutales más intensos de Nariño.
           </p>
         </motion.div>
 

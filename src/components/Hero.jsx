@@ -125,7 +125,7 @@ const Hero = () => {
               className="inline-block"
             >
               <span className="px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-sm font-semibold tracking-wider">
-                REFRESCO HELADO PREMIUM
+                BEBIDAS HELADAS EN CUMBAL, NARIÑO
               </span>
             </motion.div>
 
@@ -135,9 +135,9 @@ const Hero = () => {
               transition={{ delay: 0.3 }}
               className="text-5xl md:text-7xl font-black text-light leading-tight"
             >
-              ENTRA EN LA
+              GRANIZADOS Y COCTELES
               <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                DIMENSIÓN FROSTBYTE
+                EN CUMBAL
               </span>
             </motion.h1>
 
@@ -162,9 +162,9 @@ const Hero = () => {
               transition={{ delay: 0.4 }}
               className="text-gray text-lg md:text-xl leading-relaxed"
             >
-              Experimenta bebidas heladas como nunca antes. Nuestros granizados
-              y frappés combinan sabores innovadores con la frescura más intensa
-              que puedas imaginar.
+              Frostbyte es el lugar perfecto en Cumbal para disfrutar granizados,
+              frappés, cocteles, shots y micheladas con amigos o en familia.
+              Bebidas heladas premium con temática cyberpunk en Cumbal, Nariño.
             </motion.p>
 
             <motion.div
@@ -194,7 +194,7 @@ const Hero = () => {
                   rel="noopener noreferrer"
                 >
                   <MapPin size={20} className="mr-2" />
-                  Cómo Llegar
+                  Ubicación en Cumbal
                 </a>
               </Button>
             </motion.div>

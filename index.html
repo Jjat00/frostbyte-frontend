@@ -1,17 +1,202 @@
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/png" href="/logo.png" />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-		<title>Frostbyte - Granizados</title>
-		<meta name="description" content="Experimenta el futuro de las bebidas heladas. Frostbyte ofrece granizados y frappés premium con un toque cyberpunk. Sabores neón, vibras eléctricas." />
-	</head>
-	<body>
-		<div id="root"></div>
-		<script type="module" src="/src/main.jsx"></script>
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!-- SEO: Title & Description optimizados para Cumbal, Nariño -->
+    <title>Frostbyte | Granizados, Cocteles y Bebidas Heladas en Cumbal</title>
+    <meta
+      name="description"
+      content="Frostbyte en Cumbal, Nariño: granizados, frappés, cocteles, shots, micheladas y el famoso Desguayabator. El mejor lugar para pasar con amigos en Cumbal."
+    />
+
+    <!-- SEO: Keywords locales -->
+    <meta
+      name="keywords"
+      content="granizados en cumbal, cocteles en cumbal, frappés cumbal, shots cumbal, bebidas heladas cumbal, micheladas cumbal, bar en cumbal nariño, restaurante cumbal, lugar divertido cumbal, frostbyte cumbal, desguayabator, cervezas cumbal, vinos cumbal, sodas italianas cumbal, donde comer en cumbal nariño"
+    />
+
+    <!-- SEO: Canonical -->
+    <link rel="canonical" href="https://frostbyte.com.co/" />
+
+    <!-- SEO: Geo Meta Tags para ubicación local -->
+    <meta name="geo.region" content="CO-NAR" />
+    <meta name="geo.placename" content="Cumbal, Nariño, Colombia" />
+    <meta name="geo.position" content="0.9083229;-77.7905377" />
+    <meta name="ICBM" content="0.9083229,-77.7905377" />
+
+    <!-- SEO: Open Graph (Facebook, WhatsApp, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Frostbyte" />
+    <meta
+      property="og:title"
+      content="Frostbyte | Granizados, Cocteles y Bebidas Heladas en Cumbal"
+    />
+    <meta
+      property="og:description"
+      content="Frostbyte en Cumbal, Nariño: granizados, frappés, cocteles, shots, micheladas y el famoso Desguayabator. El mejor lugar para pasar con amigos en Cumbal."
+    />
+    <meta property="og:url" content="https://frostbyte.com.co/" />
+    <meta property="og:image" content="https://frostbyte.com.co/logo.png" />
+    <meta
+      property="og:image:alt"
+      content="Frostbyte - Bebidas heladas en Cumbal, Nariño"
+    />
+    <meta property="og:locale" content="es_CO" />
+
+    <!-- SEO: Open Graph Business Contact -->
+    <meta
+      property="business:contact_data:street_address"
+      content="Cra. 8 #18-13"
+    />
+    <meta property="business:contact_data:locality" content="Cumbal" />
+    <meta property="business:contact_data:region" content="Nariño" />
+    <meta property="business:contact_data:country_name" content="Colombia" />
+    <meta
+      property="business:contact_data:phone_number"
+      content="+573164277879"
+    />
+
+    <!-- SEO: Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Frostbyte | Granizados y Cocteles en Cumbal"
+    />
+    <meta
+      name="twitter:description"
+      content="Bebidas heladas premium, cocteles, shots y el famoso Desguayabator. Temática cyberpunk en Cumbal, Nariño."
+    />
+    <meta name="twitter:image" content="https://frostbyte.com.co/logo.png" />
+    <meta
+      name="twitter:image:alt"
+      content="Frostbyte - Bar de bebidas heladas en Cumbal"
+    />
+
+    <!-- SEO: JSON-LD Schema - Restaurant/LocalBusiness -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Restaurant",
+        "@id": "https://frostbyte.com.co/",
+        "name": "Frostbyte",
+        "description": "Bar de bebidas heladas con temática cyberpunk en Cumbal, Nariño. Granizados, frappés, cocteles, shots, micheladas, cervezas, vinos y el famoso Desguayabator.",
+        "url": "https://frostbyte.com.co/",
+        "image": "https://frostbyte.com.co/logo.png",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://frostbyte.com.co/logo.png"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Cra. 8 #18-13",
+          "addressLocality": "Cumbal",
+          "addressRegion": "Nariño",
+          "postalCode": "523560",
+          "addressCountry": "CO"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 0.9083229,
+          "longitude": -77.7905377
+        },
+        "telephone": "+573164277879",
+        "priceRange": "$$",
+        "servesCuisine": [
+          "Bebidas Heladas",
+          "Cocteles",
+          "Granizados",
+          "Frappés",
+          "Shots"
+        ],
+        "hasMenu": {
+          "@type": "Menu",
+          "name": "Carta Frostbyte",
+          "hasMenuSection": [
+            {
+              "@type": "MenuSection",
+              "name": "Granizados",
+              "description": "Hielo triturado con sabores frutales intensos"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Frappés",
+              "description": "Bebidas cremosas heladas de café y frutas"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Cocteles",
+              "description": "Mojitos, Margaritas, Moscow Mule y Cuates con tequila"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Shots",
+              "description": "Ginebra, Vodka, Whisky, Tequila, Ron y Aguardiente"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Micheladas",
+              "description": "Cervezas con mezcla especial"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Sodas Italianas",
+              "description": "Sodas refrescantes de Fresa y Maracuyá"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Cervezas",
+              "description": "Poker, Budweiser, Corona y Coronita"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Vinos",
+              "description": "Gato Negro y Casillero del Diablo"
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Desguayabator",
+              "description": "Bebida especial para curar la resaca con Electrolit y Bonfiest"
+            }
+          ]
+        },
+        "sameAs": [
+          "https://www.instagram.com/frostbyte.col/",
+          "https://www.tiktok.com/@frostbyte.col"
+        ],
+        "areaServed": {
+          "@type": "City",
+          "name": "Cumbal",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "Nariño"
+          }
+        },
+        "potentialAction": {
+          "@type": "OrderAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://wa.me/573164277879"
+          }
+        }
+      }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media = 'all'"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

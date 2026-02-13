@@ -144,7 +144,7 @@ const Header = () => {
           >
             <img
               src="/logo.png"
-              alt="Frostbyte Logo"
+              alt="Frostbyte - Granizados y Cocteles en Cumbal"
               width={40}
               height={40}
               className="w-10 h-10 object-contain"

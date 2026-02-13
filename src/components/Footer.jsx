@@ -48,8 +48,9 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-gray leading-relaxed">
-              Experimenta el futuro de las bebidas heladas. Granizados y frappés
-              inspirados en el cyberpunk que superan los límites del sabor.
+              Bar de bebidas heladas en Cumbal, Nariño. Granizados, frappés,
+              cocteles, shots, micheladas y el famoso Desguayabator. El mejor
+              lugar para pasar con amigos en Cumbal.
             </p>
           </motion.div>
 
@@ -103,7 +104,7 @@ const Footer = () => {
               Síguenos
             </span>
             <p className="text-gray mb-4">
-              Únete a nuestra comunidad cyberpunk en redes sociales
+              Síguenos en redes para promociones de bebidas heladas en Cumbal
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => (
@@ -131,15 +132,15 @@ const Footer = () => {
             <span className="text-light font-bold text-lg mb-4 block">
               Ubicación
             </span>
-            <div className="flex items-start gap-3 text-gray">
+            <div className="flex items-start gap-3 text-gray" itemScope itemType="https://schema.org/PostalAddress">
               <MapPin className="text-primary mt-1 flex-shrink-0" size={20} />
               <div>
                 <p className="leading-relaxed">
-                  Cra. 8 #18-13
+                  <span itemProp="streetAddress">Cra. 8 #18-13</span>
                   <br />
-                  Cumbal, Nariño
+                  <span itemProp="addressLocality">Cumbal</span>, <span itemProp="addressRegion">Nariño</span>
                   <br />
-                  Colombia
+                  <span itemProp="addressCountry">Colombia</span>
                 </p>
                 <a
                   href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
@@ -157,7 +158,7 @@ const Footer = () => {
         <div className="border-t border-gray/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray text-sm">
-              © 2025 Frostbyte. Todos los derechos reservados.
+              © 2026 Frostbyte Cumbal. Todos los derechos reservados.
             </p>
             <div className="flex space-x-6">
               <a

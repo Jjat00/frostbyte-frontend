@@ -136,8 +136,8 @@ const Cervezas = () => {
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            Las mejores cervezas bien frías para refrescarte. Nacionales e
-            importadas de la mejor calidad.
+            Cervezas en Cumbal: las mejores marcas bien frías para refrescarte.
+            Nacionales e importadas en Frostbyte.
           </p>
         </motion.div>
 

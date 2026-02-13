@@ -49,7 +49,8 @@ const Features = () => {
             POR QUÉ <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">FROSTBYTE</span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            No solo servimos bebidas, ofrecemos una experiencia
+            El lugar perfecto en Cumbal para pasar un buen rato con amigos o en
+            familia. No solo servimos bebidas, ofrecemos una experiencia.
           </p>
         </motion.div>
 

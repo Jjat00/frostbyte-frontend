@@ -204,8 +204,8 @@ const Cuates = () => {
             </span>
           </h2>
           <p className="text-white text-lg md:text-xl max-w-2xl mx-auto font-semibold drop-shadow-lg">
-            Cócteles listos para tomar con auténtico tequila mexicano.
-            Refrescantes, prácticos y perfectos para cualquier ocasión.
+            Cuates en Cumbal: cocteles listos con auténtico tequila mexicano.
+            Refrescantes y perfectos para cualquier ocasión en Frostbyte.
           </p>
         </motion.div>
 

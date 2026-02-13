@@ -171,8 +171,8 @@ const Micheladas = () => {
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            La combinación perfecta de cerveza, limón, salsas y especias.
-            ¡Refrescante y picante!
+            Micheladas en Cumbal: la combinación perfecta de cerveza, limón,
+            salsas y especias. ¡Refrescante y picante!
           </p>
         </motion.div>
 

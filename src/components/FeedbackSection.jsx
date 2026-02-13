@@ -142,7 +142,7 @@ const FeedbackSection = () => {
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
             Para nosotros es muy importante saber tu opinion para mejorar.
-            Cuentanos que tal tu experiencia en Frostbyte 💙
+            Cuéntanos qué tal tu experiencia en Frostbyte Cumbal 💙
           </p>
         </motion.div>
 
