@@ -206,7 +206,8 @@ const Mocktails = () => {
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            Bebidas clásicas y creaciones de la casa para elevar tu espíritu.
+            Cocteles en Cumbal: mojitos, margaritas y creaciones de la casa para
+            elevar tu espíritu.
           </p>
         </motion.div>
 

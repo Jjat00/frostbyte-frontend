@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /home
+Disallow: /inventario/
+Disallow: /pedidos/
+Disallow: /productos/
+Disallow: /gastos/
+Disallow: /musica/
+Disallow: /feedback/
+Disallow: /juegos-admin
+
+Sitemap: https://frostbyte.com.co/sitemap.xml

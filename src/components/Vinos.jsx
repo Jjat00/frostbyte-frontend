@@ -130,8 +130,8 @@ const Vinos = () => {
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            Disfruta de una copa de vino tinto de las mejores viñas chilenas.
-            Elegancia y sabor en cada sorbo.
+            Vinos en Cumbal: disfruta de una copa de vino tinto de las mejores
+            viñas chilenas. Elegancia y sabor en Frostbyte.
           </p>
         </motion.div>
 

@@ -197,7 +197,7 @@ const Hero = () => {
                   rel="noopener noreferrer"
                 >
                   <MapPin size={20} className="mr-2" />
-                  Cómo Llegar
+                  Ubicación en Cumbal
                 </a>
               </Button>
             </motion.div>

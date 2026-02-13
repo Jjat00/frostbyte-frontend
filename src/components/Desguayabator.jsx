@@ -231,9 +231,10 @@ const Desguayabator = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-base sm:text-xl md:text-2xl text-gray max-w-3xl mx-auto mb-4 px-2"
           >
-            La bebida helada con la fórmula secreta para{" "}
-            <span className="text-emerald-400 font-bold">revivir</span> después
-            de una noche épica
+            La bebida más famosa de Cumbal para{" "}
+            <span className="text-emerald-400 font-bold">curar el guayabo</span>.
+            Fórmula secreta con Electrolit + Bonfiest para revivir después de
+            una noche épica
           </motion.p>
 
           {/* Info de ingredientes */}

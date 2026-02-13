@@ -129,8 +129,8 @@ const Frappes = () => {
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            Cremosas y heladas creaciones que fusionan sabores clásicos con
-            energía del futuro.
+            Los mejores frappés en Cumbal. Cremosas y heladas creaciones que
+            fusionan sabores clásicos con energía del futuro.
           </p>
         </motion.div>
 
