@@ -12,10 +12,12 @@ import {
   AlertCircle,
   Package,
   Sparkles,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { productsService, variantsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
 import { ImageUpload } from '@/components/ui/ImageUpload';
+import { AIGalleryPickerModal } from '@/components/ai-generator/AIGalleryPickerModal';
 
 const ProductFormPage = () => {
   const navigate = useNavigate();
@@ -39,6 +41,7 @@ const ProductFormPage = () => {
 
   const [errors, setErrors] = useState({});
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
+  const [showGalleryPicker, setShowGalleryPicker] = useState(false);
 
   // Obtener categorías
   const { data: categoriesData } = useQuery({
@@ -339,9 +342,19 @@ const ProductFormPage = () => {
 
             {/* Imagen del producto */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray mb-2">
-                Imagen del Producto
-              </label>
+              <div className="flex items-center gap-3 mb-2">
+                <label className="text-sm font-medium text-gray">
+                  Imagen del Producto
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowGalleryPicker(true)}
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-secondary border border-secondary/30 rounded-lg hover:bg-secondary/10 hover:border-secondary/50 transition-all"
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  Galería IA
+                </button>
+              </div>
               <ImageUpload
                 value={formData.image_url}
                 onChange={(url) => {
@@ -593,6 +606,18 @@ const ProductFormPage = () => {
           </button>
         </div>
       </form>
+
+      {/* Modal de galería IA */}
+      <AIGalleryPickerModal
+        isOpen={showGalleryPicker}
+        onClose={() => setShowGalleryPicker(false)}
+        onSelect={(url) => {
+          setFormData((prev) => ({ ...prev, image_url: url }));
+          if (errors.image_url) {
+            setErrors((prev) => ({ ...prev, image_url: null }));
+          }
+        }}
+      />
     </div>
   );
 };
