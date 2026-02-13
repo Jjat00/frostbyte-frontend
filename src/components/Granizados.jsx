@@ -39,9 +39,7 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
 
 // Tarjeta: imagen, título, descripción y precios con buen contraste
 const ProductCard = ({ product, index, styles }) => {
-  const variants = product.variants || [];
-  const smallVariant = variants.find((v) => v.name === "Pequeño");
-  const largeVariant = variants.find((v) => v.name === "Grande");
+  const variants = (product.variants || []).filter((v) => v.is_active !== false);
   const ringColor = styles.ringColor || "border-cyan-400";
   const labelBg =
     styles.labelBg || "bg-gradient-to-r from-cyan-500 to-blue-600";
@@ -101,26 +99,16 @@ const ProductCard = ({ product, index, styles }) => {
             {product.description}
           </p>
           <div className="flex items-center justify-center gap-6 flex-wrap pt-2">
-            {smallVariant && (
-              <div className="flex flex-col items-center">
+            {variants.map((variant) => (
+              <div key={variant.id || variant.name} className="flex flex-col items-center">
                 <span className="text-xs text-slate-300 uppercase font-semibold tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {smallVariant.name}
+                  {variant.name}
                 </span>
                 <span className="text-lg font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-                  {formatPrice(smallVariant.price)}
+                  {formatPrice(variant.price)}
                 </span>
               </div>
-            )}
-            {largeVariant && (
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-slate-300 uppercase font-semibold tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {largeVariant.name}
-                </span>
-                <span className="text-lg font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-                  {formatPrice(largeVariant.price)}
-                </span>
-              </div>
-            )}
+            ))}
           </div>
         </div>
       </div>

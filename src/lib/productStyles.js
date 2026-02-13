@@ -31,7 +31,7 @@ const categoryDefaults = {
     secondaryGradient: "from-transparent via-cyan-200/20 to-transparent",
     accentColor: "primary",
     ringColor: "border-cyan-400",
-    labelBg: "bg-gradient-to-r from-cyan-500 to-blue-600",
+    labelBg: "bg-gradient-to-r from-red-500 to-rose-600",
   },
   frappes: {
     icon: Coffee,
@@ -284,7 +284,7 @@ export function getProductStyles(product, categorySlug) {
     labelBg:
       specificStyles.labelBg ||
       categoryStyles.labelBg ||
-      "bg-gradient-to-r from-cyan-500 to-blue-600",
+      "bg-gradient-to-r from-red-500 to-rose-600",
   };
 }
 
