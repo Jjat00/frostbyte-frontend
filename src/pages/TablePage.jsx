@@ -14,6 +14,7 @@ import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
+import LoveAndFriendshipBanner from "@/components/LoveAndFriendshipBanner";
 import { env } from "@/config/env";
 
 function TablePage() {
@@ -58,6 +59,7 @@ function TablePage() {
         <Header />
         <main>
           <Hero />
+          <LoveAndFriendshipBanner />
           <QuickNav />
           <SocialDiscountBanner />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
