@@ -37,90 +37,69 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   </motion.div>
 );
 
-// Tarjeta: imagen, título, descripción y precios con buen contraste
+// Tarjeta con glass-morphism: limpia, profesional y legible
 const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
-  const smallVariant = variants.find((v) => v.name === "Pequeño");
-  const largeVariant = variants.find((v) => v.name === "Grande");
   const ringColor = styles.ringColor || "border-cyan-400";
-  const labelBg =
-    styles.labelBg || "bg-gradient-to-r from-cyan-500 to-blue-600";
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ scale: 1.05 }}
-      className="group relative h-full flex flex-col"
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      className="group relative h-full"
     >
-      <div className="relative flex flex-col items-center h-full">
-        {/* Con imagen: solo la imagen. Sin imagen: círculo con anillo y fondo */}
-        <div className="relative mb-4 shrink-0">
+      <div className="relative flex flex-col items-center h-full bg-white/4 backdrop-blur-md border border-white/8 rounded-3xl p-6 transition-all duration-500 hover:bg-white/7 hover:border-white/15 hover:shadow-[0_8px_40px_rgba(255,45,85,0.12)]">
+        {/* Imagen del producto */}
+        <div className="relative mb-5 shrink-0">
           {styles.image ? (
-            <div className="relative w-90 h-90 md:w-90 md:h-90 flex items-center justify-center">
+            <div className="relative w-52 h-52 md:w-56 md:h-56 flex items-center justify-center">
               <img
                 alt={product.name}
-                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-2xl"
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_8px_24px_rgba(0,0,0,0.3)]"
                 src={styles.image}
                 loading="lazy"
               />
             </div>
           ) : (
-            <>
+            <div className="relative w-52 h-52 md:w-56 md:h-56 rounded-full overflow-hidden">
               <div
-                className={`absolute inset-0 rounded-full border-4 ${ringColor} shadow-2xl`}
+                className={`absolute inset-0 rounded-full border-2 ${ringColor} opacity-40`}
               ></div>
               <div
-                className={`absolute inset-2 rounded-full border-2 ${ringColor} opacity-60`}
+                className={`w-full h-full bg-linear-to-br ${styles.visualGradient || styles.gradient} opacity-80`}
               ></div>
-              <div className="relative w-90 h-90 md:w-90 md:h-90 rounded-full overflow-hidden bg-linear-to-br from-cyan-600/30 to-blue-900/30 flex items-center justify-center">
-                <div
-                  className={`w-full h-full bg-linear-to-br ${styles.visualGradient || styles.gradient}`}
-                ></div>
-              </div>
-            </>
+            </div>
           )}
         </div>
 
         {/* Nombre del producto */}
-        <div className="w-full min-h-0 md:min-h-16 flex flex-col items-center px-2 mb-3">
-          <div
-            className={`inline-block px-4 py-2 ${labelBg} rounded-lg shadow-lg`}
-          >
-            <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center md:line-clamp-2 drop-shadow-sm">
-              {product.name}
-            </h3>
-          </div>
+        <div className="w-full flex flex-col items-center mb-3">
+          <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center line-clamp-2 leading-tight">
+            {product.name}
+          </h3>
+          <div className="w-10 h-0.5 bg-primary/60 rounded-full mt-2"></div>
         </div>
 
-        {/* Descripción y precios — solo texto con contraste */}
-        <div className="mt-auto w-full flex flex-col items-center px-2 text-center">
-          <p className="text-white text-sm md:text-base max-w-full md:line-clamp-2 font-medium tracking-tight mb-4 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
-            {product.description}
-          </p>
-          <div className="flex items-center justify-center gap-6 flex-wrap pt-2">
-            {smallVariant && (
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-slate-300 uppercase font-semibold tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {smallVariant.name}
+        {/* Descripción */}
+        <p className="text-slate-400 text-sm text-center line-clamp-2 mb-5 leading-relaxed max-w-[260px]">
+          {product.description}
+        </p>
+
+        {/* Precios */}
+        <div className="mt-auto w-full">
+          <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/6">
+            {variants.map((variant) => (
+              <div key={variant.id || variant.name} className="flex flex-col items-center">
+                <span className="text-[11px] text-slate-500 uppercase font-semibold tracking-widest mb-0.5">
+                  {variant.name}
                 </span>
-                <span className="text-lg font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-                  {formatPrice(smallVariant.price)}
-                </span>
-              </div>
-            )}
-            {largeVariant && (
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-slate-300 uppercase font-semibold tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                  {largeVariant.name}
-                </span>
-                <span className="text-lg font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-                  {formatPrice(largeVariant.price)}
+                <span className="text-lg font-black text-primary">
+                  {formatPrice(variant.price)}
                 </span>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
@@ -129,18 +108,28 @@ const ProductCard = ({ product, index, styles }) => {
 };
 
 const ProductSkeleton = () => (
-  <div className="flex flex-col items-center h-full animate-pulse">
-    <div className="relative mb-4 shrink-0">
-      <div className="w-56 h-56 md:w-52 md:h-52 rounded-full bg-dark border-4 border-gray/30"></div>
-    </div>
-    <div className="min-h-0 md:min-h-16 w-full flex justify-center mb-3">
-      <div className="h-10 bg-white/20 rounded-lg w-3/4"></div>
-    </div>
-    <div className="mt-auto w-full flex flex-col items-center px-2">
-      <div className="h-4 bg-white/15 rounded w-full max-w-xs mb-4"></div>
-      <div className="flex gap-6">
-        <div className="h-8 bg-white/15 rounded w-16"></div>
-        <div className="h-8 bg-white/15 rounded w-16"></div>
+  <div className="bg-white/4 border border-white/8 rounded-3xl p-6 animate-pulse">
+    <div className="flex flex-col items-center h-full">
+      <div className="relative mb-5 shrink-0">
+        <div className="w-52 h-52 md:w-56 md:h-56 rounded-full bg-white/6"></div>
+      </div>
+      <div className="w-full flex flex-col items-center mb-3">
+        <div className="h-5 bg-white/8 rounded-lg w-3/4 mb-2"></div>
+        <div className="w-10 h-0.5 bg-white/6 rounded-full"></div>
+      </div>
+      <div className="h-4 bg-white/6 rounded w-full max-w-[220px] mb-2"></div>
+      <div className="h-4 bg-white/6 rounded w-2/3 max-w-[180px] mb-5"></div>
+      <div className="mt-auto w-full pt-3 border-t border-white/6">
+        <div className="flex justify-center gap-5">
+          <div className="flex flex-col items-center gap-1">
+            <div className="h-3 bg-white/6 rounded w-12"></div>
+            <div className="h-5 bg-white/8 rounded w-16"></div>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <div className="h-3 bg-white/6 rounded w-12"></div>
+            <div className="h-5 bg-white/8 rounded w-16"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
