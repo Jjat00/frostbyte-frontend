@@ -11,27 +11,27 @@ const QUIZ_QUESTIONS = [
     key: "temperature",
     label: "¿Qué temperatura prefieres?",
     options: [
-      { value: "frio", label: "❄️ Bien frío" },
-      { value: "cremoso", label: "☕ Cremoso" },
-      { value: "cualquiera", label: "🌡️ Me da igual" },
+      { value: "frio", label: "Bien frío" },
+      { value: "cremoso", label: "Cremoso" },
+      { value: "cualquiera", label: "Me da igual" },
     ],
   },
   {
     key: "taste",
     label: "¿Qué sabor te llama?",
     options: [
-      { value: "dulce", label: "🍭 Dulce" },
-      { value: "acido_frutal", label: "🍋 Ácido/Frutal" },
-      { value: "amargo_intenso", label: "🍺 Amargo/Intenso" },
+      { value: "dulce", label: "Dulce" },
+      { value: "acido_frutal", label: "Ácido / Frutal" },
+      { value: "amargo_intenso", label: "Amargo / Intenso" },
     ],
   },
   {
     key: "alcohol",
     label: "¿Con o sin alcohol?",
     options: [
-      { value: "sin_alcohol", label: "🍹 Sin alcohol" },
-      { value: "con_alcohol", label: "🍻 Con alcohol" },
-      { value: "cualquiera", label: "🤷 Cualquiera" },
+      { value: "sin_alcohol", label: "Sin alcohol" },
+      { value: "con_alcohol", label: "Con alcohol" },
+      { value: "cualquiera", label: "Cualquiera" },
     ],
   },
 ];
@@ -51,7 +51,7 @@ function TabSwitcher({ active, onChange }) {
               : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10"
           }`}
         >
-          {tab === "mood" ? "✍️ Estado de ánimo" : "🎯 Quiz rápido"}
+          {tab === "mood" ? "Estado de ánimo" : "Quiz rápido"}
         </button>
       ))}
     </div>
