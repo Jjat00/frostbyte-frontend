@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronDown,
@@ -76,6 +76,24 @@ const ProductFloatCard = ({
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
+  const [mousePos, setMousePos] = useState({ x: -9999, y: -9999 });
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const handleMouseMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    };
+    const handleMouseLeave = () => setMousePos({ x: -9999, y: -9999 });
+    el.addEventListener("mousemove", handleMouseMove);
+    el.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      el.removeEventListener("mousemove", handleMouseMove);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchMotivationalPhrase = async () => {
@@ -99,9 +117,29 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <div className="absolute inset-0 bg-linear-to-b from-dark via-dark-secondary to-dark"></div>
+    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Base gradient */}
+      <div className="absolute inset-0 bg-linear-to-b from-dark via-dark-secondary to-dark" />
 
+      {/* Dot grid */}
+      <div
+        className="absolute inset-0 opacity-[0.18]"
+        style={{
+          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
+
+      {/* Spotlight */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(650px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,0,212,0.10), transparent 65%)`,
+          transition: "background 0.1s ease",
+        }}
+      />
+
+      {/* Ambient orbs */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>
         <div
