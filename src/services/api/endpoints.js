@@ -36,6 +36,10 @@ export const ENDPOINTS = {
   // Feedback
   FEEDBACK: '/feedback/',
   FEEDBACK_DETAIL: (id) => `/feedback/${id}/`,
+
+  // AI Drink Recommender
+  AI_MOOD_RECOMMEND: '/motivational/recommend/',
+  AI_QUIZ_RECOMMEND: '/motivational/quiz/',
 };
 
 export default ENDPOINTS;
