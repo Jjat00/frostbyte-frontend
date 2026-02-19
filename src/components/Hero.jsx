@@ -1,97 +1,95 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import {
-  ChevronDown,
-  Instagram,
-  MapPin,
-  Snowflake,
-  Coffee,
-  Wine,
-  GlassWater,
-  Beer,
-  Sparkles,
-} from "lucide-react";
+import { ChevronDown, Instagram, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
 
-// Icono de TikTok personalizado
 const TikTokIcon = ({ size = 20 }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
     <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
   </svg>
 );
 
 const socialLinks = [
-  {
-    icon: Instagram,
-    href: "https://www.instagram.com/frostbyte.col/",
-    label: "Instagram",
-  },
-  {
-    icon: TikTokIcon,
-    href: "https://www.tiktok.com/@frostbyte.col",
-    label: "TikTok",
-  },
+  { icon: Instagram, href: "https://www.instagram.com/frostbyte.col/", label: "Instagram" },
+  { icon: TikTokIcon, href: "https://www.tiktok.com/@frostbyte.col", label: "TikTok" },
 ];
-
-const ProductFloatCard = ({
-  title,
-  subtitle,
-  icon: Icon,
-  gradient,
-  href,
-  delay = 0,
-}) => (
-  <motion.button
-    type="button"
-    onClick={() =>
-      document.getElementById(href)?.scrollIntoView({ behavior: "smooth" })
-    }
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay }}
-    whileHover={{ y: -4 }}
-    className="group w-full text-left bg-dark border border-gray/20 rounded-2xl p-4 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300"
-  >
-    <div className="flex items-center gap-3">
-      <div
-        className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-linear-to-br ${gradient} group-hover:scale-110 transition-transform duration-300`}
-      >
-        <Icon className="text-dark" size={20} />
-      </div>
-      <div className="min-w-0">
-        <div className="text-light font-bold text-sm">{title}</div>
-        <div className="text-gray text-xs">{subtitle}</div>
-      </div>
-    </div>
-  </motion.button>
-);
 
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
-  const [mousePos, setMousePos] = useState({ x: -9999, y: -9999 });
   const sectionRef = useRef(null);
+  const canvasRef = useRef(null);
 
+  // Dot grid wave displacement
   useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const handleMouseMove = (e) => {
-      const rect = el.getBoundingClientRect();
-      setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    const canvas = canvasRef.current;
+    const section = sectionRef.current;
+    if (!canvas || !section) return;
+
+    const ctx = canvas.getContext("2d");
+    let rafId;
+    const mouse = { x: -9999, y: -9999 };
+    const SPACING = 28;
+
+    const resize = () => {
+      canvas.width = section.offsetWidth;
+      canvas.height = section.offsetHeight;
     };
-    const handleMouseLeave = () => setMousePos({ x: -9999, y: -9999 });
-    el.addEventListener("mousemove", handleMouseMove);
-    el.addEventListener("mouseleave", handleMouseLeave);
+    resize();
+    window.addEventListener("resize", resize);
+
+    const handleMouseMove = (e) => {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const handleMouseLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    section.addEventListener("mousemove", handleMouseMove);
+    section.addEventListener("mouseleave", handleMouseLeave);
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const t = Date.now() * 0.003;
+      const cols = Math.ceil(canvas.width / SPACING) + 1;
+      const rows = Math.ceil(canvas.height / SPACING) + 1;
+
+      for (let col = 0; col < cols; col++) {
+        for (let row = 0; row < rows; row++) {
+          const bx = col * SPACING;
+          const by = row * SPACING;
+          const dx = bx - mouse.x;
+          const dy = by - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const radius = 160;
+
+          let x = bx;
+          let y = by;
+
+          if (dist < radius && dist > 0) {
+            const norm = dist / radius;          // 0 (close) → 1 (edge)
+            const wave = Math.sin(norm * 10 - t * 4) * (1 - norm) * 14;
+            x += (dx / dist) * wave;
+            y += (dy / dist) * wave;
+          }
+
+          ctx.beginPath();
+          ctx.arc(x, y, 1, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,255,255,0.18)";
+          ctx.fill();
+        }
+      }
+
+      rafId = requestAnimationFrame(animate);
+    };
+    animate();
+
     return () => {
-      el.removeEventListener("mousemove", handleMouseMove);
-      el.removeEventListener("mouseleave", handleMouseLeave);
+      section.removeEventListener("mousemove", handleMouseMove);
+      section.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -121,22 +119,10 @@ const Hero = () => {
       {/* Base gradient */}
       <div className="absolute inset-0 bg-linear-to-b from-dark via-dark-secondary to-dark" />
 
-      {/* Dot grid */}
-      <div
-        className="absolute inset-0 opacity-[0.18]"
-        style={{
-          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-        }}
-      />
-
-      {/* Spotlight */}
-      <div
+      {/* Dot grid with wave displacement */}
+      <canvas
+        ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(650px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255,0,212,0.10), transparent 65%)`,
-          transition: "background 0.1s ease",
-        }}
       />
 
       {/* Ambient orbs */}
@@ -149,211 +135,115 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+
+          {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block"
-            >
-              <span className="px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-sm font-semibold tracking-wider">
-                BEBIDAS HELADAS EN CUMBAL, NARIÑO
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl md:text-7xl font-black text-light leading-tight"
-            >
-              GRANIZADOS Y COCTELES
-              <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-                EN CUMBAL
-              </span>
-            </motion.h1>
-
-            {!isLoadingPhrase && motivationalPhrase && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35 }}
-                className="relative"
-              >
-                <div className="px-6 py-3 bg-linear-to-r from-primary/10 via-secondary/10 to-primary/10 border border-primary/30 rounded-2xl backdrop-blur-sm">
-                  <p className="text-primary text-base md:text-lg font-semibold text-center italic">
-                    "{motivationalPhrase}"
-                  </p>
-                </div>
-              </motion.div>
-            )}
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-gray text-lg md:text-xl leading-relaxed"
-            >
-              Frostbyte es el lugar perfecto en Cumbal para disfrutar granizados,
-              frappés, cocteles, shots y micheladas con amigos o en familia.
-              Bebidas heladas premium con temática cyberpunk en Cumbal, Nariño.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4"
-            >
-              <Button
-                onClick={() =>
-                  document
-                    .getElementById("menu")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
-              >
-                Explorar Carta
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 hover:border-primary hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
-              >
-                <a
-                  href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MapPin size={20} className="mr-2" />
-                  Ubicación en Cumbal
-                </a>
-              </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex items-center gap-6 pt-4"
-            >
-              <span className="text-gray text-sm">Síguenos:</span>
-              <div className="flex gap-4">
-                {socialLinks.map((social, index) => (
-                  <motion.a
-                    key={index}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    whileHover={{ scale: 1.1, y: -3 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="group flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/40 rounded-full text-primary hover:from-primary hover:to-secondary hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-300"
-                  >
-                    <social.icon size={20} />
-                    <span className="text-sm font-semibold">
-                      {social.label}
-                    </span>
-                  </motion.a>
-                ))}
-              </div>
-            </motion.div>
+            <span className="inline-block px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap">
+              BEBIDAS HELADAS · CUMBAL, NARIÑO
+            </span>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative hidden md:block"
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-[clamp(2.8rem,11vw,9rem)] font-black text-light leading-none tracking-tight w-full"
           >
-            <div className="relative w-full flex items-center justify-center">
-              <div className="w-full max-w-sm">
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Desguayabator destacado */}
-                  <motion.button
-                    type="button"
-                    onClick={() =>
-                      document
-                        .getElementById("desguayabator")
-                        ?.scrollIntoView({ behavior: "smooth" })
-                    }
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    whileHover={{ y: -4 }}
-                    className="col-span-2 group w-full text-left bg-dark border border-emerald-500/40 rounded-2xl p-4 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-linear-to-br from-emerald-400 to-cyan-500 group-hover:scale-110 transition-transform duration-300">
-                        <Sparkles className="text-dark" size={20} />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-emerald-400 font-bold text-sm">
-                          Desguayabator
-                        </div>
-                        <div className="text-gray text-xs">Cura guayabos</div>
-                      </div>
-                    </div>
-                  </motion.button>
+            FROSTBYTE
+            <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest mt-2">
+              CUMBAL, NARIÑO
+            </span>
+          </motion.h1>
 
-                  <ProductFloatCard
-                    title="Granizados"
-                    subtitle="Hielo frutal"
-                    icon={Snowflake}
-                    gradient="from-cyan-400 to-blue-500"
-                    href="granizados"
-                    delay={0.3}
-                  />
-                  <ProductFloatCard
-                    title="Frappés"
-                    subtitle="Café helado"
-                    icon={Coffee}
-                    gradient="from-amber-600 to-orange-600"
-                    href="frappes"
-                    delay={0.4}
-                  />
-                  <ProductFloatCard
-                    title="Sodas"
-                    subtitle="Italianas"
-                    icon={Sparkles}
-                    gradient="from-pink-400 to-red-500"
-                    href="sodas"
-                    delay={0.5}
-                  />
-                  <ProductFloatCard
-                    title="Micheladas"
-                    subtitle="Cerveza"
-                    icon={Beer}
-                    gradient="from-orange-400 to-red-500"
-                    href="micheladas"
-                    delay={0.6}
-                  />
-                  <ProductFloatCard
-                    title="Cócteles"
-                    subtitle="Clásicos"
-                    icon={Wine}
-                    gradient="from-purple-400 to-pink-500"
-                    href="mocktails"
-                    delay={0.7}
-                  />
-                  <ProductFloatCard
-                    title="Shots"
-                    subtitle="Licores premium"
-                    icon={GlassWater}
-                    gradient="from-emerald-400 to-teal-500"
-                    href="shots"
-                    delay={0.8}
-                  />
-                </div>
+          {/* Frase motivacional */}
+          {!isLoadingPhrase && motivationalPhrase && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="max-w-2xl mx-auto"
+            >
+              <div className="px-6 py-3 bg-linear-to-r from-primary/10 via-secondary/10 to-primary/10 border border-primary/30 rounded-2xl backdrop-blur-sm">
+                <p className="text-primary text-base md:text-lg font-semibold italic">
+                  "{motivationalPhrase}"
+                </p>
               </div>
-            </div>
+            </motion.div>
+          )}
+
+          {/* Descripción */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto"
+          >
+            Granizados, frappés, cocteles, shots y micheladas con amigos o en familia.
+            Bebidas heladas premium con temática cyberpunk en Cumbal, Nariño.
+          </motion.p>
+
+          {/* Botones + redes en una fila en desktop */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <Button
+              onClick={() =>
+                document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" })
+              }
+              className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+            >
+              Explorar Carta
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 hover:border-primary hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
+            >
+              <a
+                href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MapPin size={20} className="mr-2" />
+                Ubicación en Cumbal
+              </a>
+            </Button>
           </motion.div>
+
+          {/* Redes sociales */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="flex items-center justify-center gap-4"
+          >
+            <span className="text-gray text-sm">Síguenos:</span>
+            {socialLinks.map((social, index) => (
+              <motion.a
+                key={index}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                whileHover={{ scale: 1.1, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/40 rounded-full text-primary hover:from-primary hover:to-secondary hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-300"
+              >
+                <social.icon size={20} />
+                <span className="text-sm font-semibold">{social.label}</span>
+              </motion.a>
+            ))}
+          </motion.div>
+
         </div>
       </div>
 
