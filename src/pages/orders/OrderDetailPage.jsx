@@ -347,6 +347,14 @@ const OrderDetailPage = () => {
             {formatDateTime(order.created_at)}
           </p>
         </div>
+        {order.access_code && (
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-[10px] text-gray uppercase tracking-wider">Código</span>
+            <span className="px-3 py-1.5 bg-secondary/20 text-secondary border border-secondary/30 rounded-lg text-lg font-bold tracking-widest">
+              {order.access_code}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Estado actual */}

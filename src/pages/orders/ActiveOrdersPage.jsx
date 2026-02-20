@@ -120,6 +120,11 @@ const OrderCard = ({ order, onUpdateStatus }) => {
             >
               {status.label}
             </span>
+            {order.access_code && (
+              <span className="px-2 py-0.5 bg-secondary/15 text-secondary rounded text-xs font-bold tracking-wider border border-secondary/20">
+                {order.access_code}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-3 mt-1 text-sm text-gray">
             <span className="flex items-center gap-1">

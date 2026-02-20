@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
@@ -14,17 +15,67 @@ import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
+import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
+import OrderMiniBar from "@/components/order-tracker/OrderMiniBar";
+import OrderTracker from "@/components/order-tracker/OrderTracker";
+import OrderReadyAlert from "@/components/order-tracker/OrderReadyAlert";
+import { publicOrdersService } from "@/services/publicOrders.service";
 import { env } from "@/config/env";
 
 function TablePage() {
   const { tableNumber } = useParams();
+  const [showTracker, setShowTracker] = useState(false);
+  const [showReadyAlert, setShowReadyAlert] = useState(false);
+  const prevStatusRef = useRef(null);
+
+  // Parse table number
+  const tableNum =
+    tableNumber?.toLowerCase() === "barra" ? 0 : parseInt(tableNumber);
+
+  // Restore verified order from sessionStorage
+  const getStoredCode = () => sessionStorage.getItem("frostbyte_order_code");
+  const [verifiedCode, setVerifiedCode] = useState(getStoredCode);
+
+  // Poll order data if verified
+  const {
+    data: order,
+    isError,
+  } = useQuery({
+    queryKey: ["public-order", verifiedCode, tableNum],
+    queryFn: () => publicOrdersService.verifyOrder(verifiedCode, tableNum),
+    enabled: !!verifiedCode,
+    refetchInterval: 30000,
+    staleTime: 15000,
+    retry: 1,
+  });
+
+  // Detect status change to "ready"
+  useEffect(() => {
+    if (order?.status === "ready" && prevStatusRef.current && prevStatusRef.current !== "ready") {
+      setShowReadyAlert(true);
+    }
+    if (order?.status) {
+      prevStatusRef.current = order.status;
+    }
+  }, [order?.status]);
+
+  // Clear verified code on error (invalid code)
+  useEffect(() => {
+    if (isError && verifiedCode) {
+      sessionStorage.removeItem("frostbyte_order_code");
+      setVerifiedCode(null);
+    }
+  }, [isError, verifiedCode]);
+
+  const handleVerified = useCallback((orderData, code) => {
+    sessionStorage.setItem("frostbyte_order_code", code);
+    setVerifiedCode(code);
+    prevStatusRef.current = orderData.status;
+  }, []);
 
   useEffect(() => {
     if (tableNumber) {
-      // Registrar visita a la mesa o barra
       const apiUrl = env.API_BASE_URL;
-
-      // Si es "barra", usar table_number: 0, sino usar el número de la mesa
       const tableNum =
         tableNumber.toLowerCase() === "barra" ? 0 : parseInt(tableNumber);
 
@@ -59,6 +110,24 @@ function TablePage() {
         <main>
           <Hero />
           <QuickNav />
+
+          {/* Order Tracker: MiniBar if verified, or AccessCodeBanner */}
+          <div className="container mx-auto py-3">
+            {order ? (
+              <div className="mx-4 md:mx-0">
+                <OrderMiniBar
+                  order={order}
+                  onClick={() => setShowTracker(true)}
+                />
+              </div>
+            ) : (
+              <AccessCodeBanner
+                tableNumber={tableNum}
+                onVerified={handleVerified}
+              />
+            )}
+          </div>
+
           <SocialDiscountBanner />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
@@ -71,6 +140,19 @@ function TablePage() {
         <Footer />
         <ScrollToCarta />
         <Toaster />
+
+        {/* Order Tracker Panel */}
+        <OrderTracker
+          order={order}
+          show={showTracker}
+          onClose={() => setShowTracker(false)}
+        />
+
+        {/* Ready Alert */}
+        <OrderReadyAlert
+          show={showReadyAlert}
+          onClose={() => setShowReadyAlert(false)}
+        />
       </div>
     </>
   );

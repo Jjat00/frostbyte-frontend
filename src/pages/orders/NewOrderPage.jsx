@@ -32,6 +32,7 @@ const NewOrderPage = () => {
   const [selectedTable, setSelectedTable] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
   const [itemNotes, setItemNotes] = useState({});
+  const [showAccessCode, setShowAccessCode] = useState(null);
 
   // Obtener categorías
   const { data: categoriesData } = useQuery({
@@ -67,7 +68,12 @@ const NewOrderPage = () => {
       // Invalidar queries para actualizar las listas
       queryClient.invalidateQueries({ queryKey: ['active-orders'] });
       queryClient.invalidateQueries({ queryKey: ['orders-stats'] });
-      navigate(`/pedidos/${data.id}`);
+      // Mostrar modal con el código de acceso antes de navegar
+      if (data.access_code) {
+        setShowAccessCode({ code: data.access_code, id: data.id });
+      } else {
+        navigate(`/pedidos/${data.id}`);
+      }
     },
   });
 
@@ -705,6 +711,54 @@ const NewOrderPage = () => {
             </div>
             <span className="text-lg font-bold">{formatCurrency(cartTotal)}</span>
           </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de código de acceso */}
+      <AnimatePresence>
+        {showAccessCode && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-dark-secondary border border-secondary/30 rounded-2xl p-6 w-full max-w-sm text-center"
+            >
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-secondary/20 flex items-center justify-center">
+                <Check className="w-8 h-8 text-secondary" />
+              </div>
+              <h3 className="text-xl font-bold text-light mb-2">
+                ¡Pedido creado!
+              </h3>
+              <p className="text-sm text-gray mb-4">
+                Código para el cliente:
+              </p>
+              <div className="flex justify-center gap-2 mb-6">
+                {showAccessCode.code.split('').map((char, idx) => (
+                  <div
+                    key={idx}
+                    className="w-14 h-16 flex items-center justify-center bg-dark border-2 border-secondary/50 rounded-xl text-2xl font-bold text-secondary"
+                  >
+                    {char}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray mb-6">
+                El cliente puede usar este código para ver el estado de su pedido
+              </p>
+              <button
+                onClick={() => navigate(`/pedidos/${showAccessCode.id}`)}
+                className="w-full py-3 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-xl hover:shadow-lg hover:shadow-secondary/30 transition-all"
+              >
+                Ver Pedido
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
