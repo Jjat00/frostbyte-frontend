@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Receipt, ChevronDown, Loader2, AlertCircle } from "lucide-react";
+import { Receipt, ChevronDown, Loader2, AlertCircle, Eye } from "lucide-react";
 
 const AccessCodeBanner = ({ tableNumber, onVerified }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +50,7 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
   const handleSubmit = async () => {
     const fullCode = code.join("");
     if (fullCode.length !== 4) {
-      setError("Ingresa el código de 4 caracteres");
+      setError("Ingresa el código de 4 dígitos");
       return;
     }
 
@@ -85,19 +85,37 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
     <div className="mx-4 md:mx-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-secondary/10 border border-secondary/20 rounded-xl hover:bg-secondary/15 transition-all"
+        className={`w-full relative overflow-hidden rounded-xl border transition-all ${
+          isOpen
+            ? "bg-secondary/15 border-secondary/30"
+            : "bg-gradient-to-r from-secondary/10 via-secondary/5 to-primary/10 border-secondary/20 hover:border-secondary/40"
+        }`}
       >
-        <div className="flex items-center gap-2">
-          <Receipt className="w-5 h-5 text-secondary" />
-          <span className="text-sm font-medium text-light">
-            ¿Tienes un código de pedido?
-          </span>
+        {/* Glow sutil */}
+        {!isOpen && (
+          <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-primary/5 animate-pulse pointer-events-none" />
+        )}
+
+        <div className="relative flex items-center justify-between gap-3 px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-secondary/20 flex items-center justify-center flex-shrink-0">
+              <Eye className="w-5 h-5 text-secondary" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-bold text-light">
+                Seguí tu pedido en vivo
+              </p>
+              <p className="text-xs text-gray">
+                Ingresá el código que te dio el mesero
+              </p>
+            </div>
+          </div>
+          <ChevronDown
+            className={`w-5 h-5 text-secondary transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
         </div>
-        <ChevronDown
-          className={`w-4 h-4 text-gray transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
       </button>
 
       <AnimatePresence>
@@ -111,10 +129,9 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
           >
             <div className="pt-4 pb-2 space-y-3">
               <p className="text-xs text-gray text-center">
-                Ingresa el código que te dio el mesero
+                Código de 4 dígitos
               </p>
 
-              {/* Desktop: inline layout, Mobile: stacked */}
               <div className="flex flex-col md:flex-row items-center justify-center gap-3">
                 <div className="flex justify-center gap-3">
                   {code.map((char, idx) => (
@@ -135,7 +152,6 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
                   ))}
                 </div>
 
-                {/* Feedback inline on desktop */}
                 <div className="md:min-w-[140px]">
                   {error && (
                     <div className="flex items-center gap-1 text-red-400 text-xs">
