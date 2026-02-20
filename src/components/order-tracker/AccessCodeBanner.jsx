@@ -10,7 +10,7 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
   const inputRefs = useRef([]);
 
   const handleInputChange = (index, value) => {
-    const char = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(-1);
+    const char = value.replace(/[^0-9]/g, "").slice(-1);
     const newCode = [...code];
     newCode[index] = char;
     setCode(newCode);
@@ -34,8 +34,7 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
     e.preventDefault();
     const pasted = e.clipboardData
       .getData("text")
-      .replace(/[^a-zA-Z0-9]/g, "")
-      .toUpperCase()
+      .replace(/[^0-9]/g, "")
       .slice(0, 4);
     const newCode = [...code];
     for (let i = 0; i < pasted.length; i++) {
@@ -122,13 +121,15 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
                     <input
                       key={idx}
                       ref={(el) => (inputRefs.current[idx] = el)}
-                      type="text"
+                      type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       maxLength={1}
                       value={char}
                       onChange={(e) => handleInputChange(idx, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(idx, e)}
                       onPaste={idx === 0 ? handlePaste : undefined}
-                      className="w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-bold bg-dark-secondary border-2 border-gray/20 rounded-xl text-light focus:border-secondary focus:outline-none transition-colors uppercase"
+                      className="w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-bold bg-dark-secondary border-2 border-gray/20 rounded-xl text-light focus:border-secondary focus:outline-none transition-colors"
                       disabled={isLoading}
                     />
                   ))}
