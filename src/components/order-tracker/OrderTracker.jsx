@@ -16,6 +16,52 @@ const OrderTracker = ({ order, show, onClose }) => {
       minimumFractionDigits: 0,
     }).format(value || 0);
 
+  // Nombres de productos en el pedido para filtrar recomendados
+  const orderProductNames = (order.items || []).map((i) => i.product_name);
+
+  const content = (
+    <>
+      {/* Status */}
+      <div className="flex items-center justify-center">
+        <OrderStatusBadge status={order.status} />
+      </div>
+
+      {/* Delivered status */}
+      {order.status === "delivered" && !order.is_paid && (
+        <div className="px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-center">
+          <p className="text-xs text-yellow-400 font-medium">
+            Pedido entregado · Pendiente de pago
+          </p>
+        </div>
+      )}
+
+      {/* Delivery progress */}
+      <div className="flex items-center justify-between px-3 py-2 bg-dark-secondary/50 rounded-lg border border-gray/10">
+        <span className="text-xs text-gray">Entregados</span>
+        <span className="text-sm text-light font-medium">
+          {order.delivered_items_count || 0} / {order.items_count || 0}
+        </span>
+      </div>
+
+      {/* Items */}
+      <OrderItemsList items={order.items} />
+
+      {/* Total */}
+      <div className="flex items-center justify-between pt-3 border-t border-gray/20">
+        <span className="text-gray font-medium">Total</span>
+        <span className="text-xl font-bold text-secondary">
+          {formatCurrency(order.total)}
+        </span>
+      </div>
+
+      {/* While you wait */}
+      <WhileYouWait status={order.status} />
+
+      {/* Recommended (excluding products already in order) */}
+      <RecommendedProducts excludeProducts={orderProductNames} />
+    </>
+  );
+
   return (
     <AnimatePresence>
       {show && (
@@ -26,12 +72,13 @@ const OrderTracker = ({ order, show, onClose }) => {
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         >
+          {/* Mobile: bottom sheet */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="absolute bottom-0 left-0 right-0 max-h-[90vh] bg-dark border-t border-gray/20 rounded-t-2xl overflow-hidden flex flex-col"
+            className="md:hidden absolute bottom-0 left-0 right-0 max-h-[90vh] bg-dark border-t border-gray/20 rounded-t-2xl overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -60,35 +107,41 @@ const OrderTracker = ({ order, show, onClose }) => {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-              {/* Status */}
-              <div className="flex items-center justify-center">
-                <OrderStatusBadge status={order.status} />
+              {content}
+            </div>
+          </motion.div>
+
+          {/* Desktop: centered modal / side panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="hidden md:flex absolute inset-y-0 right-0 w-full max-w-lg flex-col bg-dark border-l border-gray/20 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray/20">
+              <div className="flex items-center gap-3">
+                <Receipt className="w-5 h-5 text-secondary" />
+                <div>
+                  <h3 className="font-bold text-light text-xl">Tu Pedido</h3>
+                  <p className="text-sm text-gray">
+                    #{order.order_number?.slice(-6)} · {order.customer_name}
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={onClose}
+                className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              {/* Delivery progress */}
-              <div className="flex items-center justify-between px-3 py-2 bg-dark-secondary/50 rounded-lg border border-gray/10">
-                <span className="text-xs text-gray">Entregados</span>
-                <span className="text-sm text-light font-medium">
-                  {order.delivered_items_count || 0} / {order.items_count || 0}
-                </span>
-              </div>
-
-              {/* Items */}
-              <OrderItemsList items={order.items} />
-
-              {/* Total */}
-              <div className="flex items-center justify-between pt-3 border-t border-gray/20">
-                <span className="text-gray font-medium">Total</span>
-                <span className="text-xl font-bold text-secondary">
-                  {formatCurrency(order.total)}
-                </span>
-              </div>
-
-              {/* While you wait */}
-              <WhileYouWait status={order.status} />
-
-              {/* Recommended */}
-              <RecommendedProducts />
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+              {content}
             </div>
           </motion.div>
         </motion.div>

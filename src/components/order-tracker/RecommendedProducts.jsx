@@ -3,14 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { Sparkles } from "lucide-react";
 import { publicOrdersService } from "@/services/publicOrders.service";
 
-const RecommendedProducts = () => {
+const RecommendedProducts = ({ excludeProducts = [] }) => {
   const { data: products } = useQuery({
     queryKey: ["popular-products"],
     queryFn: () => publicOrdersService.getPopularProducts(),
     staleTime: 5 * 60 * 1000,
   });
 
-  if (!products || products.length === 0) return null;
+  // Filtrar productos que ya están en el pedido
+  const excludeSet = new Set(excludeProducts.map((n) => n?.toLowerCase()));
+  const filtered = (products || []).filter(
+    (p) => !excludeSet.has(p.product_name?.toLowerCase())
+  );
+
+  if (filtered.length === 0) return null;
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat("es-CO", {
@@ -25,8 +31,8 @@ const RecommendedProducts = () => {
         <Sparkles className="w-4 h-4 text-secondary" />
         Recomendados
       </h4>
-      <div className="grid grid-cols-2 gap-2">
-        {products.map((product, idx) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        {filtered.map((product, idx) => (
           <div
             key={idx}
             className="bg-dark-secondary/50 border border-gray/10 rounded-lg overflow-hidden"
@@ -35,10 +41,10 @@ const RecommendedProducts = () => {
               <img
                 src={product.image_url}
                 alt={product.product_name}
-                className="w-full h-20 object-cover"
+                className="w-full h-20 md:h-24 object-cover"
               />
             ) : (
-              <div className="w-full h-20 bg-gradient-to-br from-secondary/10 to-primary/10 flex items-center justify-center">
+              <div className="w-full h-20 md:h-24 bg-gradient-to-br from-secondary/10 to-primary/10 flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-gray/20" />
               </div>
             )}

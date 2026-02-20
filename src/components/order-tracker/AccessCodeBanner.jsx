@@ -10,14 +10,12 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
   const inputRefs = useRef([]);
 
   const handleInputChange = (index, value) => {
-    // Solo permitir alfanuméricos
     const char = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(-1);
     const newCode = [...code];
     newCode[index] = char;
     setCode(newCode);
     setError("");
 
-    // Auto-focus al siguiente input
     if (char && index < 3) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -77,7 +75,6 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
     }
   };
 
-  // Auto-submit when all 4 chars entered
   useEffect(() => {
     const fullCode = code.join("");
     if (fullCode.length === 4) {
@@ -113,43 +110,46 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pt-3 pb-1 space-y-3">
+            <div className="pt-4 pb-2 space-y-3">
               <p className="text-xs text-gray text-center">
                 Ingresa el código que te dio el mesero
               </p>
 
-              {/* 4 digit inputs */}
-              <div className="flex justify-center gap-3">
-                {code.map((char, idx) => (
-                  <input
-                    key={idx}
-                    ref={(el) => (inputRefs.current[idx] = el)}
-                    type="text"
-                    maxLength={1}
-                    value={char}
-                    onChange={(e) => handleInputChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(idx, e)}
-                    onPaste={idx === 0 ? handlePaste : undefined}
-                    className="w-12 h-14 text-center text-xl font-bold bg-dark-secondary border-2 border-gray/20 rounded-xl text-light focus:border-secondary focus:outline-none transition-colors uppercase"
-                    disabled={isLoading}
-                  />
-                ))}
+              {/* Desktop: inline layout, Mobile: stacked */}
+              <div className="flex flex-col md:flex-row items-center justify-center gap-3">
+                <div className="flex justify-center gap-3">
+                  {code.map((char, idx) => (
+                    <input
+                      key={idx}
+                      ref={(el) => (inputRefs.current[idx] = el)}
+                      type="text"
+                      maxLength={1}
+                      value={char}
+                      onChange={(e) => handleInputChange(idx, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(idx, e)}
+                      onPaste={idx === 0 ? handlePaste : undefined}
+                      className="w-12 h-14 md:w-14 md:h-16 text-center text-xl md:text-2xl font-bold bg-dark-secondary border-2 border-gray/20 rounded-xl text-light focus:border-secondary focus:outline-none transition-colors uppercase"
+                      disabled={isLoading}
+                    />
+                  ))}
+                </div>
+
+                {/* Feedback inline on desktop */}
+                <div className="md:min-w-[140px]">
+                  {error && (
+                    <div className="flex items-center gap-1 text-red-400 text-xs">
+                      <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                      {error}
+                    </div>
+                  )}
+                  {isLoading && (
+                    <div className="flex items-center gap-2 text-secondary text-xs">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Verificando...
+                    </div>
+                  )}
+                </div>
               </div>
-
-              {/* Error */}
-              {error && (
-                <div className="flex items-center justify-center gap-1 text-red-400 text-xs">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  {error}
-                </div>
-              )}
-
-              {/* Loading */}
-              {isLoading && (
-                <div className="flex justify-center">
-                  <Loader2 className="w-5 h-5 animate-spin text-secondary" />
-                </div>
-              )}
             </div>
           </motion.div>
         )}
