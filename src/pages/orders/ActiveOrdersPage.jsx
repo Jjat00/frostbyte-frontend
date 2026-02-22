@@ -110,9 +110,9 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       className={`border rounded-xl p-4 ${status.bgClass} transition-all`}
     >
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <div className="flex items-center gap-2">
+      <div className="flex items-start justify-between mb-3 gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="font-bold text-light text-lg">
               #{order.order_number?.slice(-6)}
             </span>
@@ -146,7 +146,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
             </span>
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-right flex-shrink-0">
           <p className="font-bold text-light">{formatCurrency(order.total)}</p>
           {order.is_paid ? (
             <span className="text-xs text-green-400">Pagado</span>
