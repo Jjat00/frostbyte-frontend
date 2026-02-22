@@ -20,6 +20,7 @@ import {
   Banknote,
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
+import { useWebSocket } from "@/hooks";
 
 const statusConfig = {
   pending: {
@@ -246,6 +247,15 @@ const ActiveOrdersPage = () => {
   const [deliveredTab, setDeliveredTab] = useState("unpaid"); // 'paid' o 'unpaid'
   const [deliveredDate, setDeliveredDate] = useState("today"); // 'today' o 'yesterday'
 
+  // WebSocket para actualizaciones en tiempo real
+  useWebSocket("/ws/orders/", {
+    onMessage: () => {
+      queryClient.invalidateQueries({ queryKey: ["active-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["delivered-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["pending-payments"] });
+    },
+  });
+
   // Obtener pedidos activos
   const {
     data: activeOrders,
@@ -254,7 +264,7 @@ const ActiveOrdersPage = () => {
   } = useQuery({
     queryKey: ["active-orders"],
     queryFn: () => ordersService.getActiveOrders(),
-    refetchInterval: 5000, // Refrescar cada 5 segundos
+    refetchInterval: 60000, // Fallback: refrescar cada 60s (WebSocket es la fuente primaria)
     staleTime: 2000,
   });
 
@@ -267,7 +277,7 @@ const ActiveOrdersPage = () => {
     queryKey: ["delivered-orders", deliveredDate],
     queryFn: () =>
       ordersService.getOrders({ status: "delivered", date: deliveredDate }),
-    refetchInterval: 10000,
+    refetchInterval: 60000,
     staleTime: 5000,
   });
 
@@ -279,7 +289,7 @@ const ActiveOrdersPage = () => {
   } = useQuery({
     queryKey: ["pending-payments"],
     queryFn: () => ordersService.getPendingPayments(),
-    refetchInterval: 10000,
+    refetchInterval: 60000,
     staleTime: 5000,
   });
 

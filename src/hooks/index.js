@@ -7,6 +7,9 @@ export { useCategories, useCategory, useActiveCategories, categoryKeys } from '.
 // Music hooks
 export { useSongRequestsNotification } from './useSongRequestsNotification';
 
+// WebSocket hook
+export { useWebSocket } from './useWebSocket';
+
 // AI Image Generation hooks
 export { useImageGeneration, useGenerationHistory, useImageValidation } from './useImageGeneration';
 export { useImageUpload } from './useImageUpload';

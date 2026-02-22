@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useSongRequestsNotification } from '@/hooks';
+import { useSongRequestsNotification, useWebSocket } from '@/hooks';
 
 const STATUS_LABELS = {
   waiting: { label: 'Esperando', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
@@ -31,6 +31,14 @@ export default function GamesAdminPage() {
   const [selectedTable, setSelectedTable] = useState('all');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
+
+  // WebSocket para actualizaciones en tiempo real
+  useWebSocket('/ws/games/admin/', {
+    onMessage: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-games'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-game-stats'] });
+    },
+  });
 
   const handleLogout = async () => {
     await logout();
@@ -61,7 +69,7 @@ export default function GamesAdminPage() {
       }
       return await gamesService.getAdminRooms(params);
     },
-    refetchInterval: 5000, // Auto-refresh cada 5 segundos
+    refetchInterval: 60000, // Fallback: refrescar cada 60s (WebSocket es la fuente primaria)
   });
 
   // Extraer array de rooms (maneja paginación del backend)
@@ -71,7 +79,7 @@ export default function GamesAdminPage() {
   const { data: stats } = useQuery({
     queryKey: ['admin-game-stats'],
     queryFn: () => gamesService.getAdminStats(),
-    refetchInterval: 10000,
+    refetchInterval: 60000,
   });
 
   // Mutation para terminar sala

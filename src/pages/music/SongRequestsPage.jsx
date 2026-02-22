@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { musicService } from '@/services';
 import { useToast } from '@/components/ui/use-toast';
+import { useWebSocket } from '@/hooks';
 
 const statusConfig = {
   pending: {
@@ -220,11 +221,18 @@ const SongRequestsPage = () => {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState(null);
 
+  // WebSocket para actualizaciones en tiempo real
+  useWebSocket('/ws/music/', {
+    onMessage: () => {
+      queryClient.invalidateQueries({ queryKey: ['song-requests'] });
+    },
+  });
+
   // Obtener todas las solicitudes
   const { data: requestsData, isLoading, isRefetching, refetch } = useQuery({
     queryKey: ['song-requests', 'admin', statusFilter],
     queryFn: () => musicService.getAll(statusFilter ? { status: statusFilter } : {}),
-    refetchInterval: 10000, // Actualizar cada 10 segundos
+    refetchInterval: 60000, // Fallback: refrescar cada 60s (WebSocket es la fuente primaria)
   });
 
   const requests = requestsData?.results || [];
