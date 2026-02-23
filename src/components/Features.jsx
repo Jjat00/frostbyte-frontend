@@ -13,7 +13,7 @@ const Features = () => {
     {
       icon: Zap,
       title: 'ENERGÍA INSTANTÁNEA',
-      description: 'Repleto de ingredientes naturales para alimentar tu estilo de vida cyberpunk',
+      description: 'Repleto de ingredientes naturales para despertar tu energía',
       color: 'secondary',
     },
     {

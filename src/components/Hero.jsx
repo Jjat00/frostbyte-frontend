@@ -185,7 +185,7 @@ const Hero = () => {
             className="text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto"
           >
             Granizados, frappés, cocteles, shots y micheladas con amigos o en familia.
-            Bebidas heladas premium con temática cyberpunk en Cumbal, Nariño.
+            Bebidas heladas premium con un estilo único en Cumbal, Nariño.
           </motion.p>
 
           {/* Botones + redes en una fila en desktop */}

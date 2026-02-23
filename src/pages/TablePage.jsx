@@ -102,7 +102,7 @@ function TablePage() {
         <title>Frostbyte - {displayName}</title>
         <meta
           name="description"
-          content="Experimenta el futuro de las bebidas heladas. Frostbyte ofrece granizados y frappés premium con un toque cyberpunk. Sabores neón, vibras eléctricas."
+          content="Experimenta el futuro de las bebidas heladas. Frostbyte ofrece granizados y frappés premium con sabores únicos. Sabores vibrantes, experiencia única."
         />
       </Helmet>
       <div className="min-h-screen bg-dark overflow-hidden">
