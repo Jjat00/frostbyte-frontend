@@ -1,0 +1,35 @@
+# Frostbyte - Cold Beverages Bar
+
+Frostbyte is a cold beverages bar (lugar de bebidas frías) specializing in frozen drinks, cocktails, and refreshing beverages. The establishment offers:
+- **Granizados** - Shaved ice drinks with various flavors
+- **Cocteles** - Cocktails
+- **Shots** - Shot drinks
+- **Frappes** - Blended frozen beverages
+- **Sodas Italianas** - Italian sodas with syrups
+- And more refreshing drinks
+
+## Public Digital Menu
+
+The website features a public digital menu accessible at the root URL (`/`) where customers can browse all available products organized by category.
+
+### Menu Categories
+
+The digital menu displays products in the following categories:
+- Granizados (shaved ice drinks)
+- Frappes (blended frozen beverages)
+- Cocteles (cocktails)
+- Shots
+- Sodas Italianas (Italian sodas)
+- And additional categories as configured by the establishment
+
+### Features
+
+- **Product Display**: Each product shows name, description, price, and image
+- **Category Navigation**: Quick navigation to jump between categories
+- **Table Tracking**: Customers can view their table-specific orders at `/mesa/:tableNumber`
+- **Music Requests**: Customers can request songs to be played
+- **Customer Feedback**: Customers can submit feedback about their experience
+
+## Contact & Location
+
+For location and contact information, please visit the main website.
