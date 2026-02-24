@@ -48,7 +48,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-gray leading-relaxed">
-              Bar de bebidas heladas en Cumbal, Nariño. Granizados, frappés,
+              Bebidas heladas en Cumbal, Nariño. Granizados, frappés,
               cocteles, shots, micheladas y el famoso Desguayabator. El mejor
               lugar para pasar con amigos en Cumbal.
             </p>
