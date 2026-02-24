@@ -40,6 +40,7 @@ export const ENDPOINTS = {
   // AI Drink Recommender
   AI_MOOD_RECOMMEND: '/motivational/recommend/',
   AI_QUIZ_RECOMMEND: '/motivational/quiz/',
+  AI_VOICE_TRANSCRIBE: '/motivational/transcribe/',
 };
 
 export default ENDPOINTS;

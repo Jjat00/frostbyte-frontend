@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Loader2, RotateCcw, ArrowRight } from "lucide-react";
+import { Sparkles, Loader2, RotateCcw, ArrowRight, Mic, MicOff } from "lucide-react";
+import useAudioRecorder from "@/hooks/useAudioRecorder";
 import { env } from "@/config/env";
 import { ENDPOINTS } from "@/services/api/endpoints";
 
@@ -58,24 +59,63 @@ function TabSwitcher({ active, onChange }) {
   );
 }
 
-function MoodTab({ mood, onChange, onSubmit, loading }) {
+function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
+  const { isRecording, isTranscribing, elapsedSeconds, maxSeconds, startRecording, stopRecording, error: audioError } = audio;
+
+  const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
   return (
     <div className="flex flex-col gap-4">
       <p className="text-white/60 text-sm">
         Cuéntanos cómo te sientes o qué se te antoja y la IA encuentra tu bebida perfecta.
       </p>
-      <textarea
-        value={mood}
-        onChange={(e) => onChange(e.target.value.slice(0, 150))}
-        placeholder="Ej: Tengo mucho calor y quiero algo refrescante y fuerte..."
-        rows={3}
-        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 text-sm resize-none focus:outline-none focus:border-primary/60 transition-colors"
-      />
+      <div className="relative">
+        <textarea
+          value={mood}
+          onChange={(e) => onChange(e.target.value.slice(0, 150))}
+          placeholder="Ej: Tengo mucho calor y quiero algo refrescante y fuerte..."
+          rows={3}
+          disabled={isTranscribing}
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-14 text-white placeholder-white/30 text-sm resize-none focus:outline-none focus:border-primary/60 transition-colors disabled:opacity-50"
+        />
+        <button
+          type="button"
+          onClick={isRecording ? stopRecording : startRecording}
+          disabled={isTranscribing || loading}
+          className={`absolute right-3 top-3 p-2 rounded-lg transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
+            isRecording
+              ? "bg-red-500/20 border border-red-500/50 text-red-400 animate-pulse"
+              : "bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/30"
+          }`}
+          title={isRecording ? "Detener grabación" : "Grabar con micrófono"}
+        >
+          {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
+        </button>
+      </div>
+
+      {isRecording && (
+        <div className="flex items-center gap-2 text-red-400 text-xs">
+          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+          Grabando... {formatTime(elapsedSeconds)} / {formatTime(maxSeconds)}
+        </div>
+      )}
+
+      {isTranscribing && (
+        <div className="flex items-center gap-2 text-primary text-xs">
+          <Loader2 size={12} className="animate-spin" />
+          Transcribiendo audio...
+        </div>
+      )}
+
+      {audioError && (
+        <p className="text-red-400 text-xs">{audioError}</p>
+      )}
+
       <div className="flex items-center justify-between">
         <span className="text-white/30 text-xs">{mood.length}/150</span>
         <button
           onClick={onSubmit}
-          disabled={loading || mood.trim().length < 5}
+          disabled={loading || mood.trim().length < 5 || isRecording || isTranscribing}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
@@ -236,6 +276,13 @@ export default function DrinkRecommender() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const audioRecorder = useAudioRecorder();
+
+  React.useEffect(() => {
+    if (audioRecorder.transcript) {
+      setMood(audioRecorder.transcript.slice(0, 150));
+    }
+  }, [audioRecorder.transcript]);
 
   const resetResult = () => {
     setResult(null);
@@ -337,6 +384,7 @@ export default function DrinkRecommender() {
                   onChange={setMood}
                   onSubmit={handleMoodSubmit}
                   loading={loading}
+                  audio={audioRecorder}
                 />
               ) : (
                 <QuizTab
