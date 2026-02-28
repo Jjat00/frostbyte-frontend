@@ -15,13 +15,16 @@ const socialLinks = [
   { icon: TikTokIcon, href: "https://www.tiktok.com/@frostbyte.col", label: "TikTok" },
 ];
 
+// "Byte" in binary: B=01000010 y=01111001 t=01110100 e=01100101
+const BYTE_BINARY = "01000010011110010111010001100101";
+
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Dot grid wave displacement
+  // Binary grid canvas animation
   useEffect(() => {
     const canvas = canvasRef.current;
     const section = sectionRef.current;
@@ -30,11 +33,30 @@ const Hero = () => {
     const ctx = canvas.getContext("2d");
     let rafId;
     const mouse = { x: -9999, y: -9999 };
-    const SPACING = 28;
+    const COL_W = 22;
+    const ROW_H = 20;
+    const FONT_SIZE = 12;
+    const HOVER_RADIUS = 140;
+
+    // Pre-compute random phase offsets per cell (created once on resize)
+    let flickerPhases = [];
+    let cols = 0;
+    let rows = 0;
+
+    const buildGrid = () => {
+      cols = Math.ceil(canvas.width / COL_W) + 1;
+      rows = Math.ceil(canvas.height / ROW_H) + 1;
+      const total = cols * rows;
+      flickerPhases = new Float32Array(total);
+      for (let i = 0; i < total; i++) {
+        flickerPhases[i] = Math.random() * Math.PI * 2;
+      }
+    };
 
     const resize = () => {
       canvas.width = section.offsetWidth;
       canvas.height = section.offsetHeight;
+      buildGrid();
     };
     resize();
     window.addEventListener("resize", resize);
@@ -49,35 +71,77 @@ const Hero = () => {
     section.addEventListener("mousemove", handleMouseMove);
     section.addEventListener("mouseleave", handleMouseLeave);
 
+    ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const t = Date.now() * 0.003;
-      const cols = Math.ceil(canvas.width / SPACING) + 1;
-      const rows = Math.ceil(canvas.height / SPACING) + 1;
+      const t = Date.now() * 0.001; // seconds
 
       for (let col = 0; col < cols; col++) {
         for (let row = 0; row < rows; row++) {
-          const bx = col * SPACING;
-          const by = row * SPACING;
-          const dx = bx - mouse.x;
-          const dy = by - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const radius = 160;
+          const idx = col * rows + row;
+          const x = col * COL_W + COL_W / 2;
+          const y = row * ROW_H + ROW_H / 2;
 
-          let x = bx;
-          let y = by;
+          // Binary digit from "Byte"
+          const digit = BYTE_BINARY[idx % BYTE_BINARY.length];
 
-          if (dist < radius && dist > 0) {
-            const norm = dist / radius;          // 0 (close) → 1 (edge)
-            const wave = Math.sin(norm * 10 - t * 4) * (1 - norm) * 14;
-            x += (dx / dist) * wave;
-            y += (dy / dist) * wave;
+          // Flicker: each cell has its own phase, slow oscillation
+          const phase = flickerPhases[idx];
+          const flicker = 0.5 + 0.5 * Math.sin(t * 0.8 + phase);
+          // Base opacity varies between 0.06 and 0.18
+          let alpha = 0.06 + flicker * 0.12;
+
+          // Color channels (base: white with subtle tint)
+          let r = 255, g = 255, b = 255;
+
+          // Subtle color cycling per cell
+          const colorCycle = Math.sin(t * 0.5 + phase * 1.5);
+          if (colorCycle > 0.3) {
+            // Cyan tint
+            r = 180; g = 240; b = 255;
+          } else if (colorCycle < -0.3) {
+            // Magenta tint
+            r = 255; g = 180; b = 240;
           }
 
-          ctx.beginPath();
-          ctx.arc(x, y, 1, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(255,255,255,0.18)";
-          ctx.fill();
+          // Mouse hover effect
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < HOVER_RADIUS) {
+            const intensity = 1 - dist / HOVER_RADIUS;
+            const ease = intensity * intensity; // quadratic ease for smoother falloff
+
+            // Boost opacity
+            alpha = Math.min(1, alpha + ease * 0.85);
+
+            // Shift color toward magenta/cyan gradient
+            r = Math.round(r * (1 - ease) + 255 * ease);
+            g = Math.round(g * (1 - ease) + 0 * ease);
+            b = Math.round(b * (1 - ease) + 212 * ease);
+
+            // Scale effect via font size
+            const scale = 1 + ease * 0.5;
+            ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Courier New', monospace`;
+
+            // Glow (shadow)
+            ctx.shadowColor = `rgba(255, 0, 212, ${ease * 0.7})`;
+            ctx.shadowBlur = ease * 16;
+          }
+
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.fillText(digit, x, y);
+
+          // Reset font/shadow if modified
+          if (dist < HOVER_RADIUS) {
+            ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+          }
         }
       }
 
@@ -119,7 +183,7 @@ const Hero = () => {
       {/* Base gradient */}
       <div className="absolute inset-0 bg-linear-to-b from-dark via-dark-secondary to-dark" />
 
-      {/* Dot grid with wave displacement */}
+      {/* Binary grid: "Byte" encoded as 0s and 1s */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
