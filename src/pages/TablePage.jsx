@@ -15,6 +15,7 @@ import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
+import DrinkRecommender from "@/components/DrinkRecommender";
 import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
 import OrderMiniBar from "@/components/order-tracker/OrderMiniBar";
 import OrderTracker from "@/components/order-tracker/OrderTracker";
@@ -129,6 +130,7 @@ function TablePage() {
           </div>
 
           <SocialDiscountBanner />
+          <DrinkRecommender />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
