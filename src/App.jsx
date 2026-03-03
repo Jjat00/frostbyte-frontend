@@ -36,11 +36,11 @@ function App() {
         <Header />
         <main>
           <Hero />
-          <SocialDiscountBanner />
           <QuickNav />
-          <DrinkRecommender />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
+          <DrinkRecommender />
+          <SocialDiscountBanner />
           <Desguayabator />
           <SolicitarCancion />
           <FeedbackSection />

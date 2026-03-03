@@ -110,29 +110,27 @@ function TablePage() {
         <Header />
         <main>
           <Hero />
-          <QuickNav />
 
-          {/* Order Tracker: MiniBar if verified, or AccessCodeBanner */}
-          <div className="container mx-auto py-3">
-            {order ? (
-              <div className="mx-4 md:mx-0">
-                <OrderMiniBar
-                  order={order}
-                  onClick={() => setShowTracker(true)}
-                />
-              </div>
-            ) : (
-              <AccessCodeBanner
-                tableNumber={tableNum}
-                onVerified={handleVerified}
+          {/* Order Tracker: MiniBar si ya verificado, o banner de código */}
+          {order ? (
+            <div className="container mx-auto px-4 py-3">
+              <OrderMiniBar
+                order={order}
+                onClick={() => setShowTracker(true)}
               />
-            )}
-          </div>
+            </div>
+          ) : (
+            <AccessCodeBanner
+              tableNumber={tableNum}
+              onVerified={handleVerified}
+            />
+          )}
 
-          <SocialDiscountBanner />
-          <DrinkRecommender />
+          <QuickNav />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
+          <DrinkRecommender />
+          <SocialDiscountBanner />
           <Desguayabator />
           <SolicitarCancion />
           <FeedbackSection />

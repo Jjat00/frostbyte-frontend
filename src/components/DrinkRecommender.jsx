@@ -42,7 +42,7 @@ const QUIZ_QUESTIONS = [
 function TabSwitcher({ active, onChange }) {
   return (
     <div className="flex rounded-xl overflow-hidden border border-white/10 mb-6">
-      {["mood", "quiz"].map((tab) => (
+      {["quiz", "mood"].map((tab) => (
         <button
           key={tab}
           onClick={() => onChange(tab)}
@@ -52,7 +52,7 @@ function TabSwitcher({ active, onChange }) {
               : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10"
           }`}
         >
-          {tab === "mood" ? "Estado de ánimo" : "Quiz rápido"}
+          {tab === "quiz" ? "Quiz rápido" : "Cuéntanos"}
         </button>
       ))}
     </div>
@@ -67,7 +67,7 @@ function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-white/60 text-sm">
-        Cuéntanos cómo te sientes o qué se te antoja y la IA encuentra tu bebida perfecta.
+        Cuéntanos qué se te antoja y encontramos tu bebida perfecta.
       </p>
       <div className="relative">
         <textarea
@@ -157,7 +157,7 @@ function QuizTab({ answers, onChange, onSubmit, loading }) {
         className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity mt-1"
       >
         {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-        Descubrir mi bebida
+        Sorpréndeme
       </button>
     </div>
   );
@@ -270,7 +270,7 @@ function ResultCard({ result, onReset }) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function DrinkRecommender() {
-  const [tab, setTab] = useState("mood");
+  const [tab, setTab] = useState("quiz");
   const [mood, setMood] = useState("");
   const [quizAnswers, setQuizAnswers] = useState({});
   const [loading, setLoading] = useState(false);
@@ -346,9 +346,10 @@ export default function DrinkRecommender() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5 }}
-      className="px-4 py-6 max-w-xl mx-auto"
+      className="py-6 bg-dark"
     >
-      <div className="bg-dark border border-white/10 rounded-2xl p-6 shadow-lg shadow-black/40">
+      <div className="container mx-auto px-4">
+      <div className="max-w-xl mx-auto bg-dark border border-white/10 rounded-2xl p-6 shadow-lg shadow-black/40">
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-5">
           <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 border border-white/10">
@@ -358,7 +359,7 @@ export default function DrinkRecommender() {
             <h2 className="text-white font-bold text-lg leading-tight">
               ¿Qué te provoca hoy?
             </h2>
-            <p className="text-white/40 text-xs">La IA te recomienda tu bebida ideal</p>
+            <p className="text-white/40 text-xs">3 preguntas y encontramos tu bebida ideal</p>
           </div>
         </div>
 
@@ -404,6 +405,7 @@ export default function DrinkRecommender() {
         {error && !loading && (
           <p className="mt-3 text-red-400 text-sm text-center">{error}</p>
         )}
+      </div>
       </div>
     </motion.section>
   );
