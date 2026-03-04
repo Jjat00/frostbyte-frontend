@@ -1,4 +1,4 @@
-# Frostbyte Frontend
+# Frostbyte
 
 Aplicación web para gestión de negocios de bebidas preparadas (granizados, frappés, cócteles), bares y restaurantes. Incluye menú digital público, sistema de pedidos, inventario, gastos operacionales y salas de juego interactivas.
 
