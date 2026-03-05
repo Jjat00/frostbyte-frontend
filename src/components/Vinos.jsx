@@ -141,7 +141,7 @@ const Vinos = () => {
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {isLoading
             ? [...Array(2)].map((_, i) => <ProductSkeleton key={i} />)
             : products.map((product, index) => (

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import { useActiveCategories } from "@/hooks";
 
 /**
@@ -96,15 +97,23 @@ const QuickNav = () => {
       <div className="container mx-auto px-4">
 
         {/* Label */}
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 6 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="text-center text-white/40 text-xs uppercase tracking-[0.2em] font-semibold mb-5"
+          className="flex items-center justify-center gap-2 mb-5"
         >
-          Explorar carta
-        </motion.p>
+          <p className="text-white/40 text-xs uppercase tracking-[0.2em] font-semibold">
+            Explorar carta
+          </p>
+          <motion.div
+            animate={{ y: [0, 4, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ChevronDown className="w-3.5 h-3.5 text-primary/60" />
+          </motion.div>
+        </motion.div>
 
         {/* Pills */}
         <motion.div
@@ -121,11 +130,15 @@ const QuickNav = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.03 }}
+              whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleClick(section.href, section.isRoute)}
-              className="px-5 py-2 rounded-full border border-white/20 text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/60 hover:text-white hover:bg-primary/10 hover:shadow-[0_0_16px_rgba(255,0,212,0.2)]"
+              className="group relative px-5 py-2.5 rounded-full bg-white/5 border border-white/15 text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/60 hover:text-white hover:bg-primary/15 hover:shadow-[0_0_20px_rgba(255,0,212,0.25)] cursor-pointer"
             >
-              {section.name}
+              <span className="relative z-10 flex items-center gap-1.5">
+                {section.name}
+                <ChevronDown className="w-3 h-3 text-white/30 group-hover:text-primary transition-colors" />
+              </span>
             </motion.button>
           ))}
         </motion.div>
