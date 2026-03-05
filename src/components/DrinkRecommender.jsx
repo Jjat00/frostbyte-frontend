@@ -346,6 +346,7 @@ export default function DrinkRecommender() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5 }}
+      id="que-te-provoca"
       className="py-6 bg-dark"
     >
       <div className="container mx-auto px-4">

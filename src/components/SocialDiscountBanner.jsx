@@ -16,7 +16,7 @@ const STEPS = [
 
 const SocialDiscountBanner = () => {
   return (
-    <section className="py-8 bg-dark">
+    <section id="descuento-redes" className="py-8 bg-dark">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

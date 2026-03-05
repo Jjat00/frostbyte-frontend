@@ -4,7 +4,7 @@ import { Cake, PartyPopper, CreditCard, Users } from "lucide-react";
 
 const BirthdayDiscountBanner = () => {
   return (
-    <section className="py-8 bg-dark">
+    <section id="descuento-cumple" className="py-8 bg-dark">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
