@@ -59,6 +59,7 @@ const JoinRoomPage = lazy(() => import("./pages/game/JoinRoomPage"));
 const GameRoomPage = lazy(() => import("./pages/game/GameRoomPage"));
 const GamesAdminPage = lazy(() => import("./pages/game/GamesAdminPage"));
 
+const LandingPage = lazy(() => import("./pages/LandingPage"));
 const AdminRoute = lazy(() => import("./components/AdminRoute"));
 
 // Fallback de carga mínimo
@@ -100,6 +101,15 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  // Landing page pública (SaaS)
+  {
+    path: "/landing",
+    element: (
+      <Lazy>
+        <LandingPage />
+      </Lazy>
+    ),
   },
   // Mesa con tracking
   {
