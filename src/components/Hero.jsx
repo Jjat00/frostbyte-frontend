@@ -112,9 +112,22 @@ const Hero = () => {
           const dy = y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
+          // Wave distortion — displaces characters in a ripple pattern
+          let drawX = x;
+          let drawY = y;
           if (dist < HOVER_RADIUS) {
             const intensity = 1 - dist / HOVER_RADIUS;
             const ease = intensity * intensity; // quadratic ease for smoother falloff
+
+            // Ripple wave: concentric rings radiating from cursor
+            const waveFreq = 0.06;
+            const waveAmp = 8;
+            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
+
+            // Displace along the vector from mouse to character
+            const angle = Math.atan2(dy, dx);
+            drawX += Math.cos(angle) * wave;
+            drawY += Math.sin(angle) * wave;
 
             // Boost opacity
             alpha = Math.min(1, alpha + ease * 0.85);
@@ -134,7 +147,7 @@ const Hero = () => {
           }
 
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-          ctx.fillText(digit, x, y);
+          ctx.fillText(digit, drawX, drawY);
 
           // Reset font/shadow if modified
           if (dist < HOVER_RADIUS) {

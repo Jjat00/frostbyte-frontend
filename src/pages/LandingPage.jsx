@@ -110,9 +110,20 @@ const HeroSection = () => {
           const dy = y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
+          let drawX = x;
+          let drawY = y;
           if (dist < HOVER_RADIUS) {
             const intensity = 1 - dist / HOVER_RADIUS;
             const ease = intensity * intensity;
+
+            // Ripple wave distortion
+            const waveFreq = 0.06;
+            const waveAmp = 8;
+            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
+            const angle = Math.atan2(dy, dx);
+            drawX += Math.cos(angle) * wave;
+            drawY += Math.sin(angle) * wave;
+
             alpha = Math.min(1, alpha + ease * 0.85);
             r = Math.round(r * (1 - ease) + 255 * ease);
             g = Math.round(g * (1 - ease) + 0 * ease);
@@ -124,7 +135,7 @@ const HeroSection = () => {
           }
 
           ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-          ctx.fillText(digit, x, y);
+          ctx.fillText(digit, drawX, drawY);
 
           if (dist < HOVER_RADIUS) {
             ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
