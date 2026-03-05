@@ -130,10 +130,10 @@ function TablePage() {
           <QuickNav />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
+          <Desguayabator />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
-          <Desguayabator />
           <SolicitarCancion />
           <FeedbackSection />
           <FrostbytePlay />

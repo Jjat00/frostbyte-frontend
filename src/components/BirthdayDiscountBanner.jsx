@@ -30,16 +30,16 @@ const BirthdayDiscountBanner = () => {
                   </span>
                 </div>
                 <p className="text-white/80 text-sm font-semibold -mt-0.5">
-                  para cumpleaneros
+                  para cumpleañeros
                 </p>
               </div>
             </div>
 
-            {/* Descripcion */}
+            {/* Descripción */}
             <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
               <PartyPopper size={20} className="text-secondary flex-shrink-0 mt-0.5" />
               <p className="text-white/70 text-sm leading-relaxed">
-                Si hoy es tu cumpleanos, obtenes <span className="text-secondary font-bold">50% de descuento</span> en el producto que elijas. Aplica para <span className="text-secondary font-bold">un solo producto</span> de cualquier categoria.
+                Si hoy es tu cumpleaños, obtienes <span className="text-secondary font-bold">50% de descuento</span> en el producto que elijas. Aplica para <span className="text-secondary font-bold">un solo producto</span> de cualquier categoría.
               </p>
             </div>
 
@@ -61,12 +61,12 @@ const BirthdayDiscountBanner = () => {
 
             {/* Urgencia */}
             <p className="text-center text-secondary/80 text-xs font-semibold mb-3">
-              Valido unicamente el dia de tu cumpleanos
+              Válido únicamente el día de tu cumpleaños
             </p>
 
             {/* CTA */}
             <p className="text-center text-white/50 text-xs">
-              Preguntale al mesero para reclamar tu descuento
+              Pregúntale al mesero para reclamar tu descuento
             </p>
 
             {/* No acumulable */}
