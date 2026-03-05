@@ -15,6 +15,7 @@ import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
+import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
 import OrderMiniBar from "@/components/order-tracker/OrderMiniBar";
@@ -131,6 +132,7 @@ function TablePage() {
           <MenuSections />
           <DrinkRecommender />
           <SocialDiscountBanner />
+          <BirthdayDiscountBanner />
           <Desguayabator />
           <SolicitarCancion />
           <FeedbackSection />

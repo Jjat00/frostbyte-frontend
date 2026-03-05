@@ -13,6 +13,7 @@ import ScrollToCarta from "@/components/ScrollToMenu";
 import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
+import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import { env } from "@/config/env";
 
@@ -41,6 +42,7 @@ function App() {
           <MenuSections />
           <DrinkRecommender />
           <SocialDiscountBanner />
+          <BirthdayDiscountBanner />
           <Desguayabator />
           <SolicitarCancion />
           <FeedbackSection />
