@@ -90,6 +90,36 @@ export const musicService = {
     const response = await apiClient.post(ENDPOINTS.SPOTIFY_DISCONNECT);
     return response.data;
   },
+
+  async playerPause() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PAUSE);
+    return response.data;
+  },
+
+  async playerResume() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_RESUME);
+    return response.data;
+  },
+
+  async playerNext() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_NEXT);
+    return response.data;
+  },
+
+  async playerPrevious() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PREVIOUS);
+    return response.data;
+  },
+
+  async playerPlayTrack(trackUri) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PLAY_TRACK, { track_uri: trackUri });
+    return response.data;
+  },
+
+  async playerVolume(volume) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_VOLUME, { volume });
+    return response.data;
+  },
 };
 
 export default musicService;

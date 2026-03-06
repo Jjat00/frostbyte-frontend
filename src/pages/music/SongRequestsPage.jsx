@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Music,
   Clock,
   Play,
+  Pause,
   CheckCircle,
   XCircle,
   Loader2,
@@ -14,57 +15,388 @@ import {
   AlertTriangle,
   Wifi,
   WifiOff,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  Search,
+  Trash2,
 } from 'lucide-react';
 import { musicService } from '@/services';
 import { useToast } from '@/components/ui/use-toast';
 import { useWebSocket } from '@/hooks';
+
+const formatDuration = (ms) => {
+  if (!ms) return '0:00';
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
 
 const statusConfig = {
   pending: {
     label: 'Pendiente',
     icon: Clock,
     bgClass: 'bg-yellow-500/10 border-yellow-500/30',
-    textClass: 'text-yellow-400',
     badgeClass: 'bg-yellow-500/20 text-yellow-400',
   },
   queued: {
     label: 'En cola',
     icon: ListMusic,
     bgClass: 'bg-cyan-500/10 border-cyan-500/30',
-    textClass: 'text-cyan-400',
     badgeClass: 'bg-cyan-500/20 text-cyan-400',
   },
   playing: {
     label: 'Reproduciendo',
     icon: Play,
     bgClass: 'bg-blue-500/10 border-blue-500/30',
-    textClass: 'text-blue-400',
     badgeClass: 'bg-blue-500/20 text-blue-400',
   },
   completed: {
     label: 'Completada',
     icon: CheckCircle,
     bgClass: 'bg-green-500/10 border-green-500/30',
-    textClass: 'text-green-400',
     badgeClass: 'bg-green-500/20 text-green-400',
   },
   cancelled: {
     label: 'Cancelada',
     icon: XCircle,
     bgClass: 'bg-red-500/10 border-red-500/30',
-    textClass: 'text-red-400',
     badgeClass: 'bg-red-500/20 text-red-400',
   },
   failed: {
     label: 'Fallida',
     icon: AlertTriangle,
     bgClass: 'bg-orange-500/10 border-orange-500/30',
-    textClass: 'text-orange-400',
     badgeClass: 'bg-orange-500/20 text-orange-400',
   },
 };
 
-const SongRequestCard = ({ request, onUpdateStatus }) => {
+// ── Now Playing + Controls ─────────────────────────────────────────
+const NowPlayingPanel = ({ isConnected }) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [volume, setVolume] = useState(50);
+
+  const { data: nowPlaying, isLoading } = useQuery({
+    queryKey: ['now-playing'],
+    queryFn: () => musicService.getNowPlaying(),
+    enabled: isConnected,
+    refetchInterval: 3000,
+  });
+
+  const controlMutation = useMutation({
+    mutationFn: (action) => {
+      switch (action) {
+        case 'pause': return musicService.playerPause();
+        case 'resume': return musicService.playerResume();
+        case 'next': return musicService.playerNext();
+        case 'previous': return musicService.playerPrevious();
+        default: return Promise.resolve();
+      }
+    },
+    onSuccess: () => {
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ['now-playing'] }), 500);
+    },
+    onError: (err) => {
+      toast({
+        title: "Error",
+        description: err.response?.data?.error || "Error al controlar reproduccion",
+        variant: "destructive",
+        duration: 3000,
+      });
+    },
+  });
+
+  const volumeMutation = useMutation({
+    mutationFn: (vol) => musicService.playerVolume(vol),
+  });
+
+  const handleVolumeChange = (e) => {
+    const vol = parseInt(e.target.value);
+    setVolume(vol);
+    volumeMutation.mutate(vol);
+  };
+
+  if (!isConnected) {
+    return (
+      <div className="bg-dark-secondary border border-red-500/30 rounded-xl p-6 mb-6 text-center">
+        <WifiOff className="w-10 h-10 text-red-400 mx-auto mb-3" />
+        <p className="text-red-400 font-medium">Spotify no esta conectado</p>
+        <a
+          href={`${import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '')}/api/v1/spotify/auth/`}
+          className="inline-block mt-3 px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors text-sm font-medium"
+        >
+          Conectar Spotify
+        </a>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 mb-6 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const progress = nowPlaying?.duration_ms > 0
+    ? (nowPlaying.progress_ms / nowPlaying.duration_ms) * 100
+    : 0;
+
+  return (
+    <div className="bg-dark-secondary border border-primary/30 rounded-xl p-5 mb-6">
+      <p className="text-xs text-primary font-semibold uppercase tracking-wider mb-4">
+        {nowPlaying?.is_playing ? 'Sonando ahora' : 'Pausado'}
+      </p>
+
+      {nowPlaying ? (
+        <>
+          <div className="flex items-center gap-4 mb-4">
+            {nowPlaying.image && (
+              <img src={nowPlaying.image} alt={nowPlaying.name} className="w-20 h-20 rounded-lg object-cover flex-shrink-0 shadow-lg" />
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-light font-bold text-lg truncate">{nowPlaying.name}</p>
+              <p className="text-gray text-sm truncate">{nowPlaying.artists}</p>
+              <p className="text-gray/50 text-xs truncate">{nowPlaying.album}</p>
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="mb-4">
+            <div className="w-full bg-gray/20 rounded-full h-1.5">
+              <div
+                className="bg-primary h-1.5 rounded-full transition-all duration-1000"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-1 text-xs text-gray">
+              <span>{formatDuration(nowPlaying.progress_ms)}</span>
+              <span>{formatDuration(nowPlaying.duration_ms)}</span>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <button
+              onClick={() => controlMutation.mutate('previous')}
+              disabled={controlMutation.isPending}
+              className="p-2.5 text-gray hover:text-light hover:bg-gray/10 rounded-full transition-colors"
+            >
+              <SkipBack className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => controlMutation.mutate(nowPlaying.is_playing ? 'pause' : 'resume')}
+              disabled={controlMutation.isPending}
+              className="p-3 bg-primary text-dark rounded-full hover:bg-primary/80 transition-colors"
+            >
+              {controlMutation.isPending ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : nowPlaying.is_playing ? (
+                <Pause className="w-6 h-6" />
+              ) : (
+                <Play className="w-6 h-6" />
+              )}
+            </button>
+            <button
+              onClick={() => controlMutation.mutate('next')}
+              disabled={controlMutation.isPending}
+              className="p-2.5 text-gray hover:text-light hover:bg-gray/10 rounded-full transition-colors"
+            >
+              <SkipForward className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Volume */}
+          <div className="flex items-center gap-3">
+            <Volume2 className="w-4 h-4 text-gray flex-shrink-0" />
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="flex-1 h-1.5 bg-gray/20 rounded-full appearance-none cursor-pointer accent-primary"
+            />
+            <span className="text-xs text-gray w-8 text-right">{volume}%</span>
+          </div>
+        </>
+      ) : (
+        <div className="text-center py-4">
+          <Music className="w-10 h-10 text-gray/30 mx-auto mb-2" />
+          <p className="text-gray">No hay nada reproduciendose</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Spotify Queue ──────────────────────────────────────────────────
+const SpotifyQueuePanel = ({ isConnected }) => {
+  const { data: queueData, isLoading } = useQuery({
+    queryKey: ['spotify-queue'],
+    queryFn: () => musicService.getQueueStatus(),
+    enabled: isConnected,
+    refetchInterval: 10000,
+  });
+
+  const queue = queueData?.queue || [];
+
+  if (!isConnected || isLoading) return null;
+  if (queue.length === 0) return null;
+
+  return (
+    <div className="bg-dark-secondary border border-gray/20 rounded-xl p-5 mb-6">
+      <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3 flex items-center gap-2">
+        <ListMusic className="w-4 h-4" />
+        Cola de Spotify ({queue.length})
+      </h3>
+      <div className="space-y-2 max-h-60 overflow-y-auto">
+        {queue.slice(0, 10).map((track, idx) => (
+          <div key={`${track.uri}-${idx}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray/5">
+            <span className="text-xs text-gray/50 w-5 text-right flex-shrink-0">{idx + 1}</span>
+            {track.image ? (
+              <img src={track.image} alt={track.name} className="w-9 h-9 rounded object-cover flex-shrink-0" />
+            ) : (
+              <div className="w-9 h-9 rounded bg-gray/20 flex items-center justify-center flex-shrink-0">
+                <Music className="w-4 h-4 text-gray" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-light text-sm truncate">{track.name}</p>
+              <p className="text-gray text-xs truncate">{track.artists}</p>
+            </div>
+            <span className="text-xs text-gray flex-shrink-0">{formatDuration(track.duration_ms)}</span>
+          </div>
+        ))}
+        {queue.length > 10 && (
+          <p className="text-xs text-gray/50 text-center pt-1">y {queue.length - 10} mas...</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── Admin Search ───────────────────────────────────────────────────
+const AdminSearch = ({ isConnected }) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query.trim()), 500);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const { data: results, isLoading: isSearching } = useQuery({
+    queryKey: ['admin-spotify-search', debouncedQuery],
+    queryFn: () => musicService.searchSpotify(debouncedQuery),
+    enabled: debouncedQuery.length >= 2 && isConnected,
+    staleTime: 60000,
+  });
+
+  const playTrackMutation = useMutation({
+    mutationFn: (uri) => musicService.playerPlayTrack(uri),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['now-playing'] });
+      toast({ title: "Reproduciendo", duration: 2000 });
+    },
+    onError: () => {
+      toast({ title: "Error al reproducir", variant: "destructive", duration: 3000 });
+    },
+  });
+
+  const queueMutation = useMutation({
+    mutationFn: (track) => musicService.create({
+      song_name: track.name,
+      artist_name: track.artists,
+      spotify_track_uri: track.uri,
+      spotify_track_image: track.image,
+      spotify_track_duration_ms: track.duration_ms,
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['song-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['spotify-queue'] });
+      toast({ title: "Agregada a la cola", duration: 2000 });
+      setQuery('');
+      setDebouncedQuery('');
+    },
+    onError: () => {
+      toast({ title: "Error al agregar", variant: "destructive", duration: 3000 });
+    },
+  });
+
+  if (!isConnected) return null;
+
+  return (
+    <div className="bg-dark-secondary border border-gray/20 rounded-xl p-5 mb-6">
+      <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3 flex items-center gap-2">
+        <Search className="w-4 h-4" />
+        Buscar y agregar canciones
+      </h3>
+      <div className="relative mb-3">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-full bg-dark border border-gray/30 rounded-lg pl-10 pr-4 py-2.5 text-light text-sm focus:outline-none focus:border-primary transition-colors placeholder:text-gray/50"
+          placeholder="Buscar cancion o artista..."
+        />
+      </div>
+      {isSearching && (
+        <div className="flex items-center justify-center py-4">
+          <Loader2 className="w-5 h-5 animate-spin text-primary" />
+        </div>
+      )}
+      {results?.length > 0 && (
+        <div className="space-y-1.5 max-h-64 overflow-y-auto">
+          {results.map((track) => (
+            <div key={track.uri} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray/5 group">
+              {track.image ? (
+                <img src={track.image} alt={track.name} className="w-10 h-10 rounded object-cover flex-shrink-0" />
+              ) : (
+                <div className="w-10 h-10 rounded bg-gray/20 flex items-center justify-center flex-shrink-0">
+                  <Music className="w-4 h-4 text-gray" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-light text-sm truncate">{track.name}</p>
+                <p className="text-gray text-xs truncate">{track.artists}</p>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <button
+                  onClick={() => playTrackMutation.mutate(track.uri)}
+                  disabled={playTrackMutation.isPending}
+                  className="p-1.5 text-primary hover:bg-primary/20 rounded-full transition-colors"
+                  title="Reproducir ahora"
+                >
+                  <Play className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => queueMutation.mutate(track)}
+                  disabled={queueMutation.isPending}
+                  className="p-1.5 text-secondary hover:bg-secondary/20 rounded-full transition-colors"
+                  title="Agregar a la cola"
+                >
+                  <ListMusic className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {debouncedQuery.length >= 2 && !isSearching && results?.length === 0 && (
+        <p className="text-gray text-sm text-center py-3">Sin resultados</p>
+      )}
+    </div>
+  );
+};
+
+// ── Song Request Card ──────────────────────────────────────────────
+const SongRequestCard = ({ request, onUpdateStatus, onPlayNow, onDelete }) => {
   const status = statusConfig[request.status] || statusConfig.pending;
   const StatusIcon = status.icon;
   const { toast } = useToast();
@@ -83,18 +415,8 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
   const handleStatusChange = async (newStatus) => {
     try {
       await onUpdateStatus(request.id, newStatus);
-      toast({
-        title: "Estado actualizado",
-        description: `La solicitud ahora esta ${statusConfig[newStatus].label.toLowerCase()}`,
-        duration: 3000,
-      });
     } catch {
-      toast({
-        title: "Error",
-        description: "No se pudo actualizar el estado",
-        variant: "destructive",
-        duration: 3000,
-      });
+      toast({ title: "Error al actualizar", variant: "destructive", duration: 3000 });
     }
   };
 
@@ -103,105 +425,91 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-dark-secondary border-2 ${status.bgClass} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300`}
+      className={`bg-dark-secondary border-2 ${status.bgClass} rounded-xl p-4 hover:shadow-lg transition-all duration-300`}
     >
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-        <div className="flex items-start gap-3 flex-1">
-          {request.spotify_track_image ? (
-            <img
-              src={request.spotify_track_image}
-              alt={request.song_name}
-              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-            />
-          ) : (
-            <div className={`w-12 h-12 flex-shrink-0 rounded-lg ${status.badgeClass} flex items-center justify-center`}>
-              <Music className="w-6 h-6" />
-            </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <h3 className="text-base sm:text-lg font-bold text-light break-words">{request.song_name}</h3>
-            <p className="text-gray text-sm break-words">{request.artist_name}</p>
-            {request.spotify_track_uri && (
-              <p className="text-gray/50 text-xs mt-1 font-mono truncate">{request.spotify_track_uri}</p>
-            )}
+      <div className="flex items-start gap-3 mb-3">
+        {request.spotify_track_image ? (
+          <img src={request.spotify_track_image} alt={request.song_name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+        ) : (
+          <div className={`w-12 h-12 flex-shrink-0 rounded-lg ${status.badgeClass} flex items-center justify-center`}>
+            <Music className="w-6 h-6" />
           </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-bold text-light truncate">{request.song_name}</h3>
+          <p className="text-gray text-xs truncate">{request.artist_name}</p>
         </div>
-
-        <div className={`px-3 py-1 rounded-full text-xs font-medium ${status.badgeClass} flex items-center gap-1.5 self-start flex-shrink-0 whitespace-nowrap`}>
-          <StatusIcon className="w-3.5 h-3.5 flex-shrink-0" />
+        <div className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.badgeClass} flex items-center gap-1 flex-shrink-0`}>
+          <StatusIcon className="w-3 h-3" />
           {status.label}
         </div>
       </div>
 
-      {request.notes && (
-        <p className="text-gray text-sm mb-4 italic break-words">"{request.notes}"</p>
-      )}
-
-      <div className="flex flex-wrap items-center gap-3 text-xs text-gray mb-4">
-        <div className="flex items-center gap-1.5">
-          <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-          <span>{formatDate(request.created_at)}</span>
-        </div>
+      <div className="flex items-center gap-2 text-xs text-gray mb-3">
+        <Calendar className="w-3 h-3" />
+        <span>{formatDate(request.created_at)}</span>
         {request.played_at && (
-          <div className="flex items-center gap-1.5">
-            <Play className="w-3.5 h-3.5 flex-shrink-0" />
-            <span>Reproducida: {formatDate(request.played_at)}</span>
-          </div>
+          <>
+            <Play className="w-3 h-3 ml-2" />
+            <span>{formatDate(request.played_at)}</span>
+          </>
         )}
       </div>
 
-      {/* Acciones */}
-      <div className="flex flex-col sm:flex-row gap-2">
+      {/* Actions */}
+      <div className="flex flex-wrap gap-1.5">
+        {request.spotify_track_uri && (request.status === 'pending' || request.status === 'queued' || request.status === 'failed') && (
+          <button
+            onClick={() => onPlayNow(request.spotify_track_uri)}
+            className="px-3 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-lg hover:bg-primary/30 transition-colors text-xs font-medium flex items-center gap-1.5"
+          >
+            <Play className="w-3.5 h-3.5" />
+            Reproducir ahora
+          </button>
+        )}
+
         {(request.status === 'pending' || request.status === 'queued' || request.status === 'failed') && (
-          <>
-            <button
-              onClick={() => handleStatusChange('playing')}
-              className="flex-1 px-3 sm:px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
-            >
-              <Play className="w-4 h-4 flex-shrink-0" />
-              <span>Reproducir</span>
-            </button>
-            <button
-              onClick={() => handleStatusChange('cancelled')}
-              className="px-3 sm:px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
-            >
-              <XCircle className="w-4 h-4 flex-shrink-0" />
-              <span>Cancelar</span>
-            </button>
-          </>
+          <button
+            onClick={() => handleStatusChange('cancelled')}
+            className="px-3 py-1.5 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors text-xs font-medium flex items-center gap-1.5"
+          >
+            <XCircle className="w-3.5 h-3.5" />
+            Cancelar
+          </button>
         )}
 
         {request.status === 'playing' && (
           <button
             onClick={() => handleStatusChange('completed')}
-            className="flex-1 px-3 sm:px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+            className="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors text-xs font-medium flex items-center gap-1.5"
           >
-            <CheckCircle className="w-4 h-4 flex-shrink-0" />
-            <span className="whitespace-nowrap">Marcar como Completada</span>
+            <CheckCircle className="w-3.5 h-3.5" />
+            Completada
           </button>
         )}
 
-        {request.status === 'completed' && (
-          <p className="text-sm text-gray italic flex-1">Esta cancion ya fue reproducida</p>
+        {request.status === 'cancelled' && (
+          <button
+            onClick={() => handleStatusChange('pending')}
+            className="px-3 py-1.5 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors text-xs font-medium flex items-center gap-1.5"
+          >
+            <Clock className="w-3.5 h-3.5" />
+            Reactivar
+          </button>
         )}
 
-        {request.status === 'cancelled' && (
-          <>
-            <p className="text-sm text-gray italic flex-1">Esta solicitud fue cancelada</p>
-            <button
-              onClick={() => handleStatusChange('pending')}
-              className="px-3 sm:px-4 py-2 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
-            >
-              <Clock className="w-4 h-4 flex-shrink-0" />
-              <span>Pendiente</span>
-            </button>
-          </>
-        )}
+        <button
+          onClick={() => onDelete(request.id)}
+          className="px-3 py-1.5 bg-gray/10 text-gray border border-gray/20 rounded-lg hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-colors text-xs font-medium flex items-center gap-1.5 ml-auto"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </motion.div>
   );
 };
 
+// ── Main Page ──────────────────────────────────────────────────────
 const SongRequestsPage = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -210,6 +518,8 @@ const SongRequestsPage = () => {
   useWebSocket('/ws/music/', {
     onMessage: () => {
       queryClient.invalidateQueries({ queryKey: ['song-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['now-playing'] });
+      queryClient.invalidateQueries({ queryKey: ['spotify-queue'] });
     },
   });
 
@@ -219,24 +529,39 @@ const SongRequestsPage = () => {
     refetchInterval: 30000,
   });
 
+  const isConnected = spotifyStatus?.connected === true;
+
   const { data: requestsData, isLoading, isRefetching, refetch } = useQuery({
     queryKey: ['song-requests', 'admin', statusFilter],
     queryFn: () => musicService.getAll(statusFilter ? { status: statusFilter } : {}),
-    refetchInterval: 60000,
+    refetchInterval: 30000,
   });
 
   const requests = requestsData?.results || [];
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }) => musicService.updateStatus(id, status),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['song-requests'] }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => musicService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['song-requests'] });
+      toast({ title: "Solicitud eliminada", duration: 2000 });
     },
   });
 
-  const handleUpdateStatus = async (id, status) => {
-    await updateStatusMutation.mutateAsync({ id, status });
-  };
+  const playTrackMutation = useMutation({
+    mutationFn: (uri) => musicService.playerPlayTrack(uri),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['now-playing'] });
+      toast({ title: "Reproduciendo", duration: 2000 });
+    },
+    onError: () => {
+      toast({ title: "Error al reproducir", variant: "destructive", duration: 3000 });
+    },
+  });
 
   const statusCounts = {
     all: requests.length,
@@ -251,8 +576,6 @@ const SongRequestsPage = () => {
   const filteredRequests = statusFilter
     ? requests.filter(r => r.status === statusFilter)
     : requests.filter(r => r.status !== 'completed');
-
-  const isConnected = spotifyStatus?.connected === true;
 
   const filterButtons = [
     { key: null, label: 'Activas', count: statusCounts.all, activeClass: 'bg-primary/20 text-primary border-primary/30' },
@@ -273,10 +596,8 @@ const SongRequestsPage = () => {
               <Music className="w-6 h-6 sm:w-8 sm:h-8 text-primary flex-shrink-0" />
               <span className="truncate">Solicitudes de Canciones</span>
             </h1>
-            <p className="text-gray text-sm sm:text-base">Gestiona las solicitudes de canciones de los clientes</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Indicador Spotify */}
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
               isConnected
                 ? 'bg-green-500/20 text-green-400 border border-green-500/30'
@@ -289,58 +610,72 @@ const SongRequestsPage = () => {
               onClick={() => refetch()}
               disabled={isRefetching}
               className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
-              title="Actualizar"
             >
               <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
-
-        {/* Filtros */}
-        <div className="flex flex-wrap gap-2">
-          {filterButtons.map((btn) => (
-            <button
-              key={btn.key ?? 'all'}
-              onClick={() => setStatusFilter(btn.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
-                statusFilter === btn.key
-                  ? btn.activeClass
-                  : 'bg-dark-secondary text-gray border-gray/20 hover:border-gray/40'
-              }`}
-            >
-              {btn.label} ({btn.count})
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* Lista */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      {/* Two-column layout: Player | Requests */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left: Player + Queue + Search */}
+        <div className="lg:col-span-1 space-y-0">
+          <NowPlayingPanel isConnected={isConnected} />
+          <SpotifyQueuePanel isConnected={isConnected} />
+          <AdminSearch isConnected={isConnected} />
         </div>
-      ) : filteredRequests.length === 0 ? (
-        <div className="text-center py-20">
-          <Music className="w-16 h-16 text-gray/50 mx-auto mb-4" />
-          <p className="text-gray text-lg">
-            {statusFilter
-              ? `No hay solicitudes con estado "${statusConfig[statusFilter]?.label}"`
-              : 'No hay solicitudes pendientes'}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <AnimatePresence>
-            {filteredRequests.map((request) => (
-              <SongRequestCard
-                key={request.id}
-                request={request}
-                onUpdateStatus={handleUpdateStatus}
-              />
+
+        {/* Right: Song Requests */}
+        <div className="lg:col-span-2">
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {filterButtons.map((btn) => (
+              <button
+                key={btn.key ?? 'all'}
+                onClick={() => setStatusFilter(btn.key)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                  statusFilter === btn.key
+                    ? btn.activeClass
+                    : 'bg-dark-secondary text-gray border-gray/20 hover:border-gray/40'
+                }`}
+              >
+                {btn.label} ({btn.count})
+              </button>
             ))}
-          </AnimatePresence>
+          </div>
+
+          {/* List */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : filteredRequests.length === 0 ? (
+            <div className="text-center py-20">
+              <Music className="w-16 h-16 text-gray/50 mx-auto mb-4" />
+              <p className="text-gray text-lg">
+                {statusFilter
+                  ? `No hay solicitudes "${statusConfig[statusFilter]?.label}"`
+                  : 'No hay solicitudes pendientes'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3">
+              <AnimatePresence>
+                {filteredRequests.map((request) => (
+                  <SongRequestCard
+                    key={request.id}
+                    request={request}
+                    onUpdateStatus={(id, s) => updateStatusMutation.mutateAsync({ id, status: s })}
+                    onPlayNow={(uri) => playTrackMutation.mutate(uri)}
+                    onDelete={(id) => deleteMutation.mutate(id)}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
