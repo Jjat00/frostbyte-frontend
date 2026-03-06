@@ -32,6 +32,14 @@ export const ENDPOINTS = {
   // Song Requests
   SONG_REQUESTS: '/song-requests/',
   SONG_REQUEST_DETAIL: (id) => `/song-requests/${id}/`,
+  SONG_REQUESTS_SEARCH: '/song-requests/search/',
+  SONG_REQUESTS_NOW_PLAYING: '/song-requests/now-playing/',
+  SONG_REQUESTS_QUEUE_STATUS: '/song-requests/queue-status/',
+  SONG_REQUESTS_SPOTIFY_STATUS: '/song-requests/spotify-status/',
+
+  // Spotify Auth
+  SPOTIFY_AUTH: '/spotify/auth/',
+  SPOTIFY_DISCONNECT: '/spotify/disconnect/',
 
   // Feedback
   FEEDBACK: '/feedback/',

@@ -1,85 +1,169 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Music, Send, Loader2, Play, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Music, Search, Loader2, Play, Clock, X, ListMusic, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { musicService } from '@/services';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+const formatDuration = (ms) => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const SpotifyTrackCard = ({ track, onSelect, isLoading }) => (
+  <motion.button
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    onClick={() => onSelect(track)}
+    disabled={isLoading}
+    className="w-full flex items-center gap-3 p-3 bg-dark-secondary/80 border border-gray/20 rounded-xl hover:border-primary/50 hover:bg-dark-secondary transition-all duration-200 text-left disabled:opacity-50"
+  >
+    {track.image ? (
+      <img
+        src={track.image}
+        alt={track.name}
+        className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+      />
+    ) : (
+      <div className="w-12 h-12 rounded-lg bg-gray/20 flex items-center justify-center flex-shrink-0">
+        <Music className="w-5 h-5 text-gray" />
+      </div>
+    )}
+    <div className="flex-1 min-w-0">
+      <p className="text-light font-medium text-sm truncate">{track.name}</p>
+      <p className="text-gray text-xs truncate">{track.artists}</p>
+    </div>
+    <div className="flex items-center gap-2 flex-shrink-0">
+      <span className="text-gray text-xs">{formatDuration(track.duration_ms)}</span>
+      <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center">
+        <Plus className="w-4 h-4" />
+      </div>
+    </div>
+  </motion.button>
+);
+
+const NowPlayingBar = ({ data }) => {
+  if (!data) return null;
+
+  const progress = data.duration_ms > 0 ? (data.progress_ms / data.duration_ms) * 100 : 0;
+
+  return (
+    <div className="bg-dark border border-primary/30 rounded-xl p-4 mb-6">
+      <p className="text-xs text-primary font-semibold uppercase tracking-wider mb-3">Sonando ahora</p>
+      <div className="flex items-center gap-3">
+        {data.image && (
+          <img src={data.image} alt={data.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="text-light font-bold text-sm truncate">{data.name}</p>
+          <p className="text-gray text-xs truncate">{data.artists}</p>
+          <div className="mt-2 w-full bg-gray/20 rounded-full h-1">
+            <div className="bg-primary h-1 rounded-full transition-all duration-1000" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const SolicitarCancion = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [formData, setFormData] = useState({
-    song_name: '',
-    artist_name: '',
-    notes: '',
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // Debounce de búsqueda
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery.trim());
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Click fuera cierra resultados
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Estado de conexión Spotify
+  const { data: spotifyStatus } = useQuery({
+    queryKey: ['spotify-status'],
+    queryFn: () => musicService.getSpotifyStatus(),
+    refetchInterval: 30000,
   });
 
-  // Obtener lista de solicitudes pendientes y reproduciendo
+  const isSpotifyConnected = spotifyStatus?.connected === true;
+
+  // Búsqueda en Spotify
+  const { data: searchResults, isLoading: isSearching } = useQuery({
+    queryKey: ['spotify-search', debouncedQuery],
+    queryFn: () => musicService.searchSpotify(debouncedQuery),
+    enabled: debouncedQuery.length >= 2 && isSpotifyConnected,
+    staleTime: 60000,
+  });
+
+  // Now playing
+  const { data: nowPlaying } = useQuery({
+    queryKey: ['now-playing'],
+    queryFn: () => musicService.getNowPlaying(),
+    enabled: isSpotifyConnected,
+    refetchInterval: 10000,
+  });
+
+  // Solicitudes en cola
   const { data: requestsData, isLoading: requestsLoading } = useQuery({
     queryKey: ['song-requests'],
     queryFn: () => musicService.getAll(),
-    refetchInterval: 5000, // Actualizar cada 5 segundos
+    refetchInterval: 5000,
   });
 
-  // Filtrar solo pendientes y reproduciendo (excluir completadas y canceladas)
   const requests = (requestsData?.results || []).filter(
-    (request) => request.status === 'pending' || request.status === 'playing'
+    (request) => request.status === 'pending' || request.status === 'queued' || request.status === 'playing'
   );
 
-  // Mutación para crear solicitud
+  // Crear solicitud
   const createMutation = useMutation({
     mutationFn: (data) => musicService.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['song-requests']);
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['song-requests'] });
       toast({
-        title: "¡Solicitud enviada! 🎵",
-        description: `Hemos recibido tu solicitud para "${formData.song_name}" de ${formData.artist_name}. ¡La reproduciremos pronto!`,
+        title: "Cancion agregada a la cola",
+        description: `"${variables.song_name}" de ${variables.artist_name} se reproducira pronto.`,
         duration: 5000,
       });
-      // Limpiar el formulario
-      setFormData({
-        song_name: '',
-        artist_name: '',
-        notes: '',
-      });
+      setSearchQuery('');
+      setDebouncedQuery('');
+      setShowResults(false);
     },
     onError: (error) => {
-      console.error('Error al enviar solicitud:', error);
+      const msg = error.response?.data?.error || "Error al enviar tu solicitud. Intenta de nuevo.";
       toast({
-        title: "Error al enviar solicitud",
-        description: error.response?.data?.detail || "Ocurrió un error al enviar tu solicitud. Por favor intenta de nuevo.",
+        title: "Error",
+        description: msg,
         variant: "destructive",
         duration: 4000,
       });
     },
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Validar que los campos requeridos estén llenos
-    if (!formData.song_name.trim() || !formData.artist_name.trim()) {
-      toast({
-        title: "Campos requeridos",
-        description: "Por favor completa el nombre de la canción y el artista",
-        variant: "destructive",
-        duration: 3000,
-      });
-      return;
-    }
-
+  const handleSelectTrack = (track) => {
     createMutation.mutate({
-      song_name: formData.song_name.trim(),
-      artist_name: formData.artist_name.trim(),
-      notes: formData.notes.trim() || '',
+      song_name: track.name,
+      artist_name: track.artists,
+      spotify_track_uri: track.uri,
+      spotify_track_image: track.image,
+      spotify_track_duration_ms: track.duration_ms,
     });
   };
 
@@ -89,6 +173,14 @@ const SolicitarCancion = () => {
         <span className="px-3 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary border border-primary/30 flex items-center gap-1">
           <Play className="w-3 h-3" />
           Reproduciendo
+        </span>
+      );
+    }
+    if (status === 'queued') {
+      return (
+        <span className="px-3 py-1 rounded-full text-xs font-medium bg-secondary/20 text-secondary border border-secondary/30 flex items-center gap-1">
+          <ListMusic className="w-3 h-3" />
+          En cola
         </span>
       );
     }
@@ -117,11 +209,11 @@ const SolicitarCancion = () => {
         >
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              ¿QUIERES UNA CANCIÓN?
+              PIDE TU CANCION
             </span>
           </h2>
           <p className="text-gray text-lg max-w-2xl mx-auto">
-            Pónla y nosotros te la reproducimos 🎵
+            Busca tu cancion favorita y se agregara automaticamente a la cola
           </p>
         </motion.div>
 
@@ -132,108 +224,109 @@ const SolicitarCancion = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="bg-dark border border-gray/20 rounded-2xl p-8 md:p-10 relative overflow-hidden">
-            {/* Efectos de fondo */}
+          <div className="bg-dark border border-gray/20 rounded-2xl p-6 md:p-8 relative overflow-hidden">
             <div className="absolute inset-0 opacity-5">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary rounded-full filter blur-[80px]"></div>
             </div>
 
             <div className="relative z-10">
-              {/* Icono decorativo */}
+              {/* Now Playing */}
+              {isSpotifyConnected && nowPlaying && <NowPlayingBar data={nowPlaying} />}
+
+              {/* Icono */}
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
                   <Music className="text-dark" size={40} />
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="song_name" className="block text-light font-semibold mb-2">
-                    Nombre de la Canción *
-                  </label>
-                  <input
-                    type="text"
-                    id="song_name"
-                    name="song_name"
-                    value={formData.song_name}
-                    onChange={handleChange}
-                    className="w-full bg-dark-secondary border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary transition-colors duration-300"
-                    placeholder="Ej: Bohemian Rhapsody"
-                    required
-                    disabled={createMutation.isPending}
-                  />
+              {!isSpotifyConnected ? (
+                <div className="text-center py-8">
+                  <p className="text-gray text-lg mb-2">El sistema de musica no esta disponible en este momento</p>
+                  <p className="text-gray/60 text-sm">Pregunta al personal para solicitar una cancion</p>
                 </div>
+              ) : (
+                <>
+                  {/* Buscador */}
+                  <div ref={searchRef} className="relative">
+                    <div className="relative">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray" />
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setShowResults(true);
+                        }}
+                        onFocus={() => setShowResults(true)}
+                        className="w-full bg-dark-secondary border border-gray/30 rounded-xl pl-12 pr-10 py-4 text-light text-lg focus:outline-none focus:border-primary transition-colors duration-300 placeholder:text-gray/50"
+                        placeholder="Busca una cancion o artista..."
+                        disabled={createMutation.isPending}
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => {
+                            setSearchQuery('');
+                            setDebouncedQuery('');
+                            setShowResults(false);
+                            inputRef.current?.focus();
+                          }}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray hover:text-light rounded-full"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
 
-                <div>
-                  <label htmlFor="artist_name" className="block text-light font-semibold mb-2">
-                    Artista *
-                  </label>
-                  <input
-                    type="text"
-                    id="artist_name"
-                    name="artist_name"
-                    value={formData.artist_name}
-                    onChange={handleChange}
-                    className="w-full bg-dark-secondary border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary transition-colors duration-300"
-                    placeholder="Ej: Queen"
-                    required
-                    disabled={createMutation.isPending}
-                  />
-                </div>
+                    {/* Resultados de búsqueda */}
+                    <AnimatePresence>
+                      {showResults && debouncedQuery.length >= 2 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="mt-3 max-h-80 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray/30 scrollbar-track-transparent"
+                        >
+                          {isSearching ? (
+                            <div className="flex items-center justify-center py-8">
+                              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                              <span className="ml-2 text-gray">Buscando...</span>
+                            </div>
+                          ) : searchResults?.length > 0 ? (
+                            searchResults.map((track) => (
+                              <SpotifyTrackCard
+                                key={track.uri}
+                                track={track}
+                                onSelect={handleSelectTrack}
+                                isLoading={createMutation.isPending}
+                              />
+                            ))
+                          ) : (
+                            <div className="text-center py-8 text-gray">
+                              <Music className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                              <p>No se encontraron resultados</p>
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
 
-                <div>
-                  <label htmlFor="notes" className="block text-light font-semibold mb-2">
-                    Notas adicionales (opcional)
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleChange}
-                    rows="3"
-                    className="w-full bg-dark-secondary border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary transition-colors duration-300 resize-none"
-                    placeholder="Alguna información adicional sobre tu solicitud..."
-                    disabled={createMutation.isPending}
-                  ></textarea>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={createMutation.isPending}
-                  className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold text-lg py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {createMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Enviando...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5 mr-2" />
-                      Solicitar Canción
-                    </>
+                  {createMutation.isPending && (
+                    <div className="flex items-center justify-center gap-2 mt-4 text-primary">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span className="text-sm font-medium">Agregando a la cola...</span>
+                    </div>
                   )}
-                </Button>
-              </form>
-
-              {/* Mensaje informativo */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                className="mt-6 text-center"
-              >
-                <p className="text-gray text-sm">
-                  Tu solicitud será procesada y la canción se reproducirá lo antes posible 🎶
-                </p>
-              </motion.div>
+                </>
+              )}
             </div>
           </div>
         </motion.div>
 
-        {/* Lista de solicitudes */}
+        {/* Cola de solicitudes */}
         {requests.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -248,7 +341,7 @@ const SolicitarCancion = () => {
                   Solicitudes en Cola
                 </span>
               </h3>
-              
+
               {requestsLoading ? (
                 <div className="text-center py-8">
                   <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
@@ -264,32 +357,33 @@ const SolicitarCancion = () => {
                         exit={{ opacity: 0, x: 20 }}
                         className="bg-dark-secondary border border-gray/20 rounded-xl p-4 hover:border-primary/50 transition-all duration-300"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                          <div className="flex items-start gap-3 flex-1">
-                            <Music className="text-primary flex-shrink-0 mt-1" size={20} />
-                            <div className="flex-1">
-                              <h4 className="text-light font-semibold text-base sm:text-lg break-words">
-                                {request.song_name}
-                              </h4>
-                              <p className="text-gray text-sm break-words">
-                                {request.artist_name}
-                              </p>
+                        <div className="flex items-center gap-3">
+                          {request.spotify_track_image ? (
+                            <img
+                              src={request.spotify_track_image}
+                              alt={request.song_name}
+                              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-lg bg-gray/20 flex items-center justify-center flex-shrink-0">
+                              <Music className="w-5 h-5 text-gray" />
                             </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-light font-semibold text-sm truncate">
+                              {request.song_name}
+                            </h4>
+                            <p className="text-gray text-xs truncate">
+                              {request.artist_name}
+                            </p>
                           </div>
-                          <div className="flex items-center self-start flex-shrink-0">
+                          <div className="flex-shrink-0">
                             {getStatusBadge(request.status)}
                           </div>
                         </div>
                       </motion.div>
                     ))}
                   </AnimatePresence>
-                  
-                  {requests.length === 0 && (
-                    <div className="text-center py-8 text-gray">
-                      <Music className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                      <p>No hay solicitudes en cola</p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -301,4 +395,3 @@ const SolicitarCancion = () => {
 };
 
 export default SolicitarCancion;
-

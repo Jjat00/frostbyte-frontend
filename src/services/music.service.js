@@ -58,6 +58,38 @@ export const musicService = {
     const response = await apiClient.delete(ENDPOINTS.SONG_REQUEST_DETAIL(id));
     return response.data;
   },
+
+  async searchSpotify(query) {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_SEARCH, {
+      params: { q: query },
+    });
+    return response.data;
+  },
+
+  async getNowPlaying() {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_NOW_PLAYING);
+    return response.data;
+  },
+
+  async getQueueStatus() {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_QUEUE_STATUS);
+    return response.data;
+  },
+
+  async getSpotifyStatus() {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_SPOTIFY_STATUS);
+    return response.data;
+  },
+
+  async getSpotifyAuthUrl() {
+    const response = await apiClient.get(ENDPOINTS.SPOTIFY_AUTH);
+    return response.data;
+  },
+
+  async disconnectSpotify() {
+    const response = await apiClient.post(ENDPOINTS.SPOTIFY_DISCONNECT);
+    return response.data;
+  },
 };
 
 export default musicService;

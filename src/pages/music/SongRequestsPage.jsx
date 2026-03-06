@@ -10,7 +10,10 @@ import {
   Loader2,
   RefreshCw,
   Calendar,
-  User,
+  ListMusic,
+  AlertTriangle,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
 import { musicService } from '@/services';
 import { useToast } from '@/components/ui/use-toast';
@@ -19,15 +22,20 @@ import { useWebSocket } from '@/hooks';
 const statusConfig = {
   pending: {
     label: 'Pendiente',
-    color: 'yellow',
     icon: Clock,
     bgClass: 'bg-yellow-500/10 border-yellow-500/30',
     textClass: 'text-yellow-400',
     badgeClass: 'bg-yellow-500/20 text-yellow-400',
   },
+  queued: {
+    label: 'En cola',
+    icon: ListMusic,
+    bgClass: 'bg-cyan-500/10 border-cyan-500/30',
+    textClass: 'text-cyan-400',
+    badgeClass: 'bg-cyan-500/20 text-cyan-400',
+  },
   playing: {
     label: 'Reproduciendo',
-    color: 'blue',
     icon: Play,
     bgClass: 'bg-blue-500/10 border-blue-500/30',
     textClass: 'text-blue-400',
@@ -35,7 +43,6 @@ const statusConfig = {
   },
   completed: {
     label: 'Completada',
-    color: 'green',
     icon: CheckCircle,
     bgClass: 'bg-green-500/10 border-green-500/30',
     textClass: 'text-green-400',
@@ -43,11 +50,17 @@ const statusConfig = {
   },
   cancelled: {
     label: 'Cancelada',
-    color: 'red',
     icon: XCircle,
     bgClass: 'bg-red-500/10 border-red-500/30',
     textClass: 'text-red-400',
     badgeClass: 'bg-red-500/20 text-red-400',
+  },
+  failed: {
+    label: 'Fallida',
+    icon: AlertTriangle,
+    bgClass: 'bg-orange-500/10 border-orange-500/30',
+    textClass: 'text-orange-400',
+    badgeClass: 'bg-orange-500/20 text-orange-400',
   },
 };
 
@@ -55,15 +68,6 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
   const status = statusConfig[request.status] || statusConfig.pending;
   const StatusIcon = status.icon;
   const { toast } = useToast();
-
-  const formatTime = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('es-CO', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -76,27 +80,15 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
     });
   };
 
-  const getTimeSince = (dateString) => {
-    if (!dateString) return 'N/A';
-    const now = new Date();
-    const created = new Date(dateString);
-    const diffMinutes = Math.floor((now - created) / 60000);
-    
-    if (diffMinutes < 1) return 'Ahora';
-    if (diffMinutes < 60) return `${diffMinutes} min`;
-    const hours = Math.floor(diffMinutes / 60);
-    return `${hours}h ${diffMinutes % 60}m`;
-  };
-
   const handleStatusChange = async (newStatus) => {
     try {
       await onUpdateStatus(request.id, newStatus);
       toast({
         title: "Estado actualizado",
-        description: `La solicitud ahora está ${statusConfig[newStatus].label.toLowerCase()}`,
+        description: `La solicitud ahora esta ${statusConfig[newStatus].label.toLowerCase()}`,
         duration: 3000,
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "No se pudo actualizar el estado",
@@ -113,18 +105,28 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
       exit={{ opacity: 0, y: -20 }}
       className={`bg-dark-secondary border-2 ${status.bgClass} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300`}
     >
-      {/* Header con badge de estado */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div className="flex items-start gap-3 flex-1">
-          <div className={`w-10 h-10 flex-shrink-0 rounded-lg ${status.badgeClass} flex items-center justify-center`}>
-            <Music className="w-5 h-5" />
-          </div>
-          <div className="flex-1">
+          {request.spotify_track_image ? (
+            <img
+              src={request.spotify_track_image}
+              alt={request.song_name}
+              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+            />
+          ) : (
+            <div className={`w-12 h-12 flex-shrink-0 rounded-lg ${status.badgeClass} flex items-center justify-center`}>
+              <Music className="w-6 h-6" />
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
             <h3 className="text-base sm:text-lg font-bold text-light break-words">{request.song_name}</h3>
             <p className="text-gray text-sm break-words">{request.artist_name}</p>
+            {request.spotify_track_uri && (
+              <p className="text-gray/50 text-xs mt-1 font-mono truncate">{request.spotify_track_uri}</p>
+            )}
           </div>
         </div>
-        
+
         <div className={`px-3 py-1 rounded-full text-xs font-medium ${status.badgeClass} flex items-center gap-1.5 self-start flex-shrink-0 whitespace-nowrap`}>
           <StatusIcon className="w-3.5 h-3.5 flex-shrink-0" />
           {status.label}
@@ -143,14 +145,14 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
         {request.played_at && (
           <div className="flex items-center gap-1.5">
             <Play className="w-3.5 h-3.5 flex-shrink-0" />
-            <span>Reproducida: {formatTime(request.played_at)}</span>
+            <span>Reproducida: {formatDate(request.played_at)}</span>
           </div>
         )}
       </div>
 
-      {/* Botones de acción según el estado */}
+      {/* Acciones */}
       <div className="flex flex-col sm:flex-row gap-2">
-        {request.status === 'pending' && (
+        {(request.status === 'pending' || request.status === 'queued' || request.status === 'failed') && (
           <>
             <button
               onClick={() => handleStatusChange('playing')}
@@ -168,7 +170,7 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
             </button>
           </>
         )}
-        
+
         {request.status === 'playing' && (
           <button
             onClick={() => handleStatusChange('completed')}
@@ -178,20 +180,11 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
             <span className="whitespace-nowrap">Marcar como Completada</span>
           </button>
         )}
-        
+
         {request.status === 'completed' && (
-          <>
-            <p className="text-sm text-gray italic flex-1">Esta canción ya fue reproducida</p>
-            <button
-              onClick={() => handleStatusChange('pending')}
-              className="px-3 sm:px-4 py-2 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
-            >
-              <Clock className="w-4 h-4 flex-shrink-0" />
-              <span>Pendiente</span>
-            </button>
-          </>
+          <p className="text-sm text-gray italic flex-1">Esta cancion ya fue reproducida</p>
         )}
-        
+
         {request.status === 'cancelled' && (
           <>
             <p className="text-sm text-gray italic flex-1">Esta solicitud fue cancelada</p>
@@ -201,13 +194,6 @@ const SongRequestCard = ({ request, onUpdateStatus }) => {
             >
               <Clock className="w-4 h-4 flex-shrink-0" />
               <span>Pendiente</span>
-            </button>
-            <button
-              onClick={() => handleStatusChange('playing')}
-              className="px-3 sm:px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
-            >
-              <Play className="w-4 h-4 flex-shrink-0" />
-              <span>Reproducir</span>
             </button>
           </>
         )}
@@ -221,27 +207,30 @@ const SongRequestsPage = () => {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState(null);
 
-  // WebSocket para actualizaciones en tiempo real
   useWebSocket('/ws/music/', {
     onMessage: () => {
       queryClient.invalidateQueries({ queryKey: ['song-requests'] });
     },
   });
 
-  // Obtener todas las solicitudes
+  const { data: spotifyStatus } = useQuery({
+    queryKey: ['spotify-status'],
+    queryFn: () => musicService.getSpotifyStatus(),
+    refetchInterval: 30000,
+  });
+
   const { data: requestsData, isLoading, isRefetching, refetch } = useQuery({
     queryKey: ['song-requests', 'admin', statusFilter],
     queryFn: () => musicService.getAll(statusFilter ? { status: statusFilter } : {}),
-    refetchInterval: 60000, // Fallback: refrescar cada 60s (WebSocket es la fuente primaria)
+    refetchInterval: 60000,
   });
 
   const requests = requestsData?.results || [];
 
-  // Mutación para actualizar estado
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }) => musicService.updateStatus(id, status),
     onSuccess: () => {
-      queryClient.invalidateQueries(['song-requests']);
+      queryClient.invalidateQueries({ queryKey: ['song-requests'] });
     },
   });
 
@@ -250,15 +239,29 @@ const SongRequestsPage = () => {
   };
 
   const statusCounts = {
+    all: requests.length,
     pending: requests.filter(r => r.status === 'pending').length,
+    queued: requests.filter(r => r.status === 'queued').length,
     playing: requests.filter(r => r.status === 'playing').length,
     completed: requests.filter(r => r.status === 'completed').length,
     cancelled: requests.filter(r => r.status === 'cancelled').length,
+    failed: requests.filter(r => r.status === 'failed').length,
   };
 
   const filteredRequests = statusFilter
     ? requests.filter(r => r.status === statusFilter)
-    : requests.filter(r => r.status !== 'completed'); // Por defecto, no mostrar completadas
+    : requests.filter(r => r.status !== 'completed');
+
+  const isConnected = spotifyStatus?.connected === true;
+
+  const filterButtons = [
+    { key: null, label: 'Activas', count: statusCounts.all, activeClass: 'bg-primary/20 text-primary border-primary/30' },
+    { key: 'pending', label: 'Pendientes', count: statusCounts.pending, activeClass: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
+    { key: 'queued', label: 'En cola', count: statusCounts.queued, activeClass: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
+    { key: 'playing', label: 'Reproduciendo', count: statusCounts.playing, activeClass: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+    { key: 'completed', label: 'Completadas', count: statusCounts.completed, activeClass: 'bg-green-500/20 text-green-400 border-green-500/30' },
+    { key: 'cancelled', label: 'Canceladas', count: statusCounts.cancelled, activeClass: 'bg-red-500/20 text-red-400 border-red-500/30' },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -272,72 +275,46 @@ const SongRequestsPage = () => {
             </h1>
             <p className="text-gray text-sm sm:text-base">Gestiona las solicitudes de canciones de los clientes</p>
           </div>
-          <button
-            onClick={() => refetch()}
-            disabled={isRefetching}
-            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors flex-shrink-0"
-            title="Actualizar"
-          >
-            <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Indicador Spotify */}
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${
+              isConnected
+                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                : 'bg-red-500/20 text-red-400 border border-red-500/30'
+            }`}>
+              {isConnected ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+              Spotify
+            </div>
+            <button
+              onClick={() => refetch()}
+              disabled={isRefetching}
+              className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+              title="Actualizar"
+            >
+              <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </div>
 
-        {/* Filtros de estado */}
+        {/* Filtros */}
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setStatusFilter(null)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === null
-                ? 'bg-primary/20 text-primary border border-primary/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
-            }`}
-          >
-            Todas ({requests.length})
-          </button>
-          <button
-            onClick={() => setStatusFilter('pending')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === 'pending'
-                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
-            }`}
-          >
-            Pendientes ({statusCounts.pending})
-          </button>
-          <button
-            onClick={() => setStatusFilter('playing')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === 'playing'
-                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
-            }`}
-          >
-            Reproduciendo ({statusCounts.playing})
-          </button>
-          <button
-            onClick={() => setStatusFilter('completed')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === 'completed'
-                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
-            }`}
-          >
-            Completadas ({statusCounts.completed})
-          </button>
-          <button
-            onClick={() => setStatusFilter('cancelled')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === 'cancelled'
-                ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
-            }`}
-          >
-            Canceladas ({statusCounts.cancelled})
-          </button>
+          {filterButtons.map((btn) => (
+            <button
+              key={btn.key ?? 'all'}
+              onClick={() => setStatusFilter(btn.key)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                statusFilter === btn.key
+                  ? btn.activeClass
+                  : 'bg-dark-secondary text-gray border-gray/20 hover:border-gray/40'
+              }`}
+            >
+              {btn.label} ({btn.count})
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Lista de solicitudes */}
+      {/* Lista */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -369,4 +346,3 @@ const SongRequestsPage = () => {
 };
 
 export default SongRequestsPage;
-
