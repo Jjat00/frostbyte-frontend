@@ -4,6 +4,7 @@ import { Music, Search, Loader2, Play, Clock, X, ListMusic, Plus } from 'lucide-
 import { useToast } from '@/components/ui/use-toast';
 import { musicService } from '@/services';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useWebSocket } from '@/hooks';
 
 const formatDuration = (ms) => {
   const minutes = Math.floor(ms / 60000);
@@ -76,6 +77,14 @@ const SolicitarCancion = () => {
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
   const inputRef = useRef(null);
+
+  // WebSocket para actualizaciones en tiempo real
+  useWebSocket('/ws/music/', {
+    onMessage: () => {
+      queryClient.invalidateQueries({ queryKey: ['song-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['now-playing'] });
+    },
+  });
 
   // Debounce de búsqueda
   useEffect(() => {
