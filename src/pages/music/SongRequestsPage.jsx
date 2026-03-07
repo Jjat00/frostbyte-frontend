@@ -253,8 +253,8 @@ const SpotifyQueuePanel = ({ isConnected }) => {
         Cola de Spotify ({queue.length})
       </h3>
       <div className="space-y-2 max-h-60 overflow-y-auto">
-        {queue.slice(0, 10).map((track, idx) => (
-          <div key={`${track.uri}-${idx}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray/5">
+        {queue.slice(0, 20).map((track, idx) => (
+          <div key={`${track.uri}-${idx}`} className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray/5 ${track.is_request ? 'border-l-2 border-primary/50' : ''}`}>
             <span className="text-xs text-gray/50 w-5 text-right flex-shrink-0">{idx + 1}</span>
             {track.image ? (
               <img src={track.image} alt={track.name} className="w-9 h-9 rounded object-cover flex-shrink-0" />
@@ -267,11 +267,16 @@ const SpotifyQueuePanel = ({ isConnected }) => {
               <p className="text-light text-sm truncate">{track.name}</p>
               <p className="text-gray text-xs truncate">{track.artists}</p>
             </div>
-            <span className="text-xs text-gray flex-shrink-0">{formatDuration(track.duration_ms)}</span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {track.is_request && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-medium">Solicitud</span>
+              )}
+              <span className="text-xs text-gray">{formatDuration(track.duration_ms)}</span>
+            </div>
           </div>
         ))}
-        {queue.length > 10 && (
-          <p className="text-xs text-gray/50 text-center pt-1">y {queue.length - 10} mas...</p>
+        {queue.length > 20 && (
+          <p className="text-xs text-gray/50 text-center pt-1">y {queue.length - 20} mas...</p>
         )}
       </div>
     </div>
