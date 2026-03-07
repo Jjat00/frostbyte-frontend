@@ -1,10 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Music, Search, Loader2, Play, Clock, X, ListMusic, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { musicService } from '@/services';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useWebSocket } from '@/hooks';
+
+const parseSyncedLyrics = (syncedLyrics) => {
+  if (!syncedLyrics) return [];
+  return syncedLyrics
+    .split('\n')
+    .map((line) => {
+      const match = line.match(/^\[(\d{2}):(\d{2})\.(\d{2,3})\]\s?(.*)/);
+      if (!match) return null;
+      const minutes = parseInt(match[1]);
+      const seconds = parseInt(match[2]);
+      const ms = parseInt(match[3].padEnd(3, '0'));
+      return { time: minutes * 60000 + seconds * 1000 + ms, text: match[4] };
+    })
+    .filter((l) => l && l.text.trim());
+};
 
 const formatDuration = (ms) => {
   const minutes = Math.floor(ms / 60000);
@@ -70,6 +85,35 @@ const NowPlayingBar = ({ data }) => {
     return () => clearInterval(interval);
   }, [data?.is_playing, data?.uri, data?.duration_ms]);
 
+  const { data: lyricsData } = useQuery({
+    queryKey: ['lyrics', data?.uri],
+    queryFn: () => musicService.getLyrics({
+      trackName: data.name,
+      artistName: data.artists?.split(', ')[0],
+      duration: Math.round(data.duration_ms / 1000),
+    }),
+    enabled: !!data?.name && !!data?.artists,
+    staleTime: Infinity,
+  });
+
+  const parsedLyrics = useMemo(
+    () => parseSyncedLyrics(lyricsData?.synced_lyrics),
+    [lyricsData?.synced_lyrics]
+  );
+
+  const lyricsLines = useMemo(() => {
+    if (parsedLyrics.length === 0) return null;
+    let idx = -1;
+    for (let i = 0; i < parsedLyrics.length; i++) {
+      if (parsedLyrics[i].time <= localProgress) idx = i;
+      else break;
+    }
+    if (idx < 0) return null;
+    const current = parsedLyrics[idx]?.text;
+    const next = parsedLyrics[idx + 1]?.text;
+    return { current, next };
+  }, [localProgress, parsedLyrics]);
+
   if (!data) return null;
 
   const progress = data.duration_ms > 0 ? (localProgress / data.duration_ms) * 100 : 0;
@@ -89,6 +133,18 @@ const NowPlayingBar = ({ data }) => {
           </div>
         </div>
       </div>
+      {lyricsLines && (
+        <div className="mt-3 text-center space-y-1">
+          <p className="text-sm text-secondary italic transition-all duration-300">
+            {lyricsLines.current}
+          </p>
+          {lyricsLines.next && (
+            <p className="text-xs text-gray/50 italic transition-all duration-300">
+              {lyricsLines.next}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

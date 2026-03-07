@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -20,6 +20,9 @@ import {
   Volume2,
   Search,
   Trash2,
+  Mic2,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { musicService } from '@/services';
 import { useToast } from '@/components/ui/use-toast';
@@ -71,6 +74,21 @@ const statusConfig = {
   },
 };
 
+const parseSyncedLyrics = (syncedLyrics) => {
+  if (!syncedLyrics) return [];
+  return syncedLyrics
+    .split('\n')
+    .map((line) => {
+      const match = line.match(/^\[(\d{2}):(\d{2})\.(\d{2,3})\]\s?(.*)/);
+      if (!match) return null;
+      const minutes = parseInt(match[1]);
+      const seconds = parseInt(match[2]);
+      const ms = parseInt(match[3].padEnd(3, '0'));
+      return { time: minutes * 60000 + seconds * 1000 + ms, text: match[4] };
+    })
+    .filter((l) => l && l.text.trim());
+};
+
 // ── Now Playing + Controls ─────────────────────────────────────────
 const NowPlayingPanel = ({ isConnected }) => {
   const { toast } = useToast();
@@ -112,6 +130,47 @@ const NowPlayingPanel = ({ isConnected }) => {
 
     return () => clearInterval(interval);
   }, [nowPlaying?.is_playing, nowPlaying?.uri, nowPlaying?.duration_ms]);
+
+  const [showLyrics, setShowLyrics] = useState(false);
+  const lyricsContainerRef = useRef(null);
+
+  const { data: lyricsData } = useQuery({
+    queryKey: ['lyrics', nowPlaying?.uri],
+    queryFn: () => musicService.getLyrics({
+      trackName: nowPlaying.name,
+      artistName: nowPlaying.artists?.split(', ')[0],
+      duration: Math.round(nowPlaying.duration_ms / 1000),
+    }),
+    enabled: !!nowPlaying?.name && !!nowPlaying?.artists,
+    staleTime: Infinity,
+  });
+
+  const parsedLyrics = useMemo(
+    () => parseSyncedLyrics(lyricsData?.synced_lyrics),
+    [lyricsData?.synced_lyrics]
+  );
+
+  const hasSyncedLyrics = parsedLyrics.length > 0;
+
+  const currentLineIndex = useMemo(() => {
+    if (!hasSyncedLyrics) return -1;
+    let idx = -1;
+    for (let i = 0; i < parsedLyrics.length; i++) {
+      if (parsedLyrics[i].time <= localProgress) idx = i;
+      else break;
+    }
+    return idx;
+  }, [localProgress, parsedLyrics, hasSyncedLyrics]);
+
+  // Auto-scroll to current lyric line
+  useEffect(() => {
+    if (!showLyrics || currentLineIndex < 0 || !lyricsContainerRef.current) return;
+    const container = lyricsContainerRef.current;
+    const activeLine = container.querySelector('[data-active="true"]');
+    if (activeLine) {
+      activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [currentLineIndex, showLyrics]);
 
   const controlMutation = useMutation({
     mutationFn: (action) => {
@@ -250,6 +309,42 @@ const NowPlayingPanel = ({ isConnected }) => {
             />
             <span className="text-xs text-gray w-8 text-right">{volume}%</span>
           </div>
+
+          {/* Lyrics toggle */}
+          {hasSyncedLyrics && (
+            <div className="mt-4">
+              <button
+                onClick={() => setShowLyrics(!showLyrics)}
+                className="flex items-center gap-1.5 text-xs text-secondary hover:text-secondary/80 transition-colors font-medium"
+              >
+                <Mic2 className="w-3.5 h-3.5" />
+                Letra
+                {showLyrics ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </button>
+              {showLyrics && (
+                <div
+                  ref={lyricsContainerRef}
+                  className="mt-3 max-h-48 overflow-y-auto space-y-1 pr-2 scrollbar-thin"
+                >
+                  {parsedLyrics.map((line, idx) => (
+                    <p
+                      key={idx}
+                      data-active={idx === currentLineIndex}
+                      className={`text-sm transition-all duration-300 ${
+                        idx === currentLineIndex
+                          ? 'text-primary font-semibold scale-[1.02] origin-left'
+                          : idx < currentLineIndex
+                            ? 'text-gray/40'
+                            : 'text-gray/70'
+                      }`}
+                    >
+                      {line.text}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </>
       ) : (
         <div className="text-center py-4">

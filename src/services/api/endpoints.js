@@ -37,6 +37,9 @@ export const ENDPOINTS = {
   SONG_REQUESTS_QUEUE_STATUS: '/song-requests/queue-status/',
   SONG_REQUESTS_SPOTIFY_STATUS: '/song-requests/spotify-status/',
 
+  // Lyrics
+  SONG_REQUESTS_LYRICS: '/song-requests/lyrics/',
+
   // Spotify Player Controls
   PLAYER_PAUSE: '/song-requests/player/pause/',
   PLAYER_RESUME: '/song-requests/player/resume/',

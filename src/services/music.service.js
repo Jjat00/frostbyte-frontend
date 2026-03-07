@@ -91,6 +91,13 @@ export const musicService = {
     return response.data;
   },
 
+  async getLyrics({ trackName, artistName, duration }) {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_LYRICS, {
+      params: { track_name: trackName, artist_name: artistName, duration },
+    });
+    return response.data;
+  },
+
   async playerPause() {
     const response = await apiClient.post(ENDPOINTS.PLAYER_PAUSE);
     return response.data;
