@@ -97,6 +97,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - **Vista admin**: Controles de playback (play, pause, skip, volumen), cola completa de Spotify
 - **Cola de Spotify**: Muestra todas las canciones en cola, las solicitudes de clientes se destacan con badge "Solicitud"
 - **Gestión de solicitudes**: Cards con estados (pendiente, en cola, reproduciendo, completada, cancelada), acciones de reproducir ahora, cancelar, reactivar, eliminar
+- **Letras sincronizadas**: Admin ve letras completas con auto-scroll y línea actual resaltada; clientes ven línea actual y siguiente como subtítulos
 - **Tiempo real**: WebSocket para sincronización instantánea de estados entre cliente y admin
 
 ### Sistema de Juegos
