@@ -76,6 +76,8 @@ const NowPlayingPanel = ({ isConnected }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [volume, setVolume] = useState(50);
+  const [localProgress, setLocalProgress] = useState(0);
+  const lastSyncRef = React.useRef({ uri: null, progress: 0, timestamp: 0 });
 
   const { data: nowPlaying, isLoading } = useQuery({
     queryKey: ['now-playing'],
@@ -83,6 +85,33 @@ const NowPlayingPanel = ({ isConnected }) => {
     enabled: isConnected,
     refetchInterval: 3000,
   });
+
+  // Sync local progress when server data arrives
+  useEffect(() => {
+    if (!nowPlaying) return;
+    const sync = lastSyncRef.current;
+    const isNewTrack = nowPlaying.uri !== sync.uri;
+    const serverProgress = nowPlaying.progress_ms || 0;
+
+    if (isNewTrack || Math.abs(serverProgress - sync.progress) > 2000) {
+      lastSyncRef.current = { uri: nowPlaying.uri, progress: serverProgress, timestamp: Date.now() };
+      setLocalProgress(serverProgress);
+    }
+  }, [nowPlaying]);
+
+  // Interpolate progress every second when playing
+  useEffect(() => {
+    if (!nowPlaying?.is_playing) return;
+
+    const interval = setInterval(() => {
+      setLocalProgress((prev) => {
+        const next = prev + 1000;
+        return next > (nowPlaying.duration_ms || 0) ? nowPlaying.duration_ms : next;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [nowPlaying?.is_playing, nowPlaying?.uri, nowPlaying?.duration_ms]);
 
   const controlMutation = useMutation({
     mutationFn: (action) => {
@@ -141,7 +170,7 @@ const NowPlayingPanel = ({ isConnected }) => {
   }
 
   const progress = nowPlaying?.duration_ms > 0
-    ? (nowPlaying.progress_ms / nowPlaying.duration_ms) * 100
+    ? (localProgress / nowPlaying.duration_ms) * 100
     : 0;
 
   return (
@@ -172,7 +201,7 @@ const NowPlayingPanel = ({ isConnected }) => {
               />
             </div>
             <div className="flex justify-between mt-1 text-xs text-gray">
-              <span>{formatDuration(nowPlaying.progress_ms)}</span>
+              <span>{formatDuration(localProgress)}</span>
               <span>{formatDuration(nowPlaying.duration_ms)}</span>
             </div>
           </div>

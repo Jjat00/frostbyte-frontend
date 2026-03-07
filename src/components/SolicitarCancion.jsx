@@ -46,9 +46,33 @@ const SpotifyTrackCard = ({ track, onSelect, isLoading }) => (
 );
 
 const NowPlayingBar = ({ data }) => {
+  const [localProgress, setLocalProgress] = useState(0);
+  const lastSyncRef = useRef({ uri: null, progress: 0 });
+
+  useEffect(() => {
+    if (!data) return;
+    const sync = lastSyncRef.current;
+    const serverProgress = data.progress_ms || 0;
+    if (data.uri !== sync.uri || Math.abs(serverProgress - sync.progress) > 2000) {
+      lastSyncRef.current = { uri: data.uri, progress: serverProgress };
+      setLocalProgress(serverProgress);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (!data?.is_playing) return;
+    const interval = setInterval(() => {
+      setLocalProgress((prev) => {
+        const next = prev + 1000;
+        return next > (data.duration_ms || 0) ? data.duration_ms : next;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [data?.is_playing, data?.uri, data?.duration_ms]);
+
   if (!data) return null;
 
-  const progress = data.duration_ms > 0 ? (data.progress_ms / data.duration_ms) * 100 : 0;
+  const progress = data.duration_ms > 0 ? (localProgress / data.duration_ms) * 100 : 0;
 
   return (
     <div className="bg-dark border border-primary/30 rounded-xl p-4 mb-6">
