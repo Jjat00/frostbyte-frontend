@@ -67,7 +67,8 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - Frase motivacional diaria con IA (GPT-4o-mini)
 - Transcripción de voz con IA (Whisper)
 - Tracking por mesa (`/mesa/:tableNumber`)
-- Solicitudes de música
+- Solicitudes de música con búsqueda en Spotify
+- Now Playing bar con canción actual y cola en tiempo real
 - Sistema de feedback
 
 ### Panel de Administración
@@ -76,6 +77,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - **Pedidos**: Gestión del ciclo de vida de pedidos (Pendiente → Preparando → Listo → Entregado)
 - **Inventario**: Control de materias primas, recetas y órdenes de compra
 - **Gastos**: Seguimiento de gastos operacionales y recurrentes
+- **Música**: Panel con controles de Spotify (play, pause, skip, volumen), cola completa de Spotify con indicador de solicitudes de clientes, búsqueda y gestión de solicitudes
 - **Analytics**: Dashboard con métricas de ventas
 
 ### Generador de Imágenes IA (Privado)
@@ -88,6 +90,14 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - Asignación directa a productos
 - Galería con historial de generaciones
 - Sugerencia automática de descripciones (GPT-4o-mini)
+
+### Música y Spotify
+- **Vista pública**: Búsqueda de canciones en Spotify con debounce, solicitud con un click
+- **Now Playing**: Barra con canción actual, progreso en tiempo real y cola de solicitudes
+- **Vista admin**: Controles de playback (play, pause, skip, volumen), cola completa de Spotify
+- **Cola de Spotify**: Muestra todas las canciones en cola, las solicitudes de clientes se destacan con badge "Solicitud"
+- **Gestión de solicitudes**: Cards con estados (pendiente, en cola, reproduciendo, completada, cancelada), acciones de reproducir ahora, cancelar, reactivar, eliminar
+- **Tiempo real**: WebSocket para sincronización instantánea de estados entre cliente y admin
 
 ### Sistema de Juegos
 - "Duelo Frostbyte" - Juego de tiempo de reacción multijugador
@@ -107,6 +117,8 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 | `/pedidos/*` | Protegido | Gestión de pedidos |
 | `/productos/*` | Protegido/Admin | Catálogo de productos con sugerencia de descripción IA |
 | `/gastos/*` | Admin | Control de gastos |
+| `/musica/solicitar` | Público | Solicitar canciones con búsqueda Spotify y Now Playing |
+| `/musica/*` | Admin | Panel de música con controles Spotify y gestión de solicitudes |
 | `/game/*` | Público | Salas de juego |
 | `/juegos-admin/*` | Admin | Administración de juegos |
 
