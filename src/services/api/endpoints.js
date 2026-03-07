@@ -32,6 +32,22 @@ export const ENDPOINTS = {
   // Song Requests
   SONG_REQUESTS: '/song-requests/',
   SONG_REQUEST_DETAIL: (id) => `/song-requests/${id}/`,
+  SONG_REQUESTS_SEARCH: '/song-requests/search/',
+  SONG_REQUESTS_NOW_PLAYING: '/song-requests/now-playing/',
+  SONG_REQUESTS_QUEUE_STATUS: '/song-requests/queue-status/',
+  SONG_REQUESTS_SPOTIFY_STATUS: '/song-requests/spotify-status/',
+
+  // Spotify Player Controls
+  PLAYER_PAUSE: '/song-requests/player/pause/',
+  PLAYER_RESUME: '/song-requests/player/resume/',
+  PLAYER_NEXT: '/song-requests/player/next/',
+  PLAYER_PREVIOUS: '/song-requests/player/previous/',
+  PLAYER_PLAY_TRACK: '/song-requests/player/play-track/',
+  PLAYER_VOLUME: '/song-requests/player/volume/',
+
+  // Spotify Auth
+  SPOTIFY_AUTH: '/spotify/auth/',
+  SPOTIFY_DISCONNECT: '/spotify/disconnect/',
 
   // Feedback
   FEEDBACK: '/feedback/',

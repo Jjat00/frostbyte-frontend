@@ -58,6 +58,68 @@ export const musicService = {
     const response = await apiClient.delete(ENDPOINTS.SONG_REQUEST_DETAIL(id));
     return response.data;
   },
+
+  async searchSpotify(query) {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_SEARCH, {
+      params: { q: query },
+    });
+    return response.data;
+  },
+
+  async getNowPlaying() {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_NOW_PLAYING);
+    return response.data;
+  },
+
+  async getQueueStatus() {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_QUEUE_STATUS);
+    return response.data;
+  },
+
+  async getSpotifyStatus() {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_SPOTIFY_STATUS);
+    return response.data;
+  },
+
+  async getSpotifyAuthUrl() {
+    const response = await apiClient.get(ENDPOINTS.SPOTIFY_AUTH);
+    return response.data;
+  },
+
+  async disconnectSpotify() {
+    const response = await apiClient.post(ENDPOINTS.SPOTIFY_DISCONNECT);
+    return response.data;
+  },
+
+  async playerPause() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PAUSE);
+    return response.data;
+  },
+
+  async playerResume() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_RESUME);
+    return response.data;
+  },
+
+  async playerNext() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_NEXT);
+    return response.data;
+  },
+
+  async playerPrevious() {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PREVIOUS);
+    return response.data;
+  },
+
+  async playerPlayTrack(trackUri) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PLAY_TRACK, { track_uri: trackUri });
+    return response.data;
+  },
+
+  async playerVolume(volume) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_VOLUME, { volume });
+    return response.data;
+  },
 };
 
 export default musicService;
