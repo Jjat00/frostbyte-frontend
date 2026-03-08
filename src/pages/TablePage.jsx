@@ -26,6 +26,7 @@ import GrowingStem from "@/components/womens-day/GrowingStem";
 import RoseScrollAccent from "@/components/womens-day/RoseScrollAccent";
 import FloralDivider from "@/components/womens-day/FloralDivider";
 import ScrollFelizDia from "@/components/womens-day/ScrollFelizDia";
+import DedicationsWall from "@/components/womens-day/DedicationsWall";
 import OrderMiniBar from "@/components/order-tracker/OrderMiniBar";
 import OrderTracker from "@/components/order-tracker/OrderTracker";
 import OrderReadyAlert from "@/components/order-tracker/OrderReadyAlert";
@@ -146,6 +147,8 @@ function TablePage() {
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
           <FloralDivider variant={3} />
+          <DedicationsWall />
+          <FloralDivider variant={4} />
           <SolicitarCancion />
           <FeedbackSection />
           <FrostbytePlay />
