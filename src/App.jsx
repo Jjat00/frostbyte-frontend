@@ -17,6 +17,12 @@ import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import { env } from "@/config/env";
 
+// 8M - Dia Internacional de la Mujer
+import Hero8M from "@/components/womens-day/Hero8M";
+import FloatingPetals from "@/components/womens-day/FloatingPetals";
+import GrowingStem from "@/components/womens-day/GrowingStem";
+import RoseScrollAccent from "@/components/womens-day/RoseScrollAccent";
+
 function App() {
   useEffect(() => {
     // Registrar visita a la página principal
@@ -36,7 +42,7 @@ function App() {
       <div className="min-h-screen bg-dark overflow-hidden">
         <Header />
         <main>
-          <Hero />
+          <Hero8M />
           <QuickNav />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
@@ -53,6 +59,10 @@ function App() {
         <Footer />
         <ScrollToCarta />
         <Toaster />
+        {/* 8M overlays */}
+        <FloatingPetals />
+        <GrowingStem />
+        <RoseScrollAccent />
       </div>
     </>
   );

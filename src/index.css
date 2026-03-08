@@ -2,31 +2,31 @@
 
 @theme {
   --color-dark: #0a0b14;
-  --color-dark-secondary: #1b1f3b;
-  --color-light: #e8f6ff;
-  --color-gray: #8a8d9c;
-  --color-primary: #ff00d4;
-  --color-secondary: #00e0ff;
+  --color-dark-secondary: #1f1020;
+  --color-light: #fff0f5;
+  --color-gray: #9c8a92;
+  --color-primary: #e84080;
+  --color-secondary: #f4a0c0;
 
-  --color-border: oklch(0.27 0.03 255);
-  --color-input: oklch(0.27 0.03 255);
-  --color-ring: #ff00d4;
+  --color-border: oklch(0.27 0.05 340);
+  --color-input: oklch(0.27 0.05 340);
+  --color-ring: #e84080;
   --color-background: #0a0b14;
-  --color-foreground: #e8f6ff;
+  --color-foreground: #fff0f5;
 
   --color-card: #0a0b14;
-  --color-card-foreground: #e8f6ff;
+  --color-card-foreground: #fff0f5;
   --color-popover: #0a0b14;
-  --color-popover-foreground: #e8f6ff;
+  --color-popover-foreground: #fff0f5;
   --color-primary-foreground: #0a0b14;
   --color-secondary-foreground: #0a0b14;
 
-  --color-muted: oklch(0.27 0.03 255);
-  --color-muted-foreground: oklch(0.55 0.02 250);
-  --color-accent: oklch(0.27 0.03 255);
-  --color-accent-foreground: #e8f6ff;
+  --color-muted: oklch(0.27 0.05 340);
+  --color-muted-foreground: oklch(0.55 0.03 340);
+  --color-accent: oklch(0.27 0.05 340);
+  --color-accent-foreground: #fff0f5;
   --color-destructive: oklch(0.6 0.2 25);
-  --color-destructive-foreground: #e8f6ff;
+  --color-destructive-foreground: #fff0f5;
 
   --radius-lg: 0.5rem;
   --radius-md: calc(0.5rem - 2px);
@@ -102,10 +102,10 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ff00d4 0%, #00e0ff 100%);
+  background: linear-gradient(180deg, #e84080 0%, #f4a0c0 100%);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #00e0ff 0%, #ff00d4 100%);
+  background: linear-gradient(180deg, #f4a0c0 0%, #e84080 100%);
 }

@@ -26,12 +26,12 @@ import {
 const categoryDefaults = {
   granizados: {
     icon: Citrus,
-    gradient: "from-cyan-400 to-blue-500",
-    visualGradient: "from-cyan-300 via-blue-400 to-indigo-500",
-    secondaryGradient: "from-transparent via-cyan-200/20 to-transparent",
+    gradient: "from-rose-400 to-pink-500",
+    visualGradient: "from-rose-300 via-pink-400 to-rose-500",
+    secondaryGradient: "from-transparent via-rose-200/20 to-transparent",
     accentColor: "primary",
-    ringColor: "border-cyan-400",
-    labelBg: "bg-gradient-to-r from-cyan-500 to-blue-600",
+    ringColor: "border-rose-400",
+    labelBg: "bg-gradient-to-r from-rose-500 to-pink-600",
   },
   frappes: {
     icon: Coffee,
@@ -280,11 +280,11 @@ export function getProductStyles(product, categorySlug) {
     licor: specificStyles.licor,
     accentColor: categoryStyles.accentColor || "primary",
     ringColor:
-      specificStyles.ringColor || categoryStyles.ringColor || "border-cyan-400",
+      specificStyles.ringColor || categoryStyles.ringColor || "border-rose-400",
     labelBg:
       specificStyles.labelBg ||
       categoryStyles.labelBg ||
-      "bg-gradient-to-r from-cyan-500 to-blue-600",
+      "bg-gradient-to-r from-rose-500 to-pink-600",
   };
 }
 
