@@ -28,7 +28,9 @@ import {
   Check,
   Wand2,
   Loader2,
+  ArrowLeft,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
 
@@ -582,6 +584,21 @@ const WomensDayGeneratorPage = () => {
         className="relative min-h-screen flex flex-col items-center px-4 py-12 sm:py-16"
         aria-label="Generador de tarjetas del Dia Internacional de la Mujer"
       >
+        {/* Back to menu */}
+        <motion.div
+          initial={{ opacity: 0, x: -12 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-full max-w-lg mb-6"
+        >
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-rose-300/70 hover:text-rose-200 text-sm font-medium rounded-lg hover:bg-rose-500/10 transition-colors duration-200"
+          >
+            <ArrowLeft size={16} />
+            Volver a la carta
+          </Link>
+        </motion.div>
+
         {/* Page header */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
