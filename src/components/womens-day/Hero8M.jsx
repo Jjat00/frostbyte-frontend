@@ -80,7 +80,7 @@ const Hero8M = () => {
     fetchPhrase();
   }, []);
 
-  // Canvas animation
+  // Canvas animation with mouse interaction (rose-themed grid + floating roses)
   useEffect(() => {
     const canvas = canvasRef.current;
     const section = sectionRef.current;
@@ -88,56 +88,178 @@ const Hero8M = () => {
 
     const ctx = canvas.getContext("2d");
     let rafId;
+    const mouse = { x: -9999, y: -9999 };
+    const COL_W = 24;
+    const ROW_H = 22;
+    const FONT_SIZE = 13;
+    const HOVER_RADIUS = 150;
+    const GRID_CHARS = "*+.o*.:+*.o+.:*";
+
+    let flickerPhases = [];
+    let cols = 0;
+    let rows = 0;
+
+    // Floating roses
     const roses = [];
-    const ROSE_COUNT = 12;
+    const ROSE_COUNT = 10;
+
+    const buildGrid = () => {
+      cols = Math.ceil(canvas.width / COL_W) + 1;
+      rows = Math.ceil(canvas.height / ROW_H) + 1;
+      const total = cols * rows;
+      flickerPhases = new Float32Array(total);
+      for (let i = 0; i < total; i++) {
+        flickerPhases[i] = Math.random() * Math.PI * 2;
+      }
+    };
 
     const resize = () => {
       canvas.width = section.offsetWidth;
       canvas.height = section.offsetHeight;
+      buildGrid();
     };
     resize();
     window.addEventListener("resize", resize);
 
+    // Mouse / touch handlers
+    const handleMouseMove = (e) => {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const handleTouchMove = (e) => {
+      const rect = section.getBoundingClientRect();
+      const touch = e.touches[0];
+      mouse.x = touch.clientX - rect.left;
+      mouse.y = touch.clientY - rect.top;
+    };
+    const handleLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    section.addEventListener("mousemove", handleMouseMove);
+    section.addEventListener("mouseleave", handleLeave);
+    section.addEventListener("touchmove", handleTouchMove, { passive: true });
+    section.addEventListener("touchend", handleLeave);
+
+    // Init floating roses
     for (let i = 0; i < ROSE_COUNT; i++) {
       roses.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: 10 + Math.random() * 18,
-        speedY: -0.15 - Math.random() * 0.3,
-        speedX: (Math.random() - 0.5) * 0.3,
+        size: 10 + Math.random() * 16,
+        speedY: -0.12 - Math.random() * 0.25,
+        speedX: (Math.random() - 0.5) * 0.25,
         rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.005,
-        opacity: 0.15 + Math.random() * 0.25,
+        rotSpeed: (Math.random() - 0.5) * 0.004,
+        opacity: 0.12 + Math.random() * 0.2,
         phase: Math.random() * Math.PI * 2,
       });
     }
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const t = Date.now() * 0.001;
 
-      for (const r of roses) {
-        r.y += r.speedY;
-        r.x += r.speedX + Math.sin(t + r.phase) * 0.2;
-        r.rotation += r.rotSpeed;
-        if (r.y < -30) {
-          r.y = canvas.height + 30;
-          r.x = Math.random() * canvas.width;
+      // --- Grid with mouse interaction ---
+      ctx.font = `${FONT_SIZE}px 'Georgia', serif`;
+
+      for (let col = 0; col < cols; col++) {
+        for (let row = 0; row < rows; row++) {
+          const idx = col * rows + row;
+          const x = col * COL_W + COL_W / 2;
+          const y = row * ROW_H + ROW_H / 2;
+
+          const ch = GRID_CHARS[idx % GRID_CHARS.length];
+
+          const phase = flickerPhases[idx];
+          const flicker = 0.5 + 0.5 * Math.sin(t * 0.7 + phase);
+          let alpha = 0.04 + flicker * 0.08;
+
+          let r = 255, g = 180, b = 200;
+
+          // Subtle color cycling
+          const colorCycle = Math.sin(t * 0.4 + phase * 1.3);
+          if (colorCycle > 0.3) {
+            r = 255; g = 150; b = 180;
+          } else if (colorCycle < -0.3) {
+            r = 240; g = 130; b = 170;
+          }
+
+          // Mouse hover effect
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          let drawX = x;
+          let drawY = y;
+
+          if (dist < HOVER_RADIUS) {
+            const intensity = 1 - dist / HOVER_RADIUS;
+            const ease = intensity * intensity;
+
+            // Ripple wave
+            const waveFreq = 0.06;
+            const waveAmp = 7;
+            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
+
+            const angle = Math.atan2(dy, dx);
+            drawX += Math.cos(angle) * wave;
+            drawY += Math.sin(angle) * wave;
+
+            // Boost opacity
+            alpha = Math.min(1, alpha + ease * 0.8);
+
+            // Shift to bright rose
+            r = Math.round(r * (1 - ease) + 232 * ease);
+            g = Math.round(g * (1 - ease) + 64 * ease);
+            b = Math.round(b * (1 - ease) + 128 * ease);
+
+            // Scale
+            const scale = 1 + ease * 0.5;
+            ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Georgia', serif`;
+
+            // Glow
+            ctx.shadowColor = `rgba(232, 64, 128, ${ease * 0.6})`;
+            ctx.shadowBlur = ease * 14;
+          }
+
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.fillText(ch, drawX, drawY);
+
+          if (dist < HOVER_RADIUS) {
+            ctx.font = `${FONT_SIZE}px 'Georgia', serif`;
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+          }
+        }
+      }
+
+      // --- Floating roses ---
+      for (const ro of roses) {
+        ro.y += ro.speedY;
+        ro.x += ro.speedX + Math.sin(t + ro.phase) * 0.18;
+        ro.rotation += ro.rotSpeed;
+        if (ro.y < -30) {
+          ro.y = canvas.height + 30;
+          ro.x = Math.random() * canvas.width;
         }
         ctx.save();
-        ctx.translate(r.x, r.y);
-        ctx.rotate(r.rotation);
-        drawCanvasRose(ctx, 0, 0, r.size, r.opacity);
+        ctx.translate(ro.x, ro.y);
+        ctx.rotate(ro.rotation);
+        drawCanvasRose(ctx, 0, 0, ro.size, ro.opacity);
         ctx.restore();
       }
 
-      for (let i = 0; i < 15; i++) {
+      // --- Sparkle particles ---
+      for (let i = 0; i < 12; i++) {
         const px = (Math.sin(t * 0.3 + i * 2.1) * 0.5 + 0.5) * canvas.width;
         const py = (Math.cos(t * 0.2 + i * 1.7) * 0.5 + 0.5) * canvas.height;
         const ps = 2 + Math.sin(t + i) * 1;
         ctx.beginPath();
         ctx.arc(px, py, ps, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 150, 180, ${0.2 + Math.sin(t * 2 + i) * 0.1})`;
+        ctx.fillStyle = `rgba(255, 150, 180, ${0.18 + Math.sin(t * 2 + i) * 0.08})`;
         ctx.fill();
       }
 
@@ -146,6 +268,10 @@ const Hero8M = () => {
     animate();
 
     return () => {
+      section.removeEventListener("mousemove", handleMouseMove);
+      section.removeEventListener("mouseleave", handleLeave);
+      section.removeEventListener("touchmove", handleTouchMove);
+      section.removeEventListener("touchend", handleLeave);
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(rafId);
     };
