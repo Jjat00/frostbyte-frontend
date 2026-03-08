@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { useActiveCategories } from "@/hooks";
+import FloralDivider from "@/components/womens-day/FloralDivider";
 
 // Importar todos los componentes de secciones
 import Granizados from "./Granizados";
@@ -53,16 +54,22 @@ const MenuSections = () => {
     return null;
   }
 
+  // Filter to renderable categories
+  const renderableCategories = activeCategories.filter(
+    (cat) => SECTION_COMPONENTS[cat.slug]
+  );
+
   return (
     <>
-      {activeCategories.map((category) => {
+      {renderableCategories.map((category, index) => {
         const SectionComponent = SECTION_COMPONENTS[category.slug];
-        if (!SectionComponent) return null;
         return (
-          <SectionComponent
-            key={category.slug}
-            showExtras={category.show_extras}
-          />
+          <React.Fragment key={category.slug}>
+            <SectionComponent showExtras={category.show_extras} />
+            {index < renderableCategories.length - 1 && (
+              <FloralDivider variant={index} />
+            )}
+          </React.Fragment>
         );
       })}
     </>

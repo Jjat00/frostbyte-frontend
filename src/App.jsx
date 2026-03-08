@@ -22,6 +22,8 @@ import Hero8M from "@/components/womens-day/Hero8M";
 import FloatingPetals from "@/components/womens-day/FloatingPetals";
 import GrowingStem from "@/components/womens-day/GrowingStem";
 import RoseScrollAccent from "@/components/womens-day/RoseScrollAccent";
+import FloralDivider from "@/components/womens-day/FloralDivider";
+import ScrollFelizDia from "@/components/womens-day/ScrollFelizDia";
 
 function App() {
   useEffect(() => {
@@ -44,12 +46,16 @@ function App() {
         <main>
           <Hero8M />
           <QuickNav />
+          <FloralDivider variant={0} />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
+          <FloralDivider variant={1} />
           <Desguayabator />
+          <FloralDivider variant={2} />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
+          <FloralDivider variant={3} />
           <SolicitarCancion />
           <FeedbackSection />
           <Features />
@@ -63,6 +69,7 @@ function App() {
         <FloatingPetals />
         <GrowingStem />
         <RoseScrollAccent />
+        <ScrollFelizDia />
       </div>
     </>
   );
