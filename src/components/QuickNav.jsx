@@ -133,7 +133,7 @@ const QuickNav = () => {
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleClick(section.href, section.isRoute)}
-              className="group relative px-5 py-2.5 rounded-full bg-white/5 border border-white/15 text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/60 hover:text-white hover:bg-primary/15 hover:shadow-[0_0_20px_rgba(255,0,212,0.25)] cursor-pointer"
+              className="group relative px-5 py-2.5 rounded-full bg-white/5 border border-white/15 text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/60 hover:text-white hover:bg-primary/15 hover:shadow-[0_0_20px_rgba(232,64,128,0.25)] cursor-pointer"
             >
               <span className="relative z-10 flex items-center gap-1.5">
                 {section.name}

@@ -256,7 +256,7 @@ const Header = () => {
           >
             <a
               href="#desguayabator"
-              className="block text-emerald-400 hover:text-emerald-300 transition-colors duration-300 font-medium"
+              className="block text-rose-400 hover:text-rose-300 transition-colors duration-300 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               🩹 Desguayabator
@@ -326,7 +326,7 @@ const Header = () => {
             </a>
             <a
               href="#feedback"
-              className="block text-teal-400 hover:text-teal-300 transition-colors duration-300 font-medium"
+              className="block text-rose-400 hover:text-rose-300 transition-colors duration-300 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               💬 Tu Opinion
@@ -363,7 +363,7 @@ const Header = () => {
                 href="https://wa.me/573164277879"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-green-400 hover:text-green-300 transition-colors duration-300 font-medium"
+                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 💬 WhatsApp

@@ -31,7 +31,7 @@ const ProductCard = ({ product, index, styles }) => {
           <div className={`absolute inset-2 rounded-full border-2 ${styles.ringColor} opacity-60`}></div>
           
           {/* Contenedor de imagen circular */}
-          <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden bg-gradient-to-br from-purple-600/30 to-purple-900/30 flex items-center justify-center">
+          <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden bg-gradient-to-br from-rose-600/30 to-rose-900/30 flex items-center justify-center">
             {styles.image ? (
               <img
                 alt={product.name}
@@ -167,7 +167,7 @@ const Cuates = () => {
   return (
     <section
       id="cuates"
-      className="py-20 relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900"
+      className="py-20 relative overflow-hidden bg-gradient-to-br from-rose-800 via-rose-900 to-[#1a0812]"
     >
       {/* Patrón de fondo decorativo */}
       <div className="absolute inset-0 opacity-20">
@@ -182,8 +182,8 @@ const Cuates = () => {
       {/* Efectos de luz ambiental */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px]"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-yellow-500 rounded-full filter blur-[120px]"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400 rounded-full filter blur-[120px]"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px]"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-rose-400 rounded-full filter blur-[120px]"></div>
       </div>
 
       {/* Líneas divisoras decorativas */}
@@ -199,7 +199,7 @@ const Cuates = () => {
           className="text-center mb-16"
         >
           <h2 className="text-5xl md:text-7xl font-black text-white mb-4 drop-shadow-2xl uppercase tracking-wider">
-            <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-rose-300 via-rose-400 to-pink-500 bg-clip-text text-transparent">
               LOS CUATES
             </span>
           </h2>
