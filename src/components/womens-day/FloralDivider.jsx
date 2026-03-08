@@ -184,7 +184,7 @@ const FloralDivider = ({ variant = 0 }) => {
       {/* Animated vine - thick and visible */}
       <motion.svg
         className="absolute inset-0 w-full h-full"
-        viewBox="0 0 1000 60"
+        viewBox="-10 0 1020 60"
         preserveAspectRatio="none"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -193,11 +193,11 @@ const FloralDivider = ({ variant = 0 }) => {
       >
         {/* Main vine */}
         <motion.path
-          d="M0,30 C125,8 125,52 250,30 C375,8 375,52 500,30 C625,8 625,52 750,30 C875,8 875,52 1000,30"
+          d="M-20,30 C125,8 125,52 250,30 C375,8 375,52 500,30 C625,8 625,52 750,30 C875,8 875,52 1020,30"
           stroke="rgba(50,120,55,0.35)"
           strokeWidth="2.5"
           fill="none"
-          vectorEffect="non-scaling-stroke"
+          strokeLinecap="round"
           initial={{ pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
           viewport={{ once: true, margin: "100px" }}
@@ -205,11 +205,11 @@ const FloralDivider = ({ variant = 0 }) => {
         />
         {/* Secondary vine */}
         <motion.path
-          d="M0,32 C125,10 125,54 250,32 C375,10 375,54 500,32 C625,10 625,54 750,32 C875,10 875,54 1000,32"
+          d="M-20,32 C125,10 125,54 250,32 C375,10 375,54 500,32 C625,10 625,54 750,32 C875,10 875,54 1020,32"
           stroke="rgba(70,145,75,0.18)"
           strokeWidth="1.5"
           fill="none"
-          vectorEffect="non-scaling-stroke"
+          strokeLinecap="round"
           initial={{ pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
           viewport={{ once: true, margin: "100px" }}
@@ -217,11 +217,11 @@ const FloralDivider = ({ variant = 0 }) => {
         />
         {/* Subtle third vine for depth */}
         <motion.path
-          d="M0,28 C125,6 125,50 250,28 C375,6 375,50 500,28 C625,6 625,50 750,28 C875,6 875,50 1000,28"
+          d="M-20,28 C125,6 125,50 250,28 C375,6 375,50 500,28 C625,6 625,50 750,28 C875,6 875,50 1020,28"
           stroke="rgba(80,160,85,0.1)"
           strokeWidth="1"
           fill="none"
-          vectorEffect="non-scaling-stroke"
+          strokeLinecap="round"
           initial={{ pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
           viewport={{ once: true, margin: "100px" }}
@@ -230,7 +230,7 @@ const FloralDivider = ({ variant = 0 }) => {
       </motion.svg>
 
       {/* Flower elements - edge to edge */}
-      <div className="relative flex items-center justify-between px-1 sm:px-2">
+      <div className="relative flex items-center justify-between">
         {elements.map((el, i) => (
           <motion.div
             key={i}
