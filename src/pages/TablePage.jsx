@@ -18,6 +18,14 @@ import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
+
+// 8M - Dia Internacional de la Mujer
+import Hero8M from "@/components/womens-day/Hero8M";
+import FloatingPetals from "@/components/womens-day/FloatingPetals";
+import GrowingStem from "@/components/womens-day/GrowingStem";
+import RoseScrollAccent from "@/components/womens-day/RoseScrollAccent";
+import FloralDivider from "@/components/womens-day/FloralDivider";
+import ScrollFelizDia from "@/components/womens-day/ScrollFelizDia";
 import OrderMiniBar from "@/components/order-tracker/OrderMiniBar";
 import OrderTracker from "@/components/order-tracker/OrderTracker";
 import OrderReadyAlert from "@/components/order-tracker/OrderReadyAlert";
@@ -110,7 +118,7 @@ function TablePage() {
       <div className="min-h-screen bg-dark overflow-hidden">
         <Header />
         <main>
-          <Hero />
+          <Hero8M />
 
           {/* Order Tracker: MiniBar si ya verificado, o banner de código */}
           {order ? (
@@ -128,12 +136,16 @@ function TablePage() {
           )}
 
           <QuickNav />
+          <FloralDivider variant={0} />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
+          <FloralDivider variant={1} />
           <Desguayabator />
+          <FloralDivider variant={2} />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
+          <FloralDivider variant={3} />
           <SolicitarCancion />
           <FeedbackSection />
           <FrostbytePlay />
@@ -142,6 +154,11 @@ function TablePage() {
         <Footer />
         <ScrollToCarta />
         <Toaster />
+        {/* 8M overlays */}
+        <FloatingPetals />
+        <GrowingStem />
+        <RoseScrollAccent />
+        <ScrollFelizDia />
 
         {/* Order Tracker Panel */}
         <OrderTracker

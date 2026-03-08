@@ -89,10 +89,11 @@ const Hero8M = () => {
     const ctx = canvas.getContext("2d");
     let rafId;
     const mouse = { x: -9999, y: -9999 };
-    const COL_W = 24;
-    const ROW_H = 22;
-    const FONT_SIZE = 13;
-    const HOVER_RADIUS = 150;
+    const isMobile = window.innerWidth < 768;
+    const COL_W = isMobile ? 36 : 24;
+    const ROW_H = isMobile ? 32 : 22;
+    const FONT_SIZE = isMobile ? 11 : 13;
+    const HOVER_RADIUS = isMobile ? 100 : 150;
     const GRID_CHARS = "*+.o*.:+*.o+.:*";
 
     let flickerPhases = [];
@@ -101,7 +102,7 @@ const Hero8M = () => {
 
     // Floating roses
     const roses = [];
-    const ROSE_COUNT = 10;
+    const ROSE_COUNT = isMobile ? 5 : 10;
 
     const buildGrid = () => {
       cols = Math.ceil(canvas.width / COL_W) + 1;
