@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Instagram, MapPin } from "lucide-react";
+import { ChevronDown, Instagram, MapPin, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
 
@@ -386,6 +387,15 @@ const Hero8M = () => {
                 <MapPin size={20} className="mr-2" />
                 Ubicacion en Cumbal
               </a>
+            </Button>
+            <Button
+              asChild
+              className="bg-gradient-to-r from-pink-500 via-rose-400 to-rose-500 text-white font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-pink-500/50 hover:from-pink-400 hover:via-rose-300 hover:to-rose-400 transition-all duration-300 border-0"
+            >
+              <Link to="/8m/generador">
+                <Sparkles size={20} className="mr-2" />
+                Crea tu tarjeta del Dia de la Mujer
+              </Link>
             </Button>
           </motion.div>
 

@@ -24,6 +24,7 @@ import GrowingStem from "@/components/womens-day/GrowingStem";
 import RoseScrollAccent from "@/components/womens-day/RoseScrollAccent";
 import FloralDivider from "@/components/womens-day/FloralDivider";
 import ScrollFelizDia from "@/components/womens-day/ScrollFelizDia";
+import DedicationsWall from "@/components/womens-day/DedicationsWall";
 
 function App() {
   useEffect(() => {
@@ -56,6 +57,8 @@ function App() {
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
           <FloralDivider variant={3} />
+          <DedicationsWall />
+          <FloralDivider variant={4} />
           <SolicitarCancion />
           <FeedbackSection />
           <Features />

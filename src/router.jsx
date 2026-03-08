@@ -62,6 +62,11 @@ const GamesAdminPage = lazy(() => import("./pages/game/GamesAdminPage"));
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const AdminRoute = lazy(() => import("./components/AdminRoute"));
 
+// 8M — Generador público de tarjetas del Día de la Mujer
+const WomensDayGeneratorPage = lazy(() =>
+  import("./pages/womens-day/WomensDayGeneratorPage")
+);
+
 // Fallback de carga mínimo
 const PageLoader = () => (
   <div className="min-h-screen bg-dark flex items-center justify-center">
@@ -490,6 +495,15 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <GameRoomPage />
+      </Lazy>
+    ),
+  },
+  // Generador público de tarjetas 8M — sin autenticación
+  {
+    path: "/8m/generador",
+    element: (
+      <Lazy>
+        <WomensDayGeneratorPage />
       </Lazy>
     ),
   },

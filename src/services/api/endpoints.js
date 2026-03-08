@@ -60,6 +60,10 @@ export const ENDPOINTS = {
   AI_MOOD_RECOMMEND: '/motivational/recommend/',
   AI_QUIZ_RECOMMEND: '/motivational/quiz/',
   AI_VOICE_TRANSCRIBE: '/motivational/transcribe/',
+
+  // Dedicatorias 8M
+  DEDICATIONS: '/motivational/dedications/',
+  DEDICATIONS_CREATE: '/motivational/dedications/create/',
 };
 
 export default ENDPOINTS;
