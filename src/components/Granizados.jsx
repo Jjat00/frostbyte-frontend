@@ -24,7 +24,7 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   <motion.div
     whileHover={{ scale: 1.05, y: -5 }}
     whileTap={{ scale: 0.98 }}
-    className="w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border border-purple-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+    className="w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border border-rose-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-rose-400/60 hover:shadow-lg hover:shadow-rose-500/20 transition-all duration-300"
   >
     <div
       className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
@@ -33,14 +33,14 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
     </div>
     <h4 className="text-light font-bold text-base">{name}</h4>
     <p className="text-gray text-xs mb-2">{brand}</p>
-    <span className="text-purple-400 font-bold text-sm">{price}</span>
+    <span className="text-rose-400 font-bold text-sm">{price}</span>
   </motion.div>
 );
 
 // Tarjeta con glass-morphism: limpia, profesional y legible
 const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
-  const ringColor = styles.ringColor || "border-cyan-400";
+  const ringColor = styles.ringColor || "border-rose-400";
 
   return (
     <motion.div
@@ -173,9 +173,9 @@ const flavorShots = [
     licor: "Vodka",
     price: "+$5.000",
     icon: Droplets,
-    gradient: "from-purple-400 to-fuchsia-600",
-    textColor: "text-purple-400",
-    borderColor: "border-purple-500/30",
+    gradient: "from-rose-400 to-fuchsia-600",
+    textColor: "text-rose-400",
+    borderColor: "border-rose-500/30",
   },
 ];
 
@@ -251,25 +251,25 @@ const Granizados = ({ showExtras = true }) => {
   return (
     <section
       id="granizados"
-      className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-blue-950 to-indigo-950"
+      className="py-20 relative overflow-hidden bg-linear-to-br from-[#1a0812] via-[#1f0a18] to-[#120610]"
     >
       {/* Patrón grid cyberpunk — sutil */}
       <div className="absolute inset-0 opacity-20">
         <div
           className="absolute top-0 left-0 w-full h-full"
           style={{
-            backgroundImage: `linear-gradient(rgba(34,211,238,0.08) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(34,211,238,0.08) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgba(232,64,128,0.06) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(232,64,128,0.06) 1px, transparent 1px)`,
             backgroundSize: "32px 32px",
           }}
         />
       </div>
 
-      {/* Neon ambiental — cyan + magenta estilo Frostbyte */}
+      {/* Neon ambiental — rosa estilo 8M */}
       <div className="absolute inset-0 opacity-25">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px]" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-500/70 rounded-full filter blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-rose-500/50 rounded-full filter blur-[100px]" />
       </div>
 
       {/* Líneas divisoras con toque neón */}
@@ -285,7 +285,7 @@ const Granizados = ({ showExtras = true }) => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            <span className="bg-linear-to-r from-cyan-200 via-primary to-secondary bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(34,211,238,0.3)]">
+            <span className="bg-linear-to-r from-pink-200 via-rose-400 to-pink-500 bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(232,64,128,0.3)]">
               GRANIZADOS
             </span>
           </h2>
@@ -323,10 +323,10 @@ const Granizados = ({ showExtras = true }) => {
             transition={{ duration: 0.6 }}
             className="mt-20"
           >
-            <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+            <div className="bg-linear-to-br from-rose-900/30 to-pink-900/30 border-2 border-rose-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
               {/* Efectos de fondo */}
               <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[100px]"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500 rounded-full filter blur-[100px]"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-pink-500 rounded-full filter blur-[80px]"></div>
               </div>
 
@@ -335,18 +335,18 @@ const Granizados = ({ showExtras = true }) => {
                 <div className="text-center mb-8">
                   <div className="flex items-center justify-center gap-3 mb-4">
                     <Skull
-                      className="text-purple-400 hidden sm:block"
+                      className="text-rose-400 hidden sm:block"
                       size={32}
                     />
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
                       ¿QUIERES{" "}
-                      <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      <span className="bg-linear-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">
                         ENVENENARLO
                       </span>
                       ?
                     </h3>
                     <Skull
-                      className="text-purple-400 hidden sm:block"
+                      className="text-rose-400 hidden sm:block"
                       size={32}
                     />
                   </div>
@@ -371,18 +371,18 @@ const Granizados = ({ showExtras = true }) => {
                   transition={{ delay: 0.3 }}
                   className="mt-8 flex justify-center"
                 >
-                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-purple-500/30">
+                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-rose-500/30">
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🍹 Granizado
                     </span>
-                    <Plus className="text-purple-400 shrink-0" size={20} />
+                    <Plus className="text-rose-400 shrink-0" size={20} />
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🥃 Shot
                     </span>
-                    <span className="text-purple-400 text-xl sm:text-2xl shrink-0">
+                    <span className="text-rose-400 text-xl sm:text-2xl shrink-0">
                       =
                     </span>
-                    <span className="text-purple-400 font-bold text-sm sm:text-base whitespace-nowrap">
+                    <span className="text-rose-400 font-bold text-sm sm:text-base whitespace-nowrap">
                       ☠️ ENVENENADO
                     </span>
                   </div>
@@ -401,7 +401,7 @@ const Granizados = ({ showExtras = true }) => {
             transition={{ duration: 0.6 }}
             className="mt-12"
           >
-            <div className="relative bg-linear-to-br from-emerald-900/20 via-dark/60 to-cyan-900/20 border-2 border-cyan-500/30 rounded-3xl overflow-hidden">
+            <div className="relative bg-linear-to-br from-rose-900/20 via-dark/60 to-pink-900/20 border-2 border-rose-500/30 rounded-3xl overflow-hidden">
               {/* Banner image */}
               <div className="relative h-48 sm:h-56 overflow-hidden">
                 <img
@@ -411,7 +411,7 @@ const Granizados = ({ showExtras = true }) => {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-dark via-dark/70 to-transparent" />
-                <div className="absolute inset-0 bg-linear-to-r from-cyan-500/5 to-emerald-500/5" />
+                <div className="absolute inset-0 bg-linear-to-r from-rose-500/5 to-pink-500/5" />
               </div>
 
               <div className="relative z-10 px-6 sm:px-10 pb-8 -mt-12">
@@ -419,17 +419,17 @@ const Granizados = ({ showExtras = true }) => {
                 <div className="text-center mb-8">
                   <div className="flex items-center justify-center gap-3 mb-3">
                     <Sparkles
-                      className="text-cyan-400 hidden sm:block"
+                      className="text-rose-400 hidden sm:block"
                       size={28}
                     />
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
                       SHOTS DE{" "}
-                      <span className="bg-linear-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                      <span className="bg-linear-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">
                         SABORES
                       </span>
                     </h3>
                     <Sparkles
-                      className="text-cyan-400 hidden sm:block"
+                      className="text-rose-400 hidden sm:block"
                       size={28}
                     />
                   </div>
@@ -454,18 +454,18 @@ const Granizados = ({ showExtras = true }) => {
                   transition={{ delay: 0.3 }}
                   className="mt-8 flex justify-center"
                 >
-                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-cyan-500/30">
+                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-rose-500/30">
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🍹 Granizado
                     </span>
-                    <Plus className="text-cyan-400 shrink-0" size={20} />
+                    <Plus className="text-rose-400 shrink-0" size={20} />
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       💧 Shot de Sabor
                     </span>
-                    <span className="text-cyan-400 text-xl sm:text-2xl shrink-0">
+                    <span className="text-rose-400 text-xl sm:text-2xl shrink-0">
                       =
                     </span>
-                    <span className="text-cyan-400 font-bold text-sm sm:text-base whitespace-nowrap">
+                    <span className="text-rose-400 font-bold text-sm sm:text-base whitespace-nowrap">
                       ✨ SABOR ÚNICO
                     </span>
                   </div>
