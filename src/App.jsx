@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import QuickNav from "@/components/QuickNav";
 import MenuSections from "@/components/MenuSections";
 import Desguayabator from "@/components/Desguayabator";
+import WaterSection from "@/components/WaterSection";
 import ScrollToCarta from "@/components/ScrollToMenu";
 import SolicitarCancion from "@/components/SolicitarCancion";
 import FeedbackSection from "@/components/FeedbackSection";
@@ -41,6 +42,7 @@ function App() {
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
+          <WaterSection />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />

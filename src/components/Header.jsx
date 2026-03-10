@@ -64,6 +64,11 @@ const Header = () => {
       description: "Bebida helada para curar guayabos. Electrolit + Bonfiest.",
     },
     {
+      title: "💧 Agua",
+      href: "#agua",
+      description: "Agua pura y refrescante para hidratarte.",
+    },
+    {
       title: "Granizados",
       href: "#granizados",
       description: "Mango, Maracumango, Lulo y más.",
@@ -260,6 +265,13 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               🩹 Desguayabator
+            </a>
+            <a
+              href="#agua"
+              className="block text-cyan-400 hover:text-cyan-300 transition-colors duration-300 font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              💧 Agua
             </a>
             <a
               href="#granizados"

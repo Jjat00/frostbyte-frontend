@@ -10,6 +10,7 @@ import { useActiveCategories } from "@/hooks";
  */
 const SECTION_CONFIG = {
   desguayabator: { name: "Desguayabator", href: "#desguayabator", categorySlug: null },
+  agua:          { name: "Agua",          href: "#agua",          categorySlug: null },
   granizados:    { name: "Granizados",    href: "#granizados",    categorySlug: "granizados" },
   frappes:       { name: "Frappés",       href: "#frappes",       categorySlug: "frappes" },
   sodas:         { name: "Sodas",         href: "#sodas",         categorySlug: "sodas-italianas" },
@@ -30,6 +31,7 @@ const SECTION_CONFIG = {
 // Orden por defecto de las secciones en el QuickNav
 const DEFAULT_SECTION_ORDER = [
   "desguayabator",
+  "agua",
   "granizados",
   "frappes",
   "sodas",
