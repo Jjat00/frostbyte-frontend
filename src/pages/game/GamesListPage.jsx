@@ -1,8 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, ArrowLeft, Gamepad2, Users } from 'lucide-react';
+import { Play, ArrowLeft, Gamepad2, Users, Zap, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+const GAME_ICONS = {
+  'duelo-frostbyte': Zap,
+  'impostor-frostbyte': Search,
+};
 
 const GamesListPage = () => {
   const navigate = useNavigate();
@@ -11,32 +16,31 @@ const GamesListPage = () => {
     {
       id: 'duelo-frostbyte',
       name: 'Duelo Frostbyte',
-      description: 'Juego de reflejos ultra rápido. Compite con tus amigos para ver quién reacciona más rápido.',
-      icon: '⚡',
+      description: 'Compite con tus amigos en un duelo de reflejos ultra rapido.',
       minPlayers: 2,
+      accent: 'amber',
       available: true,
     },
     {
       id: 'impostor-frostbyte',
       name: 'Impostor Frostbyte',
       description: 'Descubre al impostor entre tus amigos. Un celular, muchas sospechas.',
-      icon: '🕵️',
       minPlayers: 3,
+      accent: 'red',
       available: true,
     },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary p-4 relative overflow-hidden">
-      {/* Background effects - Colores diferentes para hacerlo más llamativo */}
+      {/* Background effects */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-violet-500/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-amber-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/15 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10 py-12">
-        {/* Back Button */}
+      <div className="max-w-lg mx-auto relative z-10 py-8">
+        {/* Back */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -56,119 +60,85 @@ const GamesListPage = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6"
-          >
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
-              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-violet-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.6)]" />
-            </motion.div>
-            <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-amber-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_20px_rgba(139,92,246,0.4)]">
-              Frostbyte Play
-            </h1>
-            <motion.div
-              animate={{ rotate: [0, -10, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
-              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" />
-            </motion.div>
-          </motion.div>
-          <p className="text-xl text-gray/80 max-w-2xl mx-auto">
-            ¡Diviértete jugando mientras esperas tu pedido!
+          <Gamepad2 className="w-10 h-10 text-secondary mx-auto mb-3" />
+          <h1 className="text-3xl font-bold text-light tracking-wider mb-2">
+            Frostbyte Play
+          </h1>
+          <p className="text-gray/60">
+            Juega mientras esperas tu pedido
           </p>
         </motion.div>
 
-        {/* Games Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {games.map((game, index) => (
-            <motion.div
-              key={game.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`bg-dark/90 backdrop-blur-xl border-2 rounded-2xl p-6 shadow-2xl transition-all hover:scale-105 relative overflow-hidden ${
-                game.available
-                  ? 'border-violet-500/50 hover:border-violet-400 cursor-pointer shadow-violet-500/20'
-                  : 'border-gray/20 opacity-50 cursor-not-allowed'
-              }`}
-              onClick={() => game.available && navigate(`/game/${game.id}/instrucciones`)}
-            >
-              {/* Efecto de brillo animado en el borde */}
-              {game.available && (
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500/0 via-violet-500/10 to-amber-500/0 opacity-50 animate-pulse"></div>
-              )}
-              
-              <div className="relative z-10">
-                <motion.div 
-                  className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-amber-500 mb-4 mx-auto shadow-lg shadow-violet-500/50"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Gamepad2 className="w-10 h-10 text-white" />
-                </motion.div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-amber-400 bg-clip-text text-transparent mb-2 text-center">
-                  {game.name}
-                </h3>
-                <p className="text-gray/70 text-center mb-4">
-                  {game.description}
-                </p>
-                {game.minPlayers && (
-                  <div className="flex items-center justify-center gap-2 mb-6">
-                    <div className="flex items-center gap-1 px-3 py-1.5 bg-violet-500/20 border border-violet-500/30 rounded-full">
-                      <Users className="w-4 h-4 text-violet-400" />
-                      <span className="text-sm text-violet-300 font-medium">
-                        Mínimo {game.minPlayers} jugadores
+        {/* Games */}
+        <div className="space-y-4">
+          {games.map((game, index) => {
+            const Icon = GAME_ICONS[game.id] || Gamepad2;
+
+            return (
+              <motion.div
+                key={game.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => game.available && navigate(`/game/${game.id}/instrucciones`)}
+                className={`relative rounded-2xl border backdrop-blur-xl overflow-hidden transition-all ${
+                  game.available
+                    ? 'bg-white/5 border-white/10 hover:border-white/20 cursor-pointer active:scale-[0.98]'
+                    : 'bg-white/[0.02] border-white/5 opacity-50 cursor-not-allowed'
+                }`}
+              >
+                <div className="flex items-center gap-4 p-4">
+                  {/* Icon */}
+                  <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Icon className="w-7 h-7 text-secondary" />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-bold text-light mb-0.5">
+                      {game.name}
+                    </h3>
+                    <p className="text-sm text-gray/50 leading-snug">
+                      {game.description}
+                    </p>
+                    <div className="flex items-center gap-1 mt-1.5">
+                      <Users className="w-3.5 h-3.5 text-gray/40" />
+                      <span className="text-xs text-gray/40">
+                        {game.minPlayers}+ jugadores
                       </span>
                     </div>
                   </div>
-                )}
-                {game.available ? (
-                  <Button
-                    className="w-full bg-gradient-to-r from-violet-500 via-purple-500 to-amber-500 text-white font-bold hover:shadow-2xl hover:shadow-violet-500/50 transition-all"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/game/${game.id}/instrucciones`);
-                    }}
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    Jugar
-                  </Button>
-                ) : (
-                  <Button
-                    disabled
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Próximamente
-                  </Button>
-                )}
-              </div>
-            </motion.div>
-          ))}
+
+                  {/* Action */}
+                  <div className="flex-shrink-0">
+                    {game.available ? (
+                      <div className="w-10 h-10 rounded-full bg-secondary/15 border border-secondary/30 flex items-center justify-center">
+                        <Play className="w-4 h-4 text-secondary ml-0.5" />
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray/40">Pronto</span>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* Coming Soon Message */}
-        <motion.div
+        {/* Footer */}
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center"
+          transition={{ delay: 0.4 }}
+          className="text-center text-gray/30 text-xs mt-8"
         >
-          <p className="text-gray/60 text-sm">
-            🎮 Pronto habrá más juegos disponibles
-          </p>
-        </motion.div>
+          Mas juegos proximamente
+        </motion.p>
       </div>
     </div>
   );
 };
 
 export default GamesListPage;
-
