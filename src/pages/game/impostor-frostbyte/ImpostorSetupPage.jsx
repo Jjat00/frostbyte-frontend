@@ -21,20 +21,22 @@ const ImpostorSetupPage = () => {
     setSessionId,
     resetGame,
     phase,
+    usedWords,
   } = useImpostorGameStore();
 
   // Detectar si hay una partida en progreso
   const hasGameInProgress = phase !== 'setup' && players.length > 0;
   const [showSetup, setShowSetup] = useState(!hasGameInProgress);
+  const [isLoading, setIsLoading] = useState(false);
 
   const canStart = players.length >= 3;
 
-  const getRandomWord = (categorySlug, usedWords = []) => {
+  const getRandomWord = (categorySlug, usedWordsList = []) => {
     const slug = categorySlug || CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)].slug;
     const words = WORDS[slug];
     if (!words) return { word: 'Frostbyte', trapWord: 'Icebyte', category: slug };
 
-    const available = words.filter((w) => !usedWords.includes(w.word));
+    const available = words.filter((w) => !usedWordsList.includes(w.word));
     const pool = available.length > 0 ? available : words;
     const selected = pool[Math.floor(Math.random() * pool.length)];
 
@@ -47,8 +49,44 @@ const ImpostorSetupPage = () => {
     };
   };
 
+  const getAiWord = async (categorySlug) => {
+    const categoryName = categorySlug
+      ? CATEGORIES.find((c) => c.slug === categorySlug)?.name || categorySlug
+      : CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)].name;
+
+    try {
+      const data = await impostorService.generateWords(categoryName, usedWords);
+      if (data.words && data.words.length > 0) {
+        const available = data.words.filter((w) => !usedWords.includes(w.word));
+        const selected = available.length > 0 ? available[0] : data.words[0];
+        return {
+          word: selected.word,
+          trapWord: config.trapWordEnabled ? selected.trap_word : null,
+          category: categoryName,
+        };
+      }
+    } catch {
+      console.warn('Error generando palabras con IA, usando fallback local');
+    }
+    return null;
+  };
+
   const handleStartGame = async () => {
-    const { word, trapWord, category } = getRandomWord(config.categorySlug);
+    setIsLoading(true);
+
+    let wordData;
+
+    // Intentar con IA si esta habilitado
+    if (config.useAiWords) {
+      wordData = await getAiWord(config.categorySlug);
+    }
+
+    // Fallback a palabras locales
+    if (!wordData) {
+      wordData = getRandomWord(config.categorySlug, usedWords);
+    }
+
+    const { word, trapWord, category } = wordData;
 
     try {
       const session = await impostorService.createSession({
@@ -72,10 +110,11 @@ const ImpostorSetupPage = () => {
         });
       }
     } catch {
-      console.warn('No se pudo crear sesión en backend, jugando offline');
+      console.warn('No se pudo crear sesion en backend, jugando offline');
     }
 
     startGame(word, trapWord, category);
+    setIsLoading(false);
     navigate('/game/impostor-frostbyte/play');
   };
 
@@ -240,12 +279,18 @@ const ImpostorSetupPage = () => {
           >
             <Button
               onClick={handleStartGame}
-              disabled={!canStart}
+              disabled={!canStart || isLoading}
               size="lg"
               className="w-full bg-gradient-to-r from-red-500 via-primary to-secondary text-white font-bold text-lg py-6 disabled:opacity-40"
             >
-              <Play className="w-5 h-5 mr-2" />
-              Empezar partida
+              {isLoading ? (
+                <span className="animate-pulse">Generando palabras...</span>
+              ) : (
+                <>
+                  <Play className="w-5 h-5 mr-2" />
+                  Empezar partida
+                </>
+              )}
             </Button>
           </motion.div>
         </div>

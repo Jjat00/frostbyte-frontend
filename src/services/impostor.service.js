@@ -15,6 +15,17 @@ export const impostorService = {
     return response.data;
   },
 
+  // ============= PALABRAS IA =============
+
+  async generateWords(categoryName, excludeWords = []) {
+    const response = await apiClient.post(`${BASE_URL}/sessions/generate-words/`, {
+      category_name: categoryName,
+      count: 5,
+      exclude_words: excludeWords,
+    });
+    return response.data;
+  },
+
   // ============= SESIONES (TRAZABILIDAD) =============
 
   async createSession(data) {

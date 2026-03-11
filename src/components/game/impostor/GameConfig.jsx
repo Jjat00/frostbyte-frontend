@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, Eye, EyeOff, Shield, Clock, MessageCircle, RotateCw } from 'lucide-react';
+import { Settings, Eye, EyeOff, Shield, Clock, MessageCircle, RotateCw, Sparkles } from 'lucide-react';
 import CategorySelector from './CategorySelector';
 
 const ToggleOption = ({ label, description, icon: Icon, enabled, onChange }) => (
@@ -132,11 +132,19 @@ const GameConfig = ({ config, onUpdateConfig, playerCount }) => {
         />
 
         <ToggleOption
-          label="Rol Espía"
-          description="Un jugador sabe quién es el impostor"
+          label="Rol Espia"
+          description="Un jugador sabe quien es el impostor"
           icon={Shield}
           enabled={config.spyEnabled}
           onChange={(v) => onUpdateConfig({ spyEnabled: v })}
+        />
+
+        <ToggleOption
+          label="Palabras con IA"
+          description="Genera palabras unicas con inteligencia artificial"
+          icon={Sparkles}
+          enabled={config.useAiWords}
+          onChange={(v) => onUpdateConfig({ useAiWords: v })}
         />
       </div>
 
