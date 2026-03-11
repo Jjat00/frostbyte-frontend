@@ -59,6 +59,10 @@ const JoinRoomPage = lazy(() => import("./pages/game/JoinRoomPage"));
 const GameRoomPage = lazy(() => import("./pages/game/GameRoomPage"));
 const GamesAdminPage = lazy(() => import("./pages/game/GamesAdminPage"));
 
+// Impostor Frostbyte
+const ImpostorSetupPage = lazy(() => import("./pages/game/impostor-frostbyte/ImpostorSetupPage"));
+const ImpostorGamePage = lazy(() => import("./pages/game/impostor-frostbyte/ImpostorGamePage"));
+
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const AdminRoute = lazy(() => import("./components/AdminRoute"));
 
@@ -490,6 +494,23 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <GameRoomPage />
+      </Lazy>
+    ),
+  },
+  // Impostor Frostbyte
+  {
+    path: "/game/impostor-frostbyte/setup",
+    element: (
+      <Lazy>
+        <ImpostorSetupPage />
+      </Lazy>
+    ),
+  },
+  {
+    path: "/game/impostor-frostbyte/play",
+    element: (
+      <Lazy>
+        <ImpostorGamePage />
       </Lazy>
     ),
   },

@@ -12,6 +12,7 @@ const GameInstructionsPage = () => {
     'duelo-frostbyte': {
       name: 'Duelo Frostbyte',
       icon: '⚡',
+      playPath: '/game/duelo-frostbyte/play',
       steps: [
         {
           icon: <Users className="w-6 h-6" />,
@@ -32,6 +33,33 @@ const GameInstructionsPage = () => {
           icon: <Trophy className="w-6 h-6" />,
           title: 'Ve los resultados',
           description: 'Compite por el mejor tiempo promedio. El más rápido gana, pero lo importante es divertirse.',
+        },
+      ],
+    },
+    'impostor-frostbyte': {
+      name: 'Impostor Frostbyte',
+      icon: '🕵️',
+      playPath: '/game/impostor-frostbyte/setup',
+      steps: [
+        {
+          icon: <Users className="w-6 h-6" />,
+          title: 'Agrega jugadores',
+          description: 'Ingresa los nombres y elige un color para cada jugador. Mínimo 3 personas.',
+        },
+        {
+          icon: <Zap className="w-6 h-6" />,
+          title: 'Descubre tu rol',
+          description: 'Pasa el celular a cada jugador para que vea su palabra secreta o descubra si es el impostor.',
+        },
+        {
+          icon: <Clock className="w-6 h-6" />,
+          title: 'Da pistas y debate',
+          description: 'Por turnos, di una palabra relacionada. Luego debatan quién creen que es el impostor.',
+        },
+        {
+          icon: <Trophy className="w-6 h-6" />,
+          title: 'Vota y descubre',
+          description: 'Vota para descubrir al impostor. Gana puntos si lo atrapas o si pasas desapercibido.',
         },
       ],
     },
@@ -125,7 +153,7 @@ const GameInstructionsPage = () => {
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <Button
-            onClick={() => navigate(`/game/${gameId}/play`)}
+            onClick={() => navigate(game.playPath || `/game/${gameId}/play`)}
             size="lg"
             className="bg-gradient-to-r from-primary to-secondary text-dark font-bold text-lg py-6 px-8"
           >

@@ -16,7 +16,14 @@ const GamesListPage = () => {
       minPlayers: 2,
       available: true,
     },
-    // Futuros juegos se agregarán aquí
+    {
+      id: 'impostor-frostbyte',
+      name: 'Impostor Frostbyte',
+      description: 'Descubre al impostor entre tus amigos. Un celular, muchas sospechas.',
+      icon: '🕵️',
+      minPlayers: 3,
+      available: true,
+    },
   ];
 
   return (
