@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 export const useCountdownTimer = (durationSeconds, { onComplete, autoStart = false } = {}) => {
   const [timeLeft, setTimeLeft] = useState(durationSeconds);
   const [isRunning, setIsRunning] = useState(autoStart);
+  const [restartKey, setRestartKey] = useState(0);
   const startTimeRef = useRef(null);
   const rafRef = useRef(null);
   const onCompleteRef = useRef(onComplete);
@@ -38,11 +39,12 @@ export const useCountdownTimer = (durationSeconds, { onComplete, autoStart = fal
         cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [isRunning, tick]);
+  }, [isRunning, restartKey, tick]);
 
   const start = useCallback(() => {
     setTimeLeft(durationSeconds);
     setIsRunning(true);
+    setRestartKey((k) => k + 1);
   }, [durationSeconds]);
 
   const pause = useCallback(() => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,20 +8,25 @@ import PlayerAvatar from './PlayerAvatar';
 import CyberpunkTimer from './CyberpunkTimer';
 
 const ClueRound = () => {
-  const { players, cluePlayerIndex, config, currentRound, advanceClue } =
+  const { players, cluePlayerIndex, currentClueRound, config, advanceClue } =
     useImpostorGameStore();
 
   const currentPlayer = players[cluePlayerIndex];
-  const isLastPlayer = cluePlayerIndex >= players.length - 1;
+  const isLastPlayerInRound = cluePlayerIndex >= players.length - 1;
+  const isLastRound = currentClueRound >= config.totalRounds;
   const hasTimer = config.turnTimerSeconds != null;
 
-  const { timeLeft, isRunning, start } = useCountdownTimer(
+  const { timeLeft, start } = useCountdownTimer(
     config.turnTimerSeconds || 30,
-    {
-      onComplete: advanceClue,
-      autoStart: hasTimer,
-    }
+    { onComplete: advanceClue }
   );
+
+  // Reiniciar timer cada vez que cambia el jugador o la ronda
+  useEffect(() => {
+    if (hasTimer && currentPlayer) {
+      start();
+    }
+  }, [cluePlayerIndex, currentClueRound]);
 
   if (!currentPlayer) return null;
 
@@ -36,7 +41,7 @@ const ClueRound = () => {
         <div className="flex items-center gap-2 justify-center mb-2">
           <MessageSquare className="w-5 h-5 text-secondary" />
           <h2 className="text-lg font-bold text-secondary">
-            Ronda de Pistas - R{currentRound}
+            Ronda de Pistas {currentClueRound}/{config.totalRounds}
           </h2>
         </div>
         <p className="text-sm text-gray/50">
@@ -44,7 +49,23 @@ const ClueRound = () => {
         </p>
       </motion.div>
 
-      {/* Progreso de jugadores */}
+      {/* Indicador de rondas */}
+      <div className="flex gap-2 items-center">
+        {Array.from({ length: config.totalRounds }, (_, i) => (
+          <div
+            key={i}
+            className={`h-2 rounded-full transition-all ${
+              i + 1 < currentClueRound
+                ? 'w-8 bg-secondary'
+                : i + 1 === currentClueRound
+                ? 'w-10 bg-secondary animate-pulse'
+                : 'w-8 bg-gray/20'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Progreso de jugadores en esta ronda */}
       <div className="flex gap-3 flex-wrap justify-center">
         {players.map((p, i) => (
           <div key={p.id} className="flex flex-col items-center gap-1">
@@ -73,7 +94,7 @@ const ClueRound = () => {
 
       {/* Jugador actual */}
       <motion.div
-        key={currentPlayer.id}
+        key={`${currentClueRound}-${currentPlayer.id}`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="flex flex-col items-center gap-4"
@@ -98,7 +119,11 @@ const ClueRound = () => {
         size="lg"
         className="bg-secondary/20 border border-secondary/40 text-secondary hover:bg-secondary/30 font-bold px-8"
       >
-        {isLastPlayer ? 'Ir a discusión' : 'Siguiente jugador'}
+        {isLastPlayerInRound && isLastRound
+          ? 'Ir a discusión'
+          : isLastPlayerInRound
+          ? `Siguiente ronda (${currentClueRound + 1}/${config.totalRounds})`
+          : 'Siguiente jugador'}
         <ArrowRight className="w-5 h-5 ml-2" />
       </Button>
     </div>

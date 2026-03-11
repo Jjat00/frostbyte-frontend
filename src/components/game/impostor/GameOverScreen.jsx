@@ -9,7 +9,7 @@ import PlayerAvatar from './PlayerAvatar';
 
 const GameOverScreen = () => {
   const navigate = useNavigate();
-  const { players, scores, roundHistory, sessionId, resetGame } = useImpostorGameStore();
+  const { players, scores, roundHistory, sessionId, resetGame, restartGame } = useImpostorGameStore();
   const finishedRef = useRef(false);
 
   const sortedPlayers = [...players].sort(
@@ -32,7 +32,8 @@ const GameOverScreen = () => {
   }, []);
 
   const handlePlayAgain = () => {
-    resetGame();
+    restartGame();
+    navigate('/game/impostor-frostbyte/setup');
   };
 
   const handleExit = () => {

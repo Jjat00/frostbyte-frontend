@@ -2,13 +2,13 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 const initialState = {
-  // Fases: setup | role-reveal | clue-round | discussion | voting | round-results | scoreboard | game-over
+  // Fases: setup | role-reveal | clue-round | discussion | voting | round-results | game-over
   phase: 'setup',
   players: [],
   config: {
     impostorCount: 1,
     hintEnabled: false,
-    trapWordEnabled: true,
+    trapWordEnabled: false,
     spyEnabled: false,
     turnTimerSeconds: 30,
     discussionTimerSeconds: 120,
@@ -21,19 +21,21 @@ const initialState = {
   // Sesión backend (trazabilidad)
   sessionId: null,
 
-  // Ronda actual
-  currentRound: 0,
+  // Partida actual (misma palabra durante toda la partida)
   currentWord: null,
   currentTrapWord: null,
   currentCategory: null,
   impostorIds: [],
   spyId: null,
 
+  // Rondas de pistas (cada ronda = todos los jugadores dan 1 pista)
+  currentClueRound: 0,
+
   // Control de revelación
   revealIndex: 0,
   revealedPlayers: [],
 
-  // Control de pistas
+  // Control de pistas (índice del jugador actual dentro de la ronda)
   cluePlayerIndex: 0,
 
   // Control de votación
@@ -44,7 +46,7 @@ const initialState = {
   scores: {},
   roundHistory: [],
 
-  // Palabras usadas en esta sesión
+  // Palabras usadas en sesiones anteriores (para no repetir al jugar de nuevo)
   usedWords: [],
 };
 
@@ -77,7 +79,7 @@ export const useImpostorGameStore = create(
 
       // ============= GAME START =============
 
-      startRound: (word, trapWord, category) => {
+      startGame: (word, trapWord, category) => {
         const state = get();
         const playerIds = state.players.map((p) => p.id);
 
@@ -96,12 +98,12 @@ export const useImpostorGameStore = create(
 
         set({
           phase: 'role-reveal',
-          currentRound: state.currentRound + 1,
           currentWord: word,
           currentTrapWord: trapWord,
           currentCategory: category,
           impostorIds,
           spyId,
+          currentClueRound: 1,
           revealIndex: 0,
           revealedPlayers: [],
           cluePlayerIndex: 0,
@@ -134,17 +136,34 @@ export const useImpostorGameStore = create(
         }),
 
       // ============= CLUE ROUND =============
+      // Cada ronda de pistas = todos los jugadores dan 1 pista
+      // Después de la última ronda de pistas → discusión → votación
 
       advanceClue: () =>
         set((state) => {
-          const nextIndex = state.cluePlayerIndex + 1;
-          if (nextIndex >= state.players.length) {
+          const nextPlayerIndex = state.cluePlayerIndex + 1;
+
+          // Si quedan jugadores en esta ronda de pistas
+          if (nextPlayerIndex < state.players.length) {
+            return { cluePlayerIndex: nextPlayerIndex };
+          }
+
+          // Todos los jugadores dieron pista en esta ronda
+          const nextClueRound = state.currentClueRound + 1;
+
+          // Si quedan más rondas de pistas → nueva ronda, resetear índice de jugador
+          if (nextClueRound <= state.config.totalRounds) {
             return {
-              cluePlayerIndex: nextIndex,
-              phase: state.config.discussionTimerSeconds ? 'discussion' : 'voting',
+              cluePlayerIndex: 0,
+              currentClueRound: nextClueRound,
             };
           }
-          return { cluePlayerIndex: nextIndex };
+
+          // Todas las rondas de pistas terminaron → ir a discusión o votación
+          return {
+            cluePlayerIndex: nextPlayerIndex,
+            phase: state.config.discussionTimerSeconds ? 'discussion' : 'voting',
+          };
         }),
 
       goToDiscussion: () => set({ phase: 'discussion' }),
@@ -223,11 +242,11 @@ export const useImpostorGameStore = create(
           });
         }
 
-        const roundResult = {
-          round: state.currentRound,
+        const gameResult = {
           word: state.currentWord,
           trapWord: state.currentTrapWord,
           category: state.currentCategory,
+          totalClueRounds: state.config.totalRounds,
           impostorIds: [...impostorIds],
           spyId,
           impostorCaught,
@@ -238,35 +257,25 @@ export const useImpostorGameStore = create(
 
         set({
           scores: newScores,
-          roundHistory: [...state.roundHistory, roundResult],
+          roundHistory: [...state.roundHistory, gameResult],
         });
 
-        return roundResult;
+        return gameResult;
       },
-
-      goToScoreboard: () => set({ phase: 'scoreboard' }),
-
-      nextRound: () => set({ phase: 'setup-round' }),
 
       goToGameOver: () => set({ phase: 'game-over' }),
 
       // ============= RESET =============
 
-      resetGame: () => set({ ...initialState }),
+      restartGame: () =>
+        set((state) => ({
+          ...initialState,
+          players: state.players,
+          config: state.config,
+          usedWords: state.usedWords,
+        })),
 
-      resetForNewRound: () =>
-        set({
-          phase: 'role-reveal',
-          currentWord: null,
-          currentTrapWord: null,
-          impostorIds: [],
-          spyId: null,
-          revealIndex: 0,
-          revealedPlayers: [],
-          cluePlayerIndex: 0,
-          votePlayerIndex: 0,
-          votes: {},
-        }),
+      resetGame: () => set({ ...initialState }),
     }),
     {
       name: 'frostbyte-impostor-game',

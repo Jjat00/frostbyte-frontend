@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Play } from 'lucide-react';
+import { ArrowLeft, Play, RotateCw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useImpostorGameStore from '@/stores/useImpostorGameStore';
 import { impostorService } from '@/services/impostor.service';
@@ -17,18 +17,15 @@ const ImpostorSetupPage = () => {
     addPlayer,
     removePlayer,
     updateConfig,
-    startRound,
+    startGame,
     setSessionId,
     resetGame,
     phase,
   } = useImpostorGameStore();
 
-  // Si hay un juego en progreso, ir directamente al juego
-  useEffect(() => {
-    if (phase !== 'setup' && phase !== 'setup-round') {
-      navigate('/game/impostor-frostbyte/play', { replace: true });
-    }
-  }, []);
+  // Detectar si hay una partida en progreso
+  const hasGameInProgress = phase !== 'setup' && players.length > 0;
+  const [showSetup, setShowSetup] = useState(!hasGameInProgress);
 
   const canStart = players.length >= 3;
 
@@ -51,10 +48,8 @@ const ImpostorSetupPage = () => {
   };
 
   const handleStartGame = async () => {
-    // Obtener palabra
     const { word, trapWord, category } = getRandomWord(config.categorySlug);
 
-    // Crear sesión en backend para trazabilidad
     try {
       const session = await impostorService.createSession({
         total_rounds: config.totalRounds,
@@ -69,7 +64,6 @@ const ImpostorSetupPage = () => {
 
       setSessionId(session.id);
 
-      // Mapear IDs del backend a los jugadores locales
       if (session.players) {
         session.players.forEach((bp, i) => {
           if (players[i]) {
@@ -78,13 +72,97 @@ const ImpostorSetupPage = () => {
         });
       }
     } catch {
-      // Si falla la conexión, jugar sin trazabilidad
       console.warn('No se pudo crear sesión en backend, jugando offline');
     }
 
-    startRound(word, trapWord, category);
+    startGame(word, trapWord, category);
     navigate('/game/impostor-frostbyte/play');
   };
+
+  const handleContinueGame = () => {
+    navigate('/game/impostor-frostbyte/play');
+  };
+
+  const handleNewGame = () => {
+    resetGame();
+    setShowSetup(true);
+  };
+
+  // Pantalla de partida en progreso
+  if (hasGameInProgress && !showSetup) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary p-4 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 -left-20 w-96 h-96 bg-red-500/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-lg mx-auto relative z-10 py-8">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mb-6"
+          >
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              className="text-gray hover:text-light"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver
+            </Button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-dark-secondary/80 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-8 text-center space-y-6"
+          >
+            <div className="text-5xl">🕵️</div>
+            <h2 className="text-2xl font-bold text-light">Partida en curso</h2>
+            <p className="text-gray/60">
+              Hay una partida sin terminar con {players.length} jugadores.
+            </p>
+
+            <div className="flex flex-wrap gap-2 justify-center">
+              {players.map((p) => (
+                <span
+                  key={p.id}
+                  className="px-3 py-1 rounded-full text-sm font-medium text-white border"
+                  style={{
+                    backgroundColor: `${p.color}20`,
+                    borderColor: `${p.color}50`,
+                  }}
+                >
+                  {p.name}
+                </span>
+              ))}
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <Button
+                onClick={handleContinueGame}
+                size="lg"
+                className="w-full bg-secondary/20 border border-secondary/40 text-secondary hover:bg-secondary/30 font-bold"
+              >
+                <ArrowRight className="w-5 h-5 mr-2" />
+                Continuar partida
+              </Button>
+              <Button
+                onClick={handleNewGame}
+                size="lg"
+                variant="ghost"
+                className="w-full text-gray/60 hover:text-red-400"
+              >
+                <RotateCw className="w-5 h-5 mr-2" />
+                Nueva partida
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary p-4 relative overflow-hidden">

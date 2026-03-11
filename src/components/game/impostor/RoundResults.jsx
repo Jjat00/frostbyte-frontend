@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Check, X, ArrowRight, Trophy } from 'lucide-react';
+import { AlertTriangle, Check, X, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useImpostorGameStore from '@/stores/useImpostorGameStore';
 import { impostorService } from '@/services/impostor.service';
@@ -14,11 +14,9 @@ const RoundResults = () => {
     currentWord,
     currentTrapWord,
     currentCategory,
-    currentRound,
     config,
-    roundHistory,
     calculateRoundResults,
-    goToScoreboard,
+    goToGameOver,
     sessionId,
   } = useImpostorGameStore();
 
@@ -28,25 +26,24 @@ const RoundResults = () => {
   useEffect(() => {
     if (!calculatedRef.current) {
       calculatedRef.current = true;
-      const roundResult = calculateRoundResults();
-      setResult(roundResult);
+      const gameResult = calculateRoundResults();
+      setResult(gameResult);
 
       // Guardar ronda en backend para trazabilidad
       if (sessionId) {
         const playerResults = players.map((p) => ({
           player_id: p.backendId,
           role: impostorIds.includes(p.id) ? 'impostor' : spyId === p.id ? 'spy' : 'normal',
-          voted_for_id: roundResult.voteCounts?.[p.id] ? undefined : undefined,
-          votes_received: roundResult.voteCounts?.[p.id] || 0,
-          points_earned: roundResult.roundPoints?.[p.id] || 0,
+          votes_received: gameResult.voteCounts?.[p.id] || 0,
+          points_earned: gameResult.roundPoints?.[p.id] || 0,
         }));
 
         impostorService.saveRound(sessionId, {
-          round_number: currentRound,
+          round_number: 1,
           category_slug: config.categorySlug || 'random',
           word: currentWord,
           trap_word: currentTrapWord || '',
-          impostor_caught: roundResult.impostorCaught,
+          impostor_caught: gameResult.impostorCaught,
           player_results: playerResults,
         }).catch(() => {});
       }
@@ -56,7 +53,6 @@ const RoundResults = () => {
   if (!result) return null;
 
   const impostorPlayers = players.filter((p) => impostorIds.includes(p.id));
-  const isLastRound = currentRound >= config.totalRounds;
 
   return (
     <div className="flex flex-col items-center gap-8 py-8">
@@ -127,7 +123,7 @@ const RoundResults = () => {
         )}
       </motion.div>
 
-      {/* Puntos de la ronda */}
+      {/* Puntos */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -135,7 +131,7 @@ const RoundResults = () => {
         className="w-full max-w-sm space-y-2"
       >
         <h3 className="text-sm font-bold text-gray/60 text-center mb-3">
-          Puntos esta ronda
+          Puntos
         </h3>
         {players
           .sort((a, b) => (result.roundPoints[b.id] || 0) - (result.roundPoints[a.id] || 0))
@@ -162,21 +158,12 @@ const RoundResults = () => {
 
       {/* Acción */}
       <Button
-        onClick={goToScoreboard}
+        onClick={goToGameOver}
         size="lg"
-        className="bg-secondary/20 border border-secondary/40 text-secondary hover:bg-secondary/30 font-bold px-8"
+        className="bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 font-bold px-8"
       >
-        {isLastRound ? (
-          <>
-            <Trophy className="w-5 h-5 mr-2" />
-            Ver resultados finales
-          </>
-        ) : (
-          <>
-            Ver puntuación
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </>
-        )}
+        <Trophy className="w-5 h-5 mr-2" />
+        Ver resultados finales
       </Button>
     </div>
   );
