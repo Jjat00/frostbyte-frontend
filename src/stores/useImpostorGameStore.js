@@ -39,11 +39,9 @@ const initialState = {
   cluePlayerIndex: 0,
 
   // Control de votación
-  votePlayerIndex: 0,
-  votes: {},
+  votedPlayerId: null,
 
-  // Puntuación
-  scores: {},
+  // Historial
   roundHistory: [],
 
   // Palabras usadas en sesiones anteriores (para no repetir al jugar de nuevo)
@@ -107,8 +105,7 @@ export const useImpostorGameStore = create(
           revealIndex: 0,
           revealedPlayers: [],
           cluePlayerIndex: 0,
-          votePlayerIndex: 0,
-          votes: {},
+          votedPlayerId: null,
           usedWords: [...state.usedWords, word],
         });
       },
@@ -168,100 +165,31 @@ export const useImpostorGameStore = create(
 
       goToDiscussion: () => set({ phase: 'discussion' }),
 
-      goToVoting: () => set({ phase: 'voting', votePlayerIndex: 0, votes: {} }),
+      goToVoting: () => set({ phase: 'voting', votedPlayerId: null }),
 
       // ============= VOTING =============
 
-      submitVote: (voterId, votedForId) =>
-        set((state) => ({
-          votes: { ...state.votes, [voterId]: votedForId },
-        })),
-
-      advanceVote: () =>
+      submitGroupVote: (playerId) =>
         set((state) => {
-          const nextIndex = state.votePlayerIndex + 1;
-          if (nextIndex >= state.players.length) {
-            return { votePlayerIndex: nextIndex, phase: 'round-results' };
-          }
-          return { votePlayerIndex: nextIndex };
+          const impostorCaught = state.impostorIds.includes(playerId);
+
+          const gameResult = {
+            word: state.currentWord,
+            trapWord: state.currentTrapWord,
+            category: state.currentCategory,
+            totalClueRounds: state.config.totalRounds,
+            impostorIds: [...state.impostorIds],
+            spyId: state.spyId,
+            impostorCaught,
+            votedPlayerId: playerId,
+          };
+
+          return {
+            votedPlayerId: playerId,
+            roundHistory: [...state.roundHistory, gameResult],
+            phase: 'round-results',
+          };
         }),
-
-      // ============= RESULTS =============
-
-      calculateRoundResults: () => {
-        const state = get();
-        const { votes, impostorIds, spyId, players, scores } = state;
-
-        // Contar votos por jugador
-        const voteCounts = {};
-        players.forEach((p) => {
-          voteCounts[p.id] = 0;
-        });
-        Object.values(votes).forEach((votedForId) => {
-          if (votedForId && voteCounts[votedForId] !== undefined) {
-            voteCounts[votedForId]++;
-          }
-        });
-
-        // Encontrar jugador(es) con más votos
-        const maxVotes = Math.max(...Object.values(voteCounts));
-        const mostVoted = Object.entries(voteCounts)
-          .filter(([, count]) => count === maxVotes)
-          .map(([id]) => id);
-
-        // Verificar si algún impostor fue atrapado (mayoría simple)
-        const impostorCaught = mostVoted.some((id) => impostorIds.includes(id));
-
-        // Calcular puntos
-        const newScores = { ...scores };
-        const roundPoints = {};
-
-        players.forEach((p) => {
-          if (!newScores[p.id]) newScores[p.id] = 0;
-          roundPoints[p.id] = 0;
-        });
-
-        if (impostorCaught) {
-          // Impostor fue descubierto - puntos para quienes votaron correctamente
-          Object.entries(votes).forEach(([voterId, votedForId]) => {
-            if (impostorIds.includes(votedForId)) {
-              roundPoints[voterId] = (roundPoints[voterId] || 0) + 2;
-              newScores[voterId] = (newScores[voterId] || 0) + 2;
-            }
-          });
-          // Bonus para espía
-          if (spyId && roundPoints[spyId] !== undefined) {
-            roundPoints[spyId] = (roundPoints[spyId] || 0) + 1;
-            newScores[spyId] = (newScores[spyId] || 0) + 1;
-          }
-        } else {
-          // Impostor no descubierto - puntos para los impostores
-          impostorIds.forEach((id) => {
-            roundPoints[id] = (roundPoints[id] || 0) + 3;
-            newScores[id] = (newScores[id] || 0) + 3;
-          });
-        }
-
-        const gameResult = {
-          word: state.currentWord,
-          trapWord: state.currentTrapWord,
-          category: state.currentCategory,
-          totalClueRounds: state.config.totalRounds,
-          impostorIds: [...impostorIds],
-          spyId,
-          impostorCaught,
-          voteCounts,
-          roundPoints,
-          mostVoted,
-        };
-
-        set({
-          scores: newScores,
-          roundHistory: [...state.roundHistory, gameResult],
-        });
-
-        return gameResult;
-      },
 
       goToGameOver: () => set({ phase: 'game-over' }),
 
