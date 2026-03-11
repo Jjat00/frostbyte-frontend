@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useImpostorGameStore from '@/stores/useImpostorGameStore';
 import { impostorService } from '@/services/impostor.service';
+import { feedbackPhaseChange, feedbackGameOver } from '@/utils/gameFeedback';
 import RoleReveal from '@/components/game/impostor/RoleReveal';
 import ClueRound from '@/components/game/impostor/ClueRound';
 import DiscussionPhase from '@/components/game/impostor/DiscussionPhase';
@@ -16,12 +17,25 @@ const ImpostorGamePage = () => {
   const navigate = useNavigate();
   const { phase, players, sessionId, resetGame } = useImpostorGameStore();
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const prevPhaseRef = useRef(phase);
 
   useEffect(() => {
     if (players.length === 0 && phase === 'setup') {
       navigate('/game/impostor-frostbyte/setup', { replace: true });
     }
   }, [players, phase, navigate]);
+
+  // Feedback sonoro/vibración al cambiar de fase
+  useEffect(() => {
+    if (prevPhaseRef.current !== phase && phase !== 'setup') {
+      if (phase === 'game-over') {
+        feedbackGameOver();
+      } else {
+        feedbackPhaseChange();
+      }
+    }
+    prevPhaseRef.current = phase;
+  }, [phase]);
 
   const handleExit = () => {
     // Marcar sesión como abandonada en el backend
@@ -74,7 +88,17 @@ const ImpostorGamePage = () => {
           </div>
         )}
 
-        {renderPhase()}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={phase}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderPhase()}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Modal de confirmación de salida */}

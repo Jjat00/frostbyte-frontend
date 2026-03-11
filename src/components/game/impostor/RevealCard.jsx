@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, AlertTriangle, Shield } from 'lucide-react';
+import { feedbackReveal } from '@/utils/gameFeedback';
 
 const RevealCard = ({ role, word, trapWord, category, hintEnabled, trapWordEnabled, spyTarget, onDone }) => {
   const [revealed, setRevealed] = useState(false);
@@ -10,6 +11,7 @@ const RevealCard = ({ role, word, trapWord, category, hintEnabled, trapWordEnabl
 
   const handleReveal = () => {
     setRevealed(true);
+    feedbackReveal();
   };
 
   const handleDone = () => {

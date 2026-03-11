@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Vote, Check, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useImpostorGameStore from '@/stores/useImpostorGameStore';
+import { feedbackVote } from '@/utils/gameFeedback';
 import PlayerAvatar from './PlayerAvatar';
 
 const VotingPhase = () => {
@@ -11,6 +12,7 @@ const VotingPhase = () => {
 
   const handleConfirm = () => {
     if (selectedId) {
+      feedbackVote();
       submitGroupVote(selectedId);
     }
   };

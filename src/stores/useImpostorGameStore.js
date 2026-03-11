@@ -1,6 +1,15 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+const shuffleArray = (arr) => {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const initialState = {
   // Fases: setup | role-reveal | clue-round | discussion | voting | round-results | game-over
   phase: 'setup',
@@ -37,6 +46,7 @@ const initialState = {
 
   // Control de pistas (índice del jugador actual dentro de la ronda)
   cluePlayerIndex: 0,
+  cluePlayerOrder: [], // orden aleatorio de índices para la ronda actual
 
   // Control de votación
   votedPlayerId: null,
@@ -105,6 +115,7 @@ export const useImpostorGameStore = create(
           revealIndex: 0,
           revealedPlayers: [],
           cluePlayerIndex: 0,
+          cluePlayerOrder: shuffleArray(state.players.map((_, i) => i)),
           votedPlayerId: null,
           usedWords: [...state.usedWords, word],
         });
@@ -148,10 +159,11 @@ export const useImpostorGameStore = create(
           // Todos los jugadores dieron pista en esta ronda
           const nextClueRound = state.currentClueRound + 1;
 
-          // Si quedan más rondas de pistas → nueva ronda, resetear índice de jugador
+          // Si quedan más rondas de pistas → nueva ronda, nuevo orden aleatorio
           if (nextClueRound <= state.config.totalRounds) {
             return {
               cluePlayerIndex: 0,
+              cluePlayerOrder: shuffleArray(state.players.map((_, i) => i)),
               currentClueRound: nextClueRound,
             };
           }

@@ -4,14 +4,16 @@ import { ArrowRight, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import useImpostorGameStore from '@/stores/useImpostorGameStore';
 import useCountdownTimer from '@/hooks/useCountdownTimer';
+import { feedbackNextTurn } from '@/utils/gameFeedback';
 import PlayerAvatar from './PlayerAvatar';
 import CyberpunkTimer from './CyberpunkTimer';
 
 const ClueRound = () => {
-  const { players, cluePlayerIndex, currentClueRound, config, advanceClue } =
+  const { players, cluePlayerIndex, cluePlayerOrder, currentClueRound, config, advanceClue } =
     useImpostorGameStore();
 
-  const currentPlayer = players[cluePlayerIndex];
+  const currentPlayerIdx = cluePlayerOrder[cluePlayerIndex] ?? cluePlayerIndex;
+  const currentPlayer = players[currentPlayerIdx];
   const isLastPlayerInRound = cluePlayerIndex >= players.length - 1;
   const isLastRound = currentClueRound >= config.totalRounds;
   const hasTimer = config.turnTimerSeconds != null;
@@ -21,14 +23,19 @@ const ClueRound = () => {
     { onComplete: advanceClue }
   );
 
-  // Reiniciar timer cada vez que cambia el jugador o la ronda
   useEffect(() => {
     if (hasTimer && currentPlayer) {
       start();
     }
+    if (currentPlayer) {
+      feedbackNextTurn();
+    }
   }, [cluePlayerIndex, currentClueRound]);
 
   if (!currentPlayer) return null;
+
+  // Construir el orden visual de jugadores para esta ronda
+  const orderedPlayers = cluePlayerOrder.map((idx) => players[idx]);
 
   return (
     <div className="flex flex-col items-center gap-8 py-8">
@@ -65,9 +72,9 @@ const ClueRound = () => {
         ))}
       </div>
 
-      {/* Progreso de jugadores en esta ronda */}
+      {/* Progreso de jugadores en esta ronda (orden aleatorio) */}
       <div className="flex gap-3 flex-wrap justify-center">
-        {players.map((p, i) => (
+        {orderedPlayers.map((p, i) => (
           <div key={p.id} className="flex flex-col items-center gap-1">
             <PlayerAvatar
               name={p.name}
@@ -113,14 +120,14 @@ const ClueRound = () => {
         />
       )}
 
-      {/* Botón siguiente */}
+      {/* Boton siguiente */}
       <Button
         onClick={advanceClue}
         size="lg"
         className="bg-secondary/20 border border-secondary/40 text-secondary hover:bg-secondary/30 font-bold px-8"
       >
         {isLastPlayerInRound && isLastRound
-          ? 'Ir a discusión'
+          ? 'Ir a discusion'
           : isLastPlayerInRound
           ? `Siguiente ronda (${currentClueRound + 1}/${config.totalRounds})`
           : 'Siguiente jugador'}
