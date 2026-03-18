@@ -16,6 +16,7 @@ import { TransparencyToggle } from "@/components/ai-generator/TransparencyToggle
 import { GenerationProgress } from "@/components/ai-generator/GenerationProgress";
 import { GeneratedImageActions } from "@/components/ai-generator/GeneratedImageActions";
 import { ProductSelectorModal } from "@/components/ai-generator/ProductSelectorModal";
+import { ModelSelector } from "@/components/ai-generator/ModelSelector";
 import { GenerationGallery } from "@/components/ai-generator/GenerationGallery";
 import {
   useImageGeneration,
@@ -40,6 +41,7 @@ const AIImageGeneratorPage = () => {
   const [referenceImage, setReferenceImage] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [transparent, setTransparent] = useState(false);
+  const [aiModel, setAiModel] = useState("gemini-3-pro-image-preview");
   const [errors, setErrors] = useState({});
 
   // Estado del modal de selección de producto
@@ -102,6 +104,7 @@ const AIImageGeneratorPage = () => {
       referenceImage,
       prompt: prompt.trim(),
       transparent,
+      aiModel,
     });
   }, [
     validateForm,
@@ -110,6 +113,7 @@ const AIImageGeneratorPage = () => {
     referenceImage,
     prompt,
     transparent,
+    aiModel,
   ]);
 
   const handleOriginalSelect = useCallback((file) => {
@@ -174,6 +178,7 @@ const AIImageGeneratorPage = () => {
     setReferenceImage(null);
     setPrompt("");
     setTransparent(false);
+    setAiModel("gemini-3-pro-image-preview");
     setErrors({});
     reset();
   }, [reset]);
@@ -228,7 +233,7 @@ const AIImageGeneratorPage = () => {
             Generador de Imágenes con IA
           </h1>
           <p className="text-gray">
-            Crea imágenes profesionales de productos usando OpenAI GPT Image
+            Crea imagenes profesionales de productos con IA (Gemini / OpenAI)
           </p>
         </div>
       </div>
@@ -343,7 +348,18 @@ const AIImageGeneratorPage = () => {
 
           <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
             <h2 className="text-xl font-bold text-light">
-              3. Opciones Adicionales
+              3. Modelo de IA
+            </h2>
+            <ModelSelector
+              value={aiModel}
+              onChange={setAiModel}
+              disabled={isGenerating}
+            />
+          </div>
+
+          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
+            <h2 className="text-xl font-bold text-light">
+              4. Opciones Adicionales
             </h2>
             <TransparencyToggle
               value={transparent}

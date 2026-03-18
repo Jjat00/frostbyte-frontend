@@ -21,6 +21,7 @@ export const aiImageService = {
     referenceImage = null,
     prompt = '',
     transparent = true,
+    aiModel = 'gemini-3-pro-image-preview',
     onProgress = null,
   }) {
     const formData = new FormData();
@@ -35,6 +36,7 @@ export const aiImageService = {
     }
 
     formData.append('transparent_background', transparent);
+    formData.append('ai_model', aiModel);
 
     const response = await apiClient.post(ENDPOINTS.AI_GENERATE_IMAGE, formData, {
       headers: {
