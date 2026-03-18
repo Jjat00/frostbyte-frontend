@@ -53,7 +53,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 ### Vistas Privadas (Panel de Administración)
 | Feature | Página | Descripción |
 |---------|--------|-------------|
-| **Generador de Imágenes** | `/productos/generador-ia` | Carga imagen original + referencia, escribe prompt, genera imagen profesional |
+| **Generador de Imágenes** | `/productos/generador-ia` | Carga imagen original + referencia, selecciona modelo (Gemini/OpenAI), escribe prompt, genera imagen profesional |
 | **Galería de Generaciones** | Pestaña dentro del generador | Historial de imágenes generadas con metadatos |
 | **Sugerencia de Descripción** | Formulario de productos | Genera descripciones automáticas para nuevos productos |
 
@@ -73,7 +73,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 
 ### Panel de Administración
 - **Productos**: CRUD de categorías, productos y variantes
-- **Productos - Generador IA**: AIImageGeneratorPage con generación de imágenes profesionales
+- **Productos - Generador IA**: AIImageGeneratorPage con generación de imágenes profesionales (Gemini/OpenAI)
 - **Pedidos**: Gestión del ciclo de vida de pedidos (Pendiente → Preparando → Listo → Entregado)
 - **Inventario**: Control de materias primas, recetas y órdenes de compra
 - **Gastos**: Seguimiento de gastos operacionales y recurrentes
@@ -81,10 +81,11 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - **Analytics**: Dashboard con métricas de ventas
 
 ### Generador de Imágenes IA (Privado)
-- Generación de imágenes de productos con GPT Image 1.5
+- Generación de imágenes de productos con IA (Gemini / OpenAI)
+- Selector de modelo: Gemini Pro Image (default), Gemini Flash Image, GPT Image 1.5
 - Carga de imagen original y imagen de referencia (opcional)
 - Editor de prompt con sugerencias preestablecidas
-- Toggle para fondo transparente
+- Toggle para fondo transparente (OpenAI: nativo, Gemini: rembg post-procesado)
 - Descarga de imágenes generadas
 - Guardado persistente en Cloudflare R2
 - Asignación directa a productos
@@ -113,7 +114,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 | `/mesa/:tableNumber` | Público | Tracking por mesa con todas las funciones de IA del menú |
 | `/login` | Público | Autenticación |
 | `/home` | Protegido | Dashboard principal |
-| **`/productos/generador-ia`** | **Admin** | **Generador de imágenes IA con editor de prompts, galería y asignación a productos** |
+| **`/productos/generador-ia`** | **Admin** | **Generador de imágenes IA con selector de modelo (Gemini/OpenAI), editor de prompts, galería y asignación a productos** |
 | `/inventario/*` | Admin | Gestión de inventario |
 | `/pedidos/*` | Protegido | Gestión de pedidos |
 | `/productos/*` | Protegido/Admin | Catálogo de productos con sugerencia de descripción IA |
@@ -169,7 +170,7 @@ Ver [.env.example](.env.example) para las variables disponibles.
 - Endpoints centralizados en `src/services/api/endpoints.js`
 
 ### Servicios de IA
-- `aiImage.service.js`: Maneja generación de imágenes, descarga y persistencia en R2
+- `aiImage.service.js`: Maneja generación de imágenes (con selección de modelo), descarga y persistencia en R2
 - `motivational.service.js`: Recomendaciones por mood/quiz, frases motivacionales, transcripción
 - Endpoints centralizados en `src/services/api/endpoints.js` con prefijos `/ai/` y `/motivational/`
 

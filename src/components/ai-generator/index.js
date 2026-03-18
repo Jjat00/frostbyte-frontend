@@ -5,3 +5,4 @@ export { TransparencyToggle } from './TransparencyToggle';
 export { GenerationProgress } from './GenerationProgress';
 export { ImagePreview } from './ImagePreview';
 export { GeneratedImageActions } from './GeneratedImageActions';
+export { ModelSelector } from './ModelSelector';
