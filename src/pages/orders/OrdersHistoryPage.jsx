@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   Search,
@@ -10,6 +10,8 @@ import {
   XCircle,
   Loader2,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Filter,
   User,
   DollarSign,
@@ -22,6 +24,142 @@ const statusConfig = {
   ready: { label: 'Listo', color: 'green', icon: CheckCircle },
   delivered: { label: 'Entregado', color: 'emerald', icon: CheckCircle },
   cancelled: { label: 'Cancelado', color: 'red', icon: XCircle },
+};
+
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+  }).format(value);
+};
+
+const OrderHistoryCard = ({ order, getStatusBadge, formatDateTime }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  const { data: orderDetail, isLoading: loadingDetail } = useQuery({
+    queryKey: ['order', order.id],
+    queryFn: () => ordersService.getOrder(order.id),
+    enabled: expanded,
+    staleTime: 30000,
+  });
+
+  const items = orderDetail?.items || order.items || [];
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = totalItems || order.items_count || 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-dark-secondary border border-gray/20 rounded-xl p-4 hover:border-gray/40 transition-all"
+    >
+      <Link to={`/pedidos/${order.id}`} className="block group">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="font-bold text-light">
+                #{order.order_number?.slice(-6)}
+              </span>
+              {getStatusBadge(order.status)}
+              {order.is_paid ? (
+                <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded text-xs">
+                  Pagado
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded text-xs">
+                  Sin pagar
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-4 text-sm text-gray">
+              <span className="flex items-center gap-1">
+                <User className="w-4 h-4" />
+                {order.customer_name || 'Cliente'}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                {formatDateTime(order.created_at)}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 mt-1">
+              {order.table_number != null && order.table_number !== undefined && (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-gray">{order.table_number === 0 ? 'Barra' : 'Mesa'}:</span>
+                  <span className="w-5 h-5 flex items-center justify-center bg-secondary/20 text-secondary rounded text-xs font-bold">
+                    {order.table_number === 0 ? 'B' : order.table_number}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="font-bold text-light">{formatCurrency(order.total)}</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray group-hover:text-secondary transition-colors" />
+          </div>
+        </div>
+      </Link>
+
+      {/* Expandable items */}
+      <div className="mt-3 pt-3 border-t border-gray/10">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center justify-between w-full text-xs text-gray hover:text-light transition-colors"
+        >
+          <span>{itemCount} producto{itemCount !== 1 ? 's' : ''}</span>
+          <span className="flex items-center gap-1">
+            {expanded ? 'Ocultar' : 'Ver items'}
+            {expanded ? (
+              <ChevronUp className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5" />
+            )}
+          </span>
+        </button>
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              {loadingDetail ? (
+                <div className="flex items-center justify-center py-3">
+                  <Loader2 className="w-4 h-4 animate-spin text-secondary" />
+                </div>
+              ) : (
+                <div className="space-y-1.5 mt-2">
+                  {items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start justify-between text-sm gap-2"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <span className="text-gray break-words block">
+                          <span className="text-light font-medium">{item.quantity}x</span>{' '}
+                          <span className="text-light">{item.product_name}</span>
+                          <span className="text-gray/70"> ({item.variant_name})</span>
+                        </span>
+                      </div>
+                      <span className="text-light flex-shrink-0">
+                        {formatCurrency(item.subtotal)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
 };
 
 const OrdersHistoryPage = () => {
@@ -51,14 +189,6 @@ const OrdersHistoryPage = () => {
       order.customer_phone?.includes(query)
     );
   });
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -154,70 +284,12 @@ const OrdersHistoryPage = () => {
       ) : (
         <div className="space-y-3">
           {filteredOrders.map((order) => (
-            <motion.div
+            <OrderHistoryCard
               key={order.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <Link
-                to={`/pedidos/${order.id}`}
-                className="block bg-dark-secondary border border-gray/20 rounded-xl p-4 hover:border-gray/40 transition-all group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="font-bold text-light">
-                        #{order.order_number?.slice(-6)}
-                      </span>
-                      {getStatusBadge(order.status)}
-                      {order.is_paid ? (
-                        <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded text-xs">
-                          Pagado
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded text-xs">
-                          Sin pagar
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-4 text-sm text-gray">
-                      <span className="flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        {order.customer_name || 'Cliente'}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {formatDateTime(order.created_at)}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-3 mt-1">
-                      {order.items_count > 0 && (
-                        <p className="text-xs text-gray">
-                          {order.items_count} producto{order.items_count > 1 ? 's' : ''}
-                        </p>
-                      )}
-                      {order.table_number != null && order.table_number !== undefined && (
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs text-gray">{order.table_number === 0 ? 'Barra' : 'Mesa'}:</span>
-                          <span className="w-5 h-5 flex items-center justify-center bg-secondary/20 text-secondary rounded text-xs font-bold">
-                            {order.table_number === 0 ? 'B' : order.table_number}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="font-bold text-light">{formatCurrency(order.total)}</p>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray group-hover:text-secondary transition-colors" />
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
+              order={order}
+              getStatusBadge={getStatusBadge}
+              formatDateTime={formatDateTime}
+            />
           ))}
         </div>
       )}
