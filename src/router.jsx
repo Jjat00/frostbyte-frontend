@@ -3,68 +3,77 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "./App";
 import { authService } from "./services/auth.service";
 
+// Lazy import con auto-reload si el chunk ya no existe (post-deploy)
+const lazyLoad = (importFn) =>
+  lazy(() =>
+    importFn().catch(() => {
+      window.location.reload();
+      return new Promise(() => {}); // nunca resuelve, el reload se encarga
+    })
+  );
+
 // Lazy load de todas las rutas excepto la carta pública (/)
-const TablePage = lazy(() => import("./pages/TablePage"));
-const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
-const HomePage = lazy(() => import("./pages/HomePage"));
+const TablePage = lazyLoad(() => import("./pages/TablePage"));
+const LoginPage = lazyLoad(() => import("./pages/auth/LoginPage"));
+const HomePage = lazyLoad(() => import("./pages/HomePage"));
 
 // Inventario
-const InventoryLayout = lazy(() => import("./pages/inventory/InventoryLayout"));
-const DashboardPage = lazy(() => import("./pages/inventory/DashboardPage"));
-const MaterialsPage = lazy(() => import("./pages/inventory/MaterialsPage"));
-const LowStockPage = lazy(() => import("./pages/inventory/LowStockPage"));
-const PurchaseOrdersPage = lazy(() => import("./pages/inventory/PurchaseOrdersPage"));
+const InventoryLayout = lazyLoad(() => import("./pages/inventory/InventoryLayout"));
+const DashboardPage = lazyLoad(() => import("./pages/inventory/DashboardPage"));
+const MaterialsPage = lazyLoad(() => import("./pages/inventory/MaterialsPage"));
+const LowStockPage = lazyLoad(() => import("./pages/inventory/LowStockPage"));
+const PurchaseOrdersPage = lazyLoad(() => import("./pages/inventory/PurchaseOrdersPage"));
 
 // Pedidos
-const OrdersLayout = lazy(() => import("./pages/orders/OrdersLayout"));
-const ActiveOrdersPage = lazy(() => import("./pages/orders/ActiveOrdersPage"));
-const NewOrderPage = lazy(() => import("./pages/orders/NewOrderPage"));
-const OrderDetailPage = lazy(() => import("./pages/orders/OrderDetailPage"));
-const OrdersHistoryPage = lazy(() => import("./pages/orders/OrdersHistoryPage"));
-const OrdersStatsPage = lazy(() => import("./pages/orders/OrdersStatsPage"));
+const OrdersLayout = lazyLoad(() => import("./pages/orders/OrdersLayout"));
+const ActiveOrdersPage = lazyLoad(() => import("./pages/orders/ActiveOrdersPage"));
+const NewOrderPage = lazyLoad(() => import("./pages/orders/NewOrderPage"));
+const OrderDetailPage = lazyLoad(() => import("./pages/orders/OrderDetailPage"));
+const OrdersHistoryPage = lazyLoad(() => import("./pages/orders/OrdersHistoryPage"));
+const OrdersStatsPage = lazyLoad(() => import("./pages/orders/OrdersStatsPage"));
 
 // Productos
-const ProductsLayout = lazy(() => import("./pages/products/ProductsLayout"));
-const ProductsListPage = lazy(() => import("./pages/products/ProductsListPage"));
-const ProductFormPage = lazy(() => import("./pages/products/ProductFormPage"));
-const CategoriesPage = lazy(() => import("./pages/products/CategoriesPage"));
-const AIImageGeneratorPage = lazy(() => import("./pages/products/AIImageGeneratorPage"));
+const ProductsLayout = lazyLoad(() => import("./pages/products/ProductsLayout"));
+const ProductsListPage = lazyLoad(() => import("./pages/products/ProductsListPage"));
+const ProductFormPage = lazyLoad(() => import("./pages/products/ProductFormPage"));
+const CategoriesPage = lazyLoad(() => import("./pages/products/CategoriesPage"));
+const AIImageGeneratorPage = lazyLoad(() => import("./pages/products/AIImageGeneratorPage"));
 
 // Música
-const MusicLayout = lazy(() => import("./pages/music/MusicLayout"));
-const SongRequestsPage = lazy(() => import("./pages/music/SongRequestsPage"));
+const MusicLayout = lazyLoad(() => import("./pages/music/MusicLayout"));
+const SongRequestsPage = lazyLoad(() => import("./pages/music/SongRequestsPage"));
 
 // Feedback
-const FeedbackLayout = lazy(() => import("./pages/feedback/FeedbackLayout"));
-const FeedbackListPage = lazy(() => import("./pages/feedback/FeedbackListPage"));
+const FeedbackLayout = lazyLoad(() => import("./pages/feedback/FeedbackLayout"));
+const FeedbackListPage = lazyLoad(() => import("./pages/feedback/FeedbackListPage"));
 
 // Gastos
-const ExpensesLayout = lazy(() => import("./pages/expenses/ExpensesLayout"));
-const ExpensesDashboard = lazy(() => import("./pages/expenses/ExpensesDashboard"));
-const ExpensesListPage = lazy(() => import("./pages/expenses/ExpensesListPage"));
-const ExpenseFormPage = lazy(() => import("./pages/expenses/ExpenseFormPage"));
-const ExpenseDetailPage = lazy(() => import("./pages/expenses/ExpenseDetailPage"));
-const ExpenseCategoriesPage = lazy(() => import("./pages/expenses/CategoriesPage"));
-const RecurringPage = lazy(() => import("./pages/expenses/RecurringPage"));
+const ExpensesLayout = lazyLoad(() => import("./pages/expenses/ExpensesLayout"));
+const ExpensesDashboard = lazyLoad(() => import("./pages/expenses/ExpensesDashboard"));
+const ExpensesListPage = lazyLoad(() => import("./pages/expenses/ExpensesListPage"));
+const ExpenseFormPage = lazyLoad(() => import("./pages/expenses/ExpenseFormPage"));
+const ExpenseDetailPage = lazyLoad(() => import("./pages/expenses/ExpenseDetailPage"));
+const ExpenseCategoriesPage = lazyLoad(() => import("./pages/expenses/CategoriesPage"));
+const RecurringPage = lazyLoad(() => import("./pages/expenses/RecurringPage"));
 
 // Estadísticas
-const AnalyticsLayout = lazy(() => import("./pages/analytics/AnalyticsLayout"));
-const FinancialDashboard = lazy(() => import("./pages/analytics/FinancialDashboard"));
+const AnalyticsLayout = lazyLoad(() => import("./pages/analytics/AnalyticsLayout"));
+const FinancialDashboard = lazyLoad(() => import("./pages/analytics/FinancialDashboard"));
 
 // Juegos
-const GamesListPage = lazy(() => import("./pages/game/GamesListPage"));
-const GameInstructionsPage = lazy(() => import("./pages/game/GameInstructionsPage"));
-const QRScanPage = lazy(() => import("./pages/game/QRScanPage"));
-const JoinRoomPage = lazy(() => import("./pages/game/JoinRoomPage"));
-const GameRoomPage = lazy(() => import("./pages/game/GameRoomPage"));
-const GamesAdminPage = lazy(() => import("./pages/game/GamesAdminPage"));
+const GamesListPage = lazyLoad(() => import("./pages/game/GamesListPage"));
+const GameInstructionsPage = lazyLoad(() => import("./pages/game/GameInstructionsPage"));
+const QRScanPage = lazyLoad(() => import("./pages/game/QRScanPage"));
+const JoinRoomPage = lazyLoad(() => import("./pages/game/JoinRoomPage"));
+const GameRoomPage = lazyLoad(() => import("./pages/game/GameRoomPage"));
+const GamesAdminPage = lazyLoad(() => import("./pages/game/GamesAdminPage"));
 
 // Impostor Frostbyte
-const ImpostorSetupPage = lazy(() => import("./pages/game/impostor-frostbyte/ImpostorSetupPage"));
-const ImpostorGamePage = lazy(() => import("./pages/game/impostor-frostbyte/ImpostorGamePage"));
+const ImpostorSetupPage = lazyLoad(() => import("./pages/game/impostor-frostbyte/ImpostorSetupPage"));
+const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/ImpostorGamePage"));
 
-const LandingPage = lazy(() => import("./pages/LandingPage"));
-const AdminRoute = lazy(() => import("./components/AdminRoute"));
+const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
+const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
 
 // Fallback de carga mínimo
 const PageLoader = () => (
