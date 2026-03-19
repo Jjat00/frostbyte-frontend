@@ -37,7 +37,31 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
   </motion.div>
 );
 
-// Tarjeta con glass-morphism: limpia, profesional y legible
+// SVG filter — distorsión sutil de vidrio grueso (más en bordes, menos en centro)
+const ThickGlassFilter = () => (
+  <svg className="absolute w-0 h-0" aria-hidden="true">
+    <defs>
+      <filter id="thick-glass" colorInterpolationFilters="sRGB">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.015"
+          numOctaves="3"
+          seed="2"
+          result="noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="noise"
+          scale="8"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+    </defs>
+  </svg>
+);
+
+// Tarjeta liquid glass — vidrio grueso con distorsión en bordes
 const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
   const ringColor = styles.ringColor || "border-cyan-400";
@@ -50,9 +74,43 @@ const ProductCard = ({ product, index, styles }) => {
       transition={{ duration: 0.5, delay: index * 0.08 }}
       className="group relative h-full"
     >
-      <div className="relative flex flex-col items-center h-full bg-white/4 backdrop-blur-md border border-white/8 rounded-3xl p-6 transition-all duration-500 hover:bg-white/7 hover:border-white/15 hover:shadow-[0_8px_40px_rgba(255,45,85,0.12)]">
+      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.04] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(34,211,238,0.05)]">
+        {/* Capa de vidrio grueso — distorsión sutil en los bordes por la concavidad */}
+        <div
+          className="absolute inset-0 rounded-3xl pointer-events-none"
+          style={{
+            backdropFilter: "url(#thick-glass) blur(0.5px)",
+            WebkitBackdropFilter: "url(#thick-glass) blur(0.5px)",
+            maskImage:
+              "radial-gradient(ellipse 70% 65% at 50% 50%, transparent 30%, rgba(0,0,0,0.5) 65%, black 90%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 70% 65% at 50% 50%, transparent 30%, rgba(0,0,0,0.5) 65%, black 90%)",
+          }}
+        />
+
+        {/* Centro — blur muy leve para simular grosor sin perder claridad */}
+        <div
+          className="absolute inset-0 rounded-3xl pointer-events-none"
+          style={{
+            backdropFilter: "blur(1px)",
+            WebkitBackdropFilter: "blur(1px)",
+          }}
+        />
+
+        {/* Reflejo especular superior */}
+        <div
+          className="absolute top-0 inset-x-0 h-1/2 rounded-t-3xl pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 40%, transparent 100%)",
+          }}
+        />
+
+        {/* Brillo en borde superior */}
+        <div className="absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
         {/* Imagen del producto */}
-        <div className="relative mb-5 shrink-0">
+        <div className="relative mb-5 shrink-0 z-10">
           {styles.image ? (
             <div className="relative w-52 h-52 md:w-56 md:h-56 flex items-center justify-center">
               <img
@@ -75,7 +133,7 @@ const ProductCard = ({ product, index, styles }) => {
         </div>
 
         {/* Nombre del producto */}
-        <div className="w-full flex flex-col items-center mb-3">
+        <div className="relative z-10 w-full flex flex-col items-center mb-3">
           <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center line-clamp-2 leading-tight">
             {product.name}
           </h3>
@@ -83,13 +141,13 @@ const ProductCard = ({ product, index, styles }) => {
         </div>
 
         {/* Descripción */}
-        <p className="text-slate-400 text-sm text-center mb-5 leading-relaxed max-w-[260px]">
+        <p className="relative z-10 text-slate-400 text-sm text-center mb-5 leading-relaxed max-w-[260px]">
           {product.description}
         </p>
 
         {/* Precios */}
-        <div className="mt-auto w-full">
-          <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/6">
+        <div className="relative z-10 mt-auto w-full">
+          <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/[0.08]">
             {variants.map((variant) => (
               <div key={variant.id || variant.name} className="flex flex-col items-center">
                 <span className="text-[11px] text-slate-500 uppercase font-semibold tracking-widest mb-0.5">
@@ -379,6 +437,9 @@ const Granizados = ({ showExtras = true }) => {
       id="granizados"
       className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-blue-950 to-indigo-950"
     >
+      {/* SVG filter para vidrio grueso */}
+      <ThickGlassFilter />
+
       {/* Grid canvas interactivo */}
       <canvas
         ref={canvasRef}
