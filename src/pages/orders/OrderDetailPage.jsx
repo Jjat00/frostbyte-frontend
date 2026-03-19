@@ -102,6 +102,10 @@ const OrderDetailPage = () => {
   const [editedCustomerName, setEditedCustomerName] = useState("");
   const [editedTableNumber, setEditedTableNumber] = useState("");
   const [discountPercent, setDiscountPercent] = useState("");
+  const [cashAmount, setCashAmount] = useState("");
+  const [showCashChangeForItem, setShowCashChangeForItem] = useState(false);
+  const [cashAmountFull, setCashAmountFull] = useState("");
+  const [showCashChangeForFull, setShowCashChangeForFull] = useState(false);
 
   // Obtener detalle del pedido
   const {
@@ -909,77 +913,178 @@ const OrderDetailPage = () => {
                   ? "Selecciona el nuevo método de pago:"
                   : "Selecciona el método de pago:"}
               </p>
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                {paymentMethods.map((method) => {
-                  const isCurrentMethod =
-                    selectedItemForPayment.payment_method === method.id;
-                  return (
+              {!showCashChangeForItem ? (
+                <>
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    {paymentMethods.map((method) => {
+                      const isCurrentMethod =
+                        selectedItemForPayment.payment_method === method.id;
+                      return (
+                        <button
+                          key={method.id}
+                          onClick={() => {
+                            if (method.id === "cash") {
+                              setCashAmount("");
+                              setShowCashChangeForItem(true);
+                              return;
+                            }
+                            if (selectedItemForPayment.is_paid) {
+                              changePaymentMethodMutation.mutate({
+                                itemId: selectedItemForPayment.id,
+                                paymentMethod: method.id,
+                              });
+                            } else {
+                              markItemPaidMutation.mutate({
+                                itemId: selectedItemForPayment.id,
+                                paymentMethod: method.id,
+                              });
+                            }
+                          }}
+                          disabled={
+                            markItemPaidMutation.isPending ||
+                            changePaymentMethodMutation.isPending
+                          }
+                          className={`flex flex-col items-center gap-2 p-4 bg-dark border rounded-xl transition-all ${
+                            isCurrentMethod
+                              ? "border-green-500 bg-green-500/10"
+                              : "border-gray/20 hover:border-green-500/50 hover:bg-green-500/5"
+                          }`}
+                        >
+                          <method.icon
+                            className={`w-6 h-6 ${
+                              isCurrentMethod ? "text-green-400" : "text-gray"
+                            }`}
+                          />
+                          <span
+                            className={`text-sm font-medium ${
+                              isCurrentMethod ? "text-green-400" : "text-light"
+                            }`}
+                          >
+                            {method.label}
+                          </span>
+                          {isCurrentMethod && (
+                            <span className="text-xs text-green-400">Actual</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {/* Botón para deshacer pago */}
+                  {selectedItemForPayment.is_paid && (
                     <button
-                      key={method.id}
-                      onClick={() => {
-                        if (selectedItemForPayment.is_paid) {
-                          changePaymentMethodMutation.mutate({
-                            itemId: selectedItemForPayment.id,
-                            paymentMethod: method.id,
-                          });
-                        } else {
-                          markItemPaidMutation.mutate({
-                            itemId: selectedItemForPayment.id,
-                            paymentMethod: method.id,
-                          });
-                        }
-                      }}
-                      disabled={
-                        markItemPaidMutation.isPending ||
-                        changePaymentMethodMutation.isPending
+                      onClick={() =>
+                        unmarkItemPaidMutation.mutate(selectedItemForPayment.id)
                       }
-                      className={`flex flex-col items-center gap-2 p-4 bg-dark border rounded-xl transition-all ${
-                        isCurrentMethod
-                          ? "border-green-500 bg-green-500/10"
-                          : "border-gray/20 hover:border-green-500/50 hover:bg-green-500/5"
-                      }`}
+                      disabled={unmarkItemPaidMutation.isPending}
+                      className="w-full py-3 mb-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl font-medium transition-all hover:bg-red-500/20 flex items-center justify-center gap-2"
                     >
-                      <method.icon
-                        className={`w-6 h-6 ${
-                          isCurrentMethod ? "text-green-400" : "text-gray"
-                        }`}
-                      />
-                      <span
-                        className={`text-sm font-medium ${
-                          isCurrentMethod ? "text-green-400" : "text-light"
-                        }`}
-                      >
-                        {method.label}
-                      </span>
-                      {isCurrentMethod && (
-                        <span className="text-xs text-green-400">Actual</span>
+                      {unmarkItemPaidMutation.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <XCircle className="w-4 h-4" />
+                          Deshacer Pago
+                        </>
                       )}
                     </button>
-                  );
-                })}
-              </div>
-              {/* Botón para deshacer pago */}
-              {selectedItemForPayment.is_paid && (
-                <button
-                  onClick={() =>
-                    unmarkItemPaidMutation.mutate(selectedItemForPayment.id)
-                  }
-                  disabled={unmarkItemPaidMutation.isPending}
-                  className="w-full py-3 mb-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl font-medium transition-all hover:bg-red-500/20 flex items-center justify-center gap-2"
-                >
-                  {unmarkItemPaidMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <XCircle className="w-4 h-4" />
-                      Deshacer Pago
-                    </>
                   )}
-                </button>
+                </>
+              ) : (
+                /* Calculadora de vuelto para item individual */
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-center gap-2 text-sm text-gray">
+                    <Banknote className="w-4 h-4 text-green-400" />
+                    Pago en efectivo
+                  </div>
+                  <div className="p-3 bg-dark rounded-lg">
+                    <p className="text-xs text-gray mb-1">A cobrar</p>
+                    <p className="text-2xl font-bold text-secondary">
+                      {formatCurrency(selectedItemForPayment.subtotal)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray mb-2">
+                      ¿Con cuánto paga?
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray text-sm">$</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={cashAmount}
+                        onChange={(e) => setCashAmount(e.target.value)}
+                        placeholder="0"
+                        autoFocus
+                        className="w-full pl-8 pr-4 py-3 bg-dark border border-gray/20 rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
+                  </div>
+                  {cashAmount && Number(cashAmount) > 0 && (
+                    <div className={`p-4 rounded-lg border ${
+                      Number(cashAmount) >= selectedItemForPayment.subtotal
+                        ? "bg-green-500/10 border-green-500/30"
+                        : "bg-red-500/10 border-red-500/30"
+                    }`}>
+                      {Number(cashAmount) >= selectedItemForPayment.subtotal ? (
+                        <>
+                          <p className="text-xs text-gray mb-1">Vuelto a entregar</p>
+                          <p className="text-3xl font-bold text-green-400">
+                            {formatCurrency(Number(cashAmount) - selectedItemForPayment.subtotal)}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-xs text-gray mb-1">Falta</p>
+                          <p className="text-3xl font-bold text-red-400">
+                            {formatCurrency(selectedItemForPayment.subtotal - Number(cashAmount))}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  <button
+                    onClick={() => {
+                      if (selectedItemForPayment.is_paid) {
+                        changePaymentMethodMutation.mutate({
+                          itemId: selectedItemForPayment.id,
+                          paymentMethod: "cash",
+                        });
+                      } else {
+                        markItemPaidMutation.mutate({
+                          itemId: selectedItemForPayment.id,
+                          paymentMethod: "cash",
+                        });
+                      }
+                      setShowCashChangeForItem(false);
+                      setCashAmount("");
+                    }}
+                    disabled={
+                      markItemPaidMutation.isPending ||
+                      changePaymentMethodMutation.isPending
+                    }
+                    className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    <Check className="w-5 h-5" />
+                    Confirmar Pago en Efectivo
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowCashChangeForItem(false);
+                      setCashAmount("");
+                    }}
+                    className="w-full py-2 text-gray hover:text-light transition-colors text-sm"
+                  >
+                    Volver a métodos de pago
+                  </button>
+                </div>
               )}
 
               <button
-                onClick={() => setSelectedItemForPayment(null)}
+                onClick={() => {
+                  setSelectedItemForPayment(null);
+                  setShowCashChangeForItem(false);
+                  setCashAmount("");
+                }}
                 className="w-full py-2 text-gray hover:text-light transition-colors"
               >
                 Cancelar
@@ -1004,27 +1109,117 @@ const OrderDetailPage = () => {
                 {formatCurrency(order.pending_total)}
               </span>
             </p>
-            <p className="text-xs text-gray mb-4">
-              Se marcarán {order.unpaid_items_count} items como pagados con el
-              mismo método
-            </p>
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              {paymentMethods.map((method) => (
+            {!showCashChangeForFull ? (
+              <>
+                <p className="text-xs text-gray mb-4">
+                  Se marcarán {order.unpaid_items_count} items como pagados con el
+                  mismo método
+                </p>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {paymentMethods.map((method) => (
+                    <button
+                      key={method.id}
+                      onClick={() => {
+                        if (method.id === "cash") {
+                          setCashAmountFull("");
+                          setShowCashChangeForFull(true);
+                          return;
+                        }
+                        markPaidMutation.mutate(method.id);
+                      }}
+                      disabled={markPaidMutation.isPending}
+                      className="flex flex-col items-center gap-2 p-4 bg-dark border border-gray/20 rounded-xl hover:border-green-500/50 hover:bg-green-500/5 transition-all"
+                    >
+                      <method.icon className="w-6 h-6 text-gray" />
+                      <span className="text-sm text-light font-medium">
+                        {method.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              /* Calculadora de vuelto para pago total */
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-2 text-sm text-gray">
+                  <Banknote className="w-4 h-4 text-green-400" />
+                  Pago en efectivo
+                </div>
+                <div className="p-3 bg-dark rounded-lg">
+                  <p className="text-xs text-gray mb-1">Total a cobrar</p>
+                  <p className="text-2xl font-bold text-secondary">
+                    {formatCurrency(order.pending_total)}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray mb-2">
+                    ¿Con cuánto paga?
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray text-sm">$</span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={cashAmountFull}
+                      onChange={(e) => setCashAmountFull(e.target.value)}
+                      placeholder="0"
+                      autoFocus
+                      className="w-full pl-8 pr-4 py-3 bg-dark border border-gray/20 rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                </div>
+                {cashAmountFull && Number(cashAmountFull) > 0 && (
+                  <div className={`p-4 rounded-lg border ${
+                    Number(cashAmountFull) >= order.pending_total
+                      ? "bg-green-500/10 border-green-500/30"
+                      : "bg-red-500/10 border-red-500/30"
+                  }`}>
+                    {Number(cashAmountFull) >= order.pending_total ? (
+                      <>
+                        <p className="text-xs text-gray mb-1">Vuelto a entregar</p>
+                        <p className="text-3xl font-bold text-green-400">
+                          {formatCurrency(Number(cashAmountFull) - order.pending_total)}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-xs text-gray mb-1">Falta</p>
+                        <p className="text-3xl font-bold text-red-400">
+                          {formatCurrency(order.pending_total - Number(cashAmountFull))}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
                 <button
-                  key={method.id}
-                  onClick={() => markPaidMutation.mutate(method.id)}
+                  onClick={() => {
+                    markPaidMutation.mutate("cash");
+                    setShowCashChangeForFull(false);
+                    setCashAmountFull("");
+                  }}
                   disabled={markPaidMutation.isPending}
-                  className="flex flex-col items-center gap-2 p-4 bg-dark border border-gray/20 rounded-xl hover:border-green-500/50 hover:bg-green-500/5 transition-all"
+                  className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
                 >
-                  <method.icon className="w-6 h-6 text-gray" />
-                  <span className="text-sm text-light font-medium">
-                    {method.label}
-                  </span>
+                  <Check className="w-5 h-5" />
+                  Confirmar Pago en Efectivo
                 </button>
-              ))}
-            </div>
+                <button
+                  onClick={() => {
+                    setShowCashChangeForFull(false);
+                    setCashAmountFull("");
+                  }}
+                  className="w-full py-2 text-gray hover:text-light transition-colors text-sm"
+                >
+                  Volver a métodos de pago
+                </button>
+              </div>
+            )}
             <button
-              onClick={() => setShowPaymentModal(false)}
+              onClick={() => {
+                setShowPaymentModal(false);
+                setShowCashChangeForFull(false);
+                setCashAmountFull("");
+              }}
               className="w-full py-2 text-gray hover:text-light transition-colors"
             >
               Cancelar
