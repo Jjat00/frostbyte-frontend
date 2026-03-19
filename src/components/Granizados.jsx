@@ -83,7 +83,7 @@ const ProductCard = ({ product, index, styles }) => {
         </div>
 
         {/* Descripción */}
-        <p className="text-slate-400 text-sm text-center line-clamp-2 mb-5 leading-relaxed max-w-[260px]">
+        <p className="text-slate-400 text-sm text-center mb-5 leading-relaxed max-w-[260px]">
           {product.description}
         </p>
 
