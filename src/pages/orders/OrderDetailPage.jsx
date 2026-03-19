@@ -338,7 +338,7 @@ const OrderDetailPage = () => {
       {/* Header */}
       <div className="flex items-center gap-3">
         <button
-          onClick={() => navigate("/pedidos")}
+          onClick={() => navigate(-1)}
           className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />

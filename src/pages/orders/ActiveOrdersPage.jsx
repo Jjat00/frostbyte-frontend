@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Clock,
   ChefHat,
@@ -288,9 +288,28 @@ const OrderCard = ({ order, onUpdateStatus }) => {
 
 const ActiveOrdersPage = () => {
   const queryClient = useQueryClient();
-  const [filter, setFilter] = useState("all");
-  const [deliveredTab, setDeliveredTab] = useState("unpaid"); // 'paid' o 'unpaid'
-  const [deliveredDate, setDeliveredDate] = useState("today"); // 'today' o 'yesterday'
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const filter = searchParams.get("filter") || "all";
+  const deliveredTab = searchParams.get("tab") || "unpaid";
+  const deliveredDate = searchParams.get("date") || "today";
+
+  const setFilter = (value) => {
+    const params = { filter: value };
+    if (value === "delivered") {
+      params.tab = "unpaid";
+      params.date = "today";
+    }
+    setSearchParams(params, { replace: true });
+  };
+
+  const setDeliveredTab = (value) => {
+    setSearchParams({ filter, tab: value, date: deliveredDate }, { replace: true });
+  };
+
+  const setDeliveredDate = (value) => {
+    setSearchParams({ filter, tab: deliveredTab, date: value }, { replace: true });
+  };
 
   // WebSocket para actualizaciones en tiempo real
   useWebSocket("/ws/orders/", {
@@ -462,13 +481,7 @@ const ActiveOrdersPage = () => {
         ].map((item) => (
           <button
             key={item.key}
-            onClick={() => {
-              setFilter(item.key);
-              if (item.key === "delivered") {
-                setDeliveredTab("unpaid"); // Reset a pendientes por pagar cuando cambias a entregados
-                setDeliveredDate("today"); // Reset a hoy cuando cambias a entregados
-              }
-            }}
+            onClick={() => setFilter(item.key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               filter === item.key
                 ? item.color === "yellow"
