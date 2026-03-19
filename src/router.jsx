@@ -3,12 +3,18 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "./App";
 import { authService } from "./services/auth.service";
 
-// Lazy import con auto-reload si el chunk ya no existe (post-deploy)
+// Lazy import con auto-reload (una sola vez) si el chunk ya no existe post-deploy
 const lazyLoad = (importFn) =>
   lazy(() =>
     importFn().catch(() => {
-      window.location.reload();
-      return new Promise(() => {}); // nunca resuelve, el reload se encarga
+      const key = "chunk_reload";
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, "1");
+        window.location.reload();
+        return new Promise(() => {});
+      }
+      sessionStorage.removeItem(key);
+      return Promise.reject(new Error("Chunk load failed after reload"));
     })
   );
 
