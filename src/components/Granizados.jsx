@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Skull,
@@ -245,25 +245,145 @@ const poisonShots = [
 
 const Granizados = ({ showExtras = true }) => {
   const { data, isLoading, error } = useProductsByCategory("granizados");
-
   const products = data?.results || [];
+
+  const sectionRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const section = sectionRef.current;
+    if (!canvas || !section) return;
+
+    const ctx = canvas.getContext("2d");
+    let rafId;
+    const mouse = { x: -9999, y: -9999 };
+    const CELL = 32;
+    const HOVER_RADIUS = 160;
+
+    const resize = () => {
+      canvas.width = section.offsetWidth;
+      canvas.height = section.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const handleMouseMove = (e) => {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const handleMouseLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    section.addEventListener("mousemove", handleMouseMove);
+    section.addEventListener("mouseleave", handleMouseLeave);
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const t = Date.now() * 0.001;
+      const cols = Math.ceil(canvas.width / CELL) + 1;
+      const rows = Math.ceil(canvas.height / CELL) + 1;
+
+      for (let col = 0; col <= cols; col++) {
+        for (let row = 0; row <= rows; row++) {
+          const baseX = col * CELL;
+          const baseY = row * CELL;
+
+          const dx = baseX - mouse.x;
+          const dy = baseY - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          let offsetX = 0;
+          let offsetY = 0;
+          let alpha = 0.12;
+          let r = 34, g = 211, b = 238;
+
+          if (dist < HOVER_RADIUS) {
+            const intensity = 1 - dist / HOVER_RADIUS;
+            const ease = intensity * intensity;
+
+            const wave = Math.sin(dist * 0.06 - t * 4) * 10 * ease;
+            const angle = Math.atan2(dy, dx);
+            offsetX = Math.cos(angle) * wave;
+            offsetY = Math.sin(angle) * wave;
+
+            alpha = 0.12 + ease * 0.55;
+            r = Math.round(34 * (1 - ease) + 255 * ease);
+            g = Math.round(211 * (1 - ease) + 0 * ease);
+            b = Math.round(238 * (1 - ease) + 212 * ease);
+          }
+
+          const px = baseX + offsetX;
+          const py = baseY + offsetY;
+
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.lineWidth = 0.5;
+
+          // horizontal line segment
+          if (col < cols) {
+            const ndx = (baseX + CELL) - mouse.x;
+            const ndy = baseY - mouse.y;
+            const nDist = Math.sqrt(ndx * ndx + ndy * ndy);
+            let nox = 0, noy = 0;
+            if (nDist < HOVER_RADIUS) {
+              const ni = 1 - nDist / HOVER_RADIUS;
+              const ne = ni * ni;
+              const nw = Math.sin(nDist * 0.06 - t * 4) * 10 * ne;
+              const na = Math.atan2(ndy, ndx);
+              nox = Math.cos(na) * nw;
+              noy = Math.sin(na) * nw;
+            }
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(baseX + CELL + nox, baseY + noy);
+            ctx.stroke();
+          }
+
+          // vertical line segment
+          if (row < rows) {
+            const ndx = baseX - mouse.x;
+            const ndy = (baseY + CELL) - mouse.y;
+            const nDist = Math.sqrt(ndx * ndx + ndy * ndy);
+            let nox = 0, noy = 0;
+            if (nDist < HOVER_RADIUS) {
+              const ni = 1 - nDist / HOVER_RADIUS;
+              const ne = ni * ni;
+              const nw = Math.sin(nDist * 0.06 - t * 4) * 10 * ne;
+              const na = Math.atan2(ndy, ndx);
+              nox = Math.cos(na) * nw;
+              noy = Math.sin(na) * nw;
+            }
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(baseX + nox, baseY + CELL + noy);
+            ctx.stroke();
+          }
+        }
+      }
+
+      rafId = requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      section.removeEventListener("mousemove", handleMouseMove);
+      section.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   return (
     <section
+      ref={sectionRef}
       id="granizados"
       className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-blue-950 to-indigo-950"
     >
-      {/* Patrón grid cyberpunk — sutil */}
-      <div className="absolute inset-0 opacity-20">
-        <div
-          className="absolute top-0 left-0 w-full h-full"
-          style={{
-            backgroundImage: `linear-gradient(rgba(34,211,238,0.08) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(34,211,238,0.08) 1px, transparent 1px)`,
-            backgroundSize: "32px 32px",
-          }}
-        />
-      </div>
+      {/* Grid canvas interactivo */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 pointer-events-none"
+      />
 
       {/* Neon ambiental — cyan + magenta estilo Frostbyte */}
       <div className="absolute inset-0 opacity-25">
