@@ -17,6 +17,8 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Banknote,
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
@@ -61,6 +63,17 @@ const OrderCard = ({ order, onUpdateStatus }) => {
   const status = statusConfig[order.status] || statusConfig.pending;
   const StatusIcon = status.icon;
   const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(false);
+
+  const { data: orderDetail, isLoading: loadingDetail } = useQuery({
+    queryKey: ["order", order.id],
+    queryFn: () => ordersService.getOrder(order.id),
+    enabled: expanded,
+    staleTime: 30000,
+  });
+
+  const items = orderDetail?.items || order.items || [];
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const nextStatus = {
     pending: "preparing",
@@ -188,29 +201,61 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       </div>
 
       {/* Items */}
-      <div className="space-y-1.5 mb-4">
-        {order.items?.slice(0, 4).map((item, idx) => (
-          <div
-            key={idx}
-            className="flex items-start justify-between text-sm gap-2"
-          >
-            <div className="flex-1 min-w-0">
-              <span className="text-gray break-words block">
-                <span className="text-light font-medium">{item.quantity}x</span>{" "}
-                <span className="text-light">{item.product_name}</span>
-                <span className="text-gray/70"> ({item.variant_name})</span>
-              </span>
-            </div>
-            <span className="text-light flex-shrink-0">
-              {formatCurrency(item.subtotal)}
-            </span>
-          </div>
-        ))}
-        {order.items?.length > 4 && (
-          <p className="text-xs text-gray">
-            +{order.items.length - 4} productos más...
-          </p>
-        )}
+      <div className="mb-4">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center justify-between w-full text-xs text-gray hover:text-light transition-colors mb-2"
+        >
+          <span>
+            {totalItems > 0
+              ? `${totalItems} items`
+              : `${(order.paid_items_count || 0) + (order.unpaid_items_count || 0) || order.items?.length || 0} items`}
+          </span>
+          <span className="flex items-center gap-1">
+            {expanded ? "Ocultar" : "Ver items"}
+            {expanded ? (
+              <ChevronUp className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5" />
+            )}
+          </span>
+        </button>
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              {loadingDetail ? (
+                <div className="flex items-center justify-center py-3">
+                  <Loader2 className="w-4 h-4 animate-spin text-secondary" />
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start justify-between text-sm gap-2"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <span className="text-gray break-words block">
+                          <span className="text-light font-medium">{item.quantity}x</span>{" "}
+                          <span className="text-light">{item.product_name}</span>
+                          <span className="text-gray/70"> ({item.variant_name})</span>
+                        </span>
+                      </div>
+                      <span className="text-light flex-shrink-0">
+                        {formatCurrency(item.subtotal)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Actions */}

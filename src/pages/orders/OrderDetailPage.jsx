@@ -541,7 +541,7 @@ const OrderDetailPage = () => {
       <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-light">
-            Productos ({order.items?.length || 0})
+            Productos ({order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0})
           </h3>
           {canAddItems && (
             <button
