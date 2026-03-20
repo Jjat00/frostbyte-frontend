@@ -23,6 +23,10 @@ const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
   const suaveVariant = variants.find((v) => v.name === "Suave");
   const cargadoVariant = variants.find((v) => v.name === "Cargado");
+  const hasSuaveCargado = suaveVariant || cargadoVariant;
+  const otherVariants = hasSuaveCargado
+    ? []
+    : variants;
 
   return (
     <motion.div
@@ -91,6 +95,16 @@ const ProductCard = ({ product, index, styles }) => {
                 </span>
               </div>
             )}
+            {otherVariants.map((variant) => (
+              <div key={variant.id || variant.name} className="flex items-center justify-between">
+                {variants.length > 1 && (
+                  <span className="text-gray text-sm">{variant.name}</span>
+                )}
+                <span className={`text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent ${variants.length === 1 ? "mx-auto" : ""}`}>
+                  {formatPrice(variant.price)}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
