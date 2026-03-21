@@ -89,6 +89,19 @@
     transform: translateX(100%);
   }
 }
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker 10s linear infinite;
+}
 html {
   scroll-behavior: smooth;
 }

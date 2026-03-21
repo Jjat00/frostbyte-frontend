@@ -11,6 +11,7 @@ import Micheladas from "./Micheladas";
 import Vinos from "./Vinos";
 import Cervezas from "./Cervezas";
 import Cuates from "./Cuates";
+import PromoTicker from "./PromoTicker";
 
 /**
  * Mapa de slug de categoría a componente de sección
@@ -53,16 +54,24 @@ const MenuSections = () => {
     return null;
   }
 
+  const tickerVariants = ["primary", "secondary", "fire"];
+
   return (
     <>
-      {activeCategories.map((category) => {
+      {activeCategories.map((category, index) => {
         const SectionComponent = SECTION_COMPONENTS[category.slug];
         if (!SectionComponent) return null;
+        // Mostrar ticker después de cada 3 secciones
+        const showTicker = (index + 1) % 3 === 0;
         return (
-          <SectionComponent
-            key={category.slug}
-            showExtras={category.show_extras}
-          />
+          <React.Fragment key={category.slug}>
+            <SectionComponent showExtras={category.show_extras} />
+            {showTicker && (
+              <PromoTicker
+                variant={tickerVariants[Math.floor(index / 3) % tickerVariants.length]}
+              />
+            )}
+          </React.Fragment>
         );
       })}
     </>
