@@ -176,6 +176,20 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        <div className="border-t border-gray/20 pt-4 mt-4 text-center">
+          <p className="text-gray text-sm">
+            Hecho por{" "}
+            <a
+              href="https://www.linkedin.com/in/jaimeaza/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:text-secondary transition-colors duration-300 font-semibold"
+            >
+              Jaime Jjat
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );
