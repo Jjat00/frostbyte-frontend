@@ -1,6 +1,10 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Instagram, MapPin, MessageCircle } from "lucide-react";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 // Icono de TikTok personalizado
 const TikTokIcon = ({ size = 20 }) => (
@@ -16,6 +20,8 @@ const TikTokIcon = ({ size = 20 }) => (
 );
 
 const Footer = () => {
+  const footerRef = useRef(null);
+
   const socialLinks = [
     {
       icon: Instagram,
@@ -29,16 +35,62 @@ const Footer = () => {
     },
   ];
 
+  useGSAP(() => {
+    const footer = footerRef.current;
+    if (!footer) return;
+
+    const line = footer.querySelector(".footer-line");
+    const cols = footer.querySelectorAll(".footer-col");
+    const socialIcons = footer.querySelectorAll(".footer-social-icon");
+    const bottom = footer.querySelector(".footer-bottom");
+
+    // 1. Top border line: expands from center
+    if (line) {
+      gsap.fromTo(line, { scaleX: 0, transformOrigin: "center" }, {
+        scaleX: 1, duration: 0.8, ease: "power2.out",
+        scrollTrigger: { trigger: footer, start: "top 90%", toggleActions: "play none none none" },
+      });
+    }
+
+    // 2. Footer columns: batch fade-in
+    if (cols.length) {
+      gsap.set(cols, { opacity: 0, y: 40 });
+      ScrollTrigger.batch(cols, {
+        start: "top 88%",
+        once: true,
+        onEnter: (batch) => gsap.to(batch, {
+          opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.15,
+        }),
+      });
+    }
+
+    // 3. Social icons: elastic bounce
+    if (socialIcons.length) {
+      gsap.fromTo(socialIcons, { opacity: 0, scale: 0, y: 20 }, {
+        opacity: 1, scale: 1, y: 0, duration: 0.8,
+        ease: "elastic.out(1, 0.5)", stagger: 0.15, delay: 0.5,
+        scrollTrigger: { trigger: socialIcons[0], start: "top 88%", toggleActions: "play none none none" },
+      });
+    }
+
+    // 4. Bottom section fade
+    if (bottom) {
+      gsap.fromTo(bottom, { opacity: 0, y: 20 }, {
+        opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.75,
+        scrollTrigger: { trigger: bottom, start: "top 95%", toggleActions: "play none none none" },
+      });
+    }
+  }, { scope: footerRef });
+
   return (
-    <footer className="bg-dark-secondary border-t border-gray/20 py-12">
-      <div className="container mx-auto px-4">
+    <footer ref={footerRef} className="bg-dark-secondary py-12">
+      {/* Top border line animates scaleX from 0 to 1 */}
+      <div className="footer-line h-px bg-gray/20 origin-center" />
+
+      <div className="container mx-auto px-4 pt-12">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          {/* Column 1 - Brand */}
+          <div className="footer-col">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
                 <span className="text-xl font-bold text-dark">F</span>
@@ -52,14 +104,10 @@ const Footer = () => {
               cocteles, shots, micheladas y el famoso Desguayabator. El mejor
               lugar para pasar con amigos en Cumbal.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          {/* Column 2 - Quick links */}
+          <div className="footer-col">
             <span className="text-light font-bold text-lg mb-4 block">
               Enlaces Rápidos
             </span>
@@ -92,14 +140,10 @@ const Footer = () => {
                 WhatsApp
               </a>
             </nav>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          {/* Column 3 - Social */}
+          <div className="footer-col">
             <span className="text-light font-bold text-lg mb-4 block">
               Síguenos
             </span>
@@ -108,27 +152,22 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => (
-                <motion.a
+                <a
                   key={index}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  className="w-10 h-10 bg-dark border border-gray/30 rounded-lg flex items-center justify-center text-gray hover:text-primary hover:border-primary/50 transition-all duration-300"
+                  className="footer-social-icon w-10 h-10 bg-dark border border-gray/30 rounded-lg flex items-center justify-center text-gray hover:text-primary hover:border-primary/50 transition-all duration-300"
                 >
                   <social.icon size={20} />
-                </motion.a>
+                </a>
               ))}
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
+          {/* Column 4 - Location */}
+          <div className="footer-col">
             <span className="text-light font-bold text-lg mb-4 block">
               Ubicación
             </span>
@@ -152,43 +191,46 @@ const Footer = () => {
                 </a>
               </div>
             </div>
-          </motion.div>
-        </div>
-
-        <div className="border-t border-gray/20 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray text-sm">
-              © 2026 Frostbyte Cumbal. Todos los derechos reservados.
-            </p>
-            <div className="flex space-x-6">
-              <a
-                href="#"
-                className="text-gray hover:text-primary transition-colors duration-300 text-sm"
-              >
-                Política de Privacidad
-              </a>
-              <a
-                href="#"
-                className="text-gray hover:text-primary transition-colors duration-300 text-sm"
-              >
-                Términos de Servicio
-              </a>
-            </div>
           </div>
         </div>
 
-        <div className="border-t border-gray/20 pt-4 mt-4 text-center">
-          <p className="text-gray text-sm">
-            Hecho por{" "}
-            <a
-              href="https://www.linkedin.com/in/jaimeaza/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:text-secondary transition-colors duration-300 font-semibold"
-            >
-              Jaime Jjat
-            </a>
-          </p>
+        {/* Bottom section */}
+        <div className="footer-bottom">
+          <div className="border-t border-gray/20 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <p className="text-gray text-sm">
+                © 2026 Frostbyte Cumbal. Todos los derechos reservados.
+              </p>
+              <div className="flex space-x-6">
+                <a
+                  href="#"
+                  className="text-gray hover:text-primary transition-colors duration-300 text-sm"
+                >
+                  Política de Privacidad
+                </a>
+                <a
+                  href="#"
+                  className="text-gray hover:text-primary transition-colors duration-300 text-sm"
+                >
+                  Términos de Servicio
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray/20 pt-4 mt-4 text-center">
+            <p className="text-gray text-sm">
+              Hecho por{" "}
+              <a
+                href="https://www.linkedin.com/in/jaimeaza/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:text-secondary transition-colors duration-300 font-semibold"
+              >
+                Jaime Jjat
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

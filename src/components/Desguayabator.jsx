@@ -1,7 +1,11 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Zap, Heart, Sparkles, Star, AlertCircle } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -51,33 +55,28 @@ const flavorStyles = {
 
 const getFlavorStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
-  return flavorStyles[slug] || {
-    icon: Zap,
-    gradient: "from-emerald-400 to-cyan-400",
-    glowGradient: "from-emerald-400 to-cyan-400",
-    borderColor: "border-emerald-500/50",
-    shadowColor: "hover:shadow-emerald-500/30",
-    bgColor: "bg-emerald-500",
-    textColor: "text-emerald-400",
-  };
+  return (
+    flavorStyles[slug] || {
+      icon: Zap,
+      gradient: "from-emerald-400 to-cyan-400",
+      glowGradient: "from-emerald-400 to-cyan-400",
+      borderColor: "border-emerald-500/50",
+      shadowColor: "hover:shadow-emerald-500/30",
+      bgColor: "bg-emerald-500",
+      textColor: "text-emerald-400",
+    }
+  );
 };
 
 const FlavorCard = ({ product, index }) => {
   const styles = getFlavorStyles(product);
   const Icon = styles.icon;
-  
+
   // Simplificar el nombre (quitar "Desguayabator ")
   const displayName = product.name.replace("Desguayabator ", "");
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50, rotateY: -15 }}
-      whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.7, delay: index * 0.15 }}
-      whileHover={{ y: -15, scale: 1.05 }}
-      className="group relative"
-    >
+    <div className="desg-card group relative">
       {/* Glow effect behind card */}
       <div
         className={`absolute -inset-1 bg-linear-to-r ${styles.glowGradient} rounded-3xl blur-lg opacity-40 group-hover:opacity-70 transition-opacity duration-500`}
@@ -127,7 +126,7 @@ const FlavorCard = ({ product, index }) => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -146,12 +145,156 @@ const Desguayabator = () => {
   const { data, isLoading, error } = useProductsByCategory("desguayabator");
 
   const products = data?.results || [];
-  
+
   // Obtener precio del primer producto (todos cuestan igual)
   const defaultPrice = products[0]?.variants?.[0]?.price || "12000";
 
+  const sectionRef = useRef(null);
+
+  useGSAP(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    // 1. Title: scrub scale 3x -> 1x + fade in
+    gsap.fromTo(
+      section.querySelector(".desg-title"),
+      { opacity: 0, scale: 3 },
+      {
+        opacity: 1,
+        scale: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section.querySelector(".desg-title"),
+          start: "top 90%",
+          end: "top 30%",
+          scrub: 1,
+        },
+      }
+    );
+
+    // 2. Badge: flip in with rotationX
+    gsap.fromTo(
+      section.querySelector(".desg-badge"),
+      { rotationX: -90, opacity: 0, transformPerspective: 800 },
+      {
+        rotationX: 0,
+        opacity: 1,
+        duration: 0.9,
+        ease: "back.out(1.7)",
+        scrollTrigger: {
+          trigger: section.querySelector(".desg-badge"),
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // 3. Subtitle: fade + y
+    gsap.fromTo(
+      section.querySelector(".desg-subtitle"),
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: section.querySelector(".desg-subtitle"),
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // 4. Price box: elastic scale bounce — dramatic BOOM
+    gsap.fromTo(
+      section.querySelector(".desg-price"),
+      { scale: 0, opacity: 0 },
+      {
+        scale: 1,
+        opacity: 1,
+        duration: 0.9,
+        ease: "elastic.out(1.2, 0.4)",
+        scrollTrigger: {
+          trigger: section.querySelector(".desg-price"),
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // 5. Flavor cards: batch — alternating sides
+    const allCards = section.querySelectorAll(".desg-card");
+    if (allCards.length) {
+      gsap.set(allCards, { opacity: 0 });
+      ScrollTrigger.batch(allCards, {
+        start: "top 88%",
+        once: true,
+        onEnter: (batch) => {
+          batch.forEach((el, i) => {
+            gsap.fromTo(
+              el,
+              { opacity: 0, x: i % 2 === 0 ? -100 : 100, rotation: i % 2 === 0 ? -8 : 8 },
+              { opacity: 1, x: 0, rotation: 0, duration: 0.7, ease: "power3.out", delay: i * 0.1 }
+            );
+          });
+        },
+      });
+    }
+
+    // 6. Ingredient pills: slide from opposite sides
+    gsap.fromTo(
+      section.querySelector(".desg-ingredient-left"),
+      { opacity: 0, x: -120 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section.querySelector(".desg-ingredient-left"),
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    gsap.fromTo(
+      section.querySelector(".desg-ingredient-right"),
+      { opacity: 0, x: 120 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: section.querySelector(".desg-ingredient-right"),
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // 7. Pro tip: typewriter reveal via clip-path
+    const protip = section.querySelector(".desg-protip");
+    if (protip) {
+      gsap.set(protip, { clipPath: "inset(0 100% 0 0)" });
+      gsap.to(protip, {
+        clipPath: "inset(0 0% 0 0)",
+        duration: 1.4,
+        ease: "power2.inOut",
+        scrollTrigger: {
+          trigger: protip,
+          start: "top 90%",
+          toggleActions: "play none none none",
+        },
+      });
+    }
+  }, { scope: sectionRef });
+
   return (
     <section
+      ref={sectionRef}
       id="desguayabator"
       className="py-16 sm:py-24 bg-dark relative overflow-hidden"
     >
@@ -182,21 +325,9 @@ const Desguayabator = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           {/* Badge exclusivo */}
-          <motion.div
-            initial={{ scale: 0, rotate: -10 }}
-            whileInView={{ scale: 1, rotate: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, type: "spring", bounce: 0.5 }}
-            className="inline-flex items-center gap-2 bg-linear-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/50 rounded-full px-4 sm:px-6 py-2 mb-6"
-          >
+          <div className="desg-badge inline-flex items-center gap-2 bg-linear-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/50 rounded-full px-4 sm:px-6 py-2 mb-6">
             <AlertCircle
               className="text-emerald-400 animate-pulse hidden sm:block"
               size={18}
@@ -208,44 +339,26 @@ const Desguayabator = () => {
               className="text-emerald-400 animate-pulse hidden sm:block"
               size={18}
             />
-          </motion.div>
+          </div>
 
           {/* Título principal */}
-          <motion.h2
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6"
-          >
+          <h2 className="desg-title text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6">
             <span className="bg-linear-to-r from-emerald-400 via-cyan-400 to-green-400 bg-clip-text text-transparent drop-shadow-lg">
               DESGUAYABATOR
             </span>
-          </motion.h2>
+          </h2>
 
           {/* Subtítulo */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-base sm:text-xl md:text-2xl text-gray max-w-3xl mx-auto mb-4 px-2"
-          >
+          <p className="desg-subtitle text-base sm:text-xl md:text-2xl text-gray max-w-3xl mx-auto mb-4 px-2">
             La bebida más famosa de Cumbal para{" "}
             <span className="text-emerald-400 font-bold">curar el guayabo</span>.
             Fórmula secreta con Electrolit + Bonfiest para revivir después de
             una noche épica
-          </motion.p>
+          </p>
 
           {/* Info de ingredientes */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8"
-          >
-            <div className="flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8">
+            <div className="desg-ingredient-left flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
               <Zap className="text-cyan-400" size={18} />
               <span className="text-light font-semibold text-sm sm:text-base">
                 Electrolit
@@ -257,7 +370,7 @@ const Desguayabator = () => {
             <span className="text-emerald-400 text-xl sm:text-2xl font-bold">
               +
             </span>
-            <div className="flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
+            <div className="desg-ingredient-right flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
               <Heart className="text-red-400" size={18} />
               <span className="text-light font-semibold text-sm sm:text-base">
                 Bonfiest
@@ -266,17 +379,11 @@ const Desguayabator = () => {
                 Alivio Express
               </span>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Precio destacado */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-center mb-12"
-        >
+        <div className="desg-price text-center mb-12">
           <div className="inline-flex flex-col items-center bg-linear-to-br from-emerald-500/20 to-cyan-500/20 border-2 border-emerald-500/50 rounded-3xl px-8 sm:px-12 py-6 sm:py-8 relative overflow-hidden">
             <div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-cyan-500/10 animate-pulse"></div>
             <span className="text-gray text-base sm:text-lg mb-2 relative z-10">
@@ -289,21 +396,15 @@ const Desguayabator = () => {
               Cualquier sabor
             </span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Sabores Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           <h3 className="text-center text-2xl font-bold text-light mb-8">
             Elige tu sabor de{" "}
             <span className="text-emerald-400">Electrolit</span>
           </h3>
-        </motion.div>
+        </div>
 
         {error && (
           <div className="text-center text-red-400 mb-8">
@@ -320,14 +421,8 @@ const Desguayabator = () => {
         </div>
 
         {/* Call to action */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center mt-16"
-        >
-          <p className="text-gray text-lg">
+        <div className="text-center mt-16">
+          <p className="desg-protip text-gray text-lg">
             <Zap className="inline text-emerald-400 mr-2" size={20} />
             <span className="text-emerald-400 font-semibold">
               Pro tip:
@@ -335,7 +430,7 @@ const Desguayabator = () => {
             Pídelo antes de que el guayabo te gane la batalla
             <Zap className="inline text-emerald-400 ml-2" size={20} />
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

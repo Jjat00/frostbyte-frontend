@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Skull,
   Plus,
@@ -14,6 +16,8 @@ import {
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -21,11 +25,7 @@ const formatPrice = (price) => {
 };
 
 const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
-  <motion.div
-    whileHover={{ scale: 1.05, y: -5 }}
-    whileTap={{ scale: 0.98 }}
-    className="w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border border-purple-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
-  >
+  <div className="poison-card w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border border-purple-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
     <div
       className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
     >
@@ -34,7 +34,7 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
     <h4 className="text-light font-bold text-base">{name}</h4>
     <p className="text-gray text-xs mb-2">{brand}</p>
     <span className="text-purple-400 font-bold text-sm">{price}</span>
-  </motion.div>
+  </div>
 );
 
 // SVG filter — distorsión sutil de vidrio grueso (más en bordes, menos en centro)
@@ -67,13 +67,7 @@ const ProductCard = ({ product, index, styles }) => {
   const ringColor = styles.ringColor || "border-cyan-400";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="group relative h-full"
-    >
+    <div className="gran-card group relative h-full">
       <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.04] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(34,211,238,0.05)]">
         {/* Capa de vidrio grueso — distorsión sutil en los bordes por la concavidad */}
         <div
@@ -161,7 +155,7 @@ const ProductCard = ({ product, index, styles }) => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -308,6 +302,7 @@ const Granizados = ({ showExtras = true }) => {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
 
+  // Canvas animation — kept exactly as-is
   useEffect(() => {
     const canvas = canvasRef.current;
     const section = sectionRef.current;
@@ -431,6 +426,77 @@ const Granizados = ({ showExtras = true }) => {
     };
   }, []);
 
+  // GSAP ScrollTrigger animations
+  useGSAP(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const title = section.querySelector(".gran-title");
+    const subtitle = section.querySelector(".gran-subtitle");
+    const cards = section.querySelectorAll(".gran-card");
+    const poisonSection = section.querySelector(".poison-section");
+
+    // Title: scrub scale 1.5 → 1 with opacity
+    if (title) {
+      gsap.fromTo(title, { scale: 1.5, opacity: 0 }, {
+        scale: 1, opacity: 1, ease: "none",
+        scrollTrigger: { trigger: title, start: "top 85%", end: "top 40%", scrub: true },
+      });
+    }
+
+    // Subtitle: fade-up
+    if (subtitle) {
+      gsap.fromTo(subtitle, { opacity: 0, y: 24 }, {
+        opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+        scrollTrigger: { trigger: subtitle, start: "top 85%", toggleActions: "play none none none" },
+      });
+    }
+
+    // Product cards: batch stagger
+    if (cards.length) {
+      gsap.set(cards, { autoAlpha: 0, y: 60, scale: 0.9 });
+      ScrollTrigger.batch(cards, {
+        start: "top 88%",
+        once: true,
+        onEnter: (batch) => gsap.to(batch, {
+          autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out", stagger: 0.12,
+        }),
+      });
+    }
+
+    // Poison section
+    if (poisonSection) {
+      const poisonTitle = poisonSection.querySelector(".poison-title");
+      const poisonFormula = poisonSection.querySelector(".poison-formula");
+      const poisonCards = poisonSection.querySelectorAll(".poison-card");
+
+      if (poisonTitle) {
+        gsap.fromTo(poisonTitle, { scale: 1.2, opacity: 0 }, {
+          scale: 1, opacity: 1, ease: "none",
+          scrollTrigger: { trigger: poisonSection, start: "top 75%", end: "top 35%", scrub: true },
+        });
+      }
+
+      if (poisonFormula) {
+        gsap.fromTo(poisonFormula, { opacity: 0, y: 20 }, {
+          opacity: 1, y: 0, duration: 0.6, ease: "power2.out",
+          scrollTrigger: { trigger: poisonFormula, start: "top 90%", toggleActions: "play none none none" },
+        });
+      }
+
+      if (poisonCards.length) {
+        gsap.set(poisonCards, { autoAlpha: 0, y: 50, rotation: -6 });
+        ScrollTrigger.batch(poisonCards, {
+          start: "top 90%",
+          once: true,
+          onEnter: (batch) => gsap.to(batch, {
+            autoAlpha: 1, y: 0, rotation: 0, duration: 0.55, ease: "back.out(1.4)", stagger: 0.1,
+          }),
+        });
+      }
+    }
+  }, { scope: sectionRef, dependencies: [products] });
+
   return (
     <section
       ref={sectionRef}
@@ -458,23 +524,18 @@ const Granizados = ({ showExtras = true }) => {
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-secondary/30 to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+        {/* Section header */}
+        <div className="text-center mb-16">
+          <h2 className="gran-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
             <span className="bg-linear-to-r from-cyan-200 via-primary to-secondary bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(34,211,238,0.3)]">
               GRANIZADOS
             </span>
           </h2>
-          <p className="text-white text-lg max-w-2xl mx-auto font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+          <p className="gran-subtitle text-white text-lg max-w-2xl mx-auto font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
             Los mejores granizados en Cumbal. Hielo triturado a la perfección
             con los sabores frutales más intensos de Nariño.
           </p>
-        </motion.div>
+        </div>
 
         {error && (
           <div className="text-center text-white bg-red-500/20 backdrop-blur-sm rounded-lg p-4 mb-8 border border-red-300">
@@ -497,13 +558,7 @@ const Granizados = ({ showExtras = true }) => {
 
         {/* Sección Envenenar - controlada por show_extras */}
         {showExtras && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mt-20"
-          >
+          <div className="poison-section mt-20">
             <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
               {/* Efectos de fondo */}
               <div className="absolute inset-0 opacity-20">
@@ -514,7 +569,7 @@ const Granizados = ({ showExtras = true }) => {
               <div className="relative z-10">
                 {/* Header */}
                 <div className="text-center mb-8">
-                  <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="poison-title flex items-center justify-center gap-3 mb-4">
                     <Skull
                       className="text-purple-400 hidden sm:block"
                       size={32}
@@ -545,13 +600,7 @@ const Granizados = ({ showExtras = true }) => {
                 </div>
 
                 {/* Ejemplo visual */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="mt-8 flex justify-center"
-                >
+                <div className="poison-formula mt-8 flex justify-center">
                   <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-purple-500/30">
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🍹 Granizado
@@ -567,21 +616,15 @@ const Granizados = ({ showExtras = true }) => {
                       ☠️ ENVENENADO
                     </span>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Sección Shots de Sabores - COMENTADO: se terminaron los shots de sabores */}
         {/* {showExtras && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mt-12"
-          >
+          <div className="mt-12">
             <div className="relative bg-linear-to-br from-emerald-900/20 via-dark/60 to-cyan-900/20 border-2 border-cyan-500/30 rounded-3xl overflow-hidden">
               <div className="relative h-48 sm:h-56 overflow-hidden">
                 <img
@@ -624,13 +667,7 @@ const Granizados = ({ showExtras = true }) => {
                   ))}
                 </div>
 
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className="mt-8 flex justify-center"
-                >
+                <div className="mt-8 flex justify-center">
                   <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-cyan-500/30">
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🍹 Granizado
@@ -646,10 +683,10 @@ const Granizados = ({ showExtras = true }) => {
                       ✨ SABOR ÚNICO
                     </span>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         )} */}
       </div>
     </section>
