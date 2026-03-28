@@ -277,7 +277,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 bg-dark-secondary rounded-xl border border-gray/20"
+            className="md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 bg-dark-secondary rounded-xl border border-gray/20 max-h-[calc(100vh-80px)] overflow-y-auto"
           >
             <a
               href="#carta"
