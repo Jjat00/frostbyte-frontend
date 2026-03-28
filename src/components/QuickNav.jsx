@@ -9,6 +9,7 @@ import { useActiveCategories } from "@/hooks";
  * categorySlug: slug de la categoría en la BD (null para secciones no-categoría)
  */
 const SECTION_CONFIG = {
+  carta:         { name: "Carta",         href: "#carta",         categorySlug: null },
   desguayabator: { name: "Desguayabator", href: "#desguayabator", categorySlug: null },
   agua:          { name: "Agua",          href: "#agua",          categorySlug: null },
   granizados:    { name: "Granizados",    href: "#granizados",    categorySlug: "granizados" },
@@ -30,6 +31,7 @@ const SECTION_CONFIG = {
 
 // Orden por defecto de las secciones en el QuickNav
 const DEFAULT_SECTION_ORDER = [
+  "carta",
   "desguayabator",
   "agua",
   "granizados",

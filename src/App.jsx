@@ -7,6 +7,7 @@ import Features from "@/components/Features";
 // import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import QuickNav from "@/components/QuickNav";
+import CartaList from "@/components/CartaList";
 import MenuSections from "@/components/MenuSections";
 import Desguayabator from "@/components/Desguayabator";
 import WaterSection from "@/components/WaterSection";
@@ -39,6 +40,7 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
+          <CartaList />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />

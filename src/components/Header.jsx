@@ -114,6 +114,26 @@ const Header = () => {
       description: "Copas de Gato Negro y Casillero del Diablo.",
     },
     {
+      title: "✨ Recomendador",
+      href: "#que-te-provoca",
+      description: "Deja que te recomendemos la bebida perfecta.",
+    },
+    {
+      title: "📱 Descuento Redes",
+      href: "#descuento-redes",
+      description: "Siguenos en redes y obtendras un descuento.",
+    },
+    {
+      title: "🎂 Descuento Cumple",
+      href: "#descuento-cumple",
+      description: "Si es tu cumple, tendras un descuento especial.",
+    },
+    {
+      title: "🎵 Pedir Cancion",
+      href: "#solicitar-cancion",
+      description: "Pide tu cancion favorita y la ponemos para ti.",
+    },
+    {
       title: "💬 Tu Opinion",
       href: "#feedback",
       description: "Dejanos tu feedback, sugerencias o comentarios.",
@@ -260,89 +280,130 @@ const Header = () => {
             className="md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 bg-dark-secondary rounded-xl border border-gray/20"
           >
             <a
-              href="#desguayabator"
-              className="block text-emerald-400 hover:text-emerald-300 transition-colors duration-300 font-medium"
+              href="#carta"
+              className="block text-primary hover:text-primary/80 transition-colors duration-300 font-bold"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              🩹 Desguayabator
+              Carta Completa
             </a>
-            <a
-              href="#agua"
-              className="block text-cyan-400 hover:text-cyan-300 transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              💧 Agua
-            </a>
-            <a
-              href="#granizados"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Granizados
-            </a>
-            <a
-              href="#frappes"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Frappés
-            </a>
-            <a
-              href="#sodas"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Sodas Italianas
-            </a>
-            <a
-              href="#micheladas"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Micheladas
-            </a>
-            <a
-              href="#cervezas"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              🍺 Cervezas
-            </a>
-            <a
-              href="#cuates"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              🍹 Cuates
-            </a>
-            <a
-              href="#mocktails"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Cócteles
-            </a>
-            <a
-              href="#shots"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Shots
-            </a>
-            <a
-              href="#vinos"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              🍷 Vinos
-            </a>
-            <a
-              href="#feedback"
-              className="block text-teal-400 hover:text-teal-300 transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              💬 Tu Opinion
-            </a>
+            <div className="border-t border-gray/20 pt-3 space-y-4">
+              <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Bebidas</p>
+              <a
+                href="#desguayabator"
+                className="block text-emerald-400 hover:text-emerald-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🩹 Desguayabator
+              </a>
+              <a
+                href="#agua"
+                className="block text-cyan-400 hover:text-cyan-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                💧 Agua
+              </a>
+              <a
+                href="#granizados"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Granizados
+              </a>
+              <a
+                href="#frappes"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Frappes
+              </a>
+              <a
+                href="#sodas"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Sodas Italianas
+              </a>
+              <a
+                href="#micheladas"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Micheladas
+              </a>
+              <a
+                href="#cervezas"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍺 Cervezas
+              </a>
+              <a
+                href="#cuates"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍹 Cuates
+              </a>
+              <a
+                href="#mocktails"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Cocteles
+              </a>
+              <a
+                href="#shots"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Shots
+              </a>
+              <a
+                href="#vinos"
+                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍷 Vinos
+              </a>
+            </div>
+            <div className="border-t border-gray/20 pt-3 space-y-4">
+              <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Mas en Frostbyte</p>
+              <a
+                href="#que-te-provoca"
+                className="block text-violet-400 hover:text-violet-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                ✨ Recomendador de Bebidas
+              </a>
+              <a
+                href="#descuento-redes"
+                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                📱 Descuento por Redes
+              </a>
+              <a
+                href="#descuento-cumple"
+                className="block text-amber-400 hover:text-amber-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎂 Descuento de Cumple
+              </a>
+              <a
+                href="#solicitar-cancion"
+                className="block text-green-400 hover:text-green-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎵 Pedir Cancion
+              </a>
+              <a
+                href="#feedback"
+                className="block text-teal-400 hover:text-teal-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                💬 Tu Opinion
+              </a>
+            </div>
             <div className="border-t border-gray/20 pt-4 space-y-4">
               {/* Frostbyte Play - Solo mostrar en rutas de mesa */}
               {isTableRoute && (
