@@ -115,16 +115,16 @@ const CategoryGroup = ({ category }) => {
       className="mb-10"
     >
       {/* Category header */}
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
+      <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-white/10">
         <h3
-          className={`text-xl md:text-2xl font-black uppercase tracking-wider bg-linear-to-r ${styles.gradient} bg-clip-text text-transparent`}
+          className={`text-lg sm:text-xl md:text-2xl font-black uppercase tracking-wide sm:tracking-wider bg-linear-to-r ${styles.gradient} bg-clip-text text-transparent min-w-0`}
         >
           {category.name}
         </h3>
         {sectionId && (
           <button
             onClick={() => scrollTo(sectionId)}
-            className="group flex items-center gap-1.5 text-xs font-semibold text-white/40 hover:text-primary transition-colors duration-200 cursor-pointer"
+            className="group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary transition-colors duration-200 cursor-pointer flex-shrink-0"
           >
             <Eye className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Ver detalles</span>
@@ -134,40 +134,41 @@ const CategoryGroup = ({ category }) => {
       </div>
 
       {/* Product list */}
-      <ul className="space-y-1">
+      <ul className="space-y-0.5">
         {products.map((product) => {
           const variants = product.variants || [];
           const defaultVariant =
             variants.find((v) => v.is_default) || variants[0];
+          const hasMultipleVariants = variants.length > 1;
 
           return (
-            <li
-              key={product.id}
-              className="flex items-baseline gap-2 py-2 group"
-            >
-              <span className="text-white/90 text-sm md:text-base font-medium flex-shrink-0">
-                {product.name}
-              </span>
-              <span className="flex-1 border-b border-dotted border-white/15 mb-1 min-w-[20px]" />
-              <div className="flex items-center gap-3 flex-shrink-0">
-                {variants.length > 1 ? (
-                  variants.map((variant) => (
-                    <div
-                      key={variant.id || variant.name}
-                      className="flex flex-col items-end"
-                    >
-                      <span className="text-[10px] text-white/35 uppercase tracking-wider leading-none">
-                        {variant.name}
-                      </span>
-                      <span className="text-primary font-bold text-sm md:text-base">
-                        {formatPrice(variant.price)}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <span className="text-primary font-bold text-sm md:text-base">
+            <li key={product.id} className="py-1.5">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-white/90 text-xs sm:text-sm md:text-base font-medium min-w-0 break-words">
+                  {product.name}
+                </span>
+                <span className="flex-1 border-b border-dotted border-white/15 mb-1 min-w-[12px]" />
+                {!hasMultipleVariants && (
+                  <span className="text-primary font-bold text-xs sm:text-sm md:text-base flex-shrink-0">
                     {formatPrice(defaultVariant?.price)}
                   </span>
+                )}
+                {hasMultipleVariants && (
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    {variants.map((variant) => (
+                      <div
+                        key={variant.id || variant.name}
+                        className="flex flex-col items-end"
+                      >
+                        <span className="text-[9px] sm:text-[10px] text-white/35 uppercase tracking-wider leading-none">
+                          {variant.name}
+                        </span>
+                        <span className="text-primary font-bold text-xs sm:text-sm md:text-base">
+                          {formatPrice(variant.price)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </li>
@@ -189,18 +190,18 @@ const SpecialSectionItem = ({ section }) => {
       transition={{ duration: 0.4 }}
       className="mb-10"
     >
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
-        <div className="flex items-center gap-2">
-          <Icon className="w-5 h-5 text-white/50" />
+      <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-white/10">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white/50 flex-shrink-0" />
           <h3
-            className={`text-xl md:text-2xl font-black uppercase tracking-wider bg-linear-to-r ${section.gradient} bg-clip-text text-transparent`}
+            className={`text-base sm:text-lg md:text-2xl font-black uppercase tracking-wide sm:tracking-wider bg-linear-to-r ${section.gradient} bg-clip-text text-transparent min-w-0 truncate`}
           >
             {section.name}
           </h3>
         </div>
         <button
           onClick={() => scrollTo(section.id)}
-          className="group flex items-center gap-1.5 text-xs font-semibold text-white/40 hover:text-primary transition-colors duration-200 cursor-pointer"
+          className="group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary transition-colors duration-200 cursor-pointer flex-shrink-0"
         >
           <Eye className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Ir a seccion</span>
@@ -209,24 +210,24 @@ const SpecialSectionItem = ({ section }) => {
       </div>
 
       {section.items ? (
-        <ul className="space-y-1">
+        <ul className="space-y-0.5">
           {section.items.map((item) => (
             <li
               key={item.name}
-              className="flex items-baseline gap-2 py-2"
+              className="flex items-baseline gap-1.5 py-1.5"
             >
-              <span className="text-white/90 text-sm md:text-base font-medium flex-shrink-0">
+              <span className="text-white/90 text-xs sm:text-sm md:text-base font-medium min-w-0">
                 {item.name}
               </span>
-              <span className="flex-1 border-b border-dotted border-white/15 mb-1 min-w-[20px]" />
-              <span className="text-primary font-bold text-sm md:text-base flex-shrink-0">
+              <span className="flex-1 border-b border-dotted border-white/15 mb-1 min-w-[12px]" />
+              <span className="text-primary font-bold text-xs sm:text-sm md:text-base flex-shrink-0">
                 {item.price}
               </span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-white/50 text-sm md:text-base">
+        <p className="text-white/50 text-xs sm:text-sm md:text-base">
           {section.description}
         </p>
       )}
@@ -269,7 +270,7 @@ const CartaList = () => {
   if (!activeCategories.length) return null;
 
   return (
-    <section id="carta" className="py-16 bg-dark relative overflow-hidden">
+    <section id="carta" className="py-10 sm:py-16 bg-dark relative overflow-hidden">
       {/* Fondo sutil */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary rounded-full filter blur-[200px]" />
@@ -282,7 +283,7 @@ const CartaList = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
           <h2 className="text-3xl md:text-5xl font-black mb-3">
             <span className="bg-linear-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
@@ -297,16 +298,16 @@ const CartaList = () => {
         </motion.div>
 
         {/* Carta border container */}
-        <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 backdrop-blur-sm">
+        <div className="bg-white/[0.02] border border-white/10 rounded-xl sm:rounded-2xl px-4 py-5 sm:p-6 md:p-10 backdrop-blur-sm">
           {/* Categorias de productos (desde la API) */}
           {activeCategories.map((category) => (
             <CategoryGroup key={category.slug} category={category} />
           ))}
 
           {/* Separador */}
-          <div className="my-8 flex items-center gap-4">
+          <div className="my-6 sm:my-8 flex items-center gap-3 sm:gap-4">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/25 text-xs uppercase tracking-widest font-semibold">
+            <span className="text-white/25 text-[10px] sm:text-xs uppercase tracking-widest font-semibold whitespace-nowrap">
               Mas en Frostbyte
             </span>
             <div className="flex-1 h-px bg-white/10" />
