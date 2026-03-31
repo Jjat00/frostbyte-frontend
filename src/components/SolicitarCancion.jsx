@@ -35,7 +35,7 @@ const SpotifyTrackCard = ({ track, onSelect, isLoading }) => (
     exit={{ opacity: 0, y: -10 }}
     onClick={() => onSelect(track)}
     disabled={isLoading}
-    className="w-full flex items-center gap-3 p-3 backdrop-blur-xl bg-white/[0.05] border border-white/[0.1] rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-primary/40 hover:bg-white/[0.09] transition-all duration-200 text-left disabled:opacity-50"
+    className="w-full flex items-center gap-3 p-3 bg-white/[0.04] backdrop-blur-md border border-white/10 rounded-xl hover:border-primary/40 hover:bg-white/[0.08] transition-all duration-200 text-left disabled:opacity-50"
   >
     {track.image ? (
       <img src={track.image} alt={track.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
@@ -116,36 +116,34 @@ const NowPlayingBar = ({ data }) => {
   const progress = data.duration_ms > 0 ? (localProgress / data.duration_ms) * 100 : 0;
 
   return (
-    <div className="mb-8 space-y-4">
-      {/* Now Playing - glass card */}
-      <div className="backdrop-blur-xl bg-white/[0.06] border border-white/[0.12] rounded-2xl p-4 md:p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_24px_rgba(0,0,0,0.2)]">
-        <div className="flex items-center gap-4 mb-3">
-          {data.image && (
-            <img
-              src={data.image}
-              alt={data.name}
-              className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-cover shadow-lg shadow-primary/30 border border-white/15 ring-2 ring-primary/20"
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] mb-1">Sonando ahora</p>
-            <p className="text-white font-black text-lg md:text-xl truncate drop-shadow-[0_2px_10px_rgba(255,0,212,0.3)]">{data.name}</p>
-            <p className="text-white/50 text-sm truncate">{data.artists}</p>
-          </div>
-        </div>
-        {/* Progress bar */}
-        <div className="w-full bg-white/[0.08] rounded-full h-1.5 backdrop-blur-sm">
-          <div className="bg-gradient-to-r from-primary to-secondary h-1.5 rounded-full transition-all duration-1000 shadow-[0_0_8px_rgba(255,0,212,0.4)]" style={{ width: `${progress}%` }} />
+    <div className="mb-8">
+      {/* Album art + info */}
+      <div className="flex items-center gap-4 mb-4">
+        {data.image && (
+          <img
+            src={data.image}
+            alt={data.name}
+            className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover shadow-lg shadow-primary/20 border border-white/10"
+          />
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] mb-1">Sonando ahora</p>
+          <p className="text-white font-black text-lg md:text-xl truncate drop-shadow-[0_2px_10px_rgba(255,0,212,0.3)]">{data.name}</p>
+          <p className="text-white/50 text-sm truncate">{data.artists}</p>
         </div>
       </div>
-      {/* Lyrics - glass card */}
+      {/* Progress bar */}
+      <div className="w-full bg-white/10 rounded-full h-1 mb-1">
+        <div className="bg-gradient-to-r from-primary to-secondary h-1 rounded-full transition-all duration-1000" style={{ width: `${progress}%` }} />
+      </div>
+      {/* Lyrics - floating text, no background */}
       {lyricsLines && (
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl px-5 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-          <p className="text-lg md:text-2xl font-bold text-white text-center drop-shadow-[0_0_20px_rgba(0,224,255,0.4)] transition-all duration-300">
+        <div className="mt-6 text-center">
+          <p className="text-xl md:text-2xl font-bold text-white drop-shadow-[0_0_20px_rgba(0,224,255,0.4)] transition-all duration-300">
             {lyricsLines.current}
           </p>
           {lyricsLines.next && (
-            <p className="text-sm md:text-base text-white/25 mt-2 text-center transition-all duration-300">
+            <p className="text-sm md:text-base text-white/30 mt-2 transition-all duration-300">
               {lyricsLines.next}
             </p>
           )}
@@ -246,17 +244,17 @@ const SolicitarCancion = () => {
 
   const getStatusBadge = (status) => {
     if (status === 'playing') return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-sm bg-primary/15 text-primary border border-primary/25 shadow-[inset_0_1px_0_rgba(255,0,212,0.1)] flex items-center gap-1">
+      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary/20 text-primary border border-primary/30 flex items-center gap-1">
         <Play className="w-3 h-3" /> Reproduciendo
       </span>
     );
     if (status === 'queued') return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-sm bg-secondary/15 text-secondary border border-secondary/25 shadow-[inset_0_1px_0_rgba(0,224,255,0.1)] flex items-center gap-1">
+      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-secondary/20 text-secondary border border-secondary/30 flex items-center gap-1">
         <ListMusic className="w-3 h-3" /> En cola
       </span>
     );
     return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-sm bg-yellow-500/15 text-yellow-400 border border-yellow-500/25 shadow-[inset_0_1px_0_rgba(234,179,8,0.1)] flex items-center gap-1">
+      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 flex items-center gap-1">
         <Clock className="w-3 h-3" /> Pendiente
       </span>
     );
@@ -307,15 +305,15 @@ const SolicitarCancion = () => {
           className="max-w-2xl mx-auto"
         >
           {!isSpotifyConnected ? (
-            <div className="backdrop-blur-xl bg-white/[0.05] border border-white/[0.1] rounded-2xl p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_24px_rgba(0,0,0,0.2)] text-center">
-              <div className="w-16 h-16 backdrop-blur-sm bg-white/[0.06] border border-white/[0.12] rounded-full flex items-center justify-center mx-auto mb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Music className="text-white/30" size={28} />
               </div>
               <p className="text-white/40 text-lg mb-2">El sistema de musica no esta disponible</p>
               <p className="text-white/20 text-sm">Pregunta al personal para solicitar una cancion</p>
             </div>
           ) : (
-            <div className="backdrop-blur-xl bg-white/[0.06] border border-white/[0.12] rounded-2xl p-5 md:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(0,0,0,0.25)]">
+            <div className="backdrop-blur-md bg-white/[0.03] border border-white/10 rounded-2xl p-5 md:p-6">
               {/* Search */}
               <div ref={searchRef} className="relative">
                 <div className="relative">
@@ -326,7 +324,7 @@ const SolicitarCancion = () => {
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); setShowResults(true); }}
                     onFocus={() => setShowResults(true)}
-                    className="w-full backdrop-blur-sm bg-white/[0.06] border border-white/[0.12] rounded-xl pl-12 pr-10 py-4 text-light text-lg focus:outline-none focus:border-primary/50 focus:bg-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 placeholder:text-white/25"
+                    className="w-full bg-white/[0.05] border border-white/15 rounded-xl pl-12 pr-10 py-4 text-light text-lg focus:outline-none focus:border-primary/50 focus:bg-white/[0.08] transition-all duration-300 placeholder:text-white/25"
                     placeholder="Busca una cancion o artista..."
                     disabled={createMutation.isPending}
                   />
@@ -387,11 +385,9 @@ const SolicitarCancion = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl mx-auto mt-10"
           >
-            <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2 mb-4 mx-auto w-fit shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <h3 className="text-sm font-bold text-white/50 text-center uppercase tracking-widest">
-                Solicitudes en Cola
-              </h3>
-            </div>
+            <h3 className="text-lg font-bold text-white/60 mb-4 text-center uppercase tracking-wider">
+              Solicitudes en Cola
+            </h3>
             {requestsLoading ? (
               <div className="text-center py-6">
                 <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto" />
@@ -405,7 +401,7 @@ const SolicitarCancion = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 20 }}
-                      className="backdrop-blur-xl bg-white/[0.05] border border-white/[0.1] rounded-xl p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:bg-white/[0.08] hover:border-white/[0.18] transition-all duration-300"
+                      className="backdrop-blur-sm bg-white/[0.03] border border-white/8 rounded-xl p-3 hover:bg-white/[0.06] hover:border-white/15 transition-all duration-300"
                     >
                       <div className="flex items-center gap-3">
                         {request.spotify_track_image ? (
