@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import MusicVisualizer from '@/components/MusicVisualizer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Music, Search, Loader2, Play, Clock, X, ListMusic, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
@@ -283,10 +284,7 @@ const SolicitarCancion = () => {
 
   return (
     <section id="solicitar-cancion" className="py-20 bg-dark-secondary relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-      </div>
+      <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
