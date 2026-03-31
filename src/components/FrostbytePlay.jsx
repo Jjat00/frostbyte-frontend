@@ -84,7 +84,7 @@ const GameCard = ({ game, index }) => {
 
           <div className="mt-auto">
             <Button
-              onClick={() => navigate("/game")}
+              onClick={() => navigate(`/game/${game.id}/instrucciones`)}
               size="sm"
               className={`bg-gradient-to-r ${game.gradient} text-white font-bold hover:shadow-lg transition-all hover:scale-105 w-full`}
             >
