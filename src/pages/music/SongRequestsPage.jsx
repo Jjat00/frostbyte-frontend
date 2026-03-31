@@ -452,8 +452,9 @@ const AdminSearch = ({ isConnected }) => {
       setQuery('');
       setDebouncedQuery('');
     },
-    onError: () => {
-      toast({ title: "Error al agregar", variant: "destructive", duration: 3000 });
+    onError: (error) => {
+      const msg = error.response?.data?.error || "Error al agregar";
+      toast({ title: msg, variant: "destructive", duration: 3000 });
     },
   });
 

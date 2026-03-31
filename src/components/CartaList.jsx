@@ -9,7 +9,9 @@ import {
   Music,
   MessageSquare,
   Sparkles,
+  Gamepad2,
 } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { useActiveCategories, useProductsByCategory } from "@/hooks";
 import { getCategoryStyles } from "@/lib/productStyles";
 
@@ -76,6 +78,18 @@ const SPECIAL_SECTIONS = [
     gradient: "from-teal-400 to-cyan-500",
     icon: MessageSquare,
     description: "Dejanos tu opinion, sugerencias o comentarios.",
+  },
+  {
+    id: "frostbyte-play",
+    name: "Frostbyte Play",
+    gradient: "from-violet-400 to-amber-400",
+    icon: Gamepad2,
+    tableOnly: true,
+    description: "Juega mientras esperas tu pedido.",
+    items: [
+      { name: "Duelo Frostbyte", price: "Gratis" },
+      { name: "Impostor Frostbyte", price: "Gratis" },
+    ],
   },
 ];
 
@@ -209,7 +223,12 @@ const SpecialSectionItem = ({ section }) => {
         </button>
       </div>
 
-      {section.items ? (
+      {section.description && (
+        <p className="text-white/50 text-xs sm:text-sm md:text-base mb-2">
+          {section.description}
+        </p>
+      )}
+      {section.items && (
         <ul className="space-y-0.5">
           {section.items.map((item) => (
             <li
@@ -226,16 +245,15 @@ const SpecialSectionItem = ({ section }) => {
             </li>
           ))}
         </ul>
-      ) : (
-        <p className="text-white/50 text-xs sm:text-sm md:text-base">
-          {section.description}
-        </p>
       )}
     </motion.div>
   );
 };
 
 const CartaList = () => {
+  const location = useLocation();
+  const isTableRoute = location.pathname.startsWith("/mesa/");
+
   const { data: categoriesData, isLoading: categoriesLoading } =
     useActiveCategories();
 
@@ -314,9 +332,11 @@ const CartaList = () => {
           </div>
 
           {/* Secciones especiales */}
-          {SPECIAL_SECTIONS.map((section) => (
-            <SpecialSectionItem key={section.id} section={section} />
-          ))}
+          {SPECIAL_SECTIONS
+            .filter((section) => !section.tableOnly || isTableRoute)
+            .map((section) => (
+              <SpecialSectionItem key={section.id} section={section} />
+            ))}
         </div>
       </div>
     </section>
