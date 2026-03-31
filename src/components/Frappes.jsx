@@ -28,7 +28,7 @@ const ProductCard = ({ product, index, styles }) => {
       whileHover={{ y: -10 }}
       className="group relative"
     >
-      <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-secondary/50 hover:shadow-xl hover:shadow-secondary/20">
+      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-secondary/40 hover:bg-white/[0.07] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(0,224,255,0.1)]">
         <div className="h-48 overflow-hidden relative">
           <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
           {styles.image ? (
@@ -93,7 +93,7 @@ const ProductCard = ({ product, index, styles }) => {
 };
 
 const ProductSkeleton = () => (
-  <div className="bg-dark border border-gray/20 rounded-2xl overflow-hidden h-full animate-pulse">
+  <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl overflow-hidden h-full animate-pulse">
     <div className="h-48 bg-gray/20"></div>
     <div className="p-6 -mt-12">
       <div className="w-12 h-12 bg-gray/30 rounded-xl mb-4"></div>
@@ -110,7 +110,7 @@ const Frappes = () => {
   const products = data?.results || [];
 
   return (
-    <section id="frappes" className="py-20 bg-dark relative overflow-hidden">
+    <section id="frappes" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>

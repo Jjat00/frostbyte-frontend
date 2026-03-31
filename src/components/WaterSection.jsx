@@ -44,7 +44,7 @@ const WaterSection = () => {
             {/* Glow */}
             <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-400/40 to-blue-500/40 rounded-3xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            <div className="relative bg-dark-secondary border border-cyan-500/20 rounded-3xl px-10 sm:px-16 py-8 sm:py-10 flex flex-col items-center text-center transition-all duration-300 group-hover:border-cyan-500/40">
+            <div className="relative backdrop-blur-xl bg-white/[0.04] border border-cyan-500/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-3xl px-10 sm:px-16 py-8 sm:py-10 flex flex-col items-center text-center transition-all duration-300 group-hover:border-cyan-500/40">
               <div className="w-14 h-14 sm:w-16 sm:h-16 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
                 <Droplets className="text-cyan-400" size={28} />
               </div>

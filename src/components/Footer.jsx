@@ -83,7 +83,7 @@ const Footer = () => {
   }, { scope: footerRef });
 
   return (
-    <footer ref={footerRef} className="bg-dark-secondary py-12">
+    <footer ref={footerRef} className="py-12 border-t border-white/[0.06]" style={{ background: "linear-gradient(to bottom, rgba(13,13,26,0.98), rgba(8,8,16,1))" }}>
       {/* Top border line animates scaleX from 0 to 1 */}
       <div className="footer-line h-px bg-gray/20 origin-center" />
 
@@ -158,7 +158,7 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="footer-social-icon w-10 h-10 bg-dark border border-gray/30 rounded-lg flex items-center justify-center text-gray hover:text-primary hover:border-primary/50 transition-all duration-300"
+                  className="footer-social-icon w-10 h-10 backdrop-blur-sm bg-white/[0.05] border border-white/[0.1] rounded-lg flex items-center justify-center text-gray hover:text-primary hover:border-primary/50 transition-all duration-300"
                 >
                   <social.icon size={20} />
                 </a>

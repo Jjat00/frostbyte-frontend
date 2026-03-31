@@ -121,7 +121,7 @@ const FeedbackSection = () => {
   const selectedType = feedbackTypes.find(t => t.value === formData.feedback_type);
 
   return (
-    <section id="feedback" className="py-20 bg-dark relative overflow-hidden">
+    <section id="feedback" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
         <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
@@ -153,7 +153,7 @@ const FeedbackSection = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="bg-dark-secondary border border-gray/20 rounded-2xl p-8 md:p-10 relative overflow-hidden">
+          <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl p-8 md:p-10 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.25)]">
             {/* Efectos de fondo */}
             <div className="absolute inset-0 opacity-5">
               <div className="absolute top-0 right-0 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
@@ -180,7 +180,7 @@ const FeedbackSection = () => {
                     name="customer_name"
                     value={formData.customer_name}
                     onChange={handleChange}
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary transition-colors duration-300"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300"
                     placeholder="Ej: Maria"
                     disabled={createMutation.isPending}
                   />
@@ -196,7 +196,7 @@ const FeedbackSection = () => {
                       type="button"
                       onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                       disabled={createMutation.isPending}
-                      className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary transition-colors duration-300 flex items-center justify-between"
+                      className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 flex items-center justify-between"
                     >
                       <span>
                         {selectedType?.emoji} {selectedType?.label}
@@ -205,7 +205,7 @@ const FeedbackSection = () => {
                     </button>
 
                     {showTypeDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-dark border border-gray/30 rounded-lg overflow-hidden z-20">
+                      <div className="absolute top-full left-0 right-0 mt-2 backdrop-blur-xl bg-dark/90 border border-white/[0.1] rounded-lg overflow-hidden z-20 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
                         {feedbackTypes.map((type) => (
                           <button
                             key={type.value}
@@ -249,7 +249,7 @@ const FeedbackSection = () => {
                     value={formData.comment}
                     onChange={handleChange}
                     rows="4"
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary transition-colors duration-300 resize-none"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 resize-none"
                     placeholder="Cuentanos tu experiencia, sugerencias o lo que quieras compartir..."
                     required
                     disabled={createMutation.isPending}
