@@ -156,7 +156,7 @@ const Header = () => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled || isMobileMenuOpen
-          ? "bg-dark-secondary/95 backdrop-blur-md shadow-lg shadow-primary/10"
+          ? "backdrop-blur-xl bg-white/[0.04] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
           : "bg-transparent"
       }`}
     >
@@ -187,7 +187,7 @@ const Header = () => {
                     Productos
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] bg-dark-secondary border-gray/20">
+                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] backdrop-blur-xl bg-dark/90 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
                       {productLinks.map((component) => (
                         <ListItem
                           key={component.title}
@@ -258,7 +258,7 @@ const Header = () => {
                   .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="ml-6 bg-gradient-to-r from-primary to-secondary text-dark font-bold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
+              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_rgba(255,0,212,0.4)] transition-all duration-300"
             >
               Ver Carta
             </Button>
@@ -277,7 +277,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 bg-dark-secondary rounded-xl border border-gray/20 max-h-[calc(100vh-80px)] overflow-y-auto"
+            className="md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.04] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
           >
             <a
               href="#carta"
@@ -286,7 +286,7 @@ const Header = () => {
             >
               Carta Completa
             </a>
-            <div className="border-t border-gray/20 pt-3 space-y-4">
+            <div className="border-t border-white/[0.08] pt-3 space-y-4">
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Bebidas</p>
               <a
                 href="#desguayabator"
@@ -366,7 +366,7 @@ const Header = () => {
                 🍷 Vinos
               </a>
             </div>
-            <div className="border-t border-gray/20 pt-3 space-y-4">
+            <div className="border-t border-white/[0.08] pt-3 space-y-4">
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Mas en Frostbyte</p>
               <a
                 href="#que-te-provoca"
@@ -404,7 +404,7 @@ const Header = () => {
                 💬 Tu Opinion
               </a>
             </div>
-            <div className="border-t border-gray/20 pt-4 space-y-4">
+            <div className="border-t border-white/[0.08] pt-4 space-y-4">
               {/* Frostbyte Play - Solo mostrar en rutas de mesa */}
               {isTableRoute && (
                 <Link
@@ -449,7 +449,7 @@ const Header = () => {
                   ?.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold"
+              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_rgba(255,0,212,0.2)]"
             >
               Ver Carta
             </Button>

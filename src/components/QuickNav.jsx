@@ -97,7 +97,7 @@ const QuickNav = () => {
   );
 
   return (
-    <section id="menu" className="py-8 bg-dark border-y border-white/10 relative">
+    <section id="menu" className="py-8 backdrop-blur-md bg-white/[0.02] border-y border-white/[0.08] relative">
       <div className="container mx-auto px-4">
 
         {/* Label */}
@@ -137,7 +137,7 @@ const QuickNav = () => {
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleClick(section.href, section.isRoute)}
-              className="group relative px-5 py-2.5 rounded-full bg-white/5 border border-white/15 text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/60 hover:text-white hover:bg-primary/15 hover:shadow-[0_0_20px_rgba(255,0,212,0.25)] cursor-pointer"
+              className="group relative px-5 py-2.5 rounded-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/50 hover:text-white hover:bg-white/[0.1] hover:shadow-[0_0_20px_rgba(255,0,212,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] cursor-pointer"
             >
               <span className="relative z-10 flex items-center gap-1.5">
                 {section.name}
