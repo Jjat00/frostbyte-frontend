@@ -222,7 +222,7 @@ const Footer = () => {
             <p className="text-gray text-sm">
               Hecho por{" "}
               <a
-                href="https://www.linkedin.com/in/jaimeaza/"
+                href="https://www.instagram.com/jaimejjat/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:text-secondary transition-colors duration-300 font-semibold"
