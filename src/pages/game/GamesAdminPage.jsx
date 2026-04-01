@@ -193,7 +193,7 @@ export default function GamesAdminPage() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 w-72 backdrop-blur-xl bg-white/[0.06] border-l border-white/[0.15] z-50 flex flex-col md:hidden"
+              className="liquid-glass fixed right-0 top-0 bottom-0 w-72 backdrop-blur-xl bg-white/[0.06] border-l border-white/[0.15] z-50 flex flex-col md:hidden"
             >
               <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
                 <span className="font-bold text-light">Menú</span>
@@ -273,7 +273,7 @@ export default function GamesAdminPage() {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-64 h-screen backdrop-blur-xl bg-white/[0.04] border-r border-white/[0.1] flex-col fixed left-0 top-0">
+      <aside className="liquid-glass hidden md:flex w-64 h-screen backdrop-blur-xl bg-white/[0.04] border-r border-white/[0.1] flex-col fixed left-0 top-0">
         {/* Logo */}
         <div className="p-5 border-b border-white/[0.08]">
           <NavLink
@@ -479,7 +479,7 @@ function RoomCard({ room, onTerminate, onCleanTable, getTimeSince }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 hover:border-primary/50 transition-all"
+      className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 hover:border-primary/50 transition-all"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">

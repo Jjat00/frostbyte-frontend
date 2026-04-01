@@ -79,7 +79,7 @@ const LoginPage = () => {
         </div>
 
         {/* Login Card */}
-        <div className="backdrop-blur-xl bg-white/[0.05] border border-white/[0.15] rounded-2xl p-8 shadow-2xl shadow-primary/10">
+        <div className="liquid-glass backdrop-blur-xl bg-white/[0.05] border border-white/[0.15] rounded-2xl p-8 shadow-2xl shadow-primary/10">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error message */}
             {error && (

@@ -187,7 +187,7 @@ const HomePage = () => {
       </div>
 
       {/* Header - Modern and sleek */}
-      <header className="relative z-30 backdrop-blur-xl bg-white/[0.03] border-b border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sticky top-0">
+      <header className="liquid-glass sticky top-0 z-30 backdrop-blur-xl bg-white/[0.03] border-b border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo section */}
@@ -338,7 +338,7 @@ const HomePage = () => {
                 transition={{ delay: index * 0.05, duration: 0.4 }}
                 whileHover={{ y: -8 }}
                 onClick={() => navigate(module.path)}
-                className={`relative group cursor-pointer ${module.bgColor} border ${module.borderColor} rounded-xl p-5 transition-all duration-300 overflow-hidden ${module.glowColor}`}
+                className={`liquid-glass-interactive relative group cursor-pointer ${module.bgColor} border ${module.borderColor} rounded-xl p-5 transition-all duration-300 overflow-hidden ${module.glowColor}`}
               >
                 {/* Animated gradient overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${module.color} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />

@@ -23,7 +23,7 @@ const ProductCard = ({ product, index, styles }) => {
       whileHover={{ y: -10 }}
       className="group relative"
     >
-      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-yellow-500/40 hover:bg-white/[0.07] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(234,179,8,0.1)]">
+      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-yellow-500/40 hover:bg-white/[0.07] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(234,179,8,0.1)]">
         <div className="h-48 overflow-hidden relative">
           <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
           {styles.image ? (

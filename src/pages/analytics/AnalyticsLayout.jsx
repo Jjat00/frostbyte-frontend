@@ -86,7 +86,7 @@ const AnalyticsLayout = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 w-72 backdrop-blur-xl bg-white/[0.04] border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] z-50 flex flex-col md:hidden"
+              className="liquid-glass fixed right-0 top-0 bottom-0 w-72 backdrop-blur-xl bg-white/[0.04] border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] z-50 flex flex-col md:hidden"
             >
               <div className="p-4 border-b border-white/[0.1] flex items-center justify-between">
                 <span className="font-bold text-light">Menu</span>
@@ -184,7 +184,7 @@ const AnalyticsLayout = () => {
       <motion.aside
         animate={{ width: sidebarWidth }}
         transition={{ duration: 0.25, ease: "easeInOut" }}
-        className="flex h-screen backdrop-blur-xl bg-white/[0.04] border-r border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex-col fixed left-0 top-0 z-20 overflow-hidden"
+        className="liquid-glass flex h-screen backdrop-blur-xl bg-white/[0.04] border-r border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex-col fixed left-0 top-0 z-20 overflow-hidden"
       >
         {/* Logo */}
         <div className={`border-b border-white/[0.1] ${collapsed ? "p-3" : "p-5"}`}>
@@ -335,7 +335,7 @@ const AnalyticsLayout = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.03] border-t border-white/[0.1] z-30 safe-area-pb">
+      <nav className="liquid-glass-pill md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.03] border-t border-white/[0.1] z-30 safe-area-pb">
         <div className="flex items-center justify-around py-2">
           {navItems
             .filter((item) => item.path !== "/home" && item.path !== "/" && item.path !== "/musica" && item.path !== "/juegos-admin" && item.path !== "/gastos")

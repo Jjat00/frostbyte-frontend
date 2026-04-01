@@ -46,7 +46,7 @@ const GameCard = ({ game, index }) => {
       className="flex-1 min-w-0"
     >
       <div
-        className={`bg-dark/90 backdrop-blur-xl border-2 ${game.border} rounded-2xl p-6 md:p-8 ${game.shadow} shadow-xl relative overflow-hidden h-full flex flex-col`}
+        className={`liquid-glass-interactive bg-dark/90 backdrop-blur-xl border-2 ${game.border} rounded-2xl p-6 md:p-8 ${game.shadow} shadow-xl relative overflow-hidden h-full flex flex-col`}
       >
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-50 animate-pulse" />
 

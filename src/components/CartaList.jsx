@@ -263,7 +263,7 @@ const CategoryGroup = ({ category }) => {
         {sectionId && (
           <button
             onClick={() => scrollTo(sectionId)}
-            className="group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.07] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-primary/30 transition-all duration-200 cursor-pointer flex-shrink-0"
+            className="liquid-glass-pill group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.07] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-primary/30 transition-all duration-200 cursor-pointer flex-shrink-0"
           >
             <Eye className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Ver detalles</span>
@@ -340,7 +340,7 @@ const SpecialSectionItem = ({ section }) => {
         </div>
         <button
           onClick={() => scrollTo(section.id)}
-          className="group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.07] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-primary/30 transition-all duration-200 cursor-pointer flex-shrink-0"
+          className="liquid-glass-pill group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.07] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-primary/30 transition-all duration-200 cursor-pointer flex-shrink-0"
         >
           <Eye className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Ir a seccion</span>
@@ -438,7 +438,7 @@ const CartaList = () => {
         </motion.div>
 
         {/* Carta border container */}
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl sm:rounded-2xl px-4 py-5 sm:p-6 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)]">
+        <div className="liquid-glass backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl sm:rounded-2xl px-4 py-5 sm:p-6 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)]">
           {/* Categorias de productos (desde la API) */}
           {activeCategories.map((category) => (
             <CategoryGroup key={category.slug} category={category} />
@@ -447,7 +447,7 @@ const CartaList = () => {
           {/* Separador */}
           <div className="my-6 sm:my-8 flex items-center gap-3 sm:gap-4">
             <div className="flex-1 h-px bg-white/[0.08]" />
-            <span className="text-white/25 text-[10px] sm:text-xs uppercase tracking-widest font-semibold whitespace-nowrap backdrop-blur-sm bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
+            <span className="liquid-glass-pill text-white/25 text-[10px] sm:text-xs uppercase tracking-widest font-semibold whitespace-nowrap backdrop-blur-sm bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06]">
               Mas en Frostbyte
             </span>
             <div className="flex-1 h-px bg-white/[0.08]" />

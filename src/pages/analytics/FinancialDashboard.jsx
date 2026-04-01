@@ -305,7 +305,7 @@ const FinancialDashboard = () => {
 
   // ── Render helpers ──
 
-  const chartContainerClass = 'backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-2xl p-4 md:p-6';
+  const chartContainerClass = 'liquid-glass-light backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-2xl p-4 md:p-6';
 
   const ViewModeToggle = () => (
     <div className="flex flex-wrap gap-2">

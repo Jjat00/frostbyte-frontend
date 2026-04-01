@@ -120,7 +120,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className={`border rounded-xl p-4 ${status.bgClass} transition-all`}
+      className={`liquid-glass-interactive border rounded-xl p-4 ${status.bgClass} transition-all`}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3 gap-2">
@@ -482,7 +482,7 @@ const ActiveOrdersPage = () => {
           <button
             key={item.key}
             onClick={() => setFilter(item.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+            className={`liquid-glass-pill flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               filter === item.key
                 ? item.color === "yellow"
                   ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"

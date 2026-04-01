@@ -176,7 +176,7 @@ const ExpensesListPage = () => {
 
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-colors w-full sm:w-auto ${
+          className={`liquid-glass-pill flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-colors w-full sm:w-auto ${
             showFilters || statusFilter || categoryFilter
               ? "bg-primary/20 border-primary/50 text-primary"
               : "backdrop-blur-xl bg-white/[0.04] border-white/[0.1] text-gray hover:text-light"
@@ -277,7 +277,7 @@ const ExpensesListPage = () => {
                 key={expense.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 hover:bg-white/[0.06] transition-colors"
+                className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 hover:bg-white/[0.06] transition-colors"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className={`p-3 rounded-lg border ${colorClass}`}>
