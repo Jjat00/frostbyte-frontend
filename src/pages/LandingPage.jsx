@@ -287,7 +287,7 @@ const stats = [
 ];
 
 const StatsSection = () => (
-  <section className="py-16 bg-dark relative">
+  <section className="py-16 relative">
     <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -298,7 +298,7 @@ const StatsSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="text-center"
+            className="liquid-glass-light relative text-center rounded-2xl p-6 border border-white/[0.08]"
           >
             <stat.icon size={24} className="text-primary/50 mx-auto mb-3" />
             <p className="text-4xl md:text-5xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
@@ -367,7 +367,7 @@ const aiFeatures = [
 ];
 
 const AIFeaturesSection = () => (
-  <section id="ai-features" className="py-24 bg-dark relative overflow-hidden">
+  <section id="ai-features" className="py-24 relative overflow-hidden">
     <div className="absolute inset-0">
       <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
       <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full filter blur-[150px]" />
@@ -408,7 +408,7 @@ const AIFeaturesSection = () => (
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="group"
           >
-            <div className="bg-dark-secondary/80 backdrop-blur-sm border border-gray/10 rounded-2xl p-8 h-full flex flex-col transition-all duration-500 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
+            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col transition-all duration-500 hover:border-primary/40 hover:shadow-[0_8px_32px_rgba(255,0,212,0.15)] hover:-translate-y-1">
               <div
                 className={`w-14 h-14 bg-linear-to-br ${feature.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}
               >
@@ -484,7 +484,7 @@ const platformFeatures = [
 ];
 
 const PlatformSection = () => (
-  <section id="platform" className="py-24 bg-dark-secondary relative overflow-hidden">
+  <section id="platform" className="py-24 relative overflow-hidden backdrop-blur-md bg-white/[0.02] border-y border-white/[0.08]">
     <div className="absolute inset-0">
       <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-secondary/30 to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
@@ -524,7 +524,7 @@ const PlatformSection = () => (
             transition={{ duration: 0.6, delay: index * 0.1 }}
             className="group"
           >
-            <div className="bg-dark border border-gray/15 rounded-2xl p-8 h-full flex flex-col items-start transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10">
+            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-start transition-all duration-300 hover:border-primary/40 hover:shadow-[0_8px_32px_rgba(255,0,212,0.15)]">
               <div
                 className={`w-16 h-16 bg-linear-to-br ${
                   feature.color === "primary"
@@ -559,7 +559,7 @@ const PlatformSection = () => (
 
 // --- DEMO / CASE STUDY SECTION ---
 const DemoSection = () => (
-  <section className="py-24 bg-dark relative overflow-hidden">
+  <section className="py-24 relative overflow-hidden">
     <div className="absolute inset-0">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full filter blur-[200px]" />
     </div>
@@ -597,15 +597,15 @@ const DemoSection = () => (
           className="relative"
         >
           {/* Browser mockup */}
-          <div className="bg-dark-secondary border border-gray/20 rounded-2xl overflow-hidden shadow-2xl shadow-primary/10">
-            <div className="flex items-center gap-3 px-6 py-4 bg-dark border-b border-gray/15">
+          <div className="liquid-glass relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <div className="flex items-center gap-3 px-6 py-4 bg-white/[0.04] border-b border-white/[0.08]">
               <div className="flex gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                 <div className="w-3 h-3 rounded-full bg-green-500/80" />
               </div>
               <div className="flex-1 flex justify-center">
-                <div className="bg-dark-secondary border border-gray/20 rounded-lg px-4 py-1.5 text-gray text-sm font-mono flex items-center gap-2 max-w-md w-full">
+                <div className="bg-white/[0.06] border border-white/[0.1] rounded-lg px-4 py-1.5 text-gray text-sm font-mono flex items-center gap-2 max-w-md w-full">
                   <Shield size={12} className="text-green-400" />
                   <span className="text-gray/50">frostbyte.app</span>
                 </div>
@@ -638,7 +638,7 @@ const DemoSection = () => (
                 ].map((item, i) => (
                   <div
                     key={i}
-                    className="bg-dark/60 border border-gray/10 rounded-xl p-4 text-center space-y-2"
+                    className="liquid-glass-light relative bg-white/[0.06] backdrop-blur-sm border border-white/[0.08] rounded-xl p-4 text-center space-y-2"
                   >
                     <div className="w-10 h-10 bg-linear-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center mx-auto">
                       <item.icon size={18} className="text-primary" />
@@ -657,7 +657,7 @@ const DemoSection = () => (
             transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
             className="absolute -right-4 top-1/4 hidden lg:block"
           >
-            <div className="bg-dark-secondary border border-primary/30 rounded-xl p-4 shadow-lg shadow-primary/10">
+            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-primary/30 rounded-xl p-4 shadow-[0_8px_32px_rgba(255,0,212,0.15)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
                   <Image size={18} className="text-primary" />
@@ -675,7 +675,7 @@ const DemoSection = () => (
             transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
             className="absolute -left-4 bottom-1/4 hidden lg:block"
           >
-            <div className="bg-dark-secondary border border-secondary/30 rounded-xl p-4 shadow-lg shadow-secondary/10">
+            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-secondary/30 rounded-xl p-4 shadow-[0_8px_32px_rgba(0,224,255,0.15)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-secondary/20 rounded-lg flex items-center justify-center">
                   <Brain size={18} className="text-secondary" />
@@ -713,7 +713,7 @@ const DemoSection = () => (
 
 // --- CTA SECTION ---
 const CTASection = () => (
-  <section className="py-24 bg-dark relative overflow-hidden">
+  <section className="py-24 relative overflow-hidden">
     <div className="absolute inset-0">
       <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
       <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-secondary/5" />
@@ -766,7 +766,7 @@ const CTASection = () => (
 
 // --- FOOTER ---
 const LandingFooter = () => (
-  <footer className="bg-dark-secondary border-t border-gray/20 py-12">
+  <footer className="backdrop-blur-xl bg-white/[0.04] border-t border-white/[0.08] py-12">
     <div className="container mx-auto px-4">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center space-x-2">
@@ -832,7 +832,7 @@ const LandingNav = () => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-dark-secondary/95 backdrop-blur-md shadow-lg shadow-primary/10"
+          ? "liquid-glass backdrop-blur-xl bg-white/[0.08] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
           : "bg-transparent"
       }`}
     >
