@@ -147,7 +147,7 @@ const FeedbackCard = ({ feedback, onUpdateStatus }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`liquid-glass-interactive backdrop-blur-xl bg-white/[0.04] border-2 ${status.bgClass} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300`}
+      className={`liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border-2 ${status.bgClass} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300`}
     >
       {/* Header con badge de estado */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
@@ -325,7 +325,7 @@ const FeedbackListPage = () => {
             className={`liquid-glass-pill px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === null
                 ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30'
-                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
+                : 'backdrop-blur-sm bg-white/[0.08] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Todas ({feedbacks.length})
@@ -335,7 +335,7 @@ const FeedbackListPage = () => {
             className={`liquid-glass-pill px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'pending'
                 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
+                : 'backdrop-blur-sm bg-white/[0.08] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Pendientes ({statusCounts.pending})
@@ -345,7 +345,7 @@ const FeedbackListPage = () => {
             className={`liquid-glass-pill px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'reviewed'
                 ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
+                : 'backdrop-blur-sm bg-white/[0.08] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Revisados ({statusCounts.reviewed})
@@ -355,7 +355,7 @@ const FeedbackListPage = () => {
             className={`liquid-glass-pill px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'responded'
                 ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
+                : 'backdrop-blur-sm bg-white/[0.08] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Respondidos ({statusCounts.responded})
@@ -365,7 +365,7 @@ const FeedbackListPage = () => {
             className={`liquid-glass-pill px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'archived'
                 ? 'bg-gray/20 text-gray border border-gray/30'
-                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
+                : 'backdrop-blur-sm bg-white/[0.08] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Archivados ({statusCounts.archived})
@@ -380,7 +380,7 @@ const FeedbackListPage = () => {
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
               typeFilter === null
                 ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30'
-                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
+                : 'backdrop-blur-sm bg-white/[0.08] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Todos
@@ -392,7 +392,7 @@ const FeedbackListPage = () => {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
                 typeFilter === key
                   ? `${config.bgColor} ${config.color} border border-current/30`
-                  : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
+                  : 'backdrop-blur-sm bg-white/[0.08] text-gray border border-white/[0.1] hover:border-white/[0.2]'
               }`}
             >
               <config.icon className="w-3.5 h-3.5" />

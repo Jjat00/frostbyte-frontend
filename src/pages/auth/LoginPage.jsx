@@ -79,7 +79,7 @@ const LoginPage = () => {
         </div>
 
         {/* Login Card */}
-        <div className="liquid-glass backdrop-blur-xl bg-white/[0.05] border border-white/[0.15] rounded-2xl p-8 shadow-2xl shadow-primary/10">
+        <div className="liquid-glass backdrop-blur-xl bg-white/[0.09] border border-white/[0.15] rounded-2xl p-8 shadow-2xl shadow-primary/10">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error message */}
             {error && (
@@ -108,7 +108,7 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   autoComplete="username"
-                  className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg pl-12 pr-4 py-3 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg pl-12 pr-4 py-3 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                   placeholder="Ingresa tu usuario"
                 />
               </div>
@@ -129,7 +129,7 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   autoComplete="current-password"
-                  className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg pl-12 pr-12 py-3 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg pl-12 pr-12 py-3 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                   placeholder="Ingresa tu contraseña"
                 />
                 <button

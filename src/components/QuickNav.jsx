@@ -137,7 +137,7 @@ const QuickNav = () => {
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleClick(section.href, section.isRoute)}
-              className="liquid-glass-pill group relative px-5 py-2.5 rounded-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/50 hover:text-white hover:bg-white/[0.1] hover:shadow-[0_0_20px_rgba(255,0,212,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] cursor-pointer"
+              className="liquid-glass-pill group relative px-5 py-2.5 rounded-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/50 hover:text-white hover:bg-white/[0.1] hover:shadow-[0_0_20px_rgba(255,0,212,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] cursor-pointer"
             >
               <span className="relative z-10 flex items-center gap-1.5">
                 {section.name}

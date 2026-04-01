@@ -44,7 +44,7 @@ const CYBERPUNK_COLORS = ['#00e0ff', '#ff00d4', '#10B981', '#8B5CF6', '#F59E0B',
 // ─── Skeleton Components ────────────────────────────────────────
 
 const KPICardSkeleton = () => (
-  <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 animate-pulse relative overflow-hidden">
+  <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.08] rounded-2xl p-5 animate-pulse relative overflow-hidden">
     <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
     <div className="flex items-start justify-between">
       <div className="space-y-3 flex-1">
@@ -58,7 +58,7 @@ const KPICardSkeleton = () => (
 );
 
 const ChartSkeleton = ({ height = 'h-72' }) => (
-  <div className={`backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 ${height} relative overflow-hidden`}>
+  <div className={`backdrop-blur-xl bg-white/[0.08] border border-white/[0.08] rounded-2xl p-6 ${height} relative overflow-hidden`}>
     <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
     <div className="h-4 bg-gray/15 rounded w-40 mb-2" />
     <div className="h-3 bg-gray/10 rounded w-56 mb-6" />
@@ -305,11 +305,11 @@ const FinancialDashboard = () => {
 
   // ── Render helpers ──
 
-  const chartContainerClass = 'liquid-glass-light backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-2xl p-4 md:p-6';
+  const chartContainerClass = 'liquid-glass-light backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-2xl p-4 md:p-6';
 
   const ViewModeToggle = () => (
     <div className="flex flex-wrap gap-2">
-      <div className="flex backdrop-blur-xl bg-white/[0.04] rounded-xl p-1 border border-white/[0.08]">
+      <div className="flex backdrop-blur-xl bg-white/[0.08] rounded-xl p-1 border border-white/[0.08]">
         {[
           { key: 'daily', label: 'Este Mes', icon: Calendar },
           { key: 'monthly', label: 'Tendencia', icon: CalendarRange },

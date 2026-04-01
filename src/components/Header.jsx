@@ -156,7 +156,7 @@ const Header = () => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled || isMobileMenuOpen
-          ? "liquid-glass backdrop-blur-xl bg-white/[0.04] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
+          ? "liquid-glass backdrop-blur-xl bg-white/[0.08] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
           : "bg-transparent"
       }`}
     >
@@ -277,7 +277,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="liquid-glass md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.04] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
+            className="liquid-glass md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.08] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
           >
             <a
               href="#carta"

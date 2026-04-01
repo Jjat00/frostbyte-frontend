@@ -153,7 +153,7 @@ const FeedbackSection = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="liquid-glass backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl p-8 md:p-10 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.25)]">
+          <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-8 md:p-10 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.25)]">
             {/* Efectos de fondo */}
             <div className="absolute inset-0 opacity-5">
               <div className="absolute top-0 right-0 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
@@ -180,7 +180,7 @@ const FeedbackSection = () => {
                     name="customer_name"
                     value={formData.customer_name}
                     onChange={handleChange}
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300"
                     placeholder="Ej: Maria"
                     disabled={createMutation.isPending}
                   />
@@ -196,7 +196,7 @@ const FeedbackSection = () => {
                       type="button"
                       onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                       disabled={createMutation.isPending}
-                      className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 flex items-center justify-between"
+                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 flex items-center justify-between"
                     >
                       <span>
                         {selectedType?.emoji} {selectedType?.label}
@@ -249,7 +249,7 @@ const FeedbackSection = () => {
                     value={formData.comment}
                     onChange={handleChange}
                     rows="4"
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 resize-none"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 resize-none"
                     placeholder="Cuentanos tu experiencia, sugerencias o lo que quieras compartir..."
                     required
                     disabled={createMutation.isPending}

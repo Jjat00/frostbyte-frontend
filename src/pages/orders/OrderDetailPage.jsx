@@ -387,7 +387,7 @@ const OrderDetailPage = () => {
       </motion.div>
 
       {/* Información del cliente */}
-      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-light flex items-center gap-2">
             <User className="w-5 h-5 text-secondary" />
@@ -443,7 +443,7 @@ const OrderDetailPage = () => {
                   type="text"
                   value={editedCustomerName}
                   onChange={(e) => setEditedCustomerName(e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
                   placeholder="Nombre del cliente"
                 />
               </div>
@@ -452,7 +452,7 @@ const OrderDetailPage = () => {
                 <select
                   value={editedTableNumber}
                   onChange={(e) => setEditedTableNumber(e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
                 >
                   <option value="">Selecciona una mesa o barra</option>
                   <option value="0">Barra</option>
@@ -499,7 +499,7 @@ const OrderDetailPage = () => {
 
       {/* Resumen de pagos y entregas */}
       {order.items?.length > 0 && (
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4">
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
               <p className="text-xs text-gray mb-1">Pagado</p>
@@ -538,7 +538,7 @@ const OrderDetailPage = () => {
       )}
 
       {/* Items del pedido con pago individual */}
-      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-light">
             Productos ({order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0})
@@ -717,7 +717,7 @@ const OrderDetailPage = () => {
                         setDiscountPercent(val);
                       }
                     }}
-                    className="w-full pl-2.5 pr-7 py-1.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light text-right focus:border-primary/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full pl-2.5 pr-7 py-1.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light text-right focus:border-primary/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray text-sm">%</span>
                 </div>
@@ -888,7 +888,7 @@ const OrderDetailPage = () => {
                   ? "Cambiar Método de Pago"
                   : "Pagar Item"}
               </h3>
-              <div className="mb-4 p-3 backdrop-blur-sm bg-white/[0.04] border border-white/[0.08] rounded-lg">
+              <div className="mb-4 p-3 backdrop-blur-sm bg-white/[0.08] border border-white/[0.08] rounded-lg">
                 <p className="text-light font-medium">
                   {selectedItemForPayment.product_name}
                 </p>
@@ -996,7 +996,7 @@ const OrderDetailPage = () => {
                     <Banknote className="w-4 h-4 text-green-400" />
                     Pago en efectivo
                   </div>
-                  <div className="p-3 backdrop-blur-sm bg-white/[0.04] border border-white/[0.08] rounded-lg">
+                  <div className="p-3 backdrop-blur-sm bg-white/[0.08] border border-white/[0.08] rounded-lg">
                     <p className="text-xs text-gray mb-1">A cobrar</p>
                     <p className="text-2xl font-bold text-secondary">
                       {formatCurrency(selectedItemForPayment.subtotal)}
@@ -1015,7 +1015,7 @@ const OrderDetailPage = () => {
                         onChange={(e) => setCashAmount(e.target.value)}
                         placeholder="0"
                         autoFocus
-                        className="w-full pl-8 pr-4 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-full pl-8 pr-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
@@ -1145,7 +1145,7 @@ const OrderDetailPage = () => {
                   <Banknote className="w-4 h-4 text-green-400" />
                   Pago en efectivo
                 </div>
-                <div className="p-3 backdrop-blur-sm bg-white/[0.04] border border-white/[0.08] rounded-lg">
+                <div className="p-3 backdrop-blur-sm bg-white/[0.08] border border-white/[0.08] rounded-lg">
                   <p className="text-xs text-gray mb-1">Total a cobrar</p>
                   <p className="text-2xl font-bold text-secondary">
                     {formatCurrency(order.pending_total)}
@@ -1164,7 +1164,7 @@ const OrderDetailPage = () => {
                       onChange={(e) => setCashAmountFull(e.target.value)}
                       placeholder="0"
                       autoFocus
-                      className="w-full pl-8 pr-4 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full pl-8 pr-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   </div>
                 </div>
@@ -1265,7 +1265,7 @@ const OrderDetailPage = () => {
                     placeholder="Buscar producto..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                    className="w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
                   />
                 </div>
               </div>

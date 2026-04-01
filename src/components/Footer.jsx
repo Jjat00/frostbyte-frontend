@@ -158,7 +158,7 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="footer-social-icon w-10 h-10 backdrop-blur-sm bg-white/[0.05] border border-white/[0.1] rounded-lg flex items-center justify-center text-gray hover:text-primary hover:border-primary/50 transition-all duration-300"
+                  className="footer-social-icon w-10 h-10 backdrop-blur-sm bg-white/[0.09] border border-white/[0.1] rounded-lg flex items-center justify-center text-gray hover:text-primary hover:border-primary/50 transition-all duration-300"
                 >
                   <social.icon size={20} />
                 </a>

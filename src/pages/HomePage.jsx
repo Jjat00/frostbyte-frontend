@@ -221,7 +221,7 @@ const HomePage = () => {
               </Link>
 
               {/* User info */}
-              <div className="hidden md:flex items-center gap-3 px-4 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.1] rounded-lg">
+              <div className="hidden md:flex items-center gap-3 px-4 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.1] rounded-lg">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-lg">
                     {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}

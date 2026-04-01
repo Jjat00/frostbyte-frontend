@@ -145,7 +145,7 @@ const ProductsListPage = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/productos/generador-ia')}
-              className="flex items-center gap-2 px-4 py-2.5 backdrop-blur-xl bg-white/[0.04] border border-secondary/30 text-secondary font-semibold rounded-lg hover:bg-secondary/10 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 backdrop-blur-xl bg-white/[0.08] border border-secondary/30 text-secondary font-semibold rounded-lg hover:bg-secondary/10 transition-all"
             >
               <Sparkles className="w-5 h-5" />
               Generador IA
@@ -166,7 +166,7 @@ const ProductsListPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/20 rounded-lg">
@@ -183,7 +183,7 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-500/20 rounded-lg">
@@ -200,7 +200,7 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-red-500/20 rounded-lg">
@@ -217,7 +217,7 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-yellow-500/20 rounded-lg">
@@ -234,7 +234,7 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 col-span-2 md:col-span-1"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 col-span-2 md:col-span-1"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-secondary/20 rounded-lg">
@@ -249,7 +249,7 @@ const ProductsListPage = () => {
       </div>
 
       {/* Filtros */}
-      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 space-y-4">
+      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Búsqueda */}
           <div className="flex-1 relative">
@@ -259,7 +259,7 @@ const ProductsListPage = () => {
               placeholder="Buscar productos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="liquid-glass-light w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+              className="liquid-glass-light w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
             />
           </div>
 
@@ -283,7 +283,7 @@ const ProductsListPage = () => {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${
               showInactive
                 ? 'bg-secondary/20 border-secondary/30 text-secondary'
-                : 'backdrop-blur-sm bg-white/[0.05] border-white/[0.12] text-gray hover:text-light'
+                : 'backdrop-blur-sm bg-white/[0.09] border-white/[0.12] text-gray hover:text-light'
             }`}
           >
             {showInactive ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
@@ -293,7 +293,7 @@ const ProductsListPage = () => {
       </div>
 
       {/* Tabla de productos */}
-      <div className="liquid-glass backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
+      <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-white/[0.03] border-b border-white/[0.08]">
@@ -328,13 +328,13 @@ const ProductsListPage = () => {
                       key={product.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className={`hover:bg-white/[0.04] transition-colors ${
+                      className={`hover:bg-white/[0.08] transition-colors ${
                         !product.is_active ? 'opacity-60' : ''
                       }`}
                     >
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/[0.05] flex items-center justify-center shrink-0">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/[0.09] flex items-center justify-center shrink-0">
                             {shouldShowImage ? (
                               <img
                                 src={product.image_url}

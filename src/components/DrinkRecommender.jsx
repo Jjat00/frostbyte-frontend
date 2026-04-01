@@ -350,7 +350,7 @@ export default function DrinkRecommender() {
       className="py-6 bg-dark"
     >
       <div className="container mx-auto px-4">
-      <div className="liquid-glass max-w-xl mx-auto backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.3)]">
+      <div className="liquid-glass max-w-xl mx-auto backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.3)]">
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-5">
           <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 border border-white/10">

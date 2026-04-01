@@ -262,7 +262,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       <div className="flex gap-2">
         <button
           onClick={() => navigate(`/pedidos/${order.id}`)}
-          className="flex-1 px-3 py-2.5 bg-white/[0.05] text-gray hover:text-light hover:bg-white/[0.08] rounded-lg text-sm font-medium transition-colors"
+          className="flex-1 px-3 py-2.5 bg-white/[0.09] text-gray hover:text-light hover:bg-white/[0.08] rounded-lg text-sm font-medium transition-colors"
         >
           Ver detalle
         </button>
@@ -495,7 +495,7 @@ const ActiveOrdersPage = () => {
                   : item.color === "red"
                   ? "bg-red-500/20 text-red-400 border border-red-500/30"
                   : "bg-secondary/20 text-secondary border border-secondary/30"
-                : "bg-white/[0.05] text-gray hover:text-light border border-transparent"
+                : "bg-white/[0.09] text-gray hover:text-light border border-transparent"
             }`}
           >
             {item.icon && <item.icon className="w-4 h-4" />}
@@ -520,7 +520,7 @@ const ActiveOrdersPage = () => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 deliveredTab === "paid"
                   ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                  : "bg-white/[0.05] text-gray hover:text-light border border-transparent"
+                  : "bg-white/[0.09] text-gray hover:text-light border border-transparent"
               }`}
             >
               <CheckCircle className="w-4 h-4" />
@@ -538,7 +538,7 @@ const ActiveOrdersPage = () => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 deliveredTab === "unpaid"
                   ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                  : "bg-white/[0.05] text-gray hover:text-light border border-transparent"
+                  : "bg-white/[0.09] text-gray hover:text-light border border-transparent"
               }`}
             >
               <DollarSign className="w-4 h-4" />
@@ -554,7 +554,7 @@ const ActiveOrdersPage = () => {
           </div>
 
           {/* Selector de fecha para pedidos entregados */}
-          <div className="flex items-center justify-center gap-3 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg">
+          <div className="flex items-center justify-center gap-3 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg">
             <button
               onClick={() => setDeliveredDate("yesterday")}
               disabled={deliveredDate === "yesterday"}
@@ -563,7 +563,7 @@ const ActiveOrdersPage = () => {
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2 px-4 py-2 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-lg">
+            <div className="flex items-center gap-2 px-4 py-2 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-lg">
               <Calendar className="w-4 h-4 text-secondary" />
               <span className="text-sm font-medium text-light">
                 {deliveredDate === "today" ? "Hoy" : "Ayer"}

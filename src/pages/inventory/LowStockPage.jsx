@@ -139,7 +139,7 @@ const LowStockPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`backdrop-blur-xl bg-white/[0.04] border rounded-xl p-4 overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
+        className={`backdrop-blur-xl bg-white/[0.08] border rounded-xl p-4 overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
           isSelected
             ? material.stock_status === 'sin_stock'
               ? 'border-red-500/50'
@@ -274,7 +274,7 @@ const LowStockPage = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-2 md:gap-4">
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <Package className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
             <p className="text-xs md:text-sm text-gray">Seleccionados</p>
@@ -285,7 +285,7 @@ const LowStockPage = () => {
           </p>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
             <p className="text-xs md:text-sm text-gray">Sin stock</p>
@@ -295,7 +295,7 @@ const LowStockPage = () => {
           </p>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <DollarSign className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
             <p className="text-xs md:text-sm text-gray">Costo Est.</p>
@@ -308,7 +308,7 @@ const LowStockPage = () => {
 
       {/* Content */}
       {materials.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl p-8 md:p-12 text-center">
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-8 md:p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-green-500" />
           </div>
@@ -320,7 +320,7 @@ const LowStockPage = () => {
           {/* Vista móvil - Cards */}
           <div className="md:hidden space-y-3">
             {/* Botón seleccionar todos en móvil */}
-            <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl p-3">
+            <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-3">
               <button
                 onClick={toggleSelectAll}
                 className="flex items-center gap-2 text-sm"
@@ -351,7 +351,7 @@ const LowStockPage = () => {
           </div>
 
           {/* Vista desktop - Tabla */}
-          <div className="hidden md:block backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
+          <div className="hidden md:block backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -391,7 +391,7 @@ const LowStockPage = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className={`border-b border-white/[0.06] transition-colors ${
-                          isSelected ? 'hover:bg-white/[0.04]' : 'opacity-40'
+                          isSelected ? 'hover:bg-white/[0.08]' : 'opacity-40'
                         }`}
                       >
                         <td className="py-4 px-4">
@@ -456,7 +456,7 @@ const LowStockPage = () => {
                             min="0"
                             value={quantity}
                             onChange={(e) => handleQuantityChange(material.id, e.target.value)}
-                            className="w-24 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-1.5 text-right text-yellow-400 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                            className="w-24 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-1.5 text-right text-yellow-400 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                           />
                         </td>
                         <td className="py-4 px-4 text-right text-light">

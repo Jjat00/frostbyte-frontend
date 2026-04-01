@@ -250,7 +250,7 @@ const RecurringPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : templatesList.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 text-center">
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 text-center">
           <RefreshCw className="w-12 h-12 text-gray mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-light mb-2">
             Sin plantillas recurrentes
@@ -278,7 +278,7 @@ const RecurringPage = () => {
                 key={template.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`backdrop-blur-xl bg-white/[0.04] rounded-xl p-5 border transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
+                className={`backdrop-blur-xl bg-white/[0.08] rounded-xl p-5 border transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
                   due ? "border-yellow-500/50" : "border-white/[0.1]"
                 }`}
               >
@@ -398,7 +398,7 @@ const RecurringPage = () => {
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     placeholder="Ej: Nomina mensual"
                   />
                 </div>
@@ -413,7 +413,7 @@ const RecurringPage = () => {
                         category_id: parseInt(e.target.value),
                       }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                   >
                     <option value="">Seleccionar categoria</option>
                     {categoriesList.map((cat) => (
@@ -435,7 +435,7 @@ const RecurringPage = () => {
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     placeholder="Descripcion del gasto"
                   />
                 </div>
@@ -448,7 +448,7 @@ const RecurringPage = () => {
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, amount: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     placeholder="0"
                     min="0"
                   />
@@ -465,7 +465,7 @@ const RecurringPage = () => {
                           recurrence_type: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                      className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     >
                       {RECURRENCE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -489,7 +489,7 @@ const RecurringPage = () => {
                             day_of_month: parseInt(e.target.value),
                           }))
                         }
-                        className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                        className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                         min="1"
                         max="31"
                       />

@@ -93,7 +93,7 @@ const ExpensesDashboard = () => {
 
         <div className="flex flex-wrap items-center gap-3">
           {/* Date filter */}
-          <div className="flex flex-wrap backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-lg p-1">
+          <div className="flex flex-wrap backdrop-blur-xl bg-white/[0.08] border border-white/[0.08] rounded-lg p-1">
             {dateFilterOptions.map((option) => (
               <button
                 key={option.value}
@@ -124,7 +124,7 @@ const ExpensesDashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-green-500/20 rounded-lg">
@@ -144,7 +144,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-yellow-500/20 rounded-lg">
@@ -164,7 +164,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-red-500/20 rounded-lg">
@@ -182,7 +182,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-primary/20 rounded-lg">
@@ -203,7 +203,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5"
         >
           <h2 className="text-lg font-semibold text-light mb-4">
             Gastos por Categoria
@@ -249,7 +249,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5"
+          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5"
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-light">
@@ -303,7 +303,7 @@ const ExpensesDashboard = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl p-8 text-center"
+            className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-8 text-center"
           >
             <AlertCircle className="w-12 h-12 text-gray mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-light mb-2">

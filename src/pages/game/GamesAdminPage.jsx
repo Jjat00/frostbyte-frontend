@@ -160,7 +160,7 @@ export default function GamesAdminPage() {
   return (
     <div className="min-h-screen bg-dark flex flex-col md:flex-row">
       {/* Mobile Header */}
-      <header className="md:hidden h-14 backdrop-blur-xl bg-white/[0.04] border-b border-white/[0.1] flex items-center justify-between px-4 sticky top-0 z-30">
+      <header className="md:hidden h-14 backdrop-blur-xl bg-white/[0.08] border-b border-white/[0.1] flex items-center justify-between px-4 sticky top-0 z-30">
         <NavLink
           to="/home"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity active:scale-95"
@@ -273,7 +273,7 @@ export default function GamesAdminPage() {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="liquid-glass hidden md:flex w-64 h-screen backdrop-blur-xl bg-white/[0.04] border-r border-white/[0.1] flex-col fixed left-0 top-0">
+      <aside className="liquid-glass hidden md:flex w-64 h-screen backdrop-blur-xl bg-white/[0.08] border-r border-white/[0.1] flex-col fixed left-0 top-0">
         {/* Logo */}
         <div className="p-5 border-b border-white/[0.08]">
           <NavLink
@@ -377,7 +377,7 @@ export default function GamesAdminPage() {
               <select
                 value={selectedTable}
                 onChange={(e) => setSelectedTable(e.target.value)}
-                className="px-4 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-4 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="all">Todas las mesas</option>
                 <option value="0">Barra</option>
@@ -396,7 +396,7 @@ export default function GamesAdminPage() {
 
             {/* Lista de Salas */}
             {!rooms || rooms.length === 0 ? (
-              <div className="text-center py-12 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl">
+              <div className="text-center py-12 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl">
                 <AlertCircle className="w-12 h-12 text-gray mx-auto mb-4" />
                 <p className="text-gray text-lg">No hay salas activas</p>
               </div>
@@ -418,7 +418,7 @@ export default function GamesAdminPage() {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.04] border-t border-white/[0.1] z-30 safe-area-pb">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.08] border-t border-white/[0.1] z-30 safe-area-pb">
         <div className="flex items-center justify-around py-2">
           {navItems
             .filter(item => item.path !== '/home' && item.path !== '/')
@@ -459,7 +459,7 @@ function StatCard({ icon: Icon, label, value, color }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
+      className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
     >
       <div className="flex items-center gap-3 mb-2">
         <Icon className={`w-5 h-5 ${color}`} />
@@ -479,7 +479,7 @@ function RoomCard({ room, onTerminate, onCleanTable, getTimeSince }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 hover:border-primary/50 transition-all"
+      className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 hover:border-primary/50 transition-all"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">

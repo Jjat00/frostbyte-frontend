@@ -47,7 +47,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-2.5 text-left text-sm focus:outline-none focus:border-primary flex items-center justify-between"
+        className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-2.5 text-left text-sm focus:outline-none focus:border-primary flex items-center justify-between"
       >
         <span className={selectedOption ? 'text-light' : 'text-gray'}>
           {selectedOption ? `${selectedOption.name} (${selectedOption.unit_abbreviation})` : placeholder}
@@ -82,7 +82,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Buscar material..."
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg pl-9 pr-3 py-2 text-sm text-light placeholder-gray/50 focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg pl-9 pr-3 py-2 text-sm text-light placeholder-gray/50 focus:outline-none focus:border-primary"
                     autoFocus
                   />
                 </div>
@@ -599,7 +599,7 @@ const PurchaseOrdersPage = () => {
         </div>
 
         {/* Navegación de mes */}
-        <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3">
+        <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3">
           <button
             onClick={goToPreviousMonth}
             className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
@@ -662,7 +662,7 @@ const PurchaseOrdersPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : orders.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 md:p-12 text-center">
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 md:p-12 text-center">
           <ShoppingCart className="w-12 h-12 text-gray/50 mx-auto mb-4" />
           <h3 className="text-lg md:text-xl font-bold text-light mb-2">Sin órdenes</h3>
           <p className="text-gray text-sm mb-4">No hay órdenes de compra registradas</p>
@@ -686,11 +686,11 @@ const PurchaseOrdersPage = () => {
               key={order.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden"
+              className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden"
             >
               {/* Order Header */}
               <div
-                className="p-3 md:p-4 cursor-pointer hover:bg-white/[0.04] transition-colors"
+                className="p-3 md:p-4 cursor-pointer hover:bg-white/[0.08] transition-colors"
                 onClick={() => setSelectedOrder(selectedOrder === order.id ? null : order.id)}
               >
                 <div className="flex items-center justify-between gap-2">
@@ -983,7 +983,7 @@ const PurchaseOrdersPage = () => {
                     value={newOrderNotes}
                     onChange={(e) => setNewOrderNotes(e.target.value)}
                     placeholder="Ej: Compra semanal"
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1018,7 +1018,7 @@ const PurchaseOrdersPage = () => {
                               placeholder="Cantidad"
                               value={item.quantity_needed}
                               onChange={(e) => updateNewOrderItem(index, 'quantity_needed', e.target.value)}
-                              className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-2.5 text-light focus:outline-none focus:border-primary text-sm"
+                              className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-2.5 text-light focus:outline-none focus:border-primary text-sm"
                             />
                           </div>
                           <div className="col-span-5 sm:col-span-3">
@@ -1029,7 +1029,7 @@ const PurchaseOrdersPage = () => {
                               placeholder="Precio"
                               value={item.estimated_unit_price}
                               onChange={(e) => updateNewOrderItem(index, 'estimated_unit_price', e.target.value)}
-                              className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-3 py-2.5 text-light focus:outline-none focus:border-primary text-sm"
+                              className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-2.5 text-light focus:outline-none focus:border-primary text-sm"
                             />
                           </div>
                           <div className="col-span-2 sm:col-span-1 flex items-center justify-center">
@@ -1137,7 +1137,7 @@ const PurchaseOrdersPage = () => {
                     onChange={(e) =>
                       setPurchaseData({ ...purchaseData, quantity_purchased: e.target.value })
                     }
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1151,7 +1151,7 @@ const PurchaseOrdersPage = () => {
                     onChange={(e) =>
                       setPurchaseData({ ...purchaseData, actual_unit_price: e.target.value })
                     }
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1164,7 +1164,7 @@ const PurchaseOrdersPage = () => {
                       setPurchaseData({ ...purchaseData, supplier: e.target.value })
                     }
                     placeholder="Nombre del proveedor"
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1325,7 +1325,7 @@ const PurchaseOrdersPage = () => {
                     value={newItem.quantity_needed}
                     onChange={(e) => setNewItem({ ...newItem, quantity_needed: e.target.value })}
                     placeholder="Cantidad a pedir"
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1338,7 +1338,7 @@ const PurchaseOrdersPage = () => {
                     value={newItem.estimated_unit_price}
                     onChange={(e) => setNewItem({ ...newItem, estimated_unit_price: e.target.value })}
                     placeholder="Precio por unidad"
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -1447,7 +1447,7 @@ const PurchaseOrdersPage = () => {
                     inputMode="decimal"
                     value={editItemData.quantity}
                     onChange={(e) => setEditItemData({ ...editItemData, quantity: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                     placeholder={editItemModal.item.is_purchased ? 'Cantidad comprada' : 'Cantidad necesaria'}
                   />
                 </div>
@@ -1462,7 +1462,7 @@ const PurchaseOrdersPage = () => {
                     inputMode="decimal"
                     value={editItemData.unit_price}
                     onChange={(e) => setEditItemData({ ...editItemData, unit_price: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                     placeholder={editItemModal.item.is_purchased ? 'Precio real por unidad' : 'Precio estimado por unidad'}
                   />
                 </div>
@@ -1474,7 +1474,7 @@ const PurchaseOrdersPage = () => {
                     value={editItemData.supplier}
                     onChange={(e) => setEditItemData({ ...editItemData, supplier: e.target.value })}
                     placeholder="Nombre del proveedor"
-                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 

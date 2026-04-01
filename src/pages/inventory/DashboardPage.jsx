@@ -257,7 +257,7 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         <Link
           to="/inventario/materiales"
-          className="group p-4 md:p-6 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl hover:border-primary/50 transition-all active:scale-[0.98]"
+          className="group p-4 md:p-6 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl hover:border-primary/50 transition-all active:scale-[0.98]"
         >
           <Package className="w-7 h-7 md:w-8 md:h-8 text-primary mb-2 md:mb-3" />
           <h3 className="font-bold text-light mb-1 text-sm md:text-base">Ver Materiales</h3>
@@ -267,7 +267,7 @@ const DashboardPage = () => {
 
         <Link
           to="/inventario/ordenes"
-          className="group p-4 md:p-6 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl hover:border-secondary/50 transition-all active:scale-[0.98]"
+          className="group p-4 md:p-6 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl hover:border-secondary/50 transition-all active:scale-[0.98]"
         >
           <ShoppingCart className="w-7 h-7 md:w-8 md:h-8 text-secondary mb-2 md:mb-3" />
           <h3 className="font-bold text-light mb-1 text-sm md:text-base">Órdenes de Compra</h3>
@@ -277,7 +277,7 @@ const DashboardPage = () => {
 
         <Link
           to="/inventario/stock-bajo"
-          className="group p-4 md:p-6 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl hover:border-yellow-500/50 transition-all active:scale-[0.98] sm:col-span-2 lg:col-span-1"
+          className="group p-4 md:p-6 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl hover:border-yellow-500/50 transition-all active:scale-[0.98] sm:col-span-2 lg:col-span-1"
         >
           <TrendingUp className="w-7 h-7 md:w-8 md:h-8 text-yellow-500 mb-2 md:mb-3" />
           <h3 className="font-bold text-light mb-1 text-sm md:text-base">Orden Automática</h3>

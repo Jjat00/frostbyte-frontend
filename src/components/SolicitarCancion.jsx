@@ -35,7 +35,7 @@ const SpotifyTrackCard = ({ track, onSelect, isLoading }) => (
     exit={{ opacity: 0, y: -10 }}
     onClick={() => onSelect(track)}
     disabled={isLoading}
-    className="w-full flex items-center gap-3 p-3 bg-white/[0.04] backdrop-blur-md border border-white/10 rounded-xl hover:border-primary/40 hover:bg-white/[0.08] transition-all duration-200 text-left disabled:opacity-50"
+    className="w-full flex items-center gap-3 p-3 bg-white/[0.08] backdrop-blur-md border border-white/10 rounded-xl hover:border-primary/40 hover:bg-white/[0.08] transition-all duration-200 text-left disabled:opacity-50"
   >
     {track.image ? (
       <img src={track.image} alt={track.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
@@ -324,7 +324,7 @@ const SolicitarCancion = () => {
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); setShowResults(true); }}
                     onFocus={() => setShowResults(true)}
-                    className="w-full bg-white/[0.05] border border-white/15 rounded-xl pl-12 pr-10 py-4 text-light text-lg focus:outline-none focus:border-primary/50 focus:bg-white/[0.08] transition-all duration-300 placeholder:text-white/25"
+                    className="w-full bg-white/[0.09] border border-white/15 rounded-xl pl-12 pr-10 py-4 text-light text-lg focus:outline-none focus:border-primary/50 focus:bg-white/[0.08] transition-all duration-300 placeholder:text-white/25"
                     placeholder="Busca una cancion o artista..."
                     disabled={createMutation.isPending}
                   />
