@@ -71,7 +71,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute z-50 w-full mt-1 backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] rounded-lg shadow-xl overflow-hidden"
+              className="absolute z-50 w-full mt-1 backdrop-blur-xl bg-dark-secondary border border-white/[0.15] rounded-lg shadow-xl overflow-hidden"
             >
               {/* Input de búsqueda */}
               <div className="p-2 border-b border-white/[0.08]">

@@ -361,10 +361,10 @@ const MaterialsPage = () => {
                   <select
                     value={editData.unit_id}
                     onChange={(e) => setEditData({ ...editData, unit_id: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-dark-secondary border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   >
                     {units.map((unit) => (
-                      <option key={unit.id} value={unit.id}>
+                      <option key={unit.id} value={unit.id} className="bg-dark-secondary text-light">
                         {unit.name} ({unit.abbreviation})
                       </option>
                     ))}
@@ -493,11 +493,11 @@ const MaterialsPage = () => {
                   <select
                     value={createData.unit_id}
                     onChange={(e) => setCreateData({ ...createData, unit_id: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-dark-secondary border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   >
-                    <option value="">Seleccionar...</option>
+                    <option value="" className="bg-dark-secondary text-light">Seleccionar...</option>
                     {units.map((unit) => (
-                      <option key={unit.id} value={unit.id}>
+                      <option key={unit.id} value={unit.id} className="bg-dark-secondary text-light">
                         {unit.name} ({unit.abbreviation})
                       </option>
                     ))}
