@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, LogIn } from "lucide-react";
@@ -13,6 +13,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { useActiveCategories } from "@/hooks";
 
 const ListItem = React.forwardRef(
   ({ className, title, children, ...props }, ref) => {
@@ -41,13 +42,50 @@ const ListItem = React.forwardRef(
 );
 ListItem.displayName = "ListItem";
 
+/**
+ * Configuración de secciones de bebidas para el menú mobile/desktop.
+ * categorySlug: slug de la categoría en BD (null = siempre visible)
+ */
+const BEVERAGE_SECTIONS = [
+  { key: "desguayabator", label: "🩹 Desguayabator", href: "#desguayabator", categorySlug: null, className: "text-emerald-400 hover:text-emerald-300" },
+  { key: "agua", label: "💧 Agua", href: "#agua", categorySlug: null, className: "text-cyan-400 hover:text-cyan-300" },
+  { key: "granizados", label: "Granizados", href: "#granizados", categorySlug: "granizados" },
+  { key: "frappes", label: "Frappes", href: "#frappes", categorySlug: "frappes" },
+  { key: "sodas", label: "Sodas Italianas", href: "#sodas", categorySlug: "sodas-italianas" },
+  { key: "micheladas", label: "Micheladas", href: "#micheladas", categorySlug: "micheladas" },
+  { key: "cervezas", label: "🍺 Cervezas", href: "#cervezas", categorySlug: "cervezas" },
+  { key: "cuates", label: "🍹 Cuates", href: "#cuates", categorySlug: "cuates" },
+  { key: "mocktails", label: "Cocteles", href: "#mocktails", categorySlug: "mocktails" },
+  { key: "shots", label: "Shots", href: "#shots", categorySlug: "shots" },
+  { key: "vinos", label: "🍷 Vinos", href: "#vinos", categorySlug: "vinos" },
+];
+
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { data: categoriesData } = useActiveCategories();
 
   // Detectar si estamos en una ruta de mesa
   const isTableRoute = location.pathname.startsWith('/mesa/');
+
+  // Obtener los slugs de categorías activas
+  const activeCategorySlugs = useMemo(() => {
+    if (!categoriesData?.results) return new Set();
+    return new Set(
+      categoriesData.results
+        .filter((cat) => cat.is_active)
+        .map((cat) => cat.slug)
+    );
+  }, [categoriesData]);
+
+  // Filtrar secciones de bebidas según categorías activas
+  const visibleBeverages = useMemo(() => {
+    return BEVERAGE_SECTIONS.filter((section) => {
+      if (!section.categorySlug) return true;
+      return activeCategorySlugs.has(section.categorySlug);
+    });
+  }, [activeCategorySlugs]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,87 +96,31 @@ const Header = () => {
   }, []);
 
   const productLinks = [
-    {
-      title: "🩹 Desguayabator",
-      href: "#desguayabator",
-      description: "Bebida helada para curar guayabos. Electrolit + Bonfiest.",
-    },
-    {
-      title: "💧 Agua",
-      href: "#agua",
-      description: "Agua pura y refrescante para hidratarte.",
-    },
-    {
-      title: "Granizados",
-      href: "#granizados",
-      description: "Mango, Maracumango, Lulo y más.",
-    },
-    {
-      title: "Frappés",
-      href: "#frappes",
-      description: "Café, Oreo, Fresa, Brownie.",
-    },
-    {
-      title: "Sodas Italianas",
-      href: "#sodas",
-      description: "Refrescantes sodas de Fresa y Maracuyá.",
-    },
-    {
-      title: "Micheladas",
-      href: "#micheladas",
-      description: "Poker, Budweiser y Corona con nuestra mezcla secreta.",
-    },
-    {
-      title: "🍺 Cervezas",
-      href: "#cervezas",
-      description: "Poker, Budweiser, Corona y Coronita bien frías.",
-    },
-    {
-      title: "🍹 Cuates",
-      href: "#cuates",
-      description: "Cócteles con tequila mexicano. Limón, Fresa y Mango.",
-    },
-    {
-      title: "Cócteles",
-      href: "#mocktails",
-      description: "Mojitos, Margaritas, Moscow Mule y más.",
-    },
-    {
-      title: "Shots",
-      href: "#shots",
-      description: "Ginebra, Vodka, Whisky, Tequila y Ron.",
-    },
-    {
-      title: "🍷 Vinos",
-      href: "#vinos",
-      description: "Copas de Gato Negro y Casillero del Diablo.",
-    },
-    {
-      title: "✨ Recomendador",
-      href: "#que-te-provoca",
-      description: "Deja que te recomendemos la bebida perfecta.",
-    },
-    {
-      title: "📱 Descuento Redes",
-      href: "#descuento-redes",
-      description: "Siguenos en redes y obtendras un descuento.",
-    },
-    {
-      title: "🎂 Descuento Cumple",
-      href: "#descuento-cumple",
-      description: "Si es tu cumple, tendras un descuento especial.",
-    },
-    {
-      title: "🎵 Pedir Cancion",
-      href: "#solicitar-cancion",
-      description: "Pide tu cancion favorita y la ponemos para ti.",
-    },
-    {
-      title: "💬 Tu Opinion",
-      href: "#feedback",
-      description: "Dejanos tu feedback, sugerencias o comentarios.",
-    },
+    { title: "🩹 Desguayabator", href: "#desguayabator", description: "Bebida helada para curar guayabos. Electrolit + Bonfiest.", categorySlug: null },
+    { title: "💧 Agua", href: "#agua", description: "Agua pura y refrescante para hidratarte.", categorySlug: null },
+    { title: "Granizados", href: "#granizados", description: "Mango, Maracumango, Lulo y más.", categorySlug: "granizados" },
+    { title: "Frappés", href: "#frappes", description: "Café, Oreo, Fresa, Brownie.", categorySlug: "frappes" },
+    { title: "Sodas Italianas", href: "#sodas", description: "Refrescantes sodas de Fresa y Maracuyá.", categorySlug: "sodas-italianas" },
+    { title: "Micheladas", href: "#micheladas", description: "Poker, Budweiser y Corona con nuestra mezcla secreta.", categorySlug: "micheladas" },
+    { title: "🍺 Cervezas", href: "#cervezas", description: "Poker, Budweiser, Corona y Coronita bien frías.", categorySlug: "cervezas" },
+    { title: "🍹 Cuates", href: "#cuates", description: "Cócteles con tequila mexicano. Limón, Fresa y Mango.", categorySlug: "cuates" },
+    { title: "Cócteles", href: "#mocktails", description: "Mojitos, Margaritas, Moscow Mule y más.", categorySlug: "mocktails" },
+    { title: "Shots", href: "#shots", description: "Ginebra, Vodka, Whisky, Tequila y Ron.", categorySlug: "shots" },
+    { title: "🍷 Vinos", href: "#vinos", description: "Copas de Gato Negro y Casillero del Diablo.", categorySlug: "vinos" },
+    { title: "✨ Recomendador", href: "#que-te-provoca", description: "Deja que te recomendemos la bebida perfecta.", categorySlug: null },
+    { title: "📱 Descuento Redes", href: "#descuento-redes", description: "Siguenos en redes y obtendras un descuento.", categorySlug: null },
+    { title: "🎂 Descuento Cumple", href: "#descuento-cumple", description: "Si es tu cumple, tendras un descuento especial.", categorySlug: null },
+    { title: "🎵 Pedir Cancion", href: "#solicitar-cancion", description: "Pide tu cancion favorita y la ponemos para ti.", categorySlug: null },
+    { title: "💬 Tu Opinion", href: "#feedback", description: "Dejanos tu feedback, sugerencias o comentarios.", categorySlug: null },
   ];
+
+  // Filtrar productLinks del desktop según categorías activas
+  const visibleProductLinks = useMemo(() => {
+    return productLinks.filter((link) => {
+      if (!link.categorySlug) return true;
+      return activeCategorySlugs.has(link.categorySlug);
+    });
+  }, [activeCategorySlugs]);
 
   const navItems = [
     {
@@ -188,7 +170,7 @@ const Header = () => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="liquid-glass grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] backdrop-blur-xl bg-dark/90 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
-                      {productLinks.map((component) => (
+                      {visibleProductLinks.map((component) => (
                         <ListItem
                           key={component.title}
                           title={component.title}
@@ -288,83 +270,16 @@ const Header = () => {
             </a>
             <div className="border-t border-white/[0.08] pt-3 space-y-4">
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Bebidas</p>
-              <a
-                href="#desguayabator"
-                className="block text-emerald-400 hover:text-emerald-300 transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🩹 Desguayabator
-              </a>
-              <a
-                href="#agua"
-                className="block text-cyan-400 hover:text-cyan-300 transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                💧 Agua
-              </a>
-              <a
-                href="#granizados"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Granizados
-              </a>
-              <a
-                href="#frappes"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Frappes
-              </a>
-              <a
-                href="#sodas"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Sodas Italianas
-              </a>
-              <a
-                href="#micheladas"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Micheladas
-              </a>
-              <a
-                href="#cervezas"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🍺 Cervezas
-              </a>
-              <a
-                href="#cuates"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🍹 Cuates
-              </a>
-              <a
-                href="#mocktails"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Cocteles
-              </a>
-              <a
-                href="#shots"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Shots
-              </a>
-              <a
-                href="#vinos"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🍷 Vinos
-              </a>
+              {visibleBeverages.map((section) => (
+                <a
+                  key={section.key}
+                  href={section.href}
+                  className={`block ${section.className || "text-gray hover:text-primary"} transition-colors duration-300 font-medium`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {section.label}
+                </a>
+              ))}
             </div>
             <div className="border-t border-white/[0.08] pt-3 space-y-4">
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Mas en Frostbyte</p>
