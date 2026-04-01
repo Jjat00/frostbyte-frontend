@@ -160,7 +160,7 @@ export default function GamesAdminPage() {
   return (
     <div className="min-h-screen bg-dark flex flex-col md:flex-row">
       {/* Mobile Header */}
-      <header className="md:hidden h-14 bg-dark-secondary/95 backdrop-blur-sm border-b border-gray/20 flex items-center justify-between px-4 sticky top-0 z-30">
+      <header className="md:hidden h-14 backdrop-blur-xl bg-white/[0.04] border-b border-white/[0.1] flex items-center justify-between px-4 sticky top-0 z-30">
         <NavLink
           to="/home"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity active:scale-95"
@@ -171,7 +171,7 @@ export default function GamesAdminPage() {
         </NavLink>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+          className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -193,9 +193,9 @@ export default function GamesAdminPage() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 w-72 bg-dark-secondary border-l border-gray/20 z-50 flex flex-col md:hidden"
+              className="fixed right-0 top-0 bottom-0 w-72 backdrop-blur-xl bg-white/[0.06] border-l border-white/[0.15] z-50 flex flex-col md:hidden"
             >
-              <div className="p-4 border-b border-gray/20 flex items-center justify-between">
+              <div className="p-4 border-b border-white/[0.08] flex items-center justify-between">
                 <span className="font-bold text-light">Menú</span>
                 <button
                   onClick={() => setSidebarOpen(false)}
@@ -206,7 +206,7 @@ export default function GamesAdminPage() {
               </div>
 
               {/* User info */}
-              <div className="p-4 border-b border-gray/20">
+              <div className="p-4 border-b border-white/[0.08]">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-lg">
                     {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
@@ -221,7 +221,7 @@ export default function GamesAdminPage() {
               {/* Navigation */}
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navItems.map((item) => {
-                  const baseClasses = "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-gray hover:text-light hover:bg-gray/10";
+                  const baseClasses = "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-gray hover:text-light hover:bg-white/[0.06]";
                   
                   if (item.external) {
                     return (
@@ -258,7 +258,7 @@ export default function GamesAdminPage() {
               </nav>
 
               {/* Logout */}
-              <div className="p-4 border-t border-gray/20">
+              <div className="p-4 border-t border-white/[0.08]">
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20 transition-colors"
@@ -273,9 +273,9 @@ export default function GamesAdminPage() {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-64 h-screen bg-dark-secondary border-r border-gray/20 flex-col fixed left-0 top-0">
+      <aside className="hidden md:flex w-64 h-screen backdrop-blur-xl bg-white/[0.04] border-r border-white/[0.1] flex-col fixed left-0 top-0">
         {/* Logo */}
-        <div className="p-5 border-b border-gray/20">
+        <div className="p-5 border-b border-white/[0.08]">
           <NavLink
             to="/home"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
@@ -292,7 +292,7 @@ export default function GamesAdminPage() {
         {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
-            const baseClasses = "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-gray/10";
+            const baseClasses = "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-white/[0.06]";
             
             if (item.external) {
               return (
@@ -328,7 +328,7 @@ export default function GamesAdminPage() {
         </nav>
 
         {/* User section */}
-        <div className="p-3 border-t border-gray/20">
+        <div className="p-3 border-t border-white/[0.08]">
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold">
               {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
@@ -377,7 +377,7 @@ export default function GamesAdminPage() {
               <select
                 value={selectedTable}
                 onChange={(e) => setSelectedTable(e.target.value)}
-                className="px-4 py-2 bg-dark-secondary border border-gray/20 rounded-lg text-light focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-4 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="all">Todas las mesas</option>
                 <option value="0">Barra</option>
@@ -396,7 +396,7 @@ export default function GamesAdminPage() {
 
             {/* Lista de Salas */}
             {!rooms || rooms.length === 0 ? (
-              <div className="text-center py-12 bg-dark-secondary rounded-xl border border-gray/20">
+              <div className="text-center py-12 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl">
                 <AlertCircle className="w-12 h-12 text-gray mx-auto mb-4" />
                 <p className="text-gray text-lg">No hay salas activas</p>
               </div>
@@ -418,7 +418,7 @@ export default function GamesAdminPage() {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-dark-secondary/95 backdrop-blur-sm border-t border-gray/20 z-30 safe-area-pb">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.04] border-t border-white/[0.1] z-30 safe-area-pb">
         <div className="flex items-center justify-around py-2">
           {navItems
             .filter(item => item.path !== '/home' && item.path !== '/')
@@ -459,7 +459,7 @@ function StatCard({ icon: Icon, label, value, color }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-dark-secondary border border-gray/20 rounded-xl p-6"
+      className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
     >
       <div className="flex items-center gap-3 mb-2">
         <Icon className={`w-5 h-5 ${color}`} />
@@ -479,7 +479,7 @@ function RoomCard({ room, onTerminate, onCleanTable, getTimeSince }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-dark-secondary border border-gray/20 rounded-xl p-6 hover:border-primary/50 transition-all"
+      className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 hover:border-primary/50 transition-all"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">

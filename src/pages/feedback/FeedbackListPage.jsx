@@ -147,7 +147,7 @@ const FeedbackCard = ({ feedback, onUpdateStatus }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-dark-secondary border-2 ${status.bgClass} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300`}
+      className={`backdrop-blur-xl bg-white/[0.04] border-2 ${status.bgClass} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300`}
     >
       {/* Header con badge de estado */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
@@ -181,7 +181,7 @@ const FeedbackCard = ({ feedback, onUpdateStatus }) => {
         </p>
 
         {feedback.admin_notes && (
-          <div className="mt-3 p-3 bg-dark rounded-lg border border-gray/20">
+          <div className="mt-3 p-3 backdrop-blur-sm bg-white/[0.03] rounded-lg border border-white/[0.08]">
             <p className="text-xs text-gray mb-1">Notas del admin:</p>
             <p className="text-sm text-light break-words">{feedback.admin_notes}</p>
           </div>
@@ -214,7 +214,7 @@ const FeedbackCard = ({ feedback, onUpdateStatus }) => {
             </button>
             <button
               onClick={() => handleStatusChange('archived')}
-              className="px-3 sm:px-4 py-2 bg-gray/20 text-gray border border-gray/30 rounded-lg hover:bg-gray/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              className="px-3 sm:px-4 py-2 bg-white/[0.06] text-gray border border-white/[0.1] rounded-lg hover:bg-white/[0.1] transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
               <Archive className="w-4 h-4 flex-shrink-0" />
               <span>Archivar</span>
@@ -233,7 +233,7 @@ const FeedbackCard = ({ feedback, onUpdateStatus }) => {
             </button>
             <button
               onClick={() => handleStatusChange('archived')}
-              className="px-3 sm:px-4 py-2 bg-gray/20 text-gray border border-gray/30 rounded-lg hover:bg-gray/30 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              className="px-3 sm:px-4 py-2 bg-white/[0.06] text-gray border border-white/[0.1] rounded-lg hover:bg-white/[0.1] transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
               <Archive className="w-4 h-4 flex-shrink-0" />
               <span>Archivar</span>
@@ -311,7 +311,7 @@ const FeedbackListPage = () => {
           <button
             onClick={() => refetch()}
             disabled={isRefetching}
-            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors flex-shrink-0"
+            className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors flex-shrink-0"
             title="Actualizar"
           >
             <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
@@ -325,7 +325,7 @@ const FeedbackListPage = () => {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === null
                 ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
+                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Todas ({feedbacks.length})
@@ -335,7 +335,7 @@ const FeedbackListPage = () => {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'pending'
                 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
+                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Pendientes ({statusCounts.pending})
@@ -345,7 +345,7 @@ const FeedbackListPage = () => {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'reviewed'
                 ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
+                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Revisados ({statusCounts.reviewed})
@@ -355,7 +355,7 @@ const FeedbackListPage = () => {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'responded'
                 ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
+                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Respondidos ({statusCounts.responded})
@@ -365,7 +365,7 @@ const FeedbackListPage = () => {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               statusFilter === 'archived'
                 ? 'bg-gray/20 text-gray border border-gray/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
+                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Archivados ({statusCounts.archived})
@@ -380,7 +380,7 @@ const FeedbackListPage = () => {
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
               typeFilter === null
                 ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30'
-                : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
+                : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
             }`}
           >
             Todos
@@ -392,7 +392,7 @@ const FeedbackListPage = () => {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
                 typeFilter === key
                   ? `${config.bgColor} ${config.color} border border-current/30`
-                  : 'bg-dark-secondary text-gray border border-gray/20 hover:border-gray/40'
+                  : 'backdrop-blur-sm bg-white/[0.04] text-gray border border-white/[0.1] hover:border-white/[0.2]'
               }`}
             >
               <config.icon className="w-3.5 h-3.5" />

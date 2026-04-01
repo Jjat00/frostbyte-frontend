@@ -192,7 +192,7 @@ const CategoriesPage = () => {
       </div>
 
       {/* Filtros */}
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 space-y-4">
+      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Búsqueda */}
           <div className="flex-1 relative">
@@ -202,7 +202,7 @@ const CategoriesPage = () => {
               placeholder="Buscar categorías..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
             />
           </div>
 
@@ -212,7 +212,7 @@ const CategoriesPage = () => {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${
               showInactive
                 ? 'bg-secondary/20 border-secondary/30 text-secondary'
-                : 'bg-dark border-gray/20 text-gray hover:text-light'
+                : 'backdrop-blur-sm bg-white/[0.05] border-white/[0.12] text-gray hover:text-light'
             }`}
           >
             {showInactive ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
@@ -239,14 +239,14 @@ const CategoriesPage = () => {
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-light">
                     {editingCategory ? 'Editar Categoría' : 'Nueva Categoría'}
                   </h2>
                   <button
                     onClick={handleCancel}
-                    className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                    className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -263,7 +263,7 @@ const CategoriesPage = () => {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                      className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
                       placeholder="Ej: Granizados"
                       required
                     />
@@ -282,7 +282,7 @@ const CategoriesPage = () => {
                         })
                       }
                       rows={3}
-                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none"
+                      className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none"
                       placeholder="Descripción de la categoría..."
                     />
                   </div>
@@ -301,7 +301,7 @@ const CategoriesPage = () => {
                           display_order: parseInt(e.target.value) || 0,
                         })
                       }
-                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                      className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
                     />
                   </div>
 
@@ -324,7 +324,7 @@ const CategoriesPage = () => {
                     <button
                       type="button"
                       onClick={handleCancel}
-                      className="px-4 py-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                      className="px-4 py-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
                     >
                       Cancelar
                     </button>
@@ -368,11 +368,11 @@ const CategoriesPage = () => {
               key={category.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`bg-dark-secondary border rounded-xl p-4 space-y-3 ${
+              className={`backdrop-blur-xl bg-white/[0.04] border rounded-xl p-4 space-y-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
                 !category.is_active ? 'opacity-60' : ''
               } ${
                 category.is_active
-                  ? 'border-gray/20'
+                  ? 'border-white/[0.1]'
                   : 'border-red-500/20'
               }`}
             >
@@ -405,7 +405,7 @@ const CategoriesPage = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-gray/10">
+              <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
                 <button
                   onClick={() => handleToggleActive(category)}
                   disabled={toggleActiveMutation.isPending}

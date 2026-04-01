@@ -250,7 +250,7 @@ const RecurringPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : templatesList.length === 0 ? (
-        <div className="bg-dark-secondary rounded-xl p-8 text-center border border-gray/10">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 text-center">
           <RefreshCw className="w-12 h-12 text-gray mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-light mb-2">
             Sin plantillas recurrentes
@@ -278,8 +278,8 @@ const RecurringPage = () => {
                 key={template.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`bg-dark-secondary rounded-xl p-5 border transition-colors ${
-                  due ? "border-yellow-500/50" : "border-gray/10"
+                className={`backdrop-blur-xl bg-white/[0.04] rounded-xl p-5 border transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
+                  due ? "border-yellow-500/50" : "border-white/[0.1]"
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -291,7 +291,7 @@ const RecurringPage = () => {
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-light">{template.name}</h3>
                       {!template.is_active && (
-                        <span className="px-2 py-0.5 text-xs bg-gray/20 text-gray rounded-full">
+                        <span className="px-2 py-0.5 text-xs bg-white/[0.08] text-gray rounded-full">
                           Inactivo
                         </span>
                       )}
@@ -326,7 +326,7 @@ const RecurringPage = () => {
                     </button>
                     <button
                       onClick={() => openModal(template)}
-                      className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                      className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
                     >
                       <Edit className="w-5 h-5" />
                     </button>
@@ -344,7 +344,7 @@ const RecurringPage = () => {
                 </div>
 
                 {template.next_due_date && (
-                  <div className="mt-4 pt-4 border-t border-gray/10 flex flex-wrap items-center gap-2 text-sm text-gray">
+                  <div className="mt-4 pt-4 border-t border-white/[0.06] flex flex-wrap items-center gap-2 text-sm text-gray">
                     <Calendar className="w-4 h-4" />
                     Proxima fecha: {template.next_due_date}
                     {template.last_generated_at && (
@@ -375,9 +375,9 @@ const RecurringPage = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md bg-dark-secondary rounded-xl border border-gray/20 z-50 overflow-hidden max-h-[90vh] overflow-y-auto"
+              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-xl z-50 overflow-hidden max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between p-4 border-b border-gray/10 sticky top-0 bg-dark-secondary">
+              <div className="flex items-center justify-between p-4 border-b border-white/[0.08] sticky top-0 backdrop-blur-xl bg-white/[0.06]">
                 <h2 className="text-lg font-semibold text-light">
                   {editingTemplate ? "Editar Plantilla" : "Nueva Plantilla"}
                 </h2>
@@ -398,7 +398,7 @@ const RecurringPage = () => {
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     placeholder="Ej: Nomina mensual"
                   />
                 </div>
@@ -413,7 +413,7 @@ const RecurringPage = () => {
                         category_id: parseInt(e.target.value),
                       }))
                     }
-                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                   >
                     <option value="">Seleccionar categoria</option>
                     {categoriesList.map((cat) => (
@@ -435,7 +435,7 @@ const RecurringPage = () => {
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     placeholder="Descripcion del gasto"
                   />
                 </div>
@@ -448,7 +448,7 @@ const RecurringPage = () => {
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, amount: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     placeholder="0"
                     min="0"
                   />
@@ -465,7 +465,7 @@ const RecurringPage = () => {
                           recurrence_type: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                      className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                     >
                       {RECURRENCE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -489,7 +489,7 @@ const RecurringPage = () => {
                             day_of_month: parseInt(e.target.value),
                           }))
                         }
-                        className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                        className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                         min="1"
                         max="31"
                       />

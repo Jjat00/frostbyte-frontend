@@ -187,7 +187,7 @@ const HomePage = () => {
       </div>
 
       {/* Header - Modern and sleek */}
-      <header className="relative z-30 bg-dark-secondary/80 backdrop-blur-xl border-b border-gray/10 sticky top-0">
+      <header className="relative z-30 backdrop-blur-xl bg-white/[0.03] border-b border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sticky top-0">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo section */}
@@ -221,12 +221,12 @@ const HomePage = () => {
               </Link>
 
               {/* User info */}
-              <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-dark-secondary/50 border border-gray/20 rounded-lg">
+              <div className="hidden md:flex items-center gap-3 px-4 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.1] rounded-lg">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-lg">
                     {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-dark-secondary rounded-full" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-dark rounded-full" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-light leading-tight">
@@ -386,7 +386,7 @@ const HomePage = () => {
                       return (
                         <div
                           key={idx}
-                          className="flex items-center gap-1.5 px-2.5 py-1 bg-dark/50 rounded-md border border-gray/10 group-hover:border-gray/30 transition-colors"
+                          className="flex items-center gap-1.5 px-2.5 py-1 bg-dark/50 rounded-md border border-white/[0.1] group-hover:border-white/[0.18] transition-colors"
                         >
                           <FeatureIcon className="w-3 h-3 text-gray" />
                           <span className="text-xs text-gray">{feature.text}</span>

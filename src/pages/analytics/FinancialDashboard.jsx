@@ -44,7 +44,7 @@ const CYBERPUNK_COLORS = ['#00e0ff', '#ff00d4', '#10B981', '#8B5CF6', '#F59E0B',
 // ─── Skeleton Components ────────────────────────────────────────
 
 const KPICardSkeleton = () => (
-  <div className="bg-dark-secondary/60 border border-gray/10 rounded-2xl p-5 animate-pulse relative overflow-hidden">
+  <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 animate-pulse relative overflow-hidden">
     <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
     <div className="flex items-start justify-between">
       <div className="space-y-3 flex-1">
@@ -58,7 +58,7 @@ const KPICardSkeleton = () => (
 );
 
 const ChartSkeleton = ({ height = 'h-72' }) => (
-  <div className={`bg-dark-secondary/60 border border-gray/10 rounded-2xl p-6 ${height} relative overflow-hidden`}>
+  <div className={`backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 ${height} relative overflow-hidden`}>
     <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
     <div className="h-4 bg-gray/15 rounded w-40 mb-2" />
     <div className="h-3 bg-gray/10 rounded w-56 mb-6" />
@@ -96,7 +96,7 @@ const SectionHeader = ({ icon: Icon, title, subtitle, action }) => (
 const CustomChartTooltip = ({ active, payload, label, formatter }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-dark-secondary/95 backdrop-blur-md border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_rgba(0,224,255,0.15)]">
+    <div className="backdrop-blur-xl bg-white/[0.06] border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_rgba(0,224,255,0.15)]">
       <p className="text-xs text-secondary font-bold mb-2">{label}</p>
       {payload.map((entry, index) => (
         <div key={index} className="flex items-center justify-between gap-6 mb-1 last:mb-0">
@@ -305,11 +305,11 @@ const FinancialDashboard = () => {
 
   // ── Render helpers ──
 
-  const chartContainerClass = 'bg-gradient-to-br from-dark-secondary/80 to-dark/60 border border-gray/15 rounded-2xl p-4 md:p-6 shadow-[inset_0_0_30px_rgba(0,224,255,0.03)]';
+  const chartContainerClass = 'backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-2xl p-4 md:p-6';
 
   const ViewModeToggle = () => (
     <div className="flex flex-wrap gap-2">
-      <div className="flex bg-dark/60 rounded-xl p-1 border border-gray/10">
+      <div className="flex backdrop-blur-xl bg-white/[0.04] rounded-xl p-1 border border-white/[0.08]">
         {[
           { key: 'daily', label: 'Este Mes', icon: Calendar },
           { key: 'monthly', label: 'Tendencia', icon: CalendarRange },
@@ -342,7 +342,7 @@ const FinancialDashboard = () => {
               className={`px-2.5 py-1.5 text-xs font-medium rounded-lg transition-all duration-300 ${
                 trendMonths === months
                   ? 'bg-primary/15 text-primary border border-primary/30'
-                  : 'bg-gray/5 text-gray hover:text-light hover:bg-gray/10 border border-transparent'
+                  : 'bg-white/[0.03] text-gray hover:text-light hover:bg-white/[0.06] border border-transparent'
               }`}
             >
               {months}M

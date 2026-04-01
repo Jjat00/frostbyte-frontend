@@ -134,7 +134,7 @@ const ExpenseDetailPage = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+            className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -149,7 +149,7 @@ const ExpenseDetailPage = () => {
         <div className="flex items-center gap-2">
           <Link
             to={`/gastos/editar/${id}`}
-            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+            className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
           >
             <Edit className="w-5 h-5" />
           </Link>
@@ -170,10 +170,10 @@ const ExpenseDetailPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-dark-secondary rounded-xl border border-gray/10 overflow-hidden"
+        className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden"
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray/10">
+        <div className="p-6 border-b border-white/[0.08]">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             <div className={`p-4 rounded-xl border ${colorClass}`}>
               <IconComponent className="w-8 h-8" />
@@ -248,14 +248,14 @@ const ExpenseDetailPage = () => {
           </div>
 
           {expense.notes && (
-            <div className="pt-4 border-t border-gray/10">
+            <div className="pt-4 border-t border-white/[0.06]">
               <p className="text-xs text-gray mb-1">Notas</p>
               <p className="text-light">{expense.notes}</p>
             </div>
           )}
 
           {expense.is_recurring && (
-            <div className="pt-4 border-t border-gray/10">
+            <div className="pt-4 border-t border-white/[0.06]">
               <span className="px-3 py-1 bg-primary/20 text-primary text-sm font-medium rounded-full">
                 Gasto recurrente - {expense.recurrence_period_display}
               </span>
@@ -272,7 +272,7 @@ const ExpenseDetailPage = () => {
 
         {/* Actions */}
         {expense.status === "pending" && (
-          <div className="p-6 border-t border-gray/10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="p-6 border-t border-white/[0.08] flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
               onClick={() => markPaidMutation.mutate({ paymentMethod: "cash" })}
               disabled={markPaidMutation.isPending}

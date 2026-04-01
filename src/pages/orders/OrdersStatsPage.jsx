@@ -279,7 +279,7 @@ const OrdersStatsPage = () => {
       </div>
 
       {/* Gráfica de Ingresos por Día */}
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
         <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-green-400" />
           Ingresos por Día
@@ -344,7 +344,7 @@ const OrdersStatsPage = () => {
       {productStats?.data && productStats.data.length > 0 && (
         <>
           {/* Cantidad Vendida por Producto */}
-          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+          <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
             <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
               <Package className="w-5 h-5 text-blue-400" />
               Cantidad Vendida por Producto
@@ -387,7 +387,7 @@ const OrdersStatsPage = () => {
           </div>
 
           {/* Ingresos por Producto */}
-          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+          <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
             <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-green-400" />
               Ingresos por Producto
@@ -438,7 +438,7 @@ const OrdersStatsPage = () => {
 
       {/* Gráfica de Mesas Más Frecuentadas */}
       {tableStats?.tables && tableStats.tables.length > 0 && (
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
           <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
             <Armchair className="w-5 h-5 text-purple-400" />
             Mesas Más Frecuentadas
@@ -496,7 +496,7 @@ const OrdersStatsPage = () => {
       )}
 
       {/* Desglose por estado */}
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
         <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-secondary" />
           Desglose por Estado
@@ -591,7 +591,7 @@ const OrdersStatsPage = () => {
       </div>
 
       {/* Desglose por Método de Pago */}
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+      <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
         <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
           <Wallet className="w-5 h-5 text-green-400" />
           Ingresos por Método de Pago
@@ -662,7 +662,7 @@ const OrdersStatsPage = () => {
       {/* Resumen */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Tasa de completado */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
           <h3 className="text-sm text-gray mb-2">Tasa de Completado</h3>
           <div className="flex items-end gap-3">
             <span className="text-4xl font-bold text-green-400">
@@ -678,7 +678,7 @@ const OrdersStatsPage = () => {
         </div>
 
         {/* Tasa de cancelación */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-4 md:p-6">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
           <h3 className="text-sm text-gray mb-2">Tasa de Cancelación</h3>
           <div className="flex items-end gap-3">
             <span className="text-4xl font-bold text-red-400">
@@ -723,17 +723,17 @@ const OrdersStatsPage = () => {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 100 }}
-              className="bg-dark-secondary border border-gray/20 rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[90vh] overflow-y-auto"
+              className="backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
-              <div className="p-4 md:p-6 border-b border-gray/20 flex items-center justify-between">
+              <div className="p-4 md:p-6 border-b border-white/[0.1] flex items-center justify-between">
                 <h3 className="text-xl font-bold text-light flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-secondary" />
                   Seleccionar Período
                 </h3>
                 <button
                   onClick={() => setShowDatePicker(false)}
-                  className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                  className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -754,7 +754,7 @@ const OrdersStatsPage = () => {
                           className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border ${
                             isSelected
                               ? 'bg-secondary/20 text-secondary border-secondary/30'
-                              : 'bg-gray/10 text-gray hover:text-light hover:bg-gray/20 border-transparent'
+                              : 'bg-white/[0.05] text-gray hover:text-light hover:bg-white/[0.08] border-transparent'
                           }`}
                         >
                           <Icon className="w-4 h-4" />
@@ -766,7 +766,7 @@ const OrdersStatsPage = () => {
                 </div>
 
                 {/* Rango personalizado */}
-                <div className="pt-4 border-t border-gray/20">
+                <div className="pt-4 border-t border-white/[0.1]">
                   <p className="text-sm text-gray mb-3 font-medium">Rango personalizado</p>
                   <div className="space-y-3">
                     <div>
@@ -776,7 +776,7 @@ const OrdersStatsPage = () => {
                         value={customStartDate}
                         onChange={(e) => setCustomStartDate(e.target.value)}
                         max={customEndDate || new Date().toISOString().split('T')[0]}
-                        className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
+                        className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
                       />
                     </div>
                     <div>
@@ -787,7 +787,7 @@ const OrdersStatsPage = () => {
                         onChange={(e) => setCustomEndDate(e.target.value)}
                         min={customStartDate || undefined}
                         max={new Date().toISOString().split('T')[0]}
-                        className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
+                        className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
                       />
                     </div>
                     <button

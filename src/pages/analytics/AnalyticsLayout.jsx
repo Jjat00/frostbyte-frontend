@@ -53,7 +53,7 @@ const AnalyticsLayout = () => {
   return (
     <div className="min-h-screen bg-dark flex flex-col md:flex-row">
       {/* Mobile Header */}
-      <header className="md:hidden h-14 bg-dark-secondary/95 backdrop-blur-sm border-b border-gray/20 flex items-center justify-between px-4 sticky top-0 z-30">
+      <header className="md:hidden h-14 backdrop-blur-xl bg-white/[0.04] border-b border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex items-center justify-between px-4 sticky top-0 z-30">
         <NavLink
           to="/home"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity active:scale-95"
@@ -64,7 +64,7 @@ const AnalyticsLayout = () => {
         </NavLink>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+          className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -86,9 +86,9 @@ const AnalyticsLayout = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 w-72 bg-dark-secondary border-l border-gray/20 z-50 flex flex-col md:hidden"
+              className="fixed right-0 top-0 bottom-0 w-72 backdrop-blur-xl bg-white/[0.04] border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] z-50 flex flex-col md:hidden"
             >
-              <div className="p-4 border-b border-gray/20 flex items-center justify-between">
+              <div className="p-4 border-b border-white/[0.1] flex items-center justify-between">
                 <span className="font-bold text-light">Menu</span>
                 <button
                   onClick={() => setSidebarOpen(false)}
@@ -99,7 +99,7 @@ const AnalyticsLayout = () => {
               </div>
 
               {/* User info */}
-              <div className="p-4 border-b border-gray/20">
+              <div className="p-4 border-b border-white/[0.1]">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-lg">
                     {user?.first_name?.charAt(0) || user?.username?.charAt(0) || "U"}
@@ -117,7 +117,7 @@ const AnalyticsLayout = () => {
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navItems.map((item) => {
                   const baseClasses =
-                    "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-gray hover:text-light hover:bg-gray/10";
+                    "flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all text-gray hover:text-light hover:bg-white/[0.06]";
 
                   if (item.external) {
                     return (
@@ -150,7 +150,7 @@ const AnalyticsLayout = () => {
                       <div className="relative">
                         <item.icon className="w-5 h-5" />
                         {item.hasNotification && hasPendingRequests && (
-                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-secondary animate-pulse" />
+                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark animate-pulse" />
                         )}
                       </div>
                       <span className="font-medium flex-1">{item.name}</span>
@@ -165,7 +165,7 @@ const AnalyticsLayout = () => {
               </nav>
 
               {/* Logout */}
-              <div className="p-4 border-t border-gray/20">
+              <div className="p-4 border-t border-white/[0.1]">
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20 transition-colors"
@@ -184,10 +184,10 @@ const AnalyticsLayout = () => {
       <motion.aside
         animate={{ width: sidebarWidth }}
         transition={{ duration: 0.25, ease: "easeInOut" }}
-        className="flex h-screen bg-dark-secondary border-r border-gray/20 flex-col fixed left-0 top-0 z-20 overflow-hidden"
+        className="flex h-screen backdrop-blur-xl bg-white/[0.04] border-r border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex-col fixed left-0 top-0 z-20 overflow-hidden"
       >
         {/* Logo */}
-        <div className={`border-b border-gray/20 ${collapsed ? "p-3" : "p-5"}`}>
+        <div className={`border-b border-white/[0.1] ${collapsed ? "p-3" : "p-5"}`}>
           <NavLink
             to="/home"
             className={`flex items-center hover:opacity-80 transition-opacity group ${collapsed ? "justify-center" : "gap-3"}`}
@@ -216,7 +216,7 @@ const AnalyticsLayout = () => {
         <nav className={`flex-1 ${collapsed ? "p-2" : "p-3"} space-y-1 overflow-y-auto overflow-x-hidden`}>
           {navItems.map((item) => {
             const activeClass = "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30";
-            const baseClasses = `flex items-center rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-gray/10 ${
+            const baseClasses = `flex items-center rounded-lg transition-all duration-200 text-gray hover:text-light hover:bg-white/[0.06] ${
               collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
             }`;
 
@@ -225,7 +225,7 @@ const AnalyticsLayout = () => {
                 <div className="relative flex-shrink-0">
                   <item.icon className="w-5 h-5" />
                   {item.hasNotification && hasPendingRequests && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark-secondary animate-pulse" />
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-dark animate-pulse" />
                   )}
                 </div>
                 {!collapsed && (
@@ -266,7 +266,7 @@ const AnalyticsLayout = () => {
         </nav>
 
         {/* User section */}
-        <div className={`border-t border-gray/20 ${collapsed ? "p-2" : "p-3"}`}>
+        <div className={`border-t border-white/[0.1] ${collapsed ? "p-2" : "p-3"}`}>
           {collapsed ? (
             <div className="flex flex-col items-center gap-2">
               <div
@@ -308,10 +308,10 @@ const AnalyticsLayout = () => {
         </div>
 
         {/* Collapse toggle */}
-        <div className="border-t border-gray/20 p-2">
+        <div className="border-t border-white/[0.1] p-2">
           <button
             onClick={() => setCollapsed((prev) => !prev)}
-            className="w-full flex items-center justify-center p-2 text-gray hover:text-secondary hover:bg-gray/10 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center p-2 text-gray hover:text-secondary hover:bg-white/[0.06] rounded-lg transition-colors"
             title={collapsed ? "Expandir menu" : "Colapsar menu"}
           >
             {collapsed ? (
@@ -335,7 +335,7 @@ const AnalyticsLayout = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-dark-secondary/95 backdrop-blur-sm border-t border-gray/20 z-30 safe-area-pb">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.03] border-t border-white/[0.1] z-30 safe-area-pb">
         <div className="flex items-center justify-around py-2">
           {navItems
             .filter((item) => item.path !== "/home" && item.path !== "/" && item.path !== "/musica" && item.path !== "/juegos-admin" && item.path !== "/gastos")
@@ -364,7 +364,7 @@ const AnalyticsLayout = () => {
                   <div className="relative">
                     <item.icon className={`w-5 h-5 ${active ? "text-primary" : ""}`} />
                     {item.hasNotification && hasPendingRequests && (
-                      <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-dark-secondary animate-pulse" />
+                      <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full border border-dark animate-pulse" />
                     )}
                   </div>
                   <span className="text-[10px] font-medium">{item.shortName}</span>

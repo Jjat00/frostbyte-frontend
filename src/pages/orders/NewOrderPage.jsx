@@ -165,7 +165,7 @@ const NewOrderPage = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/pedidos')}
-            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors lg:hidden"
+            className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors lg:hidden"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -197,7 +197,7 @@ const NewOrderPage = () => {
               placeholder="Buscar producto..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-dark-secondary border border-gray/20 rounded-xl text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-3 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none transition-colors"
             />
           </div>
 
@@ -208,7 +208,7 @@ const NewOrderPage = () => {
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                 !selectedCategory
                   ? 'bg-secondary/20 text-secondary border border-secondary/30'
-                  : 'bg-gray/10 text-gray hover:text-light border border-transparent'
+                  : 'bg-white/[0.05] text-gray hover:text-light border border-transparent'
               }`}
             >
               Todos
@@ -220,7 +220,7 @@ const NewOrderPage = () => {
                 className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                   selectedCategory === cat.slug
                     ? 'bg-secondary/20 text-secondary border border-secondary/30'
-                    : 'bg-gray/10 text-gray hover:text-light border border-transparent'
+                    : 'bg-white/[0.05] text-gray hover:text-light border border-transparent'
                 }`}
               >
                 {cat.name}
@@ -244,7 +244,7 @@ const NewOrderPage = () => {
                   key={product.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-dark-secondary border border-gray/20 rounded-xl p-4"
+                  className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
@@ -264,7 +264,7 @@ const NewOrderPage = () => {
                           className={`group relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
                             inCart
                               ? 'bg-secondary/20 border border-secondary/50 text-secondary'
-                              : 'bg-gray/10 border border-gray/20 text-gray hover:text-light hover:border-gray/40'
+                              : 'bg-white/[0.05] border border-white/[0.1] text-gray hover:text-light hover:border-white/[0.2]'
                           }`}
                         >
                           <span className="font-medium">{variant.name}</span>
@@ -288,9 +288,9 @@ const NewOrderPage = () => {
         </div>
 
         {/* Panel del Carrito (Desktop) */}
-        <div className="hidden lg:flex lg:w-96 flex-col bg-dark-secondary border border-gray/20 rounded-xl">
+        <div className="hidden lg:flex lg:w-96 flex-col backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl">
           {/* Header del carrito */}
-          <div className="p-4 border-b border-gray/20 flex items-center justify-between flex-shrink-0">
+          <div className="p-4 border-b border-white/[0.1] flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <ShoppingCart className="w-5 h-5 text-secondary" />
               <span className="font-bold text-light">Pedido</span>
@@ -326,7 +326,7 @@ const NewOrderPage = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="bg-dark/50 rounded-lg p-3"
+                    className="backdrop-blur-sm bg-white/[0.03] border border-white/[0.06] rounded-lg p-3"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1 min-w-0">
@@ -347,7 +347,7 @@ const NewOrderPage = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => updateQuantity(item.variantId, -1)}
-                          className="w-7 h-7 flex items-center justify-center bg-gray/20 rounded-lg text-gray hover:text-light hover:bg-gray/30"
+                          className="w-7 h-7 flex items-center justify-center bg-white/[0.08] rounded-lg text-gray hover:text-light hover:bg-white/[0.12]"
                         >
                           <Minus className="w-4 h-4" />
                         </button>
@@ -356,7 +356,7 @@ const NewOrderPage = () => {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.variantId, 1)}
-                          className="w-7 h-7 flex items-center justify-center bg-gray/20 rounded-lg text-gray hover:text-light hover:bg-gray/30"
+                          className="w-7 h-7 flex items-center justify-center bg-white/[0.08] rounded-lg text-gray hover:text-light hover:bg-white/[0.12]"
                         >
                           <Plus className="w-4 h-4" />
                         </button>
@@ -372,7 +372,7 @@ const NewOrderPage = () => {
                       placeholder="Notas (ej: sin azúcar)"
                       value={itemNotes[item.variantId] || ''}
                       onChange={(e) => updateItemNotes(item.variantId, e.target.value)}
-                      className="mt-2 w-full px-2 py-1.5 bg-dark border border-gray/20 rounded text-xs text-light placeholder:text-gray/50 focus:border-secondary/50 focus:outline-none"
+                      className="mt-2 w-full px-2 py-1.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded text-xs text-light placeholder:text-gray/50 focus:border-secondary/50 focus:outline-none"
                     />
                   </motion.div>
                 ))}
@@ -382,7 +382,7 @@ const NewOrderPage = () => {
 
           {/* Selección de mesa */}
           {cart.length > 0 && (
-            <div className="p-4 border-t border-gray/20 flex-shrink-0">
+            <div className="p-4 border-t border-white/[0.1] flex-shrink-0">
               <label className="block text-sm font-medium text-light mb-2">
                 Mesa/Barra <span className="text-red-400">*</span>
               </label>
@@ -417,7 +417,7 @@ const NewOrderPage = () => {
                   placeholder="Nombre del cliente"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
                 />
               </div>
               <div className="relative">
@@ -427,7 +427,7 @@ const NewOrderPage = () => {
                   placeholder="Teléfono (opcional)"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
                 />
               </div>
               <div className="relative">
@@ -437,7 +437,7 @@ const NewOrderPage = () => {
                   value={customerNotes}
                   onChange={(e) => setCustomerNotes(e.target.value)}
                   rows={2}
-                  className="w-full pl-10 pr-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none"
+                  className="w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none"
                 />
               </div>
             </div>
@@ -487,7 +487,7 @@ const NewOrderPage = () => {
             >
               <div className="flex flex-col h-full">
                 {/* Header del carrito mobile */}
-                <div className="p-4 border-b border-gray/20 flex items-center justify-between flex-shrink-0 bg-dark-secondary">
+                <div className="p-4 border-b border-white/[0.1] flex items-center justify-between flex-shrink-0 backdrop-blur-xl bg-white/[0.04]">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowCheckout(false)}
@@ -530,7 +530,7 @@ const NewOrderPage = () => {
                             key={item.variantId}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="bg-dark-secondary rounded-lg p-3 border border-gray/20"
+                            className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-lg p-3"
                           >
                             <div className="flex items-start justify-between mb-2">
                               <div className="flex-1 min-w-0">
@@ -551,7 +551,7 @@ const NewOrderPage = () => {
                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={() => updateQuantity(item.variantId, -1)}
-                                  className="w-8 h-8 flex items-center justify-center bg-gray/20 rounded-lg text-gray hover:text-light hover:bg-gray/30"
+                                  className="w-8 h-8 flex items-center justify-center bg-white/[0.08] rounded-lg text-gray hover:text-light hover:bg-white/[0.12]"
                                 >
                                   <Minus className="w-4 h-4" />
                                 </button>
@@ -560,7 +560,7 @@ const NewOrderPage = () => {
                                 </span>
                                 <button
                                   onClick={() => updateQuantity(item.variantId, 1)}
-                                  className="w-8 h-8 flex items-center justify-center bg-gray/20 rounded-lg text-gray hover:text-light hover:bg-gray/30"
+                                  className="w-8 h-8 flex items-center justify-center bg-white/[0.08] rounded-lg text-gray hover:text-light hover:bg-white/[0.12]"
                                 >
                                   <Plus className="w-4 h-4" />
                                 </button>
@@ -576,7 +576,7 @@ const NewOrderPage = () => {
                               placeholder="Notas (ej: sin azúcar)"
                               value={itemNotes[item.variantId] || ''}
                               onChange={(e) => updateItemNotes(item.variantId, e.target.value)}
-                              className="mt-2 w-full px-3 py-2 bg-dark border border-gray/20 rounded-lg text-sm text-light placeholder:text-gray/50 focus:border-secondary/50 focus:outline-none"
+                              className="mt-2 w-full px-3 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light placeholder:text-gray/50 focus:border-secondary/50 focus:outline-none"
                             />
                           </motion.div>
                         ))}
@@ -586,14 +586,14 @@ const NewOrderPage = () => {
 
                   {/* Selección de mesa - Mobile */}
                   {cart.length > 0 && (
-                    <div className="p-4 border-t border-gray/20 bg-dark-secondary/50">
+                    <div className="p-4 border-t border-white/[0.1] bg-white/[0.02]">
                       <label className="block text-sm font-medium text-light mb-2">
                         Mesa/Barra <span className="text-red-400">*</span>
                       </label>
                       <select
                         value={selectedTable}
                         onChange={(e) => setSelectedTable(e.target.value)}
-                        className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                        className="w-full px-4 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
                       >
                         <option value="">Selecciona una mesa o barra</option>
                         <option value="0">Barra</option>
@@ -613,7 +613,7 @@ const NewOrderPage = () => {
 
                   {/* Datos del cliente - Mobile */}
                   {cart.length > 0 && (
-                    <div className="p-4 border-t border-gray/20 space-y-3 bg-dark-secondary/50">
+                    <div className="p-4 border-t border-white/[0.1] space-y-3 bg-white/[0.02]">
                       <p className="text-sm font-medium text-gray mb-2">Datos del cliente</p>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray" />
@@ -622,7 +622,7 @@ const NewOrderPage = () => {
                           placeholder="Nombre del cliente"
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 bg-dark border border-gray/20 rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                          className="w-full pl-10 pr-4 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
                         />
                       </div>
                       <div className="relative">
@@ -632,7 +632,7 @@ const NewOrderPage = () => {
                           placeholder="Teléfono (opcional)"
                           value={customerPhone}
                           onChange={(e) => setCustomerPhone(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 bg-dark border border-gray/20 rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                          className="w-full pl-10 pr-4 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
                         />
                       </div>
                       <div className="relative">
@@ -642,7 +642,7 @@ const NewOrderPage = () => {
                           value={customerNotes}
                           onChange={(e) => setCustomerNotes(e.target.value)}
                           rows={2}
-                          className="w-full pl-10 pr-4 py-3 bg-dark border border-gray/20 rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none"
+                          className="w-full pl-10 pr-4 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-sm text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none"
                         />
                       </div>
                     </div>
@@ -651,7 +651,7 @@ const NewOrderPage = () => {
 
                 {/* Footer fijo con Total y botón - Mobile */}
                 {cart.length > 0 && (
-                  <div className="p-4 border-t border-gray/20 bg-dark-secondary flex-shrink-0 safe-area-pb">
+                  <div className="p-4 border-t border-white/[0.1] backdrop-blur-xl bg-white/[0.04] flex-shrink-0 safe-area-pb">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-gray font-medium">Total</span>
                       <span className="text-2xl font-bold text-secondary">

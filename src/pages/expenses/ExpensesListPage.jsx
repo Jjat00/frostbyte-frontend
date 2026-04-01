@@ -170,7 +170,7 @@ const ExpensesListPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar gastos..."
-            className="w-full pl-10 pr-4 py-2.5 bg-dark-secondary border border-gray/20 rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50"
+            className="w-full pl-10 pr-4 py-2.5 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50"
           />
         </div>
 
@@ -179,7 +179,7 @@ const ExpensesListPage = () => {
           className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-colors w-full sm:w-auto ${
             showFilters || statusFilter || categoryFilter
               ? "bg-primary/20 border-primary/50 text-primary"
-              : "bg-dark-secondary border-gray/20 text-gray hover:text-light"
+              : "backdrop-blur-xl bg-white/[0.04] border-white/[0.1] text-gray hover:text-light"
           }`}
         >
           <Filter className="w-5 h-5" />
@@ -194,7 +194,7 @@ const ExpensesListPage = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-dark-secondary rounded-xl p-4 border border-gray/10"
+            className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
           >
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
@@ -202,7 +202,7 @@ const ExpensesListPage = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
-                  className="w-full px-3 py-2 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                 >
                   <option value="">Todos</option>
                   <option value="pending">Pendiente</option>
@@ -216,7 +216,7 @@ const ExpensesListPage = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => handleFilterChange("category", e.target.value)}
-                  className="w-full px-3 py-2 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                 >
                   <option value="">Todas</option>
                   {categories?.results?.map((cat) => (
@@ -237,7 +237,7 @@ const ExpensesListPage = () => {
                 <select
                   value={dateFilter}
                   onChange={(e) => handleFilterChange("date", e.target.value)}
-                  className="w-full px-3 py-2 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
                 >
                   <option value="today">Hoy</option>
                   <option value="week">Esta semana</option>
@@ -256,7 +256,7 @@ const ExpensesListPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : expenses.length === 0 ? (
-        <div className="bg-dark-secondary rounded-xl p-8 text-center border border-gray/10">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 text-center">
           <Wallet className="w-12 h-12 text-gray mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-light mb-2">
             Sin gastos encontrados
@@ -277,7 +277,7 @@ const ExpensesListPage = () => {
                 key={expense.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-dark-secondary rounded-xl p-4 border border-gray/10 hover:border-gray/20 transition-colors"
+                className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 hover:bg-white/[0.06] transition-colors"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className={`p-3 rounded-lg border ${colorClass}`}>
@@ -328,7 +328,7 @@ const ExpensesListPage = () => {
                           selectedExpense === expense.id ? null : expense.id
                         )
                       }
-                      className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                      className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
                     >
                       <MoreVertical className="w-5 h-5" />
                     </button>
@@ -345,11 +345,11 @@ const ExpensesListPage = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="fixed sm:absolute right-4 sm:right-0 bottom-20 sm:bottom-auto sm:top-full sm:mt-1 w-[calc(100%-2rem)] sm:w-48 bg-dark border sm:bg-dark-secondary border-gray/20 rounded-lg shadow-2xl z-50 overflow-hidden"
+                            className="fixed sm:absolute right-4 sm:right-0 bottom-20 sm:bottom-auto sm:top-full sm:mt-1 w-[calc(100%-2rem)] sm:w-48 backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-lg shadow-2xl z-50 overflow-hidden"
                           >
                             <Link
                               to={`/gastos/${expense.id}`}
-                              className="flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-gray hover:text-light hover:bg-gray/10 transition-colors"
+                              className="flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-gray hover:text-light hover:bg-white/[0.06] transition-colors"
                             >
                               <Eye className="w-4 h-4" />
                               Ver detalle

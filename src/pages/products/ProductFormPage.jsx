@@ -269,7 +269,7 @@ const ProductFormPage = () => {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate('/productos')}
-          className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+          className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -288,7 +288,7 @@ const ProductFormPage = () => {
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Información básica */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4">
           <h2 className="text-xl font-bold text-light flex items-center gap-2">
             <Package className="w-5 h-5 text-secondary" />
             Información Básica
@@ -305,8 +305,8 @@ const ProductFormPage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-2.5 bg-dark border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
-                  errors.name ? 'border-red-500' : 'border-gray/20'
+                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
+                  errors.name ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
                 placeholder="Ej: Mango Biche"
               />
@@ -324,8 +324,8 @@ const ProductFormPage = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-2.5 bg-dark border rounded-lg text-light focus:border-secondary/50 focus:outline-none ${
-                  errors.category ? 'border-red-500' : 'border-gray/20'
+                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border rounded-lg text-light focus:border-secondary/50 focus:outline-none ${
+                  errors.category ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
               >
                 <option value="">Selecciona una categoría</option>
@@ -398,8 +398,8 @@ const ProductFormPage = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
-                className={`w-full px-4 py-2.5 bg-dark border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none ${
-                  errors.description ? 'border-red-500' : 'border-gray/20'
+                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.05] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none ${
+                  errors.description ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
                 placeholder="Describe el producto..."
               />
@@ -435,7 +435,7 @@ const ProductFormPage = () => {
         </div>
 
         {/* Variantes */}
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-light flex items-center gap-2">
               <Package className="w-5 h-5 text-secondary" />
@@ -464,7 +464,7 @@ const ProductFormPage = () => {
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-dark border border-gray/20 rounded-lg p-4 space-y-3"
+                className="backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg p-4 space-y-3"
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray">
@@ -493,10 +493,10 @@ const ProductFormPage = () => {
                       onChange={(e) =>
                         handleVariantChange(index, 'name', e.target.value)
                       }
-                      className={`w-full px-4 py-2 bg-dark border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
+                      className={`w-full px-4 py-2 backdrop-blur-sm bg-white/[0.05] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
                         errors[`variant_${index}_name`]
                           ? 'border-red-500'
-                          : 'border-gray/20'
+                          : 'border-white/[0.12]'
                       }`}
                       placeholder="Ej: Pequeño, Grande"
                     />
@@ -520,10 +520,10 @@ const ProductFormPage = () => {
                       onChange={(e) =>
                         handleVariantChange(index, 'price', e.target.value)
                       }
-                      className={`w-full px-4 py-2 bg-dark border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
+                      className={`w-full px-4 py-2 backdrop-blur-sm bg-white/[0.05] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
                         errors[`variant_${index}_price`]
                           ? 'border-red-500'
-                          : 'border-gray/20'
+                          : 'border-white/[0.12]'
                       }`}
                       placeholder="0"
                     />
@@ -583,7 +583,7 @@ const ProductFormPage = () => {
           <button
             type="button"
             onClick={() => navigate('/productos')}
-            className="px-6 py-2.5 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+            className="px-6 py-2.5 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
           >
             Cancelar
           </button>

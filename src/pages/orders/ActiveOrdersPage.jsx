@@ -170,7 +170,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       </div>
 
       {/* Customer */}
-      <div className="mb-3 pb-3 border-b border-gray/20">
+      <div className="mb-3 pb-3 border-b border-white/[0.1]">
         <div className="flex items-center gap-2 text-sm">
           <User className="w-4 h-4 text-gray" />
           <span className="text-light font-medium">
@@ -262,7 +262,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       <div className="flex gap-2">
         <button
           onClick={() => navigate(`/pedidos/${order.id}`)}
-          className="flex-1 px-3 py-2.5 bg-gray/10 text-gray hover:text-light hover:bg-gray/20 rounded-lg text-sm font-medium transition-colors"
+          className="flex-1 px-3 py-2.5 bg-white/[0.05] text-gray hover:text-light hover:bg-white/[0.08] rounded-lg text-sm font-medium transition-colors"
         >
           Ver detalle
         </button>
@@ -453,7 +453,7 @@ const ActiveOrdersPage = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => refetch()}
-            className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+            className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
           >
             <RefreshCw
               className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`}
@@ -495,14 +495,14 @@ const ActiveOrdersPage = () => {
                   : item.color === "red"
                   ? "bg-red-500/20 text-red-400 border border-red-500/30"
                   : "bg-secondary/20 text-secondary border border-secondary/30"
-                : "bg-gray/10 text-gray hover:text-light border border-transparent"
+                : "bg-white/[0.05] text-gray hover:text-light border border-transparent"
             }`}
           >
             {item.icon && <item.icon className="w-4 h-4" />}
             {item.label}
             <span
               className={`px-1.5 py-0.5 rounded-full text-xs ${
-                filter === item.key ? "bg-dark/30" : "bg-gray/20"
+                filter === item.key ? "bg-dark/30" : "bg-white/[0.08]"
               }`}
             >
               {counts[item.key]}
@@ -514,20 +514,20 @@ const ActiveOrdersPage = () => {
       {/* Pestañas para pedidos entregados */}
       {filter === "delivered" && (
         <>
-          <div className="flex gap-2 border-b border-gray/20 pb-2">
+          <div className="flex gap-2 border-b border-white/[0.1] pb-2">
             <button
               onClick={() => setDeliveredTab("paid")}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 deliveredTab === "paid"
                   ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                  : "bg-gray/10 text-gray hover:text-light border border-transparent"
+                  : "bg-white/[0.05] text-gray hover:text-light border border-transparent"
               }`}
             >
               <CheckCircle className="w-4 h-4" />
               Pagados
               <span
                 className={`px-1.5 py-0.5 rounded-full text-xs ${
-                  deliveredTab === "paid" ? "bg-dark/30" : "bg-gray/20"
+                  deliveredTab === "paid" ? "bg-dark/30" : "bg-white/[0.08]"
                 }`}
               >
                 {counts.deliveredPaid}
@@ -538,14 +538,14 @@ const ActiveOrdersPage = () => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 deliveredTab === "unpaid"
                   ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                  : "bg-gray/10 text-gray hover:text-light border border-transparent"
+                  : "bg-white/[0.05] text-gray hover:text-light border border-transparent"
               }`}
             >
               <DollarSign className="w-4 h-4" />
               Pendientes por pagar
               <span
                 className={`px-1.5 py-0.5 rounded-full text-xs ${
-                  deliveredTab === "unpaid" ? "bg-dark/30" : "bg-gray/20"
+                  deliveredTab === "unpaid" ? "bg-dark/30" : "bg-white/[0.08]"
                 }`}
               >
                 {counts.deliveredUnpaid}
@@ -554,16 +554,16 @@ const ActiveOrdersPage = () => {
           </div>
 
           {/* Selector de fecha para pedidos entregados */}
-          <div className="flex items-center justify-center gap-3 py-3 bg-dark-secondary/50 rounded-lg border border-gray/20">
+          <div className="flex items-center justify-center gap-3 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg">
             <button
               onClick={() => setDeliveredDate("yesterday")}
               disabled={deliveredDate === "yesterday"}
-              className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Ayer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2 px-4 py-2 bg-dark rounded-lg border border-gray/20">
+            <div className="flex items-center gap-2 px-4 py-2 backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-lg">
               <Calendar className="w-4 h-4 text-secondary" />
               <span className="text-sm font-medium text-light">
                 {deliveredDate === "today" ? "Hoy" : "Ayer"}
@@ -572,7 +572,7 @@ const ActiveOrdersPage = () => {
             <button
               onClick={() => setDeliveredDate("today")}
               disabled={deliveredDate === "today"}
-              className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Hoy"
             >
               <ChevronRight className="w-5 h-5" />

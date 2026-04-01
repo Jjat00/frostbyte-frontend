@@ -146,7 +146,7 @@ const MaterialsPage = () => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-dark-secondary border border-gray/20 rounded-xl p-4"
+      className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ const MaterialsPage = () => {
             placeholder="Buscar materiales..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-dark-secondary border border-gray/20 rounded-lg pl-10 pr-4 py-2.5 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm"
+            className="w-full backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-lg pl-10 pr-4 py-2.5 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm"
           />
         </div>
       </div>
@@ -235,7 +235,7 @@ const MaterialsPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : materials.length === 0 ? (
-        <div className="bg-dark-secondary border border-gray/20 rounded-xl p-8 text-center">
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-xl p-8 text-center">
           <Package className="w-12 h-12 text-gray/50 mx-auto mb-4" />
           <p className="text-gray">No se encontraron materiales</p>
         </div>
@@ -249,11 +249,11 @@ const MaterialsPage = () => {
           </div>
 
           {/* Vista desktop - Tabla */}
-          <div className="hidden md:block bg-dark-secondary border border-gray/20 rounded-xl overflow-hidden">
+          <div className="hidden md:block backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray/20">
+                  <tr className="border-b border-white/[0.1]">
                     <th className="text-left py-4 px-4 text-sm font-medium text-gray">Material</th>
                     <th className="text-center py-4 px-4 text-sm font-medium text-gray">Unidad</th>
                     <th className="text-right py-4 px-4 text-sm font-medium text-gray">Stock</th>
@@ -268,7 +268,7 @@ const MaterialsPage = () => {
                   {materials.map((material) => (
                     <tr
                       key={material.id}
-                      className="border-b border-gray/10 hover:bg-gray/5 transition-colors"
+                      className="border-b border-white/[0.06] hover:bg-white/[0.04] transition-colors"
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
@@ -279,7 +279,7 @@ const MaterialsPage = () => {
                         </div>
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <span className="px-2 py-1 bg-gray/10 rounded text-xs text-gray">
+                        <span className="px-2 py-1 bg-white/[0.05] rounded text-xs text-gray">
                           {material.unit_abbreviation}
                         </span>
                       </td>
@@ -328,7 +328,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-dark-secondary border-t md:border border-gray/20 rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -351,7 +351,7 @@ const MaterialsPage = () => {
                     type="text"
                     value={editData.name || ''}
                     onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                     placeholder="Nombre del material"
                   />
                 </div>
@@ -361,7 +361,7 @@ const MaterialsPage = () => {
                   <select
                     value={editData.unit_id}
                     onChange={(e) => setEditData({ ...editData, unit_id: e.target.value })}
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   >
                     {units.map((unit) => (
                       <option key={unit.id} value={unit.id}>
@@ -380,7 +380,7 @@ const MaterialsPage = () => {
                       inputMode="decimal"
                       value={editData.current_stock}
                       onChange={(e) => setEditData({ ...editData, current_stock: e.target.value })}
-                      className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
@@ -391,7 +391,7 @@ const MaterialsPage = () => {
                       inputMode="decimal"
                       value={editData.minimum_stock}
                       onChange={(e) => setEditData({ ...editData, minimum_stock: e.target.value })}
-                      className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                     />
                   </div>
                 </div>
@@ -404,7 +404,7 @@ const MaterialsPage = () => {
                     inputMode="decimal"
                     value={editData.cost_per_unit}
                     onChange={(e) => setEditData({ ...editData, cost_per_unit: e.target.value })}
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -415,7 +415,7 @@ const MaterialsPage = () => {
                     value={editData.supplier}
                     onChange={(e) => setEditData({ ...editData, supplier: e.target.value })}
                     placeholder="Nombre del proveedor"
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -460,7 +460,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-dark-secondary border-t md:border border-gray/20 rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -484,7 +484,7 @@ const MaterialsPage = () => {
                     value={createData.name}
                     onChange={(e) => setCreateData({ ...createData, name: e.target.value })}
                     placeholder="Ej: Pulpa de Mango"
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -493,7 +493,7 @@ const MaterialsPage = () => {
                   <select
                     value={createData.unit_id}
                     onChange={(e) => setCreateData({ ...createData, unit_id: e.target.value })}
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   >
                     <option value="">Seleccionar...</option>
                     {units.map((unit) => (
@@ -514,7 +514,7 @@ const MaterialsPage = () => {
                       value={createData.current_stock}
                       onChange={(e) => setCreateData({ ...createData, current_stock: e.target.value })}
                       placeholder="0"
-                      className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
@@ -526,7 +526,7 @@ const MaterialsPage = () => {
                       value={createData.minimum_stock}
                       onChange={(e) => setCreateData({ ...createData, minimum_stock: e.target.value })}
                       placeholder="0"
-                      className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                     />
                   </div>
                 </div>
@@ -540,7 +540,7 @@ const MaterialsPage = () => {
                     value={createData.cost_per_unit}
                     onChange={(e) => setCreateData({ ...createData, cost_per_unit: e.target.value })}
                     placeholder="0"
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
 
@@ -551,7 +551,7 @@ const MaterialsPage = () => {
                     value={createData.supplier}
                     onChange={(e) => setCreateData({ ...createData, supplier: e.target.value })}
                     placeholder="Ej: Fruver Local"
-                    className="w-full bg-dark border border-gray/30 rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full backdrop-blur-sm bg-white/[0.05] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
                   />
                 </div>
               </div>
@@ -596,7 +596,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-dark-secondary border-t md:border border-gray/20 rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
+              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-4 mb-4">
