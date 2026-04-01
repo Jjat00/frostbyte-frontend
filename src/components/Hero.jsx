@@ -258,8 +258,10 @@ const Hero = () => {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      <div className="absolute inset-0 bg-linear-to-b from-dark via-dark-secondary to-dark" />
-
+      <div className="absolute inset-0 backdrop-blur-xl bg-black/[0.3]" />
+      <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
       <div className="absolute inset-0 opacity-20">
