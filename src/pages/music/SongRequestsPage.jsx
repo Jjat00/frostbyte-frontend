@@ -207,7 +207,7 @@ const NowPlayingPanel = ({ isConnected }) => {
 
   if (!isConnected) {
     return (
-      <div className="bg-dark-secondary border border-red-500/30 rounded-xl p-6 mb-6 text-center">
+      <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-red-500/30 rounded-xl p-6 mb-6 text-center">
         <WifiOff className="w-10 h-10 text-red-400 mx-auto mb-3" />
         <p className="text-red-400 font-medium">Spotify no esta conectado</p>
         <a
@@ -222,7 +222,7 @@ const NowPlayingPanel = ({ isConnected }) => {
 
   if (isLoading) {
     return (
-      <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 mb-6 flex items-center justify-center">
+      <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-6 mb-6 flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
@@ -233,7 +233,7 @@ const NowPlayingPanel = ({ isConnected }) => {
     : 0;
 
   return (
-    <div className="bg-dark-secondary border border-primary/30 rounded-xl p-5 mb-6">
+    <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-primary/30 rounded-xl p-5 mb-6">
       <p className="text-xs text-primary font-semibold uppercase tracking-wider mb-4">
         {nowPlaying?.is_playing ? 'Sonando ahora' : 'Pausado'}
       </p>
@@ -253,7 +253,7 @@ const NowPlayingPanel = ({ isConnected }) => {
 
           {/* Progress bar */}
           <div className="mb-4">
-            <div className="w-full bg-gray/20 rounded-full h-1.5">
+            <div className="w-full bg-white/[0.08] rounded-full h-1.5">
               <div
                 className="bg-primary h-1.5 rounded-full transition-all duration-1000"
                 style={{ width: `${progress}%` }}
@@ -270,7 +270,7 @@ const NowPlayingPanel = ({ isConnected }) => {
             <button
               onClick={() => controlMutation.mutate('previous')}
               disabled={controlMutation.isPending}
-              className="p-2.5 text-gray hover:text-light hover:bg-gray/10 rounded-full transition-colors"
+              className="p-2.5 text-gray hover:text-light hover:bg-white/[0.06] rounded-full transition-colors"
             >
               <SkipBack className="w-5 h-5" />
             </button>
@@ -290,7 +290,7 @@ const NowPlayingPanel = ({ isConnected }) => {
             <button
               onClick={() => controlMutation.mutate('next')}
               disabled={controlMutation.isPending}
-              className="p-2.5 text-gray hover:text-light hover:bg-gray/10 rounded-full transition-colors"
+              className="p-2.5 text-gray hover:text-light hover:bg-white/[0.06] rounded-full transition-colors"
             >
               <SkipForward className="w-5 h-5" />
             </button>
@@ -305,7 +305,7 @@ const NowPlayingPanel = ({ isConnected }) => {
               max="100"
               value={volume}
               onChange={handleVolumeChange}
-              className="flex-1 h-1.5 bg-gray/20 rounded-full appearance-none cursor-pointer accent-primary"
+              className="flex-1 h-1.5 bg-white/[0.08] rounded-full appearance-none cursor-pointer accent-primary"
             />
             <span className="text-xs text-gray w-8 text-right">{volume}%</span>
           </div>
@@ -371,19 +371,19 @@ const SpotifyQueuePanel = ({ isConnected }) => {
   if (queue.length === 0) return null;
 
   return (
-    <div className="bg-dark-secondary border border-gray/20 rounded-xl p-5 mb-6">
+    <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-5 mb-6">
       <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3 flex items-center gap-2">
         <ListMusic className="w-4 h-4" />
         Cola de Spotify ({queue.length})
       </h3>
       <div className="space-y-2 max-h-60 overflow-y-auto">
         {queue.slice(0, 20).map((track, idx) => (
-          <div key={`${track.uri}-${idx}`} className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray/5 ${track.is_request ? 'border-l-2 border-primary/50' : ''}`}>
+          <div key={`${track.uri}-${idx}`} className={`flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.04] ${track.is_request ? 'border-l-2 border-primary/50' : ''}`}>
             <span className="text-xs text-gray/50 w-5 text-right flex-shrink-0">{idx + 1}</span>
             {track.image ? (
               <img src={track.image} alt={track.name} className="w-9 h-9 rounded object-cover flex-shrink-0" />
             ) : (
-              <div className="w-9 h-9 rounded bg-gray/20 flex items-center justify-center flex-shrink-0">
+              <div className="w-9 h-9 rounded bg-white/[0.08] flex items-center justify-center flex-shrink-0">
                 <Music className="w-4 h-4 text-gray" />
               </div>
             )}
@@ -461,7 +461,7 @@ const AdminSearch = ({ isConnected }) => {
   if (!isConnected) return null;
 
   return (
-    <div className="bg-dark-secondary border border-gray/20 rounded-xl p-5 mb-6">
+    <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-5 mb-6">
       <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3 flex items-center gap-2">
         <Search className="w-4 h-4" />
         Buscar y agregar canciones
@@ -472,7 +472,7 @@ const AdminSearch = ({ isConnected }) => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full bg-dark border border-gray/30 rounded-lg pl-10 pr-4 py-2.5 text-light text-sm focus:outline-none focus:border-primary transition-colors placeholder:text-gray/50"
+          className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg pl-10 pr-4 py-2.5 text-light text-sm focus:outline-none focus:border-primary transition-colors placeholder:text-gray/50"
           placeholder="Buscar cancion o artista..."
         />
       </div>
@@ -484,11 +484,11 @@ const AdminSearch = ({ isConnected }) => {
       {results?.length > 0 && (
         <div className="space-y-1.5 max-h-64 overflow-y-auto">
           {results.map((track) => (
-            <div key={track.uri} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray/5 group">
+            <div key={track.uri} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.04] group">
               {track.image ? (
                 <img src={track.image} alt={track.name} className="w-10 h-10 rounded object-cover flex-shrink-0" />
               ) : (
-                <div className="w-10 h-10 rounded bg-gray/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded bg-white/[0.08] flex items-center justify-center flex-shrink-0">
                   <Music className="w-4 h-4 text-gray" />
                 </div>
               )}
@@ -555,7 +555,7 @@ const SongRequestCard = ({ request, onUpdateStatus, onPlayNow, onDelete }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-dark-secondary border-2 ${status.bgClass} rounded-xl p-4 hover:shadow-lg transition-all duration-300`}
+      className={`liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border-2 ${status.bgClass} rounded-xl p-4 hover:shadow-lg transition-all duration-300`}
     >
       <div className="flex items-start gap-3 mb-3">
         {request.spotify_track_image ? (
@@ -630,7 +630,7 @@ const SongRequestCard = ({ request, onUpdateStatus, onPlayNow, onDelete }) => {
 
         <button
           onClick={() => onDelete(request.id)}
-          className="px-3 py-1.5 bg-gray/10 text-gray border border-gray/20 rounded-lg hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-colors text-xs font-medium flex items-center gap-1.5 ml-auto"
+          className="px-3 py-1.5 bg-white/[0.09] text-gray border border-white/[0.1] rounded-lg hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-colors text-xs font-medium flex items-center gap-1.5 ml-auto"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
@@ -739,7 +739,7 @@ const SongRequestsPage = () => {
             <button
               onClick={() => refetch()}
               disabled={isRefetching}
-              className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+              className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
             >
               <RefreshCw className={`w-5 h-5 ${isRefetching ? 'animate-spin' : ''}`} />
             </button>
@@ -767,7 +767,7 @@ const SongRequestsPage = () => {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
                   statusFilter === btn.key
                     ? btn.activeClass
-                    : 'bg-dark-secondary text-gray border-gray/20 hover:border-gray/40'
+                    : 'backdrop-blur-sm bg-white/[0.09] text-gray border-white/[0.1] hover:border-white/[0.2]'
                 }`}
               >
                 {btn.label} ({btn.count})
