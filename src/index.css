@@ -206,19 +206,18 @@
 .liquid-glass-interactive::before {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  inset: 0;
+  border-radius: inherit;
   background: linear-gradient(
     135deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.04) 45%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.04) 55%,
-    transparent 60%
+    transparent 30%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.06) 55%,
+    transparent 70%
   );
-  transform: translateX(-100%) translateY(-100%);
+  background-size: 200% 200%;
+  background-position: 100% 100%;
   pointer-events: none;
   z-index: 1;
   transition: none;
@@ -243,10 +242,10 @@
 
 @keyframes liquid-shimmer {
   0% {
-    transform: translateX(-100%) translateY(-100%);
+    background-position: 100% 100%;
   }
   100% {
-    transform: translateX(50%) translateY(50%);
+    background-position: 0% 0%;
   }
 }
 
