@@ -227,6 +227,7 @@ const Hero = () => {
       if (!section) return;
 
       const badge = section.querySelector(".hero-badge");
+      const greeting = section.querySelector(".hero-greeting");
       const dateStrip = section.querySelector(".hero-subtitle");
       const letters = section.querySelectorAll(".hero-title-letter");
       const phrase = section.querySelector(".hero-phrase");
@@ -236,7 +237,8 @@ const Hero = () => {
       const scrollIndicator = section.querySelector(".hero-scroll-indicator");
 
       // Set initial invisible states
-      gsap.set(badge, { autoAlpha: 0, y: -30 });
+      gsap.set(badge, { autoAlpha: 0, scale: 0 });
+      gsap.set(greeting, { autoAlpha: 0, y: -20 });
       gsap.set(dateStrip, { autoAlpha: 0, y: 20 });
       gsap.set(letters, {
         autoAlpha: 0,
@@ -252,15 +254,27 @@ const Hero = () => {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // 1. Greeting & Day
+      // 1. Badge — elastic scale
       tl.to(badge, {
         autoAlpha: 1,
-        y: 0,
+        scale: 1,
         duration: 0.7,
-        ease: "power2.out",
+        ease: "elastic.out(1, 0.5)",
       });
 
-      // 2. Date strip
+      // 2. Greeting
+      tl.to(
+        greeting,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        "-=0.3",
+      );
+
+      // 3. Date strip
       tl.to(
         dateStrip,
         {
@@ -386,8 +400,15 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8 pb-16">
+          {/* Badge */}
+          <div>
+            <span className="hero-badge inline-block px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap">
+              BEBIDAS HELADAS · CUMBAL, NARIÑO
+            </span>
+          </div>
+
           {/* Greeting, Day & Date strip */}
-          <div className="hero-badge flex flex-col items-center gap-1">
+          <div className="hero-greeting flex flex-col items-center gap-1">
             <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-white/70">
               {greeting}
             </span>
