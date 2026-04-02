@@ -14,8 +14,16 @@ const TikTokIcon = ({ size = 20 }) => (
 );
 
 const socialLinks = [
-  { icon: Instagram, href: "https://www.instagram.com/frostbyte.col/", label: "Instagram" },
-  { icon: TikTokIcon, href: "https://www.tiktok.com/@frostbyte.col", label: "TikTok" },
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/frostbyte.col/",
+    label: "Instagram",
+  },
+  {
+    icon: TikTokIcon,
+    href: "https://www.tiktok.com/@frostbyte.col",
+    label: "TikTok",
+  },
 ];
 
 // "Byte" in binary: B=01000010 y=01111001 t=01110100 e=01100101
@@ -23,11 +31,44 @@ const BYTE_BINARY = "01000010011110010111010001100101";
 
 const FROSTBYTE_LETTERS = ["F", "R", "O", "S", "T", "B", "Y", "T", "E"];
 
+const DAY_NAMES = [
+  "DOMINGO",
+  "LUNES",
+  "MARTES",
+  "MIÉRCOLES",
+  "JUEVES",
+  "VIERNES",
+  "SÁBADO",
+];
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "BUENOS DIAS";
+  if (hour >= 12 && hour < 18) return "BUENAS TARDES";
+  return "BUENAS NOCHES";
+};
+
+const getDateStrip = () => {
+  const today = new Date();
+  const dates = [];
+  for (let i = -2; i <= 2; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    dates.push({ day: d.getDate(), isCurrent: i === 0 });
+  }
+  return dates;
+};
+
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
+  const [displayedPhrase, setDisplayedPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
+  const [isStreaming, setIsStreaming] = useState(false);
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
+  const greeting = getGreeting();
+  const dayName = DAY_NAMES[new Date().getDay()];
+  const dateStrip = getDateStrip();
 
   // Binary grid canvas animation
   useEffect(() => {
@@ -65,7 +106,10 @@ const Hero = () => {
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
     };
-    const handleMouseLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+    const handleMouseLeave = () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    };
     section.addEventListener("mousemove", handleMouseMove);
     section.addEventListener("mouseleave", handleMouseLeave);
     ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
@@ -83,10 +127,19 @@ const Hero = () => {
           const phase = flickerPhases[idx];
           const flicker = 0.5 + 0.5 * Math.sin(t * 0.8 + phase);
           let alpha = 0.06 + flicker * 0.12;
-          let r = 255, g = 255, b = 255;
+          let r = 255,
+            g = 255,
+            b = 255;
           const colorCycle = Math.sin(t * 0.5 + phase * 1.5);
-          if (colorCycle > 0.3) { r = 180; g = 240; b = 255; }
-          else if (colorCycle < -0.3) { r = 255; g = 180; b = 240; }
+          if (colorCycle > 0.3) {
+            r = 180;
+            g = 240;
+            b = 255;
+          } else if (colorCycle < -0.3) {
+            r = 255;
+            g = 180;
+            b = 240;
+          }
           const dx = x - mouse.x;
           const dy = y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
@@ -133,125 +186,181 @@ const Hero = () => {
   useEffect(() => {
     const fetchMotivationalPhrase = async () => {
       try {
-        const response = await fetch(`${env.API_BASE_URL}/motivational/phrase/`);
+        const response = await fetch(
+          `${env.API_BASE_URL}/motivational/phrase/`,
+        );
         const data = await response.json();
-        if (response.ok && data.phrase) { setMotivationalPhrase(data.phrase); }
-      } catch (error) { console.error("Error al obtener la frase motivacional:", error); }
-      finally { setIsLoadingPhrase(false); }
+        if (response.ok && data.phrase) {
+          setMotivationalPhrase(data.phrase);
+        }
+      } catch (error) {
+        console.error("Error al obtener la frase motivacional:", error);
+      } finally {
+        setIsLoadingPhrase(false);
+      }
     };
     fetchMotivationalPhrase();
   }, []);
 
+  // Streaming effect word by word
+  useEffect(() => {
+    if (!motivationalPhrase || isLoadingPhrase) return;
+    const words = motivationalPhrase.split(" ");
+    setIsStreaming(true);
+    setDisplayedPhrase("");
+    let index = 0;
+    const interval = setInterval(() => {
+      index++;
+      setDisplayedPhrase(words.slice(0, index).join(" "));
+      if (index >= words.length) {
+        clearInterval(interval);
+        setIsStreaming(false);
+      }
+    }, 80);
+    return () => clearInterval(interval);
+  }, [motivationalPhrase, isLoadingPhrase]);
+
   // GSAP entrance animations
-  useGSAP(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
 
-    const badge = section.querySelector(".hero-badge");
-    const letters = section.querySelectorAll(".hero-title-letter");
-    const subtitle = section.querySelector(".hero-subtitle");
-    const phrase = section.querySelector(".hero-phrase");
-    const description = section.querySelector(".hero-description");
-    const ctaBtns = section.querySelectorAll(".hero-cta-btn");
-    const socialLinks = section.querySelectorAll(".hero-social-link");
-    const scrollIndicator = section.querySelector(".hero-scroll-indicator");
+      const badge = section.querySelector(".hero-badge");
+      const dateStrip = section.querySelector(".hero-subtitle");
+      const letters = section.querySelectorAll(".hero-title-letter");
+      const phrase = section.querySelector(".hero-phrase");
+      const description = section.querySelector(".hero-description");
+      const ctaBtns = section.querySelectorAll(".hero-cta-btn");
+      const socialLinks = section.querySelectorAll(".hero-social-link");
+      const scrollIndicator = section.querySelector(".hero-scroll-indicator");
 
-    // Set initial invisible states
-    gsap.set(badge, { autoAlpha: 0, scale: 0 });
-    gsap.set(letters, {
-      autoAlpha: 0,
-      y: (i) => gsap.utils.random(-120, -60),
-      x: (i) => gsap.utils.random(-80, 80),
-      rotation: (i) => gsap.utils.random(-45, 45),
-    });
-    gsap.set(subtitle, { autoAlpha: 0, y: 40 });
-    if (phrase) gsap.set(phrase, { autoAlpha: 0, x: -50 });
-    gsap.set(description, { autoAlpha: 0, y: 30 });
-    gsap.set(ctaBtns, { autoAlpha: 0, y: 40 });
-    gsap.set(socialLinks, { autoAlpha: 0, x: -40 });
-    gsap.set(scrollIndicator, { autoAlpha: 0 });
+      // Set initial invisible states
+      gsap.set(badge, { autoAlpha: 0, y: -30 });
+      gsap.set(dateStrip, { autoAlpha: 0, y: 20 });
+      gsap.set(letters, {
+        autoAlpha: 0,
+        y: (i) => gsap.utils.random(-120, -60),
+        x: (i) => gsap.utils.random(-80, 80),
+        rotation: (i) => gsap.utils.random(-45, 45),
+      });
+      if (phrase) gsap.set(phrase, { autoAlpha: 0, y: 30 });
+      gsap.set(description, { autoAlpha: 0, y: 30 });
+      gsap.set(ctaBtns, { autoAlpha: 0, y: 40 });
+      gsap.set(socialLinks, { autoAlpha: 0, x: -40 });
+      gsap.set(scrollIndicator, { autoAlpha: 0 });
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    // 1. Badge — elastic scale
-    tl.to(badge, {
-      autoAlpha: 1,
-      scale: 1,
-      duration: 0.7,
-      ease: "elastic.out(1, 0.5)",
-    });
-
-    // 2. Letters fly in from random positions, stagger from center
-    tl.to(letters, {
-      autoAlpha: 1,
-      y: 0,
-      x: 0,
-      rotation: 0,
-      duration: 0.8,
-      stagger: { amount: 0.4, from: "center", ease: "power2.inOut" },
-      ease: "back.out(1.4)",
-    }, "-=0.3");
-
-    // 3. Subtitle slide up
-    tl.to(subtitle, {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power2.out",
-    }, "-=0.3");
-
-    // 4. Motivational phrase
-    if (phrase) {
-      tl.to(phrase, {
+      // 1. Greeting & Day
+      tl.to(badge, {
         autoAlpha: 1,
-        x: 0,
-        duration: 0.6,
+        y: 0,
+        duration: 0.7,
         ease: "power2.out",
-      }, "-=0.2");
-    }
+      });
 
-    // 5. Description
-    tl.to(description, {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power2.out",
-    }, "-=0.2");
+      // 2. Date strip
+      tl.to(
+        dateStrip,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        "-=0.3",
+      );
 
-    // 6. CTA buttons with back ease
-    tl.to(ctaBtns, {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.5,
-      stagger: 0.12,
-      ease: "back.out(1.7)",
-    }, "-=0.2");
+      // 3. Letters fly in from random positions, stagger from center
+      tl.to(
+        letters,
+        {
+          autoAlpha: 1,
+          y: 0,
+          x: 0,
+          rotation: 0,
+          duration: 0.8,
+          stagger: { amount: 0.4, from: "center", ease: "power2.inOut" },
+          ease: "back.out(1.4)",
+        },
+        "-=0.3",
+      );
 
-    // 7. Social links elastic bounce
-    tl.to(socialLinks, {
-      autoAlpha: 1,
-      x: 0,
-      duration: 0.6,
-      stagger: 0.15,
-      ease: "elastic.out(1, 0.6)",
-    }, "-=0.2");
+      // 4. Motivational phrase
+      if (phrase) {
+        tl.to(
+          phrase,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+          },
+          "-=0.2",
+        );
+      }
 
-    // 8. Scroll indicator + infinite bounce
-    tl.to(scrollIndicator, {
-      autoAlpha: 1,
-      duration: 0.8,
-      ease: "power1.out",
-      onComplete: () => {
-        gsap.to(scrollIndicator, {
-          y: 10,
-          duration: 1,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      },
-    }, "-=0.2");
-  }, { scope: sectionRef });
+      // 5. Description
+      tl.to(
+        description,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+        },
+        "-=0.2",
+      );
+
+      // 6. CTA buttons with back ease
+      tl.to(
+        ctaBtns,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.12,
+          ease: "back.out(1.7)",
+        },
+        "-=0.2",
+      );
+
+      // 7. Social links elastic bounce
+      tl.to(
+        socialLinks,
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: "elastic.out(1, 0.6)",
+        },
+        "-=0.2",
+      );
+
+      // 8. Scroll indicator + infinite bounce
+      tl.to(
+        scrollIndicator,
+        {
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: "power1.out",
+          onComplete: () => {
+            gsap.to(scrollIndicator, {
+              y: 10,
+              duration: 1,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+            });
+          },
+        },
+        "-=0.2",
+      );
+    },
+    { scope: sectionRef },
+  );
 
   return (
     <section
@@ -262,7 +371,10 @@ const Hero = () => {
       <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
-      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 pointer-events-none"
+      />
 
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>
@@ -274,12 +386,26 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8 pb-16">
-
-          {/* Badge */}
-          <div>
-            <span className="hero-badge inline-block px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap">
-              BEBIDAS HELADAS · CUMBAL, NARIÑO
+          {/* Greeting, Day & Date strip */}
+          <div className="hero-badge flex flex-col items-center gap-1">
+            <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-white/70">
+              {greeting}
             </span>
+            <span className="text-base sm:text-lg font-bold tracking-wider uppercase text-primary">
+              {dayName}
+            </span>
+            <div className="hero-subtitle flex items-center gap-4">
+              {dateStrip.map((d, i) => (
+                <span
+                  key={i}
+                  className={`text-xs sm:text-sm font-medium ${
+                    d.isCurrent ? "text-primary" : "text-white/30"
+                  }`}
+                >
+                  {String(d.day).padStart(2, "0")}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Headline */}
@@ -295,33 +421,42 @@ const Hero = () => {
                 </span>
               ))}
             </span>
-            <span className="hero-subtitle block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest mt-2">
+            <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest mt-2">
               CUMBAL, NARIÑO
             </span>
           </h1>
 
           {/* Frase motivacional */}
           {!isLoadingPhrase && motivationalPhrase && (
-            <div className="hero-phrase max-w-2xl mx-auto">
-              <div className="px-6 py-3 bg-linear-to-r from-primary/10 via-secondary/10 to-primary/10 border border-primary/30 rounded-2xl backdrop-blur-sm">
-                <p className="text-primary text-base md:text-lg font-semibold italic">
-                  "{motivationalPhrase}"
-                </p>
-              </div>
+            <div className="hero-phrase max-w-2xl mx-auto text-center">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">
+                Para hoy
+              </p>
+              <div className="w-16 h-[2px] bg-linear-to-r from-primary to-secondary mx-auto mt-2 mb-4" />
+              <p className="text-secondary text-base sm:text-lg md:text-xl leading-relaxed font-medium italic">
+                &ldquo;{displayedPhrase}
+                {isStreaming && (
+                  <span className="inline-block w-0.5 h-5 bg-secondary ml-0.5 animate-pulse align-middle" />
+                )}
+                {!isStreaming && <>&rdquo;</>}
+              </p>
             </div>
           )}
 
           {/* Descripción */}
           <p className="hero-description text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-            Granizados, frappés, cocteles, shots y micheladas con amigos o en familia.
-            Bebidas heladas premium con un estilo único en Cumbal, Nariño.
+            Granizados, frappés, cocteles, shots y micheladas con amigos o en
+            familia. Bebidas heladas premium con un estilo único en Cumbal,
+            Nariño.
           </p>
 
           {/* Botones */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               onClick={() =>
-                document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" })
+                document
+                  .getElementById("menu")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }
               className="hero-cta-btn bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
             >
@@ -360,7 +495,6 @@ const Hero = () => {
               </a>
             ))}
           </div>
-
         </div>
       </div>
 
