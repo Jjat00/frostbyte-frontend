@@ -11,7 +11,7 @@ const WhileYouWait = ({ status }) => {
     <div className="mt-6">
       <button
         onClick={() => navigate("/game")}
-        className="w-full p-4 rounded-xl bg-gradient-to-r from-violet-500/20 via-purple-500/15 to-amber-500/20 border border-violet-500/30 hover:border-violet-500/50 transition-all group"
+        className="w-full p-4 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.1] hover:border-violet-500/40 hover:bg-white/[0.1] transition-all group shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-amber-500 flex items-center justify-center flex-shrink-0">
@@ -23,7 +23,7 @@ const WhileYouWait = ({ status }) => {
               <Zap className="w-3.5 h-3.5 text-amber-400" />
             </p>
             <p className="text-xs text-gray">
-              Juega Duelo Frostbyte con tus amigos
+              Diviértete con nuestros juegos interactivos
             </p>
           </div>
           <span className="text-xs text-violet-400 font-medium group-hover:text-violet-300 transition-colors">

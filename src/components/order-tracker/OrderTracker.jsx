@@ -36,7 +36,7 @@ const OrderTracker = ({ order, show, onClose }) => {
       )}
 
       {/* Delivery progress */}
-      <div className="flex items-center justify-between px-3 py-2 bg-dark-secondary/50 rounded-lg border border-gray/10">
+      <div className="flex items-center justify-between px-3 py-2 backdrop-blur-sm bg-white/[0.06] rounded-lg border border-white/[0.1]">
         <span className="text-xs text-gray">Entregados</span>
         <span className="text-sm text-light font-medium">
           {order.delivered_items_count || 0} / {order.items_count || 0}
@@ -47,7 +47,7 @@ const OrderTracker = ({ order, show, onClose }) => {
       <OrderItemsList items={order.items} />
 
       {/* Total */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray/20">
+      <div className="flex items-center justify-between pt-3 border-t border-white/[0.1]">
         <span className="text-gray font-medium">Total</span>
         <span className="text-xl font-bold text-secondary">
           {formatCurrency(order.total)}
@@ -78,7 +78,7 @@ const OrderTracker = ({ order, show, onClose }) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="md:hidden absolute bottom-0 left-0 right-0 max-h-[90vh] bg-dark border-t border-gray/20 rounded-t-2xl overflow-hidden flex flex-col"
+            className="md:hidden absolute bottom-0 left-0 right-0 max-h-[90vh] backdrop-blur-xl bg-dark/95 border-t border-white/[0.1] rounded-t-2xl overflow-hidden flex flex-col shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -87,7 +87,7 @@ const OrderTracker = ({ order, show, onClose }) => {
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray/20">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.1]">
               <div className="flex items-center gap-3">
                 <Receipt className="w-5 h-5 text-secondary" />
                 <div>
@@ -117,11 +117,11 @@ const OrderTracker = ({ order, show, onClose }) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 40 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="hidden md:flex absolute inset-y-0 right-0 w-full max-w-lg flex-col bg-dark border-l border-gray/20 shadow-2xl"
+            className="hidden md:flex absolute inset-y-0 right-0 w-full max-w-lg flex-col backdrop-blur-xl bg-dark/95 border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.3)]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray/20">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.1]">
               <div className="flex items-center gap-3">
                 <Receipt className="w-5 h-5 text-secondary" />
                 <div>
