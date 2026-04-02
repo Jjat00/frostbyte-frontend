@@ -159,9 +159,9 @@ const NewOrderPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] md:h-[calc(100vh-3rem)] pb-20 lg:pb-0">
+    <div className="flex flex-col h-[calc(100vh-8rem)] md:h-[calc(100vh-4.5rem)] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2 lg:mb-3">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/pedidos')}
@@ -171,7 +171,7 @@ const NewOrderPage = () => {
           </button>
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-light">Nuevo Pedido</h1>
-            <p className="text-sm text-gray">Selecciona productos de la carta</p>
+            <p className="text-sm text-gray lg:hidden">Selecciona productos de la carta</p>
           </div>
         </div>
         {/* Indicador de items en carrito para desktop pequeño/mediano */}
@@ -186,23 +186,23 @@ const NewOrderPage = () => {
         )}
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden min-w-0">
         {/* Panel de Productos */}
-        <div className={`flex-1 flex flex-col overflow-hidden ${showCheckout ? 'hidden lg:flex' : ''}`}>
+        <div className={`flex-1 min-w-0 flex flex-col overflow-hidden ${showCheckout ? 'hidden lg:flex' : ''}`}>
           {/* Búsqueda */}
-          <div className="relative mb-4">
+          <div className="relative mb-2 lg:mb-3">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray" />
             <input
               type="text"
               placeholder="Buscar producto..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none transition-colors"
             />
           </div>
 
           {/* Categorías */}
-          <div className="flex gap-2 overflow-x-auto pb-3 mb-4 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-2 lg:mb-3 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
             <button
               onClick={() => setSelectedCategory(null)}
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
@@ -288,7 +288,7 @@ const NewOrderPage = () => {
         </div>
 
         {/* Panel del Carrito (Desktop) */}
-        <div className="hidden lg:flex lg:w-96 flex-col backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl">
+        <div className="hidden lg:flex lg:w-96 flex-shrink-0 flex-col backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl">
           {/* Header del carrito */}
           <div className="p-4 border-b border-white/[0.1] flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">

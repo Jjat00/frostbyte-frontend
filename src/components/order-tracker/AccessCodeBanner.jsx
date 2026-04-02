@@ -95,10 +95,10 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
             </div>
             <div>
               <p className="text-sm font-bold text-light leading-tight">
-                Seguí tu pedido en vivo
+                Mirá tu pedido y lo que vas consumiendo
               </p>
               <p className="text-xs text-secondary/70 mt-0.5">
-                Te avisamos cuando esté listo
+                Seguí en vivo el estado y te avisamos cuando esté listo
               </p>
             </div>
           </div>
