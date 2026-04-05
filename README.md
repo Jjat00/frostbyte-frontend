@@ -177,7 +177,7 @@ Ver [.env.example](.env.example) para las variables disponibles.
 ### Hooks de IA
 - `useImageGeneration()`: Estados y acciones para generador de imágenes
 - `useImageValidation()`: Validación de archivos de imagen
-- Custom hooks para cada feature de IA con manejo de loading y errores
+- Custom hooks para cada feature de IA con manejo de loading y errores.
 
 ### Estilos
 - Tema dark cyberpunk
