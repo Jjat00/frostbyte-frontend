@@ -392,11 +392,11 @@ const ExpensesListPage = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="fixed sm:absolute right-4 sm:right-0 bottom-20 sm:bottom-auto sm:top-full sm:mt-1 w-[calc(100%-2rem)] sm:w-48 backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-lg shadow-2xl z-50 overflow-hidden"
+                            className="fixed sm:absolute right-4 sm:right-0 bottom-20 sm:bottom-full sm:mb-1 w-[calc(100%-2rem)] sm:w-48 backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-lg shadow-2xl z-50 overflow-hidden"
                           >
                             <Link
                               to={`/gastos/${expense.id}`}
-                              className="flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-gray hover:text-light hover:bg-white/[0.06] transition-colors"
+                              className="flex items-center gap-2 px-4 py-3 sm:py-2.5 text-sm text-light hover:bg-white/[0.06] transition-colors"
                             >
                               <Eye className="w-4 h-4" />
                               Ver detalle
