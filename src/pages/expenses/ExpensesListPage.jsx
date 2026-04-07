@@ -324,7 +324,7 @@ const ExpensesListPage = () => {
                 key={expense.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 hover:bg-white/[0.06] transition-colors"
+                className="relative backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 hover:bg-white/[0.06] transition-colors"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className={`p-3 rounded-lg border ${colorClass}`}>
