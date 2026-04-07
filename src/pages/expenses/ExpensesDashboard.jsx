@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
@@ -14,8 +14,10 @@ import {
   Loader2,
   AlertCircle,
   PlusCircle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { expensesService } from "@/services/expenses.service";
 
 const ICON_MAP = {
@@ -43,11 +45,46 @@ const COLOR_MAP = {
 };
 
 const ExpensesDashboard = () => {
-  const [dateFilter, setDateFilter] = useState("month");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const now = new Date();
+  const currentMonth = searchParams.get("month")
+    ? parseInt(searchParams.get("month"))
+    : now.getMonth();
+  const currentYear = searchParams.get("year")
+    ? parseInt(searchParams.get("year"))
+    : now.getFullYear();
+
+  const { startDate, endDate } = useMemo(() => {
+    const start = new Date(currentYear, currentMonth, 1);
+    const end = new Date(currentYear, currentMonth + 1, 0);
+    const fmt = (d) => d.toISOString().split("T")[0];
+    return { startDate: fmt(start), endDate: fmt(end) };
+  }, [currentMonth, currentYear]);
+
+  const monthLabel = useMemo(() => {
+    const d = new Date(currentYear, currentMonth, 1);
+    const label = d.toLocaleDateString("es-CO", { month: "long", year: "numeric" });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }, [currentMonth, currentYear]);
+
+  const isCurrentMonth =
+    currentMonth === now.getMonth() && currentYear === now.getFullYear();
+
+  const navigateMonth = (direction) => {
+    const newParams = new URLSearchParams(searchParams);
+    let m = currentMonth + direction;
+    let y = currentYear;
+    if (m < 0) { m = 11; y--; }
+    if (m > 11) { m = 0; y++; }
+    newParams.set("month", m.toString());
+    newParams.set("year", y.toString());
+    setSearchParams(newParams);
+  };
 
   const { data: stats, isLoading: loadingStats } = useQuery({
-    queryKey: ["expense-stats", dateFilter],
-    queryFn: () => expensesService.getExpenseStats(dateFilter),
+    queryKey: ["expense-stats", startDate, endDate],
+    queryFn: () => expensesService.getExpenseStats({ start_date: startDate, end_date: endDate }),
   });
 
   const { data: pendingData, isLoading: loadingPending } = useQuery({
@@ -64,13 +101,6 @@ const ExpensesDashboard = () => {
       maximumFractionDigits: 0,
     }).format(num);
   };
-
-  const dateFilterOptions = [
-    { value: "today", label: "Hoy" },
-    { value: "week", label: "Semana" },
-    { value: "month", label: "Mes" },
-    { value: "year", label: "Ano" },
-  ];
 
   if (loadingStats || loadingPending) {
     return (
@@ -91,32 +121,37 @@ const ExpensesDashboard = () => {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Date filter */}
-          <div className="flex flex-wrap backdrop-blur-xl bg-white/[0.08] border border-white/[0.08] rounded-lg p-1">
-            {dateFilterOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => setDateFilter(option.value)}
-                className={`px-2.5 py-1.5 text-xs sm:px-3 sm:text-sm font-medium rounded-md transition-colors ${
-                  dateFilter === option.value
-                    ? "bg-primary text-dark"
-                    : "text-gray hover:text-light"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-
-          <Link
-            to="/gastos/nuevo"
+        <Link
+          to="/gastos/nuevo"
           className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">Nuevo Gasto</span>
-          </Link>
-        </div>
+        >
+          <PlusCircle className="w-4 h-4" />
+          <span className="hidden sm:inline">Nuevo Gasto</span>
+        </Link>
+      </div>
+
+      {/* Month Navigation */}
+      <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl px-4 py-3">
+        <button
+          onClick={() => navigateMonth(-1)}
+          className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+
+        <span className="text-light font-medium text-lg">{monthLabel}</span>
+
+        <button
+          onClick={() => navigateMonth(1)}
+          disabled={isCurrentMonth}
+          className={`p-2 rounded-lg transition-colors ${
+            isCurrentMonth
+              ? "text-gray/30 cursor-not-allowed"
+              : "text-gray hover:text-light hover:bg-white/[0.06]"
+          }`}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Stats Cards */}

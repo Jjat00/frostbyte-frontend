@@ -69,8 +69,8 @@ export const expensesService = {
     return response.data;
   },
 
-  async getExpenseStats(date = 'month') {
-    const response = await apiClient.get(`${BASE_URL}/stats/`, { params: { date } });
+  async getExpenseStats(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/stats/`, { params });
     return response.data;
   },
 
