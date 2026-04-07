@@ -74,7 +74,8 @@ const ExpensesListPage = () => {
   const { startDate, endDate } = useMemo(() => {
     const start = new Date(currentYear, currentMonth, 1);
     const end = new Date(currentYear, currentMonth + 1, 0);
-    const fmt = (d) => d.toISOString().split("T")[0];
+    const fmt = (d) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     return { startDate: fmt(start), endDate: fmt(end) };
   }, [currentMonth, currentYear]);
 
