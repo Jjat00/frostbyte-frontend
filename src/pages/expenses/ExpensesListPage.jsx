@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -6,7 +6,6 @@ import {
   Search,
   Filter,
   CheckCircle,
-  Clock,
   XCircle,
   Loader2,
   Users,
@@ -17,6 +16,8 @@ import {
   MoreVertical,
   Trash2,
   Eye,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { expensesService } from "@/services/expenses.service";
@@ -61,7 +62,41 @@ const ExpensesListPage = () => {
 
   const statusFilter = searchParams.get("status") || "";
   const categoryFilter = searchParams.get("category") || "";
-  const dateFilter = searchParams.get("date") || "month";
+
+  const now = new Date();
+  const currentMonth = searchParams.get("month")
+    ? parseInt(searchParams.get("month"))
+    : now.getMonth();
+  const currentYear = searchParams.get("year")
+    ? parseInt(searchParams.get("year"))
+    : now.getFullYear();
+
+  const { startDate, endDate } = useMemo(() => {
+    const start = new Date(currentYear, currentMonth, 1);
+    const end = new Date(currentYear, currentMonth + 1, 0);
+    const fmt = (d) => d.toISOString().split("T")[0];
+    return { startDate: fmt(start), endDate: fmt(end) };
+  }, [currentMonth, currentYear]);
+
+  const monthLabel = useMemo(() => {
+    const d = new Date(currentYear, currentMonth, 1);
+    const label = d.toLocaleDateString("es-CO", { month: "long", year: "numeric" });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }, [currentMonth, currentYear]);
+
+  const isCurrentMonth =
+    currentMonth === now.getMonth() && currentYear === now.getFullYear();
+
+  const navigateMonth = (direction) => {
+    const newParams = new URLSearchParams(searchParams);
+    let m = currentMonth + direction;
+    let y = currentYear;
+    if (m < 0) { m = 11; y--; }
+    if (m > 11) { m = 0; y++; }
+    newParams.set("month", m.toString());
+    newParams.set("year", y.toString());
+    setSearchParams(newParams);
+  };
 
   const { data: categories } = useQuery({
     queryKey: ["expense-categories"],
@@ -69,12 +104,13 @@ const ExpensesListPage = () => {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["expenses", { status: statusFilter, category: categoryFilter, date: dateFilter, search }],
+    queryKey: ["expenses", { status: statusFilter, category: categoryFilter, startDate, endDate, search }],
     queryFn: () =>
       expensesService.getExpenses({
         status: statusFilter || undefined,
         category: categoryFilter || undefined,
-        date: dateFilter,
+        start_date: startDate,
+        end_date: endDate,
         search: search || undefined,
       }),
   });
@@ -187,6 +223,30 @@ const ExpensesListPage = () => {
         </button>
       </div>
 
+      {/* Month Navigation */}
+      <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl px-4 py-3">
+        <button
+          onClick={() => navigateMonth(-1)}
+          className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+
+        <span className="text-light font-medium text-lg">{monthLabel}</span>
+
+        <button
+          onClick={() => navigateMonth(1)}
+          disabled={isCurrentMonth}
+          className={`p-2 rounded-lg transition-colors ${
+            isCurrentMonth
+              ? "text-gray/30 cursor-not-allowed"
+              : "text-gray hover:text-light hover:bg-white/[0.06]"
+          }`}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+
       {/* Filters Panel */}
       <AnimatePresence>
         {showFilters && (
@@ -196,13 +256,13 @@ const ExpensesListPage = () => {
             exit={{ opacity: 0, height: 0 }}
             className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray mb-2">Estado</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
                 >
                   <option value="">Todos</option>
                   <option value="pending">Pendiente</option>
@@ -216,7 +276,7 @@ const ExpensesListPage = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => handleFilterChange("category", e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
                 >
                   <option value="">Todas</option>
                   {categories?.results?.map((cat) => (
@@ -229,20 +289,6 @@ const ExpensesListPage = () => {
                         {cat.name}
                       </option>
                     ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray mb-2">Periodo</label>
-                <select
-                  value={dateFilter}
-                  onChange={(e) => handleFilterChange("date", e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
-                >
-                  <option value="today">Hoy</option>
-                  <option value="week">Esta semana</option>
-                  <option value="month">Este mes</option>
-                  <option value="year">Este ano</option>
                 </select>
               </div>
             </div>
