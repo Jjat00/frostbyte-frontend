@@ -243,7 +243,7 @@ const OrdersHistoryPage = () => {
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="px-4 py-3 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl text-light focus:border-secondary/50 focus:outline-none"
+            className="px-4 py-3 backdrop-blur-xl bg-[#1a1a2e] border border-white/[0.1] rounded-xl text-light focus:border-secondary/50 focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-light"
           >
             <option value="today">Hoy</option>
             <option value="week">Última semana</option>
@@ -254,7 +254,7 @@ const OrdersHistoryPage = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-3 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl text-light focus:border-secondary/50 focus:outline-none"
+            className="px-4 py-3 backdrop-blur-xl bg-[#1a1a2e] border border-white/[0.1] rounded-xl text-light focus:border-secondary/50 focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-light"
           >
             <option value="">Todos</option>
             <option value="pending">Pendiente</option>
@@ -265,6 +265,24 @@ const OrdersHistoryPage = () => {
           </select>
         </div>
       </div>
+
+      {/* Resumen */}
+      {!isLoading && filteredOrders.length > 0 && (
+        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray">
+              {filteredOrders.length} pedido{filteredOrders.length !== 1 ? 's' : ''} encontrado
+              {filteredOrders.length !== 1 ? 's' : ''}
+            </span>
+            <span className="text-light font-medium">
+              Total:{' '}
+              {formatCurrency(
+                filteredOrders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0)
+              )}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Lista de pedidos */}
       {isLoading ? (
@@ -294,23 +312,6 @@ const OrdersHistoryPage = () => {
         </div>
       )}
 
-      {/* Resumen */}
-      {filteredOrders.length > 0 && (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray">
-              {filteredOrders.length} pedido{filteredOrders.length !== 1 ? 's' : ''} encontrado
-              {filteredOrders.length !== 1 ? 's' : ''}
-            </span>
-            <span className="text-light font-medium">
-              Total:{' '}
-              {formatCurrency(
-                filteredOrders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0)
-              )}
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
