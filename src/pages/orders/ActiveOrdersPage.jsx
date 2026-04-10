@@ -120,7 +120,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className={`liquid-glass-interactive border rounded-xl p-4 ${status.bgClass} transition-all`}
+      className={`liquid-glass-interactive relative border rounded-xl p-4 ${status.bgClass} transition-all`}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3 gap-2">
