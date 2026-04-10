@@ -328,9 +328,9 @@ const ProductFormPage = () => {
                   errors.category ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
               >
-                <option value="">Selecciona una categoría</option>
+                <option value="" className="bg-dark text-light">Selecciona una categoría</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
+                  <option key={cat.id} value={cat.id} className="bg-dark text-light">
                     {cat.name}
                   </option>
                 ))}
