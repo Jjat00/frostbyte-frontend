@@ -60,6 +60,10 @@ export const ENDPOINTS = {
   AI_MOOD_RECOMMEND: '/motivational/recommend/',
   AI_QUIZ_RECOMMEND: '/motivational/quiz/',
   AI_VOICE_TRANSCRIBE: '/motivational/transcribe/',
+
+  // Recetarios
+  RECETARIOS: '/recetarios/recipes/',
+  RECETARIO_DETAIL: (slug) => `/recetarios/recipes/${slug}/`,
 };
 
 export default ENDPOINTS;
