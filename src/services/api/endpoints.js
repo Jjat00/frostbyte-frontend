@@ -64,8 +64,6 @@ export const ENDPOINTS = {
   // Recetarios
   RECETARIOS: '/recetarios/recipes/',
   RECETARIO_DETAIL: (slug) => `/recetarios/recipes/${slug}/`,
-  RECETARIO_CATEGORIES: '/recetarios/categories/',
-  RECETARIO_CATEGORY_DETAIL: (slug) => `/recetarios/categories/${slug}/`,
 };
 
 export default ENDPOINTS;

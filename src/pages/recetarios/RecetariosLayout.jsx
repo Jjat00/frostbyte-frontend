@@ -6,9 +6,7 @@ import {
   LogOut,
   Menu,
   X,
-  List,
   PlusCircle,
-  FolderOpen,
   Home,
   Store,
   Music,
@@ -55,13 +53,6 @@ const RecetariosLayout = () => {
       shortName: "Nuevo",
       path: "/recetarios/nuevo",
       icon: PlusCircle,
-      adminOnly: true,
-    },
-    {
-      name: "Categorias",
-      shortName: "Categ.",
-      path: "/recetarios/categorias",
-      icon: FolderOpen,
       adminOnly: true,
     },
     {

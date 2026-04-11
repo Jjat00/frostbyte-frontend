@@ -58,7 +58,6 @@ const RecetariosLayout = lazyLoad(() => import("./pages/recetarios/RecetariosLay
 const RecetariosListPage = lazyLoad(() => import("./pages/recetarios/RecetariosListPage"));
 const RecetarioDetailPage = lazyLoad(() => import("./pages/recetarios/RecetarioDetailPage"));
 const RecetarioFormPage = lazyLoad(() => import("./pages/recetarios/RecetarioFormPage"));
-const RecetarioCategoriesPage = lazyLoad(() => import("./pages/recetarios/CategoriesPage"));
 
 // Gastos
 const ExpensesLayout = lazyLoad(() => import("./pages/expenses/ExpensesLayout"));
@@ -408,16 +407,6 @@ export const router = createBrowserRouter([
           <Lazy>
             <AdminRoute>
               <RecetarioFormPage />
-            </AdminRoute>
-          </Lazy>
-        ),
-      },
-      {
-        path: "categorias",
-        element: (
-          <Lazy>
-            <AdminRoute>
-              <RecetarioCategoriesPage />
             </AdminRoute>
           </Lazy>
         ),

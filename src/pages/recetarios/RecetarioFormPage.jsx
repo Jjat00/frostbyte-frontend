@@ -54,10 +54,10 @@ const RecetarioFormPage = () => {
     enabled: isEditing,
   });
 
-  // Load categories
+  // Load product categories
   const { data: categoriesData } = useQuery({
-    queryKey: ["recetario-categories"],
-    queryFn: () => recetariosService.getCategories(),
+    queryKey: ["product-categories"],
+    queryFn: () => apiClient.get("/categories/?active_only=true").then((r) => r.data),
   });
 
   // Load products

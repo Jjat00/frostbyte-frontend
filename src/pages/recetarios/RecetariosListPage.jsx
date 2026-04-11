@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { recetariosService } from "@/services/recetarios.service";
+import { apiClient } from "@/services/api/client";
 import { useAuthStore } from "@/stores/useAuthStore";
 import toast from "react-hot-toast";
 
@@ -32,8 +33,8 @@ const RecetariosListPage = () => {
   const [difficultyFilter, setDifficultyFilter] = useState("");
 
   const { data: categoriesData } = useQuery({
-    queryKey: ["recetario-categories"],
-    queryFn: () => recetariosService.getCategories(),
+    queryKey: ["product-categories"],
+    queryFn: () => apiClient.get("/categories/?active_only=true").then((r) => r.data),
   });
 
   const { data, isLoading } = useQuery({
