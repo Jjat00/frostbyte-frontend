@@ -53,6 +53,13 @@ const SongRequestsPage = lazyLoad(() => import("./pages/music/SongRequestsPage")
 const FeedbackLayout = lazyLoad(() => import("./pages/feedback/FeedbackLayout"));
 const FeedbackListPage = lazyLoad(() => import("./pages/feedback/FeedbackListPage"));
 
+// Recetarios
+const RecetariosLayout = lazyLoad(() => import("./pages/recetarios/RecetariosLayout"));
+const RecetariosListPage = lazyLoad(() => import("./pages/recetarios/RecetariosListPage"));
+const RecetarioDetailPage = lazyLoad(() => import("./pages/recetarios/RecetarioDetailPage"));
+const RecetarioFormPage = lazyLoad(() => import("./pages/recetarios/RecetarioFormPage"));
+const RecetarioCategoriesPage = lazyLoad(() => import("./pages/recetarios/CategoriesPage"));
+
 // Gastos
 const ExpensesLayout = lazyLoad(() => import("./pages/expenses/ExpensesLayout"));
 const ExpensesDashboard = lazyLoad(() => import("./pages/expenses/ExpensesDashboard"));
@@ -361,6 +368,65 @@ export const router = createBrowserRouter([
         element: (
           <Lazy>
             <FeedbackListPage />
+          </Lazy>
+        ),
+      },
+    ],
+  },
+  // Panel de recetarios (empleados y admin)
+  {
+    path: "/recetarios",
+    element: (
+      <Lazy>
+        <ProtectedRoute>
+          <RecetariosLayout />
+        </ProtectedRoute>
+      </Lazy>
+    ),
+    children: [
+      {
+        index: true,
+        element: (
+          <Lazy>
+            <RecetariosListPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: "nuevo",
+        element: (
+          <Lazy>
+            <AdminRoute>
+              <RecetarioFormPage />
+            </AdminRoute>
+          </Lazy>
+        ),
+      },
+      {
+        path: "editar/:slug",
+        element: (
+          <Lazy>
+            <AdminRoute>
+              <RecetarioFormPage />
+            </AdminRoute>
+          </Lazy>
+        ),
+      },
+      {
+        path: "categorias",
+        element: (
+          <Lazy>
+            <AdminRoute>
+              <RecetarioCategoriesPage />
+            </AdminRoute>
+          </Lazy>
+        ),
+      },
+      {
+        path: ":slug",
+        element: (
+          <Lazy>
+            <RecetarioDetailPage />
           </Lazy>
         ),
       },

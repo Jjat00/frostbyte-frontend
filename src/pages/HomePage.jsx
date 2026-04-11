@@ -14,6 +14,9 @@ import {
   MessageSquare,
   Wallet,
   RefreshCw,
+  BookOpen,
+  ChefHat,
+  UtensilsCrossed,
   ExternalLink,
   TrendingUp,
   PieChart,
@@ -119,6 +122,22 @@ const HomePage = () => {
       ],
     },
     {
+      id: 'recetarios',
+      title: 'Recetarios',
+      description: 'Guias de preparacion paso a paso para cada bebida',
+      icon: BookOpen,
+      path: '/recetarios',
+      color: 'from-amber-500 to-orange-500',
+      bgColor: 'bg-amber-500/10',
+      borderColor: 'border-amber-500/30',
+      glowColor: 'group-hover:shadow-[0_0_30px_rgba(245,158,11,0.3)]',
+      features: [
+        { icon: BookOpen, text: 'Recetas' },
+        { icon: UtensilsCrossed, text: 'Ingredientes' },
+        { icon: ChefHat, text: 'Pasos' },
+      ],
+    },
+    {
       id: 'games',
       title: 'Juegos',
       description: 'Administra salas de juego activas por mesa',
@@ -170,7 +189,7 @@ const HomePage = () => {
 
   const modules = isAdmin()
     ? allModules
-    : allModules.filter(m => ['orders', 'products', 'music', 'feedback', 'games'].includes(m.id));
+    : allModules.filter(m => ['orders', 'products', 'music', 'feedback', 'recetarios', 'games'].includes(m.id));
 
   // Quick stats data
   const currentHour = new Date().getHours();
