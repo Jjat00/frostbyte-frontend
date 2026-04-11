@@ -34,6 +34,12 @@ const NewOrderPage = () => {
   const [itemNotes, setItemNotes] = useState({});
   const [showAccessCode, setShowAccessCode] = useState(null);
 
+  // Obtener mesas activas
+  const { data: tablesData } = useQuery({
+    queryKey: ['tables'],
+    queryFn: () => ordersService.getTables(),
+  });
+
   // Obtener categorías
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
@@ -392,10 +398,9 @@ const NewOrderPage = () => {
                 className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
               >
                 <option value="">Selecciona una mesa o barra</option>
-                <option value="0">Barra</option>
-                {[1, 2, 3, 4, 5].map((tableNum) => (
-                  <option key={tableNum} value={tableNum}>
-                    Mesa {tableNum}
+                {(tablesData || []).map((table) => (
+                  <option key={table.table_number} value={table.table_number}>
+                    {table.table_name}
                   </option>
                 ))}
               </select>
@@ -596,10 +601,9 @@ const NewOrderPage = () => {
                         className="w-full px-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
                       >
                         <option value="">Selecciona una mesa o barra</option>
-                        <option value="0">Barra</option>
-                        {[1, 2, 3, 4, 5].map((tableNum) => (
-                          <option key={tableNum} value={tableNum}>
-                            Mesa {tableNum}
+                        {(tablesData || []).map((table) => (
+                          <option key={table.table_number} value={table.table_number}>
+                            {table.table_name}
                           </option>
                         ))}
                       </select>

@@ -22,11 +22,11 @@ const QRScanPage = () => {
     },
   });
 
-  // Filtrar solo mesas 1-5 (excluir barra que es 0) y ordenar
+  // Filtrar mesas activas (excluir barra que es 0) y ordenar
   const availableTables = useMemo(() => {
     if (!tablesData) return [];
     return tablesData
-      .filter(table => table.table_number > 0 && table.table_number <= 5 && table.is_active)
+      .filter(table => table.table_number > 0 && table.is_active)
       .sort((a, b) => a.table_number - b.table_number);
   }, [tablesData]);
 
