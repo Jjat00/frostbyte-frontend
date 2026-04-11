@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -11,11 +11,227 @@ import {
   ChefHat,
   UtensilsCrossed,
   Image as ImageIcon,
-  GripVertical,
+  Upload,
+  Link as LinkIcon,
+  X,
 } from "lucide-react";
 import { recetariosService } from "@/services/recetarios.service";
 import { apiClient } from "@/services/api/client";
+import { uploadService } from "@/services/upload.service";
 import toast from "react-hot-toast";
+
+/**
+ * Campo de imagen con opcion de subir archivo o pegar URL
+ */
+const ImageField = ({ value, onChange, label, compact = false }) => {
+  const [mode, setMode] = useState(value ? "url" : "upload");
+  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const fileInputRef = useRef(null);
+
+  const handleUpload = useCallback(
+    async (file) => {
+      const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+      if (!allowed.includes(file.type)) {
+        toast.error("Tipo no permitido. Usa JPEG, PNG, WebP o GIF.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Archivo muy grande. Maximo 5MB.");
+        return;
+      }
+      setIsUploading(true);
+      setProgress(0);
+      try {
+        const result = await uploadService.uploadImage(file, (p) => setProgress(p));
+        onChange(result.url);
+        toast.success("Imagen subida");
+      } catch {
+        toast.error("Error al subir imagen");
+      } finally {
+        setIsUploading(false);
+        setProgress(0);
+      }
+    },
+    [onChange]
+  );
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleUpload(file);
+    e.target.value = "";
+  };
+
+  if (compact) {
+    return (
+      <div className="space-y-1">
+        <div className="flex gap-1">
+          <input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="URL imagen (opcional)"
+            className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            className="px-2.5 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-gray hover:text-secondary hover:border-secondary/50 transition-colors disabled:opacity-50"
+            title="Subir imagen"
+          >
+            {isUploading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Upload className="w-4 h-4" />
+            )}
+          </button>
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="px-2 py-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        {isUploading && (
+          <div className="bg-gray-700 rounded-full h-1 overflow-hidden">
+            <div
+              className="bg-primary h-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+        {value && (
+          <img
+            src={value}
+            alt="Preview"
+            className="h-16 rounded object-cover"
+          />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {label && <label className="block text-sm text-gray mb-1">{label}</label>}
+
+      {/* Mode tabs */}
+      <div className="flex gap-1 mb-2">
+        <button
+          type="button"
+          onClick={() => setMode("upload")}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+            mode === "upload"
+              ? "bg-secondary/20 text-secondary border border-secondary/30"
+              : "text-gray hover:text-light bg-white/[0.04]"
+          }`}
+        >
+          <Upload className="w-3.5 h-3.5" />
+          Subir
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("url")}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+            mode === "url"
+              ? "bg-secondary/20 text-secondary border border-secondary/30"
+              : "text-gray hover:text-light bg-white/[0.04]"
+          }`}
+        >
+          <LinkIcon className="w-3.5 h-3.5" />
+          URL
+        </button>
+      </div>
+
+      {mode === "upload" ? (
+        <div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+
+          {value && !isUploading ? (
+            <div className="relative rounded-lg overflow-hidden border border-white/[0.12]">
+              <img
+                src={value}
+                alt="Preview"
+                className="w-full h-48 object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-2 right-2 flex items-center gap-1 px-3 py-1.5 text-xs bg-black/60 text-light rounded-lg hover:bg-black/80 transition-colors"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                Cambiar
+              </button>
+            </div>
+          ) : isUploading ? (
+            <div className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-white/[0.12] rounded-lg">
+              <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+              <div className="w-32 bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-primary h-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray mt-1">{progress}%</p>
+            </div>
+          ) : (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-white/[0.12] rounded-lg cursor-pointer hover:border-secondary/50 transition-colors"
+            >
+              <Upload className="w-10 h-10 text-gray mb-2" />
+              <p className="text-sm text-gray">
+                Haz clic para subir una imagen
+              </p>
+              <p className="text-xs text-gray/60 mt-1">
+                JPEG, PNG, WebP o GIF. Max 5MB
+              </p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="https://..."
+            className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+          />
+          {value && (
+            <img
+              src={value}
+              alt="Preview"
+              className="h-32 rounded-lg object-cover"
+            />
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const EMPTY_STEP = { step_number: 1, instruction: "", image_url: "", tip: "" };
 const EMPTY_INGREDIENT = { name: "", quantity: "", unit: "", is_optional: false };
@@ -397,14 +613,13 @@ const RecetarioFormPage = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm text-gray mb-1">URL de imagen principal</label>
-            <input
-              name="image_url"
+          <div className="md:col-span-2">
+            <ImageField
+              label="Imagen principal"
               value={formData.image_url}
-              onChange={handleChange}
-              placeholder="https://..."
-              className={inputClass("image_url")}
+              onChange={(url) =>
+                setFormData((prev) => ({ ...prev, image_url: url }))
+              }
             />
           </div>
 
@@ -581,22 +796,18 @@ const RecetarioFormPage = () => {
                 className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
               />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <input
-                  value={step.tip}
-                  onChange={(e) => updateStep(index, "tip", e.target.value)}
-                  placeholder="Tip (opcional)"
-                  className="px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
-                />
-                <input
-                  value={step.image_url}
-                  onChange={(e) =>
-                    updateStep(index, "image_url", e.target.value)
-                  }
-                  placeholder="URL imagen (opcional)"
-                  className="px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
-                />
-              </div>
+              <input
+                value={step.tip}
+                onChange={(e) => updateStep(index, "tip", e.target.value)}
+                placeholder="Tip (opcional)"
+                className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+              />
+
+              <ImageField
+                compact
+                value={step.image_url}
+                onChange={(url) => updateStep(index, "image_url", url)}
+              />
             </div>
           ))}
         </div>
@@ -633,31 +844,35 @@ const RecetarioFormPage = () => {
             {images.map((img, index) => (
               <div
                 key={index}
-                className="flex flex-col sm:flex-row gap-2 items-start sm:items-center bg-white/[0.04] rounded-lg p-3"
+                className="bg-white/[0.04] rounded-lg p-3 space-y-2"
               >
-                <input
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray">
+                    Imagen {index + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <ImageField
+                  compact
                   value={img.image_url}
-                  onChange={(e) =>
-                    updateImage(index, "image_url", e.target.value)
-                  }
-                  placeholder="URL de imagen *"
-                  className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                  onChange={(url) => updateImage(index, "image_url", url)}
                 />
+
                 <input
                   value={img.caption}
                   onChange={(e) =>
                     updateImage(index, "caption", e.target.value)
                   }
-                  placeholder="Descripcion"
-                  className="w-full sm:w-40 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                  placeholder="Descripcion (opcional)"
+                  className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
                 />
-                <button
-                  type="button"
-                  onClick={() => removeImage(index)}
-                  className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
               </div>
             ))}
           </div>
