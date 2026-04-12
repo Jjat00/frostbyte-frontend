@@ -33,6 +33,7 @@ const SECTION_IDS = {
   vinos: "vinos",
   cervezas: "cervezas",
   cuates: "cuates",
+  luladas: "luladas",
   desguayabator: "desguayabator",
 };
 
