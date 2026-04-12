@@ -11,6 +11,7 @@ import Micheladas from "./Micheladas";
 import Vinos from "./Vinos";
 import Cervezas from "./Cervezas";
 import Cuates from "./Cuates";
+import Luladas from "./Luladas";
 import PromoTicker from "./PromoTicker";
 
 /**
@@ -30,6 +31,7 @@ const SECTION_COMPONENTS = {
   vinos: Vinos,
   cervezas: Cervezas,
   cuates: Cuates,
+  luladas: Luladas,
 };
 
 /**
