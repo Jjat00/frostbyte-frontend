@@ -63,6 +63,15 @@ const categoryDefaults = {
     gradient: "from-pink-400 to-rose-500",
     accentColor: "pink",
   },
+  luladas: {
+    icon: Citrus,
+    gradient: "from-lime-400 to-green-500",
+    visualGradient: "from-lime-300 via-green-400 to-emerald-500",
+    secondaryGradient: "from-transparent via-lime-200/20 to-transparent",
+    accentColor: "lime",
+    ringColor: "border-lime-400",
+    labelBg: "bg-gradient-to-r from-lime-500 to-emerald-600",
+  },
 };
 
 /**
