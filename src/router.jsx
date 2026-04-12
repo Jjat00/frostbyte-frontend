@@ -334,17 +334,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // Panel YouTube (protegido)
-  {
-    path: "/youtube",
-    element: (
-      <Lazy>
-        <ProtectedRoute>
-          <YouTubeAdminPage />
-        </ProtectedRoute>
-      </Lazy>
-    ),
-  },
   // Pantalla TV YouTube (publico, para la TV del local)
   {
     path: "/youtube-tv",
@@ -370,6 +359,14 @@ export const router = createBrowserRouter([
         element: (
           <Lazy>
             <SongRequestsPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: "youtube",
+        element: (
+          <Lazy>
+            <YouTubeAdminPage />
           </Lazy>
         ),
       },

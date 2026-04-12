@@ -52,6 +52,9 @@ export const ENDPOINTS = {
   SPOTIFY_AUTH: '/spotify/auth/',
   SPOTIFY_DISCONNECT: '/spotify/disconnect/',
 
+  // Music Settings
+  MUSIC_SETTINGS: '/music-settings/',
+
   // Feedback
   FEEDBACK: '/feedback/',
   FEEDBACK_DETAIL: (id) => `/feedback/${id}/`,
