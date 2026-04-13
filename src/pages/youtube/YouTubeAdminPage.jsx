@@ -89,7 +89,7 @@ const YouTubeAdminPage = () => {
     queryKey: ["youtube-recommendations"],
     queryFn: () => youtubeService.getRecommendations(),
     enabled: debouncedQuery.length < 2,
-    staleTime: 5 * 60 * 1000, // 5 min
+    staleTime: 30 * 1000, // 30s - se invalida cuando cambia el video sonando
   });
 
   // Now playing
@@ -120,6 +120,7 @@ const YouTubeAdminPage = () => {
       if (data.type === "youtube_changed") {
         queryClient.invalidateQueries({ queryKey: ["youtube-now-playing"] });
         queryClient.invalidateQueries({ queryKey: ["youtube-queue"] });
+        queryClient.invalidateQueries({ queryKey: ["youtube-recommendations"] });
       }
     },
     [queryClient]
