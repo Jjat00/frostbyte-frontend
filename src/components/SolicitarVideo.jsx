@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import MusicVisualizer from "@/components/MusicVisualizer";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Youtube,
@@ -228,6 +229,9 @@ const SolicitarVideo = () => {
         background: "linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)",
       }}
     >
+      {/* Canvas animation - esfera 3D de particulas */}
+      <MusicVisualizer isPlaying={!!nowPlaying?.video_id} />
+
       {/* Neon ambiental rojo */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-red-500 rounded-full filter blur-[120px]" />
