@@ -166,6 +166,26 @@ const YouTubeTVPage = () => {
           event.target.playVideo();
         },
         onStateChange: (event) => {
+          // Cuando empieza a reproducir un video nuevo, reportar al backend
+          // (incluye videos del Mix que no estan en nuestra DB)
+          if (event.data === window.YT.PlayerState.PLAYING) {
+            try {
+              const data = event.target.getVideoData?.();
+              if (data?.video_id) {
+                sendMessageRef.current?.({
+                  type: "tv_playing",
+                  video_id: data.video_id,
+                  title: data.title || "",
+                  channel_name: data.author || "",
+                  is_mix: modeRef.current === "mix",
+                });
+              }
+            } catch {
+              // ignore
+            }
+            return;
+          }
+
           if (event.data !== window.YT.PlayerState.ENDED) return;
 
           if (modeRef.current === "queue") {

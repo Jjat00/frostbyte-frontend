@@ -97,7 +97,7 @@ const NowPlayingCard = ({ video }) => {
             {video.channel_name}
           </p>
           <p className="text-[10px] text-red-400/70 uppercase tracking-wider font-bold mt-2">
-            En vivo en la pantalla
+            {video.is_mix ? "Mix automatico" : "En vivo en la pantalla"}
           </p>
         </div>
       </div>
