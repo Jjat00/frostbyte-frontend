@@ -49,6 +49,10 @@ const AIImageGeneratorPage = lazyLoad(() => import("./pages/products/AIImageGene
 const MusicLayout = lazyLoad(() => import("./pages/music/MusicLayout"));
 const SongRequestsPage = lazyLoad(() => import("./pages/music/SongRequestsPage"));
 
+// YouTube
+const YouTubeAdminPage = lazyLoad(() => import("./pages/youtube/YouTubeAdminPage"));
+const YouTubeTVPage = lazyLoad(() => import("./pages/youtube/YouTubeTVPage"));
+
 // Feedback
 const FeedbackLayout = lazyLoad(() => import("./pages/feedback/FeedbackLayout"));
 const FeedbackListPage = lazyLoad(() => import("./pages/feedback/FeedbackListPage"));
@@ -330,6 +334,15 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Pantalla TV YouTube (publico, para la TV del local)
+  {
+    path: "/youtube-tv",
+    element: (
+      <Lazy>
+        <YouTubeTVPage />
+      </Lazy>
+    ),
+  },
   // Panel de música (protegido)
   {
     path: "/musica",
@@ -346,6 +359,14 @@ export const router = createBrowserRouter([
         element: (
           <Lazy>
             <SongRequestsPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: "youtube",
+        element: (
+          <Lazy>
+            <YouTubeAdminPage />
           </Lazy>
         ),
       },

@@ -12,7 +12,7 @@ import MenuSections from "@/components/MenuSections";
 import Desguayabator from "@/components/Desguayabator";
 import WaterSection from "@/components/WaterSection";
 import ScrollToCarta from "@/components/ScrollToMenu";
-import SolicitarCancion from "@/components/SolicitarCancion";
+import SolicitarMusica from "@/components/SolicitarMusica";
 import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
@@ -48,7 +48,7 @@ function App() {
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
-          <SolicitarCancion />
+          <SolicitarMusica />
           <FeedbackSection />
           <Features />
           {/* <Gallery /> */}

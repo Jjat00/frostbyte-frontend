@@ -52,6 +52,9 @@ export const ENDPOINTS = {
   SPOTIFY_AUTH: '/spotify/auth/',
   SPOTIFY_DISCONNECT: '/spotify/disconnect/',
 
+  // Music Settings
+  MUSIC_SETTINGS: '/music-settings/',
+
   // Feedback
   FEEDBACK: '/feedback/',
   FEEDBACK_DETAIL: (id) => `/feedback/${id}/`,
@@ -64,6 +67,19 @@ export const ENDPOINTS = {
   // Recetarios
   RECETARIOS: '/recetarios/recipes/',
   RECETARIO_DETAIL: (slug) => `/recetarios/recipes/${slug}/`,
+
+  // YouTube Video Requests
+  VIDEO_REQUESTS: '/video-requests/',
+  VIDEO_REQUEST_DETAIL: (id) => `/video-requests/${id}/`,
+  VIDEO_REQUESTS_SEARCH: '/video-requests/search/',
+  VIDEO_REQUESTS_RECOMMENDATIONS: '/video-requests/recommendations/',
+  VIDEO_REQUESTS_NOW_PLAYING: '/video-requests/now-playing/',
+  VIDEO_REQUESTS_LAST_PLAYED: '/video-requests/last-played/',
+  VIDEO_REQUESTS_QUEUE: '/video-requests/queue/',
+  VIDEO_PLAYER_PLAY: '/video-requests/player/play/',
+  VIDEO_PLAYER_NEXT: '/video-requests/player/next/',
+  VIDEO_PLAYER_PAUSE: '/video-requests/player/pause/',
+  VIDEO_PLAYER_RESUME: '/video-requests/player/resume/',
 };
 
 export default ENDPOINTS;

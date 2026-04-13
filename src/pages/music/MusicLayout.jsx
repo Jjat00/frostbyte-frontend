@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Music,
+  Youtube,
   LogOut,
   Menu,
   X,
@@ -11,14 +13,32 @@ import {
   Package,
   ShoppingCart,
   Gamepad2,
+  Radio,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { musicService } from '@/services';
 
 const MusicLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAdmin } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: musicSettings } = useQuery({
+    queryKey: ['music-settings'],
+    queryFn: () => musicService.getSettings(),
+    staleTime: 30000,
+  });
+
+  const updateSourceMutation = useMutation({
+    mutationFn: (source) => musicService.updateSettings({ source }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['music-settings'] });
+    },
+  });
+
+  const activeSource = musicSettings?.source || 'youtube';
 
   const handleLogout = async () => {
     await logout();
@@ -59,10 +79,17 @@ const MusicLayout = () => {
       icon: Store,
     },
     {
-      name: 'Solicitudes de Canciones',
-      shortName: 'Canciones',
+      name: 'Spotify',
+      shortName: 'Spotify',
       path: '/musica',
       icon: Music,
+      end: true,
+    },
+    {
+      name: 'YouTube',
+      shortName: 'YouTube',
+      path: '/musica/youtube',
+      icon: Youtube,
       end: true,
     },
     {
@@ -279,6 +306,47 @@ const MusicLayout = () => {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen md:ml-64">
+        {/* Source selector - visible para admin */}
+        {isAdmin() && (
+          <div className="sticky top-0 md:top-0 z-20 backdrop-blur-xl bg-dark/80 border-b border-white/[0.08] px-4 md:px-6 py-3">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2 text-sm">
+                <Radio className="w-4 h-4 text-secondary" />
+                <span className="text-white/60">Fuente publica:</span>
+                <span className="font-bold text-white">
+                  {activeSource === 'youtube' ? 'YouTube' : 'Spotify'}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] rounded-full p-1">
+                <button
+                  onClick={() => updateSourceMutation.mutate('youtube')}
+                  disabled={updateSourceMutation.isPending}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    activeSource === 'youtube'
+                      ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                      : 'text-white/40 hover:text-white/70'
+                  }`}
+                >
+                  <Youtube className="w-3.5 h-3.5" />
+                  YouTube
+                </button>
+                <button
+                  onClick={() => updateSourceMutation.mutate('spotify')}
+                  disabled={updateSourceMutation.isPending}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    activeSource === 'spotify'
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                      : 'text-white/40 hover:text-white/70'
+                  }`}
+                >
+                  <Music className="w-3.5 h-3.5" />
+                  Spotify
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Page content */}
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto">
           <Outlet />
