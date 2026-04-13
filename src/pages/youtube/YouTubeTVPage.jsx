@@ -5,18 +5,22 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 
 /**
  * Pagina TV - Se abre en la pantalla del local.
- * Reproduce videos de YouTube en secuencia usando la IFrame API.
- * Escucha via WebSocket comandos de reproduccion y notifica cuando un video termina.
+ * - Modo "queue": reproduce videos solicitados, uno por uno.
+ * - Modo "mix": cuando la cola esta vacia, reproduce el Mix de YouTube
+ *   (radio auto-generada) basado en el ultimo video solicitado. Asi siempre
+ *   hay algo sonando.
  */
 const YouTubeTVPage = () => {
   const queryClient = useQueryClient();
   const playerRef = useRef(null);
   const playerContainerRef = useRef(null);
   const [apiReady, setApiReady] = useState(false);
-  const [currentVideo, setCurrentVideo] = useState(null);
+  const [current, setCurrent] = useState(null);
+  // current: { video_id, title, mode: 'queue' | 'mix' }
   const sendMessageRef = useRef(null);
+  const modeRef = useRef("idle");
 
-  // Cargar la IFrame API de YouTube una vez
+  // Cargar IFrame API
   useEffect(() => {
     if (window.YT && window.YT.Player) {
       setApiReady(true);
@@ -33,7 +37,6 @@ const YouTubeTVPage = () => {
     window.onYouTubeIframeAPIReady = () => setApiReady(true);
   }, []);
 
-  // Consultar el video actual
   const { data: nowPlaying } = useQuery({
     queryKey: ["youtube-now-playing"],
     queryFn: async () => {
@@ -46,19 +49,25 @@ const YouTubeTVPage = () => {
     refetchInterval: 5000,
   });
 
-  // WebSocket para recibir comandos del admin
-  const handleWsMessage = useCallback((data) => {
-    if (data.type === "play_video" && data.video_id) {
-      setCurrentVideo({ video_id: data.video_id, title: data.title || "" });
-    } else if (data.type === "player_control") {
-      if (!playerRef.current) return;
-      if (data.action === "pause") playerRef.current.pauseVideo?.();
-      else if (data.action === "resume") playerRef.current.playVideo?.();
-    } else if (data.type === "youtube_changed") {
-      queryClient.invalidateQueries({ queryKey: ["youtube-now-playing"] });
-      queryClient.invalidateQueries({ queryKey: ["youtube-queue"] });
-    }
-  }, [queryClient]);
+  // WebSocket
+  const handleWsMessage = useCallback(
+    (data) => {
+      if (data.type === "play_video" && data.video_id) {
+        setCurrent({
+          video_id: data.video_id,
+          title: data.title || "",
+          mode: "queue",
+        });
+      } else if (data.type === "player_control") {
+        if (!playerRef.current) return;
+        if (data.action === "pause") playerRef.current.pauseVideo?.();
+        else if (data.action === "resume") playerRef.current.playVideo?.();
+      } else if (data.type === "youtube_changed") {
+        queryClient.invalidateQueries({ queryKey: ["youtube-now-playing"] });
+      }
+    },
+    [queryClient]
+  );
 
   const { sendMessage } = useWebSocket("/ws/youtube/", {
     onMessage: handleWsMessage,
@@ -69,58 +78,133 @@ const YouTubeTVPage = () => {
     sendMessageRef.current = sendMessage;
   }, [sendMessage]);
 
-  // Sincronizar con el now-playing de la API si no hay video local
   useEffect(() => {
-    if (nowPlaying && nowPlaying.video_id && !currentVideo) {
-      setCurrentVideo({
-        video_id: nowPlaying.video_id,
-        title: nowPlaying.title,
-      });
-    }
-  }, [nowPlaying, currentVideo]);
+    modeRef.current = current?.mode || "idle";
+  }, [current?.mode]);
 
-  // Crear / actualizar el reproductor cuando cambia el video
+  // Sincronizar con now-playing; si no hay, iniciar Mix con el ultimo reproducido
   useEffect(() => {
-    if (!apiReady || !currentVideo?.video_id || !playerContainerRef.current) return;
-
-    if (playerRef.current && playerRef.current.loadVideoById) {
-      playerRef.current.loadVideoById(currentVideo.video_id);
+    // Hay un video solicitado actualmente
+    if (nowPlaying?.video_id) {
+      if (current?.video_id !== nowPlaying.video_id || current?.mode !== "queue") {
+        setCurrent({
+          video_id: nowPlaying.video_id,
+          title: nowPlaying.title,
+          mode: "queue",
+        });
+      }
       return;
     }
 
-    playerRef.current = new window.YT.Player(playerContainerRef.current, {
-      videoId: currentVideo.video_id,
-      playerVars: {
-        autoplay: 1,
-        controls: 1,
-        modestbranding: 1,
-        rel: 0,
-        playsinline: 1,
-      },
+    // No hay nada en cola y ya estamos en mix - no hacer nada
+    if (current?.mode === "mix") return;
+
+    // Buscar el ultimo reproducido para iniciar el Mix
+    let cancelled = false;
+    (async () => {
+      try {
+        const last = await youtubeService.getLastPlayed();
+        if (cancelled) return;
+        if (last?.video_id) {
+          setCurrent({
+            video_id: last.video_id,
+            title: last.title,
+            mode: "mix",
+          });
+        }
+      } catch {
+        // no hay ningun video previo, el TV queda en idle
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [nowPlaying?.video_id, current?.mode, current?.video_id]);
+
+  // Crear / actualizar el reproductor
+  useEffect(() => {
+    if (!apiReady || !current?.video_id || !playerContainerRef.current) return;
+
+    const isMix = current.mode === "mix";
+    const mixListId = `RD${current.video_id}`;
+
+    // Si ya hay player, actualizar sin destruir
+    if (playerRef.current) {
+      try {
+        if (isMix) {
+          playerRef.current.loadPlaylist?.({
+            list: mixListId,
+            listType: "playlist",
+            index: 0,
+          });
+        } else {
+          playerRef.current.loadVideoById?.(current.video_id);
+        }
+      } catch {
+        // fallback: recrear
+      }
+      return;
+    }
+
+    const playerVars = {
+      autoplay: 1,
+      controls: 1,
+      modestbranding: 1,
+      rel: 0,
+      playsinline: 1,
+    };
+
+    if (isMix) {
+      playerVars.listType = "playlist";
+      playerVars.list = mixListId;
+    }
+
+    const playerConfig = {
+      playerVars,
       events: {
         onReady: (event) => {
           event.target.playVideo();
         },
         onStateChange: (event) => {
-          // 0 = ended
-          if (event.data === window.YT.PlayerState.ENDED) {
+          if (event.data !== window.YT.PlayerState.ENDED) return;
+
+          if (modeRef.current === "queue") {
+            // Notificar fin + pedir siguiente
             sendMessageRef.current?.({
               type: "video_ended",
-              video_id: currentVideo.video_id,
+              video_id: current.video_id,
             });
-            // Pedir el siguiente
             youtubeService.playerNext().catch(() => {});
           }
+          // Si es mix, la playlist avanza sola
         },
         onError: () => {
-          // Si falla un video, saltamos al siguiente
-          youtubeService.playerNext().catch(() => {});
+          if (modeRef.current === "queue") {
+            youtubeService.playerNext().catch(() => {});
+          } else if (modeRef.current === "mix" && playerRef.current) {
+            // En mix, saltar al siguiente video del playlist
+            try {
+              playerRef.current.nextVideo?.();
+            } catch {
+              // ignore
+            }
+          }
         },
       },
-    });
+    };
 
+    // Solo incluir videoId en modo queue; en mix la playlist se carga via playerVars.list
+    if (!isMix) {
+      playerConfig.videoId = current.video_id;
+    }
+
+    playerRef.current = new window.YT.Player(playerContainerRef.current, playerConfig);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiReady, current?.video_id, current?.mode]);
+
+  // Cleanup al desmontar
+  useEffect(() => {
     return () => {
-      // Nota: destruir el player al desmontar el componente completo
       if (playerRef.current && playerRef.current.destroy) {
         try {
           playerRef.current.destroy();
@@ -130,15 +214,25 @@ const YouTubeTVPage = () => {
         playerRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiReady, currentVideo?.video_id]);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden">
-      {currentVideo?.video_id ? (
-        <div className="absolute inset-0">
-          <div ref={playerContainerRef} className="w-full h-full" />
-        </div>
+      {current?.video_id ? (
+        <>
+          <div className="absolute inset-0">
+            <div ref={playerContainerRef} className="w-full h-full" />
+          </div>
+          {current.mode === "mix" && (
+            <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 text-white/80 text-xs font-bold flex items-center gap-2">
+              <span className="flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+              </span>
+              MIX AUTOMATICO
+            </div>
+          )}
+        </>
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <div className="w-20 h-20 rounded-full border-4 border-primary/30 border-t-primary animate-spin mb-8" />

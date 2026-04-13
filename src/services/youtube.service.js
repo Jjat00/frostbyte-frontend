@@ -40,8 +40,18 @@ export const youtubeService = {
     return response.data;
   },
 
+  async getRecommendations() {
+    const response = await apiClient.get(ENDPOINTS.VIDEO_REQUESTS_RECOMMENDATIONS);
+    return response.data;
+  },
+
   async getNowPlaying() {
     const response = await apiClient.get(ENDPOINTS.VIDEO_REQUESTS_NOW_PLAYING);
+    return response.data;
+  },
+
+  async getLastPlayed() {
+    const response = await apiClient.get(ENDPOINTS.VIDEO_REQUESTS_LAST_PLAYED);
     return response.data;
   },
 

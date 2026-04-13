@@ -11,6 +11,7 @@ import {
   Tv,
   Youtube,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 import { youtubeService } from "@/services/youtube.service";
 import { useWebSocket } from "@/hooks/useWebSocket";
@@ -30,6 +31,40 @@ const formatDuration = (iso) => {
   return `${mm}:${String(ss).padStart(2, "0")}`;
 };
 
+const VideoResultCard = ({ video, onPlay, onAdd }) => (
+  <div className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition">
+    <img
+      src={video.thumbnail}
+      alt={video.title}
+      className="w-24 h-14 md:w-32 md:h-20 rounded object-cover shrink-0"
+    />
+    <div className="flex-1 min-w-0">
+      <p className="font-semibold text-sm md:text-base line-clamp-2">
+        {video.title}
+      </p>
+      <p className="text-white/50 text-xs md:text-sm truncate">
+        {video.channel_name} · {formatDuration(video.duration)}
+      </p>
+    </div>
+    <div className="flex items-center gap-1 shrink-0">
+      <button
+        onClick={() => onPlay(video)}
+        className="p-2 rounded-lg bg-primary/20 hover:bg-primary/40 transition"
+        title="Reproducir ahora"
+      >
+        <Play className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => onAdd(video)}
+        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition"
+        title="Agregar a cola"
+      >
+        <Plus className="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+);
+
 const YouTubeAdminPage = () => {
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
@@ -47,6 +82,14 @@ const YouTubeAdminPage = () => {
     queryFn: () => youtubeService.search(debouncedQuery),
     enabled: debouncedQuery.length >= 2,
     staleTime: 60000,
+  });
+
+  // Recomendaciones (se muestran cuando no hay busqueda)
+  const { data: recommendations, isLoading: isLoadingRecommendations } = useQuery({
+    queryKey: ["youtube-recommendations"],
+    queryFn: () => youtubeService.getRecommendations(),
+    enabled: debouncedQuery.length < 2,
+    staleTime: 5 * 60 * 1000, // 5 min
   });
 
   // Now playing
@@ -243,44 +286,50 @@ const YouTubeAdminPage = () => {
             )}
           </div>
 
-          {searchResults && searchResults.length > 0 && (
+          {/* Resultados de busqueda */}
+          {debouncedQuery.length >= 2 && searchResults && searchResults.length > 0 && (
             <div className="space-y-2">
               {searchResults.map((video) => (
-                <div
+                <VideoResultCard
                   key={video.video_id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition"
-                >
-                  <img
-                    src={video.thumbnail}
-                    alt={video.title}
-                    className="w-24 h-14 md:w-32 md:h-20 rounded object-cover shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm md:text-base line-clamp-2">
-                      {video.title}
-                    </p>
-                    <p className="text-white/50 text-xs md:text-sm truncate">
-                      {video.channel_name} · {formatDuration(video.duration)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      onClick={() => handlePlayNow(video)}
-                      className="p-2 rounded-lg bg-primary/20 hover:bg-primary/40 transition"
-                      title="Reproducir ahora"
-                    >
-                      <Play className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleAddToQueue(video)}
-                      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition"
-                      title="Agregar a cola"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                  video={video}
+                  onPlay={handlePlayNow}
+                  onAdd={handleAddToQueue}
+                />
               ))}
+            </div>
+          )}
+
+          {/* Recomendaciones (cuando no hay busqueda) */}
+          {debouncedQuery.length < 2 && (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-4 h-4 text-red-400" />
+                <h2 className="text-xs uppercase tracking-widest text-white/60 font-semibold">
+                  Recomendaciones
+                </h2>
+              </div>
+              {isLoadingRecommendations ? (
+                <div className="flex items-center gap-2 text-white/40 text-sm py-6">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Cargando recomendaciones...
+                </div>
+              ) : recommendations && recommendations.length > 0 ? (
+                <div className="space-y-2">
+                  {recommendations.map((video) => (
+                    <VideoResultCard
+                      key={video.video_id}
+                      video={video}
+                      onPlay={handlePlayNow}
+                      onAdd={handleAddToQueue}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-white/30 text-sm">
+                  No hay recomendaciones disponibles
+                </p>
+              )}
             </div>
           )}
         </div>
