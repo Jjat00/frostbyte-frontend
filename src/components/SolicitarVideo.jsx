@@ -61,28 +61,45 @@ const YouTubeVideoCard = ({ video, onSelect, isLoading }) => (
   </motion.button>
 );
 
-const NowPlayingEmbed = ({ video }) => {
+const NowPlayingCard = ({ video }) => {
   if (!video?.video_id) return null;
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 max-w-lg mx-auto">
       <p className="text-[10px] text-red-400 font-bold uppercase tracking-[0.2em] mb-3 text-center">
-        Sonando ahora
+        Reproduciendo ahora
       </p>
-      <div className="relative aspect-video max-w-lg mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(239,68,68,0.15)]">
-        <iframe
-          src={`https://www.youtube.com/embed/${video.video_id}?autoplay=0&controls=1&modestbranding=1&rel=0`}
-          title={video.title}
-          className="w-full h-full"
-          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-      <div className="max-w-lg mx-auto mt-3 text-center">
-        <p className="text-white font-bold text-base md:text-lg line-clamp-2">
-          {video.title}
-        </p>
-        <p className="text-white/50 text-sm truncate">{video.channel_name}</p>
+      <div className="flex items-center gap-4 backdrop-blur-md bg-white/[0.04] border border-white/10 rounded-2xl p-3 shadow-[0_0_40px_rgba(239,68,68,0.1)]">
+        {/* Thumbnail */}
+        <div className="relative flex-shrink-0">
+          {video.thumbnail ? (
+            <img
+              src={video.thumbnail}
+              alt={video.title}
+              className="w-24 h-16 md:w-32 md:h-20 rounded-xl object-cover border border-white/10"
+            />
+          ) : (
+            <div className="w-24 h-16 md:w-32 md:h-20 rounded-xl bg-white/10 flex items-center justify-center">
+              <Youtube className="w-6 h-6 text-white/30" />
+            </div>
+          )}
+          {/* Pulse indicator */}
+          <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-bold text-sm md:text-base line-clamp-2">
+            {video.title}
+          </p>
+          <p className="text-white/50 text-xs md:text-sm truncate mt-1">
+            {video.channel_name}
+          </p>
+          <p className="text-[10px] text-red-400/70 uppercase tracking-wider font-bold mt-2">
+            En vivo en la pantalla
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -244,7 +261,7 @@ const SolicitarVideo = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          {nowPlaying?.video_id && <NowPlayingEmbed video={nowPlaying} />}
+          {nowPlaying?.video_id && <NowPlayingCard video={nowPlaying} />}
         </motion.div>
 
         {/* Search + Results */}
