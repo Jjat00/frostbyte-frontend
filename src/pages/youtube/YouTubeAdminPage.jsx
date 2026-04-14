@@ -186,12 +186,15 @@ const YouTubeAdminPage = () => {
     },
   });
 
-  // Recomendaciones (se muestran cuando no hay busqueda)
+  // Recomendaciones (se muestran cuando no hay busqueda).
+  // staleTime 10min para evitar refetches agresivos que consumen cuota.
+  // Se actualizan al abrir la pagina o despues de 10 min.
   const { data: recommendations, isLoading: isLoadingRecommendations } = useQuery({
     queryKey: ["youtube-recommendations"],
     queryFn: () => youtubeService.getRecommendations(),
     enabled: debouncedQuery.length < 3,
-    staleTime: 30 * 1000, // 30s - se invalida cuando cambia el video sonando
+    staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   // Now playing
@@ -217,12 +220,14 @@ const YouTubeAdminPage = () => {
   const queue = queueData?.queue || [];
 
   // WebSocket para sincronizacion en tiempo real
+  // Nota: no invalidamos recommendations aqui para no gastar cuota. Cada cancion
+  // del Mix dispara youtube_changed, y refetchear recommendations cada vez puede
+  // sumar 101 unidades por cancion si el canal semilla cambia.
   const handleWsMessage = useCallback(
     (data) => {
       if (data.type === "youtube_changed") {
         queryClient.invalidateQueries({ queryKey: ["youtube-now-playing"] });
         queryClient.invalidateQueries({ queryKey: ["youtube-queue"] });
-        queryClient.invalidateQueries({ queryKey: ["youtube-recommendations"] });
       }
     },
     [queryClient]
