@@ -12,6 +12,7 @@ import {
   Youtube,
   Loader2,
   Sparkles,
+  Gauge,
 } from "lucide-react";
 import { youtubeService } from "@/services/youtube.service";
 import { useWebSocket } from "@/hooks/useWebSocket";
@@ -29,6 +30,55 @@ const formatDuration = (iso) => {
   const ss = s ? parseInt(s) : 0;
   if (hh > 0) return `${hh}:${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
   return `${mm}:${String(ss).padStart(2, "0")}`;
+};
+
+const QuotaBar = ({ quota }) => {
+  const pct = quota.percentage || 0;
+  const color =
+    pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-yellow-500" : "bg-green-500";
+  const textColor =
+    pct >= 90
+      ? "text-red-400"
+      : pct >= 70
+      ? "text-yellow-400"
+      : "text-green-400";
+
+  return (
+    <div className="mb-6 rounded-xl bg-white/[0.03] border border-white/[0.08] p-4">
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+        <div className="flex items-center gap-2">
+          <Gauge className={`w-4 h-4 ${textColor}`} />
+          <span className="text-xs uppercase tracking-widest text-white/60 font-semibold">
+            Cuota YouTube hoy
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className={`font-bold ${textColor}`}>
+            {quota.used.toLocaleString("es-CO")}
+          </span>
+          <span className="text-white/40">/</span>
+          <span className="text-white/70">
+            {quota.limit.toLocaleString("es-CO")}
+          </span>
+          <span className="text-white/40">·</span>
+          <span className="text-white/60">
+            {quota.remaining.toLocaleString("es-CO")} restantes
+          </span>
+        </div>
+      </div>
+      <div className="h-2 w-full rounded-full bg-white/[0.05] overflow-hidden">
+        <div
+          className={`h-full ${color} transition-all duration-500`}
+          style={{ width: `${Math.min(100, pct)}%` }}
+        />
+      </div>
+      {pct >= 90 && (
+        <p className="mt-2 text-xs text-red-400">
+          Cuota casi agotada. Se renueva a medianoche (hora Pacifico).
+        </p>
+      )}
+    </div>
+  );
 };
 
 const VideoResultCard = ({ video, onPlay, onAdd }) => (
@@ -70,9 +120,9 @@ const YouTubeAdminPage = () => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  // Debounce busqueda
+  // Debounce busqueda (1s + min 3 caracteres para reducir consumo de cuota)
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(query.trim()), 500);
+    const timer = setTimeout(() => setDebouncedQuery(query.trim()), 1000);
     return () => clearTimeout(timer);
   }, [query]);
 
@@ -80,15 +130,22 @@ const YouTubeAdminPage = () => {
   const { data: searchResults, isLoading: isSearching } = useQuery({
     queryKey: ["youtube-search", debouncedQuery],
     queryFn: () => youtubeService.search(debouncedQuery),
-    enabled: debouncedQuery.length >= 2,
+    enabled: debouncedQuery.length >= 3,
     staleTime: 60000,
+  });
+
+  // Estado de cuota
+  const { data: quotaStatus } = useQuery({
+    queryKey: ["youtube-quota-status"],
+    queryFn: () => youtubeService.getQuotaStatus(),
+    refetchInterval: 30000,
   });
 
   // Recomendaciones (se muestran cuando no hay busqueda)
   const { data: recommendations, isLoading: isLoadingRecommendations } = useQuery({
     queryKey: ["youtube-recommendations"],
     queryFn: () => youtubeService.getRecommendations(),
-    enabled: debouncedQuery.length < 2,
+    enabled: debouncedQuery.length < 3,
     staleTime: 30 * 1000, // 30s - se invalida cuando cambia el video sonando
   });
 
@@ -226,6 +283,9 @@ const YouTubeAdminPage = () => {
           </a>
         </div>
 
+        {/* Quota status */}
+        {quotaStatus && <QuotaBar quota={quotaStatus} />}
+
         {/* Now Playing */}
         <div className="mb-8 liquid-glass backdrop-blur-xl bg-white/[0.06] border border-white/[0.1] rounded-2xl p-4 md:p-6">
           <h2 className="text-xs uppercase tracking-widest text-white/40 mb-3 font-semibold">
@@ -288,7 +348,7 @@ const YouTubeAdminPage = () => {
           </div>
 
           {/* Resultados de busqueda */}
-          {debouncedQuery.length >= 2 && searchResults && searchResults.length > 0 && (
+          {debouncedQuery.length >= 3 && searchResults && searchResults.length > 0 && (
             <div className="space-y-2">
               {searchResults.map((video) => (
                 <VideoResultCard
@@ -302,7 +362,7 @@ const YouTubeAdminPage = () => {
           )}
 
           {/* Recomendaciones (cuando no hay busqueda) */}
-          {debouncedQuery.length < 2 && (
+          {debouncedQuery.length < 3 && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-red-400" />

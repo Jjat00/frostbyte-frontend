@@ -73,6 +73,7 @@ export const ENDPOINTS = {
   VIDEO_REQUEST_DETAIL: (id) => `/video-requests/${id}/`,
   VIDEO_REQUESTS_SEARCH: '/video-requests/search/',
   VIDEO_REQUESTS_RECOMMENDATIONS: '/video-requests/recommendations/',
+  VIDEO_REQUESTS_QUOTA_STATUS: '/video-requests/quota-status/',
   VIDEO_REQUESTS_NOW_PLAYING: '/video-requests/now-playing/',
   VIDEO_REQUESTS_LAST_PLAYED: '/video-requests/last-played/',
   VIDEO_REQUESTS_QUEUE: '/video-requests/queue/',

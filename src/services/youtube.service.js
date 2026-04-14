@@ -45,6 +45,11 @@ export const youtubeService = {
     return response.data;
   },
 
+  async getQuotaStatus() {
+    const response = await apiClient.get(ENDPOINTS.VIDEO_REQUESTS_QUOTA_STATUS);
+    return response.data;
+  },
+
   async getNowPlaying() {
     const response = await apiClient.get(ENDPOINTS.VIDEO_REQUESTS_NOW_PLAYING);
     return response.data;
