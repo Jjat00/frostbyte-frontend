@@ -50,6 +50,11 @@ export const youtubeService = {
     return response.data;
   },
 
+  async resetQuotaCounter() {
+    const response = await apiClient.post(ENDPOINTS.VIDEO_REQUESTS_QUOTA_RESET);
+    return response.data;
+  },
+
   async getNowPlaying() {
     const response = await apiClient.get(ENDPOINTS.VIDEO_REQUESTS_NOW_PLAYING);
     return response.data;

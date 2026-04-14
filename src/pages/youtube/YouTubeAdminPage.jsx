@@ -13,6 +13,7 @@ import {
   Loader2,
   Sparkles,
   Gauge,
+  RotateCcw,
 } from "lucide-react";
 import { youtubeService } from "@/services/youtube.service";
 import { useWebSocket } from "@/hooks/useWebSocket";
@@ -50,7 +51,7 @@ const resetTimeColombia = () => {
   });
 };
 
-const QuotaBar = ({ quota }) => {
+const QuotaBar = ({ quota, onReset, isResetting }) => {
   const pct = quota.percentage || 0;
   const isExhausted = quota.remaining <= 0;
   const color =
@@ -75,18 +76,28 @@ const QuotaBar = ({ quota }) => {
             Cuota YouTube hoy
           </span>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className={`font-bold ${textColor}`}>
-            {quota.used.toLocaleString("es-CO")}
-          </span>
-          <span className="text-white/40">/</span>
-          <span className="text-white/70">
-            {quota.limit.toLocaleString("es-CO")}
-          </span>
-          <span className="text-white/40">·</span>
-          <span className="text-white/60">
-            {quota.remaining.toLocaleString("es-CO")} restantes
-          </span>
+        <div className="flex items-center gap-3 text-sm">
+          <div className="flex items-center gap-2">
+            <span className={`font-bold ${textColor}`}>
+              {quota.used.toLocaleString("es-CO")}
+            </span>
+            <span className="text-white/40">/</span>
+            <span className="text-white/70">
+              {quota.limit.toLocaleString("es-CO")}
+            </span>
+            <span className="text-white/40">·</span>
+            <span className="text-white/60">
+              {quota.remaining.toLocaleString("es-CO")} restantes
+            </span>
+          </div>
+          <button
+            onClick={onReset}
+            disabled={isResetting}
+            title="Resetear contador local (no altera la cuota real en Google)"
+            className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06] transition disabled:opacity-50"
+          >
+            <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? "animate-spin" : ""}`} />
+          </button>
         </div>
       </div>
       <div className="h-2 w-full rounded-full bg-white/[0.05] overflow-hidden">
@@ -166,6 +177,13 @@ const YouTubeAdminPage = () => {
     queryKey: ["youtube-quota-status"],
     queryFn: () => youtubeService.getQuotaStatus(),
     refetchInterval: 30000,
+  });
+
+  const resetQuotaMutation = useMutation({
+    mutationFn: () => youtubeService.resetQuotaCounter(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["youtube-quota-status"] });
+    },
   });
 
   // Recomendaciones (se muestran cuando no hay busqueda)
@@ -311,7 +329,13 @@ const YouTubeAdminPage = () => {
         </div>
 
         {/* Quota status */}
-        {quotaStatus && <QuotaBar quota={quotaStatus} />}
+        {quotaStatus && (
+          <QuotaBar
+            quota={quotaStatus}
+            onReset={() => resetQuotaMutation.mutate()}
+            isResetting={resetQuotaMutation.isPending}
+          />
+        )}
 
         {/* Now Playing */}
         <div className="mb-8 liquid-glass backdrop-blur-xl bg-white/[0.06] border border-white/[0.1] rounded-2xl p-4 md:p-6">
