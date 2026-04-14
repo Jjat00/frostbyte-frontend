@@ -32,12 +32,35 @@ const formatDuration = (iso) => {
   return `${mm}:${String(ss).padStart(2, "0")}`;
 };
 
+// Proxima renovacion de cuota: medianoche hora Pacifico (UTC-8) = 03:00 UTC-5
+const resetTimeColombia = () => {
+  const now = new Date();
+  // Medianoche Pacifico = 8am UTC. En UTC-5 son las 3am.
+  const nextResetUTC = new Date(now);
+  nextResetUTC.setUTCHours(8, 0, 0, 0);
+  if (nextResetUTC <= now) {
+    nextResetUTC.setUTCDate(nextResetUTC.getUTCDate() + 1);
+  }
+  // Formato hora Colombia (UTC-5)
+  return nextResetUTC.toLocaleString("es-CO", {
+    timeZone: "America/Bogota",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
+
 const QuotaBar = ({ quota }) => {
   const pct = quota.percentage || 0;
+  const isExhausted = quota.remaining <= 0;
   const color =
-    pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-yellow-500" : "bg-green-500";
+    isExhausted || pct >= 90
+      ? "bg-red-500"
+      : pct >= 70
+      ? "bg-yellow-500"
+      : "bg-green-500";
   const textColor =
-    pct >= 90
+    isExhausted || pct >= 90
       ? "text-red-400"
       : pct >= 70
       ? "text-yellow-400"
@@ -72,11 +95,15 @@ const QuotaBar = ({ quota }) => {
           style={{ width: `${Math.min(100, pct)}%` }}
         />
       </div>
-      {pct >= 90 && (
+      {isExhausted ? (
         <p className="mt-2 text-xs text-red-400">
-          Cuota casi agotada. Se renueva a medianoche (hora Pacifico).
+          Cuota agotada. Se renueva hoy a las {resetTimeColombia()} (hora Colombia).
         </p>
-      )}
+      ) : pct >= 90 ? (
+        <p className="mt-2 text-xs text-yellow-400">
+          Queda poca cuota. Se renueva a las {resetTimeColombia()} (hora Colombia).
+        </p>
+      ) : null}
     </div>
   );
 };
