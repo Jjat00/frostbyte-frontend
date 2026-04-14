@@ -168,7 +168,7 @@ const YouTubeAdminPage = () => {
   const { data: searchResults, isLoading: isSearching } = useQuery({
     queryKey: ["youtube-search", debouncedQuery],
     queryFn: () => youtubeService.search(debouncedQuery),
-    enabled: debouncedQuery.length >= 3,
+    enabled: debouncedQuery.length >= 4,
     staleTime: 60000,
   });
 
@@ -192,7 +192,7 @@ const YouTubeAdminPage = () => {
   const { data: recommendations, isLoading: isLoadingRecommendations } = useQuery({
     queryKey: ["youtube-recommendations"],
     queryFn: () => youtubeService.getRecommendations(),
-    enabled: debouncedQuery.length < 3,
+    enabled: debouncedQuery.length < 4,
     staleTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
@@ -404,7 +404,7 @@ const YouTubeAdminPage = () => {
           </div>
 
           {/* Resultados de busqueda */}
-          {debouncedQuery.length >= 3 && searchResults && searchResults.length > 0 && (
+          {debouncedQuery.length >= 4 && searchResults && searchResults.length > 0 && (
             <div className="space-y-2">
               {searchResults.map((video) => (
                 <VideoResultCard
@@ -418,7 +418,7 @@ const YouTubeAdminPage = () => {
           )}
 
           {/* Recomendaciones (cuando no hay busqueda) */}
-          {debouncedQuery.length < 3 && (
+          {debouncedQuery.length < 4 && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-red-400" />

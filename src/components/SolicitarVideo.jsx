@@ -140,7 +140,7 @@ const SolicitarVideo = () => {
   const { data: searchResults, isLoading: isSearching } = useQuery({
     queryKey: ["youtube-search-public", debouncedQuery],
     queryFn: () => youtubeService.search(debouncedQuery),
-    enabled: debouncedQuery.length >= 3,
+    enabled: debouncedQuery.length >= 4,
     staleTime: 60000,
   });
 
@@ -310,7 +310,7 @@ const SolicitarVideo = () => {
               </div>
 
               <AnimatePresence>
-                {showResults && debouncedQuery.length >= 3 && (
+                {showResults && debouncedQuery.length >= 4 && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
