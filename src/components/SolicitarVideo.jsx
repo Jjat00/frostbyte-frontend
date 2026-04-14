@@ -123,7 +123,8 @@ const SolicitarVideo = () => {
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(searchQuery.trim()), 500);
+    // 1s debounce para reducir consumo de cuota de YouTube API
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery.trim()), 1000);
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
@@ -139,7 +140,7 @@ const SolicitarVideo = () => {
   const { data: searchResults, isLoading: isSearching } = useQuery({
     queryKey: ["youtube-search-public", debouncedQuery],
     queryFn: () => youtubeService.search(debouncedQuery),
-    enabled: debouncedQuery.length >= 2,
+    enabled: debouncedQuery.length >= 3,
     staleTime: 60000,
   });
 
@@ -309,7 +310,7 @@ const SolicitarVideo = () => {
               </div>
 
               <AnimatePresence>
-                {showResults && debouncedQuery.length >= 2 && (
+                {showResults && debouncedQuery.length >= 3 && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
