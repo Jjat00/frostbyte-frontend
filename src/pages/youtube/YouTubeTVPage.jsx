@@ -19,6 +19,10 @@ const YouTubeTVPage = () => {
   // current: { video_id, title, mode: 'queue' | 'mix' }
   const sendMessageRef = useRef(null);
   const modeRef = useRef("idle");
+  const currentRef = useRef(null);
+  useEffect(() => {
+    currentRef.current = current;
+  }, [current]);
 
   // Cargar IFrame API
   useEffect(() => {
@@ -82,22 +86,42 @@ const YouTubeTVPage = () => {
     modeRef.current = current?.mode || "idle";
   }, [current?.mode]);
 
-  // Sincronizar con now-playing; si no hay, iniciar Mix con el ultimo reproducido
+  // Sincronizar con now-playing; si no hay, iniciar Mix con el ultimo reproducido.
+  // IMPORTANTE: solo depende de nowPlaying.video_id - no de current. Si dependiera
+  // de current, cada cambio via WS (play_video) dispararia este efecto con un
+  // nowPlaying stale y revertiria al video anterior, rompiendo la transicion.
   useEffect(() => {
-    // Hay un video solicitado actualmente
+    const c = currentRef.current;
+
+    // Hay un video sonando actualmente (reportado por backend)
     if (nowPlaying?.video_id) {
-      if (current?.video_id !== nowPlaying.video_id || current?.mode !== "queue") {
+      // Ya estamos reproduciendo este video, no hacer nada
+      if (c?.video_id === nowPlaying.video_id) return;
+
+      // Si el video viene del Mix automatico, mantener el modo mix del reproductor
+      // (el player ya esta avanzando en el playlist, no queremos interrumpirlo)
+      if (nowPlaying.is_mix) {
+        // Solo actualizamos el titulo/nombre local si cambia, pero no el modo
+        if (c?.mode === "mix") return;
         setCurrent({
           video_id: nowPlaying.video_id,
           title: nowPlaying.title,
-          mode: "queue",
+          mode: "mix",
         });
+        return;
       }
+
+      // Video solicitado (cola)
+      setCurrent({
+        video_id: nowPlaying.video_id,
+        title: nowPlaying.title,
+        mode: "queue",
+      });
       return;
     }
 
-    // No hay nada en cola y ya estamos en mix - no hacer nada
-    if (current?.mode === "mix") return;
+    // No hay nada sonando (cola vacia)
+    if (c?.mode === "mix") return; // ya estamos en mix
 
     // Buscar el ultimo reproducido para iniciar el Mix
     let cancelled = false;
@@ -119,7 +143,7 @@ const YouTubeTVPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [nowPlaying?.video_id, current?.mode, current?.video_id]);
+  }, [nowPlaying?.video_id, nowPlaying?.is_mix]);
 
   // Crear / actualizar el reproductor
   useEffect(() => {
@@ -189,14 +213,22 @@ const YouTubeTVPage = () => {
           if (event.data !== window.YT.PlayerState.ENDED) return;
 
           if (modeRef.current === "queue") {
-            // Notificar fin + pedir siguiente
+            // Notificar fin + pedir siguiente (usar ref para evitar stale closure)
+            const endedId = currentRef.current?.video_id;
             sendMessageRef.current?.({
               type: "video_ended",
-              video_id: current.video_id,
+              video_id: endedId,
             });
             youtubeService.playerNext().catch(() => {});
+          } else if (modeRef.current === "mix") {
+            // El Mix deberia avanzar solo, pero algunas politicas de autoplay
+            // bloquean la transicion. Forzamos nextVideo() como respaldo.
+            try {
+              event.target.nextVideo?.();
+            } catch {
+              // ignore
+            }
           }
-          // Si es mix, la playlist avanza sola
         },
         onError: () => {
           if (modeRef.current === "queue") {
