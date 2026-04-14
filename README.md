@@ -67,8 +67,9 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - Frase motivacional diaria con IA (GPT-4o-mini)
 - Transcripción de voz con IA (Whisper)
 - Tracking por mesa (`/mesa/:tableNumber`)
-- Solicitudes de música con búsqueda en Spotify
-- Now Playing bar con canción actual y cola en tiempo real
+- **Solicitudes de música** - el admin elige la fuente (Spotify o YouTube, default YouTube) y los clientes ven la UI correspondiente:
+  - **Spotify**: búsqueda, Now Playing con letras sincronizadas, cola en tiempo real
+  - **YouTube**: búsqueda de videos, "Reproduciendo ahora" con thumbnail (se actualiza cuando cambia la pantalla del local, incluyendo videos del Mix automático), cola en tiempo real
 - Sistema de feedback
 
 ### Panel de Administración
@@ -77,7 +78,10 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - **Pedidos**: Gestión del ciclo de vida de pedidos (Pendiente → Preparando → Listo → Entregado)
 - **Inventario**: Control de materias primas, recetas y órdenes de compra
 - **Gastos**: Seguimiento de gastos operacionales y recurrentes
-- **Música**: Panel con controles de Spotify (play, pause, skip, volumen), cola completa de Spotify con indicador de solicitudes de clientes, búsqueda y gestión de solicitudes
+- **Música**: Panel unificado con pestañas Spotify y YouTube. Selector superior para elegir qué fuente ven los clientes. Cada fuente con sus propios controles:
+  - **Spotify**: play, pause, skip, volumen, cola completa de Spotify
+  - **YouTube**: búsqueda, recomendaciones basadas en historial/trending, cola, controles de TV, indicador de cuota (unidades usadas/restantes del día)
+- **Pantalla TV** (`/youtube-tv`): Vista pública para el televisor del local. Reproduce los videos de la cola en secuencia con YouTube IFrame API. Cuando la cola se vacía, inicia un **Mix automático** basado en la última canción para que siempre haya algo sonando
 - **Analytics**: Dashboard con métricas de ventas
 
 ### Generador de Imágenes IA (Privado)
@@ -92,14 +96,25 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - Galería con historial de generaciones
 - Sugerencia automática de descripciones (GPT-4o-mini)
 
-### Música y Spotify
-- **Vista pública**: Búsqueda de canciones en Spotify con debounce, solicitud con un click
+### Música (Spotify + YouTube)
+El admin elige la fuente activa desde el selector del panel `/musica`. Los clientes ven sólo la UI de la fuente activa en `SolicitarMusica` (un wrapper que lee el setting y renderiza `SolicitarCancion` o `SolicitarVideo`). Default: **YouTube**.
+
+#### Spotify
+- **Vista pública**: Búsqueda de canciones, solicitud con un click
 - **Now Playing**: Barra con canción actual, progreso en tiempo real y cola de solicitudes
 - **Vista admin**: Controles de playback (play, pause, skip, volumen), cola completa de Spotify
-- **Cola de Spotify**: Muestra todas las canciones en cola, las solicitudes de clientes se destacan con badge "Solicitud"
-- **Gestión de solicitudes**: Cards con estados (pendiente, en cola, reproduciendo, completada, cancelada), acciones de reproducir ahora, cancelar, reactivar, eliminar
-- **Letras sincronizadas**: Admin ve letras completas con auto-scroll y línea actual resaltada; clientes ven línea actual y siguiente como subtítulos
-- **Tiempo real**: WebSocket para sincronización instantánea de estados entre cliente y admin
+- **Cola**: Las solicitudes de clientes se destacan con badge "Solicitud"
+- **Letras sincronizadas**: Admin ve letras completas con auto-scroll; clientes ven línea actual/siguiente
+- **Tiempo real**: WebSocket `/ws/music/`
+
+#### YouTube
+- **Vista pública (`SolicitarVideo`)**: Búsqueda con debounce (1s, mín 3 chars para optimizar cuota), card de "Reproduciendo ahora" con thumbnail + indicador pulsante + etiqueta ("En vivo en la pantalla" o "Mix automático"), cola de solicitudes con estados
+- **Vista admin (`/musica/youtube`)**: Sección de **Recomendaciones** por defecto (videos similares al que suena o trending de música), búsqueda, cola, controles de reproducción, botón "Abrir TV", **indicador de cuota YouTube API** con barra de progreso (verde/amarillo/rojo)
+- **Pantalla TV (`/youtube-tv`)**: Página pública para la TV del local. Usa YouTube IFrame Player API a pantalla completa. Dos modos:
+  - **Cola**: Reproduce videos solicitados en secuencia
+  - **Mix automático**: Cuando la cola se vacía, carga un Mix de YouTube (`RD<videoId>`) con el último video como semilla. Badge "MIX AUTOMATICO" visible. Transiciona solo
+- **Visualizer**: Las dos vistas públicas (Spotify y YouTube) incluyen la esfera 3D de partículas animada (`MusicVisualizer`)
+- **Tiempo real**: WebSocket `/ws/youtube/` sincroniza el estado de la TV con admin y público
 
 ### Sistema de Juegos
 - "Duelo Frostbyte" - Juego de tiempo de reacción multijugador
@@ -119,8 +134,9 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 | `/pedidos/*` | Protegido | Gestión de pedidos |
 | `/productos/*` | Protegido/Admin | Catálogo de productos con sugerencia de descripción IA |
 | `/gastos/*` | Admin | Control de gastos |
-| `/musica/solicitar` | Público | Solicitar canciones con búsqueda Spotify y Now Playing |
-| `/musica/*` | Admin | Panel de música con controles Spotify y gestión de solicitudes |
+| `/musica` | Admin | Panel de música - Spotify (index) |
+| `/musica/youtube` | Admin | Panel de música - YouTube con búsqueda, recomendaciones, cola, controles TV e indicador de cuota |
+| `/youtube-tv` | Público | Pantalla TV para el local - reproduce videos en cola y Mix automático a pantalla completa |
 | `/game/*` | Público | Salas de juego |
 | `/juegos-admin/*` | Admin | Administración de juegos |
 
