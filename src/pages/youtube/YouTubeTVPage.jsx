@@ -20,6 +20,7 @@ const YouTubeTVPage = () => {
   const sendMessageRef = useRef(null);
   const modeRef = useRef("idle");
   const currentRef = useRef(null);
+  const mixRetryTimerRef = useRef(null);
   useEffect(() => {
     currentRef.current = current;
   }, [current]);
@@ -193,6 +194,10 @@ const YouTubeTVPage = () => {
           // Cuando empieza a reproducir un video nuevo, reportar al backend
           // (incluye videos del Mix que no estan en nuestra DB)
           if (event.data === window.YT.PlayerState.PLAYING) {
+            if (mixRetryTimerRef.current) {
+              clearTimeout(mixRetryTimerRef.current);
+              mixRetryTimerRef.current = null;
+            }
             try {
               const data = event.target.getVideoData?.();
               if (data?.video_id) {
@@ -213,21 +218,49 @@ const YouTubeTVPage = () => {
           if (event.data !== window.YT.PlayerState.ENDED) return;
 
           if (modeRef.current === "queue") {
-            // Notificar fin + pedir siguiente (usar ref para evitar stale closure)
+            // Notificar fin al backend. El consumer WS elige el siguiente,
+            // lo marca como playing y nos envia play_video. No llamamos al
+            // endpoint HTTP porque /youtube-tv es publica (sin token).
             const endedId = currentRef.current?.video_id;
             sendMessageRef.current?.({
               type: "video_ended",
               video_id: endedId,
             });
-            youtubeService.playerNext().catch(() => {});
           } else if (modeRef.current === "mix") {
-            // El Mix deberia avanzar solo, pero algunas politicas de autoplay
-            // bloquean la transicion. Forzamos nextVideo() como respaldo.
+            // En mix, el playlist deberia avanzar solo. Algunas politicas de
+            // autoplay (especialmente en navegadores de TV) bloquean la
+            // transicion. Intentamos nextVideo() y, si el player sigue en
+            // ENDED/UNSTARTED despues de ~1.5s, recargamos la playlist para
+            // forzar la transicion aprovechando el user gesture heredado.
             try {
               event.target.nextVideo?.();
             } catch {
               // ignore
             }
+
+            if (mixRetryTimerRef.current) clearTimeout(mixRetryTimerRef.current);
+            mixRetryTimerRef.current = setTimeout(() => {
+              mixRetryTimerRef.current = null;
+              try {
+                const player = playerRef.current;
+                if (!player) return;
+                const state = player.getPlayerState?.();
+                const stuck =
+                  state === window.YT.PlayerState.ENDED ||
+                  state === window.YT.PlayerState.UNSTARTED ||
+                  state === window.YT.PlayerState.PAUSED;
+                if (!stuck) return;
+                const vid = currentRef.current?.video_id;
+                if (!vid) return;
+                player.loadPlaylist?.({
+                  list: `RD${vid}`,
+                  listType: "playlist",
+                  index: 0,
+                });
+              } catch {
+                // ignore
+              }
+            }, 1500);
           }
         },
         onError: () => {
@@ -257,6 +290,10 @@ const YouTubeTVPage = () => {
   // Cleanup al desmontar
   useEffect(() => {
     return () => {
+      if (mixRetryTimerRef.current) {
+        clearTimeout(mixRetryTimerRef.current);
+        mixRetryTimerRef.current = null;
+      }
       if (playerRef.current && playerRef.current.destroy) {
         try {
           playerRef.current.destroy();
