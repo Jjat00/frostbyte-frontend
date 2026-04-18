@@ -215,20 +215,54 @@ const SolicitarCancion = () => {
 
   const createMutation = useMutation({
     mutationFn: (data) => musicService.create(data),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['song-requests'] });
-      toast({
-        title: "Cancion agregada a la cola",
-        description: `"${variables.song_name}" de ${variables.artist_name} se reproducira pronto.`,
-        duration: 5000,
-      });
       setSearchQuery('');
       setDebouncedQuery('');
       setShowResults(false);
+
+      const trackLabel = `"${variables.song_name}" de ${variables.artist_name}`;
+      if (response?.status === 'failed') {
+        toast({
+          title: "No se pudo agregar a la cola",
+          description: `${trackLabel} no pudo encolarse en Spotify. Avisa al personal.`,
+          variant: "destructive",
+          duration: 5000,
+        });
+      } else if (response?.status === 'pending') {
+        toast({
+          title: "Solicitud recibida",
+          description: `${trackLabel} quedo pendiente. Se encolara cuando Spotify vuelva a conectarse.`,
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: "Cancion agregada a la cola",
+          description: `${trackLabel} se reproducira pronto.`,
+          duration: 5000,
+        });
+      }
     },
     onError: (error) => {
-      const msg = error.response?.data?.error || "Error al enviar tu solicitud. Intenta de nuevo.";
-      toast({ title: "Error", description: msg, variant: "destructive", duration: 4000 });
+      const status = error.response?.status;
+      const serverMsg = error.response?.data?.error;
+
+      if (status === 409) {
+        toast({
+          title: "Esta cancion ya esta en la cola",
+          description: serverMsg || "Elige otra o espera a que termine la actual.",
+          variant: "destructive",
+          duration: 4000,
+        });
+        return;
+      }
+
+      toast({
+        title: "Error al agregar la cancion",
+        description: serverMsg || "No pudimos enviar tu solicitud. Intenta de nuevo.",
+        variant: "destructive",
+        duration: 4000,
+      });
     },
   });
 

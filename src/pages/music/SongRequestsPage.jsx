@@ -445,16 +445,38 @@ const AdminSearch = ({ isConnected }) => {
       spotify_track_image: track.image,
       spotify_track_duration_ms: track.duration_ms,
     }),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['song-requests'] });
       queryClient.invalidateQueries({ queryKey: ['spotify-queue'] });
-      toast({ title: "Agregada a la cola", duration: 2000 });
       setQuery('');
       setDebouncedQuery('');
+
+      if (response?.status === 'failed') {
+        toast({
+          title: "No se pudo encolar en Spotify",
+          description: "La solicitud quedo como fallida.",
+          variant: "destructive",
+          duration: 3000,
+        });
+      } else if (response?.status === 'pending') {
+        toast({
+          title: "Solicitud pendiente",
+          description: "Spotify no esta conectado, se encolara cuando vuelva.",
+          duration: 3000,
+        });
+      } else {
+        toast({ title: "Agregada a la cola", duration: 2000 });
+      }
     },
     onError: (error) => {
+      const status = error.response?.status;
       const msg = error.response?.data?.error || "Error al agregar";
-      toast({ title: msg, variant: "destructive", duration: 3000 });
+      toast({
+        title: status === 409 ? "Ya esta en la cola" : msg,
+        description: status === 409 ? msg : undefined,
+        variant: "destructive",
+        duration: 3000,
+      });
     },
   });
 
