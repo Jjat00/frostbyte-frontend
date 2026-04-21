@@ -4,77 +4,76 @@ import { Droplets } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 
-// Datos de shots de sabores - COMENTADO: se terminaron los shots de sabores
-// const flavorShots = [
-//   {
-//     name: "Porrito",
-//     flavor: "Verde",
-//     licor: "Tequila",
-//     price: "$5.000",
-//     gradient: "from-green-400 to-emerald-600",
-//     textColor: "text-green-400",
-//     borderColor: "border-green-500/40",
-//     glowColor: "rgba(74, 222, 128, 0.3)",
-//   },
-//   {
-//     name: "Maracuyá",
-//     flavor: "Amarillo",
-//     licor: "Whisky",
-//     price: "$5.000",
-//     gradient: "from-yellow-300 to-amber-500",
-//     textColor: "text-yellow-400",
-//     borderColor: "border-yellow-500/40",
-//     glowColor: "rgba(250, 204, 21, 0.3)",
-//   },
-//   {
-//     name: "Fresita",
-//     flavor: "Rojo",
-//     licor: "Ron",
-//     price: "$5.000",
-//     gradient: "from-red-400 to-rose-600",
-//     textColor: "text-red-400",
-//     borderColor: "border-red-500/40",
-//     glowColor: "rgba(248, 113, 113, 0.3)",
-//   },
-//   {
-//     name: "Tentaxxion",
-//     flavor: "Morado",
-//     licor: "Vodka",
-//     price: "$5.000",
-//     gradient: "from-purple-400 to-fuchsia-600",
-//     textColor: "text-purple-400",
-//     borderColor: "border-purple-500/40",
-//     glowColor: "rgba(192, 132, 252, 0.3)",
-//   },
-// ];
+const flavorShots = [
+  {
+    name: "Porrito",
+    flavor: "Verde",
+    licor: "Tequila",
+    price: "$5.000",
+    gradient: "from-green-400 to-emerald-600",
+    textColor: "text-green-400",
+    borderColor: "border-green-500/40",
+    glowColor: "rgba(74, 222, 128, 0.3)",
+  },
+  {
+    name: "Maracuyá",
+    flavor: "Amarillo",
+    licor: "Whisky",
+    price: "$5.000",
+    gradient: "from-yellow-300 to-amber-500",
+    textColor: "text-yellow-400",
+    borderColor: "border-yellow-500/40",
+    glowColor: "rgba(250, 204, 21, 0.3)",
+  },
+  {
+    name: "Fresita",
+    flavor: "Rojo",
+    licor: "Ron",
+    price: "$5.000",
+    gradient: "from-red-400 to-rose-600",
+    textColor: "text-red-400",
+    borderColor: "border-red-500/40",
+    glowColor: "rgba(248, 113, 113, 0.3)",
+  },
+  {
+    name: "Tentaxxion",
+    flavor: "Morado",
+    licor: "Vodka",
+    price: "$5.000",
+    gradient: "from-purple-400 to-fuchsia-600",
+    textColor: "text-purple-400",
+    borderColor: "border-purple-500/40",
+    glowColor: "rgba(192, 132, 252, 0.3)",
+  },
+];
 
-// const FlavorShotCard = ({ shot, index }) => (
-//   <motion.div
-//     initial={{ opacity: 0, y: 30 }}
-//     whileInView={{ opacity: 1, y: 0 }}
-//     viewport={{ once: true }}
-//     transition={{ duration: 0.5, delay: index * 0.1 }}
-//     whileHover={{ y: -8, scale: 1.05 }}
-//     className={`group relative bg-dark/60 backdrop-blur-sm border ${shot.borderColor} rounded-2xl p-5 text-center cursor-default hover:shadow-lg transition-all duration-300`}
-//     style={{ "--glow": shot.glowColor }}
-//   >
-//     <div
-//       className={`w-14 h-14 bg-linear-to-br ${shot.gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg group-hover:scale-110 transition-transform duration-300`}
-//     >
-//       <Droplets className="text-dark" size={26} />
-//     </div>
-//     <h4 className={`text-lg font-black ${shot.textColor} mb-1`}>
-//       {shot.name}
-//     </h4>
-//     <p className="text-gray/70 text-xs mb-1">{shot.licor}</p>
-//     <p className="text-gray text-xs uppercase tracking-wider font-semibold mb-2">
-//       {shot.flavor}
-//     </p>
-//     <span className={`${shot.textColor} font-bold text-sm`}>
-//       {shot.price}
-//     </span>
-//   </motion.div>
-// );
+const FlavorShotCard = ({ shot, index }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay: index * 0.1 }}
+    whileHover={{ y: -8, scale: 1.05 }}
+    className={`group relative bg-dark/60 backdrop-blur-sm border ${shot.borderColor} rounded-2xl p-5 text-center cursor-default hover:shadow-lg transition-all duration-300`}
+    style={{ "--glow": shot.glowColor }}
+  >
+    <div
+      className={`w-14 h-14 bg-linear-to-br ${shot.gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+    >
+      <Droplets className="text-dark" size={26} />
+    </div>
+    <h4 className={`text-lg font-black ${shot.textColor} mb-1`}>
+      {shot.name}
+    </h4>
+    <p className="text-gray/70 text-xs mb-1">{shot.licor}</p>
+    <p className="text-gray text-xs uppercase tracking-wider font-semibold mb-2">
+      {shot.flavor}
+    </p>
+    <span className={`${shot.textColor} font-bold text-sm`}>
+      {shot.price}
+    </span>
+  </motion.div>
+);
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -197,8 +196,7 @@ const Shots = () => {
               ))}
         </div>
 
-        {/* Sección Shots de Sabores - COMENTADO: se terminaron los shots de sabores */}
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -241,7 +239,7 @@ const Shots = () => {
               </div>
             </div>
           </div>
-        </motion.div> */}
+        </motion.div>
       </div>
     </section>
   );

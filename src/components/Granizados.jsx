@@ -187,67 +187,66 @@ const ProductSkeleton = () => (
   </div>
 );
 
-// Datos de shots de sabores para personalizar - COMENTADO: se terminaron los shots de sabores
-// const flavorShots = [
-//   {
-//     name: "Porrito",
-//     flavor: "Verde",
-//     licor: "Tequila",
-//     price: "+$5.000",
-//     icon: Droplets,
-//     gradient: "from-green-400 to-emerald-600",
-//     textColor: "text-green-400",
-//     borderColor: "border-green-500/30",
-//   },
-//   {
-//     name: "Maracuyá",
-//     flavor: "Amarillo",
-//     licor: "Whisky",
-//     price: "+$5.000",
-//     icon: Droplets,
-//     gradient: "from-yellow-300 to-amber-500",
-//     textColor: "text-yellow-400",
-//     borderColor: "border-yellow-500/30",
-//   },
-//   {
-//     name: "Fresita",
-//     flavor: "Rojo",
-//     licor: "Ron",
-//     price: "+$5.000",
-//     icon: Droplets,
-//     gradient: "from-red-400 to-rose-600",
-//     textColor: "text-red-400",
-//     borderColor: "border-red-500/30",
-//   },
-//   {
-//     name: "Tentaxxion",
-//     flavor: "Morado",
-//     licor: "Vodka",
-//     price: "+$5.000",
-//     icon: Droplets,
-//     gradient: "from-purple-400 to-fuchsia-600",
-//     textColor: "text-purple-400",
-//     borderColor: "border-purple-500/30",
-//   },
-// ];
+const flavorShots = [
+  {
+    name: "Porrito",
+    flavor: "Verde",
+    licor: "Tequila",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-green-400 to-emerald-600",
+    textColor: "text-green-400",
+    borderColor: "border-green-500/30",
+  },
+  {
+    name: "Maracuyá",
+    flavor: "Amarillo",
+    licor: "Whisky",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-yellow-300 to-amber-500",
+    textColor: "text-yellow-400",
+    borderColor: "border-yellow-500/30",
+  },
+  {
+    name: "Fresita",
+    flavor: "Rojo",
+    licor: "Ron",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-red-400 to-rose-600",
+    textColor: "text-red-400",
+    borderColor: "border-red-500/30",
+  },
+  {
+    name: "Tentaxxion",
+    flavor: "Morado",
+    licor: "Vodka",
+    price: "+$5.000",
+    icon: Droplets,
+    gradient: "from-purple-400 to-fuchsia-600",
+    textColor: "text-purple-400",
+    borderColor: "border-purple-500/30",
+  },
+];
 
-// const FlavorOption = ({ name, flavor, licor, price, icon: Icon, gradient, textColor, borderColor }) => (
-//   <motion.div
-//     whileHover={{ scale: 1.05, y: -5 }}
-//     whileTap={{ scale: 0.98 }}
-//     className={`w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border ${borderColor} rounded-2xl p-4 text-center cursor-pointer hover:shadow-lg transition-all duration-300`}
-//   >
-//     <div
-//       className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
-//     >
-//       <Icon className="text-dark" size={24} />
-//     </div>
-//     <h4 className={`${textColor} font-bold text-base`}>{name}</h4>
-//     <p className="text-gray text-xs">{licor}</p>
-//     <p className="text-gray text-xs mb-2">{flavor}</p>
-//     <span className={`${textColor} font-bold text-sm`}>{price}</span>
-//   </motion.div>
-// );
+const FlavorOption = ({ name, flavor, licor, price, icon: Icon, gradient, textColor, borderColor }) => (
+  <motion.div
+    whileHover={{ scale: 1.05, y: -5 }}
+    whileTap={{ scale: 0.98 }}
+    className={`w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border ${borderColor} rounded-2xl p-4 text-center cursor-pointer hover:shadow-lg transition-all duration-300`}
+  >
+    <div
+      className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
+    >
+      <Icon className="text-dark" size={24} />
+    </div>
+    <h4 className={`${textColor} font-bold text-base`}>{name}</h4>
+    <p className="text-gray text-xs">{licor}</p>
+    <p className="text-gray text-xs mb-2">{flavor}</p>
+    <span className={`${textColor} font-bold text-sm`}>{price}</span>
+  </motion.div>
+);
 
 // Datos de shots para envenenar (estos podrían venir de la API también)
 const poisonShots = [
@@ -622,8 +621,7 @@ const Granizados = ({ showExtras = true }) => {
           </div>
         )}
 
-        {/* Sección Shots de Sabores - COMENTADO: se terminaron los shots de sabores */}
-        {/* {showExtras && (
+        {showExtras && (
           <div className="mt-12">
             <div className="relative bg-linear-to-br from-emerald-900/20 via-dark/60 to-cyan-900/20 border-2 border-cyan-500/30 rounded-3xl overflow-hidden">
               <div className="relative h-48 sm:h-56 overflow-hidden">
@@ -687,7 +685,7 @@ const Granizados = ({ showExtras = true }) => {
               </div>
             </div>
           </div>
-        )} */}
+        )}
       </div>
     </section>
   );
