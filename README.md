@@ -204,7 +204,7 @@ Ver [.env.example](.env.example) para las variables disponibles.
 ## Scripts
 
 ```bash
-npm run dev      # Desarrollo en puerto 3000
+npm run dev      # Desarrollo en puerto 5173
 npm run build    # Build de producción
 npm run preview  # Preview del build
 ```

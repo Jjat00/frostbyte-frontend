@@ -9,7 +9,7 @@ Frostbyte is a restaurant management web application with a public digital menu 
 ## Development Commands
 
 ```bash
-npm run dev      # Start development server on port 3000
+npm run dev      # Start development server on port 5173
 npm run build    # Build for production
 npm run preview  # Preview production build
 ```
