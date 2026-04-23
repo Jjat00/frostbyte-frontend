@@ -1,148 +1,218 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 
-// Utilidad para formatear precios colombianos
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 const formatPrice = (price) => {
   if (!price) return "$0";
   return `$${Number(price).toLocaleString("es-CO")}`;
 };
 
 const ProductCard = ({ product, index, styles }) => {
-  const Icon = styles.icon;
   const variants = product.variants || [];
-  const hasOptions = variants.length > 1;
-  
-  // Buscar variantes específicas para frappés con opciones
-  const chocolistoVariant = variants.find(v => v.name === "Chocolisto");
-  const miloVariant = variants.find(v => v.name === "Milo");
-  const regularVariant = variants.find(v => v.name === "Regular" || v.is_default);
+  const ringColor = styles.ringColor || "border-amber-400";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      whileHover={{ y: -10 }}
-      className="group relative"
-    >
-      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-secondary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(0,224,255,0.1)]">
-        <div className="h-48 overflow-hidden relative">
-          <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
+    <div className="frappe-card group relative h-full">
+      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(251,191,36,0.08)]">
+        {/* Blur de fondo */}
+        <div
+          className="absolute inset-0 rounded-3xl pointer-events-none"
+          style={{
+            backdropFilter: "blur(1px)",
+            WebkitBackdropFilter: "blur(1px)",
+          }}
+        />
+
+        {/* Reflejo especular superior */}
+        <div
+          className="absolute top-0 inset-x-0 h-1/2 rounded-t-3xl pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 40%, transparent 100%)",
+          }}
+        />
+
+        {/* Brillo en borde superior */}
+        <div className="absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
+        {/* Imagen del producto */}
+        <div className="relative mb-5 shrink-0 z-10">
           {styles.image ? (
-            <img
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              src={styles.image}
-              loading="lazy"
-            />
+            <div className="relative w-52 h-52 md:w-56 md:h-56 flex items-center justify-center">
+              <img
+                alt={product.name}
+                className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_8px_24px_rgba(0,0,0,0.3)]"
+                src={styles.image}
+                loading="lazy"
+              />
+            </div>
           ) : (
-            <div className={`w-full h-full bg-linear-to-br ${styles.gradient}`}></div>
-          )}
-          {product.is_coming_soon && (
-            <div className="absolute inset-0 bg-dark/70 z-20 flex items-center justify-center">
-              <span className="text-light font-bold text-lg tracking-wider uppercase bg-secondary/20 px-4 py-2 rounded-lg border border-secondary/50">
-                Próximamente
-              </span>
+            <div className="relative w-52 h-52 md:w-56 md:h-56 rounded-full overflow-hidden">
+              <div
+                className={`absolute inset-0 rounded-full border-2 ${ringColor} opacity-40`}
+              ></div>
+              <div
+                className={`w-full h-full bg-linear-to-br ${styles.visualGradient || styles.gradient} opacity-80`}
+              ></div>
             </div>
           )}
         </div>
 
-        <div className="p-6 flex flex-col grow relative z-20 -mt-12">
-          <div
-            className={`w-12 h-12 bg-linear-to-br ${styles.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
-          >
-            <Icon className="text-dark" size={24} />
+        {/* Badge proximamente */}
+        {product.is_coming_soon && (
+          <div className="absolute top-4 right-4 z-20">
+            <span className="text-[10px] font-bold uppercase tracking-widest bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-full border border-amber-400/40">
+              Próximamente
+            </span>
           </div>
-          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-secondary transition-colors duration-300">
+        )}
+
+        {/* Nombre del producto */}
+        <div className="relative z-10 w-full flex flex-col items-center mb-3">
+          <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center line-clamp-2 leading-tight">
             {product.name}
           </h3>
-          <p className="text-gray mb-4 grow text-sm">{product.description}</p>
-          
-          {hasOptions && chocolistoVariant && miloVariant ? (
-            <div className="mt-auto pt-4 border-t border-gray/10">
-              <p className="text-xs text-gray mb-2">Elige tu base:</p>
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex flex-col">
-                  <span className="text-xs text-gray">{chocolistoVariant.name}</span>
-                  <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-                    {formatPrice(chocolistoVariant.price)}
-                  </span>
-                </div>
-                <div className="flex flex-col text-right">
-                  <span className="text-xs text-gray">{miloVariant.name}</span>
-                  <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-                    {formatPrice(miloVariant.price)}
-                  </span>
-                </div>
+          <div className="w-10 h-0.5 bg-amber-400/60 rounded-full mt-2"></div>
+        </div>
+
+        {/* Descripcion */}
+        <p className="relative z-10 text-slate-400 text-sm text-center mb-5 leading-relaxed max-w-[260px]">
+          {product.description}
+        </p>
+
+        {/* Precios */}
+        <div className="relative z-10 mt-auto w-full">
+          <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/[0.08]">
+            {variants.map((variant) => (
+              <div key={variant.id || variant.name} className="flex flex-col items-center">
+                <span className="text-[11px] text-slate-500 uppercase font-semibold tracking-widest mb-0.5">
+                  {variant.name}
+                </span>
+                <span className="text-lg font-black text-amber-400">
+                  {formatPrice(variant.price)}
+                </span>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-              <span className="text-2xl font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-                {formatPrice(regularVariant?.price)}
-              </span>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 const ProductSkeleton = () => (
-  <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full animate-pulse">
-    <div className="h-48 bg-gray/20"></div>
-    <div className="p-6 -mt-12">
-      <div className="w-12 h-12 bg-gray/30 rounded-xl mb-4"></div>
-      <div className="h-6 bg-gray/20 rounded mb-2 w-3/4"></div>
-      <div className="h-4 bg-gray/20 rounded mb-4 w-full"></div>
-      <div className="h-8 bg-gray/20 rounded w-24 mt-4"></div>
+  <div className="bg-white/4 border border-white/8 rounded-3xl p-6 animate-pulse">
+    <div className="flex flex-col items-center h-full">
+      <div className="relative mb-5 shrink-0">
+        <div className="w-52 h-52 md:w-56 md:h-56 rounded-full bg-white/6"></div>
+      </div>
+      <div className="w-full flex flex-col items-center mb-3">
+        <div className="h-5 bg-white/8 rounded-lg w-3/4 mb-2"></div>
+        <div className="w-10 h-0.5 bg-white/6 rounded-full"></div>
+      </div>
+      <div className="h-4 bg-white/6 rounded w-full max-w-[220px] mb-2"></div>
+      <div className="h-4 bg-white/6 rounded w-2/3 max-w-[180px] mb-5"></div>
+      <div className="mt-auto w-full pt-3 border-t border-white/6">
+        <div className="flex justify-center gap-5">
+          <div className="flex flex-col items-center gap-1">
+            <div className="h-3 bg-white/6 rounded w-12"></div>
+            <div className="h-5 bg-white/8 rounded w-16"></div>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <div className="h-3 bg-white/6 rounded w-12"></div>
+            <div className="h-5 bg-white/8 rounded w-16"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 );
 
 const Frappes = () => {
   const { data, isLoading, error } = useProductsByCategory("frappes");
-
   const products = data?.results || [];
 
+  const sectionRef = useRef(null);
+
+  useGSAP(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const title = section.querySelector(".frappe-title");
+    const subtitle = section.querySelector(".frappe-subtitle");
+    const cards = section.querySelectorAll(".frappe-card");
+
+    if (title) {
+      gsap.fromTo(title, { scale: 1.5, opacity: 0 }, {
+        scale: 1, opacity: 1, ease: "none",
+        scrollTrigger: { trigger: title, start: "top 85%", end: "top 40%", scrub: true },
+      });
+    }
+
+    if (subtitle) {
+      gsap.fromTo(subtitle, { opacity: 0, y: 24 }, {
+        opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+        scrollTrigger: { trigger: subtitle, start: "top 85%", toggleActions: "play none none none" },
+      });
+    }
+
+    if (cards.length) {
+      gsap.set(cards, { autoAlpha: 0, y: 60, scale: 0.9 });
+      ScrollTrigger.batch(cards, {
+        start: "top 88%",
+        once: true,
+        onEnter: (batch) => gsap.to(batch, {
+          autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out", stagger: 0.12,
+        }),
+      });
+    }
+  }, { scope: sectionRef, dependencies: [products] });
+
   return (
-    <section id="frappes" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
+    <section
+      ref={sectionRef}
+      id="frappes"
+      className="py-20 relative overflow-hidden bg-linear-to-br from-stone-950 via-amber-950 to-orange-950"
+    >
+      {/* Neon ambiental — ambar/naranja estilo café cremoso */}
+      <div className="absolute inset-0 opacity-25">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-amber-500 rounded-full filter blur-[120px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500 rounded-full filter blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-400/70 rounded-full filter blur-[100px]" />
       </div>
+
+      {/* Lineas divisoras */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-400/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-orange-400/30 to-transparent" />
+
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h2 className="frappe-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            <span className="bg-linear-to-r from-amber-300 via-orange-400 to-yellow-400 bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(251,191,36,0.3)]">
               FRAPPÉS
             </span>
           </h2>
-          <p className="text-gray text-lg max-w-2xl mx-auto">
+          <p className="frappe-subtitle text-white text-lg max-w-2xl mx-auto font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
             Los mejores frappés en Cumbal. Cremosas y heladas creaciones que
             fusionan sabores clásicos con energía del futuro.
           </p>
-        </motion.div>
+        </div>
 
         {error && (
-          <div className="text-center text-red-400 mb-8">
-            Error al cargar los productos.
+          <div className="text-center text-white bg-red-500/20 backdrop-blur-sm rounded-lg p-4 mb-8 border border-red-300">
+            Error al cargar los productos. Por favor intenta de nuevo.
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-8 max-w-7xl mx-auto items-stretch">
           {isLoading
-            ? [...Array(4)].map((_, i) => <ProductSkeleton key={i} />)
+            ? [...Array(3)].map((_, i) => <ProductSkeleton key={i} />)
             : products.map((product, index) => (
                 <ProductCard
                   key={product.id}
