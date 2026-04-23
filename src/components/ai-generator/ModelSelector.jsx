@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Cpu, Zap, Crown } from "lucide-react";
+import { Cpu, Zap, Crown, Sparkles } from "lucide-react";
 
 const AI_MODELS = [
   {
@@ -29,6 +29,15 @@ const AI_MODELS = [
     badge: null,
     badgeColor: null,
   },
+  {
+    id: "gpt-image-2",
+    name: "GPT Image 2",
+    provider: "OpenAI",
+    description: "Texto nítido, edición multi-referencia, 4K",
+    icon: Sparkles,
+    badge: "Nuevo",
+    badgeColor: "text-primary",
+  },
 ];
 
 /**
@@ -40,7 +49,7 @@ export function ModelSelector({ value, onChange, disabled = false }) {
       <label className="text-sm font-medium text-light">
         Modelo de IA
       </label>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {AI_MODELS.map((model) => {
           const Icon = model.icon;
           const isSelected = value === model.id;
