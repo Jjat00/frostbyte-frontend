@@ -53,6 +53,9 @@ const SongRequestsPage = lazyLoad(() => import("./pages/music/SongRequestsPage")
 const YouTubeAdminPage = lazyLoad(() => import("./pages/youtube/YouTubeAdminPage"));
 const YouTubeTVPage = lazyLoad(() => import("./pages/youtube/YouTubeTVPage"));
 
+// Frostbyte TV (slideshow de productos activos para la TV del local)
+const FrostbyteTVPage = lazyLoad(() => import("./pages/FrostbyteTVPage"));
+
 // Feedback
 const FeedbackLayout = lazyLoad(() => import("./pages/feedback/FeedbackLayout"));
 const FeedbackListPage = lazyLoad(() => import("./pages/feedback/FeedbackListPage"));
@@ -340,6 +343,15 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <YouTubeTVPage />
+      </Lazy>
+    ),
+  },
+  // Pantalla TV Frostbyte - Slideshow publicitario de productos activos
+  {
+    path: "/frostbyte-tv",
+    element: (
+      <Lazy>
+        <FrostbyteTVPage />
       </Lazy>
     ),
   },
