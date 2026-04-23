@@ -24,6 +24,9 @@ import {
 } from "@/hooks/useImageGeneration";
 import { cn } from "@/lib/utils";
 
+// Modelos que NO soportan background transparente en el endpoint de OpenAI.
+const MODELS_WITHOUT_TRANSPARENCY = new Set(["gpt-image-2"]);
+
 /**
  * Página principal para generación de imágenes de productos con IA
  * Integra OpenAI GPT Image 1.5 para crear imágenes profesionales
@@ -46,6 +49,15 @@ const AIImageGeneratorPage = () => {
 
   // Estado del modal de selección de producto
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+
+  const supportsTransparency = !MODELS_WITHOUT_TRANSPARENCY.has(aiModel);
+
+  // Si el modelo seleccionado no soporta transparencia, forzarla en off
+  useEffect(() => {
+    if (!supportsTransparency && transparent) {
+      setTransparent(false);
+    }
+  }, [supportsTransparency, transparent]);
 
   // Hooks personalizados
   const { validateFile } = useImageValidation();
@@ -364,8 +376,17 @@ const AIImageGeneratorPage = () => {
             <TransparencyToggle
               value={transparent}
               onChange={setTransparent}
-              disabled={isGenerating}
+              disabled={isGenerating || !supportsTransparency}
             />
+            {!supportsTransparency && (
+              <div className="flex items-start gap-2 text-xs text-amber-400/90 bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span>
+                  El modelo seleccionado no soporta fondo transparente. Si
+                  lo necesitas, usa GPT Image 1.5 o Gemini.
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-between gap-4 pt-4">
