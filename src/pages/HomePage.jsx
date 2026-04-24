@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
 import {
   Package,
   ClipboardList,
@@ -21,23 +22,157 @@ import {
   TrendingUp,
   PieChart,
   DollarSign,
-  Zap,
   Activity,
   Shield,
   Clock,
+  Receipt,
+  AlertTriangle,
+  Star,
+  CircleDollarSign,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
+import { ordersService } from '@/services/orders.service';
+
+const formatCurrency = (value) => {
+  const num = parseFloat(value || 0);
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(num);
+};
+
+const formatCurrencyCompact = (value) => {
+  const num = parseFloat(value || 0);
+  if (num >= 1_000_000) return `$${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `$${(num / 1_000).toFixed(0)}K`;
+  return formatCurrency(num);
+};
+
+const KpiCard = ({ icon: Icon, label, value, subtitle, accent = 'secondary', isLoading, delay = 0, onClick, badge }) => {
+  const palettes = {
+    secondary: {
+      gradient: 'from-secondary to-primary',
+      glow: 'group-hover:shadow-[0_0_30px_rgba(0,224,255,0.3)]',
+    },
+    primary: {
+      gradient: 'from-primary to-secondary',
+      glow: 'group-hover:shadow-[0_0_30px_rgba(255,0,212,0.3)]',
+    },
+    green: {
+      gradient: 'from-emerald-400 to-teal-500',
+      glow: 'group-hover:shadow-[0_0_30px_rgba(16,185,129,0.25)]',
+    },
+    amber: {
+      gradient: 'from-amber-400 to-orange-500',
+      glow: 'group-hover:shadow-[0_0_30px_rgba(245,158,11,0.25)]',
+    },
+    purple: {
+      gradient: 'from-purple-400 to-pink-500',
+      glow: 'group-hover:shadow-[0_0_30px_rgba(168,85,247,0.25)]',
+    },
+  };
+
+  const c = palettes[accent] || palettes.secondary;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+      whileHover={onClick ? { y: -4 } : undefined}
+      onClick={onClick}
+      className={`
+        liquid-glass-interactive relative group
+        rounded-2xl p-4 md:p-5
+        flex flex-col h-full min-w-0
+        transition-all duration-300 ${c.glow}
+        ${onClick ? 'cursor-pointer' : ''}
+      `}
+    >
+      {/* Corner accent */}
+      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+      {/* Subtle gradient wash tied to accent */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${c.gradient} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-500 rounded-2xl pointer-events-none`} />
+
+      <div className="relative z-10 flex flex-col h-full min-w-0">
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <div className={`relative p-2.5 rounded-xl bg-gradient-to-br ${c.gradient} group-hover:scale-110 transition-transform duration-300 shadow-lg shrink-0`}>
+            <Icon className="w-5 h-5 text-dark" />
+          </div>
+          {badge && (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 backdrop-blur-sm shrink-0">
+              {badge}
+            </span>
+          )}
+        </div>
+
+        <p className="text-[11px] text-gray font-medium uppercase tracking-wider mb-1.5 truncate">
+          {label}
+        </p>
+
+        {isLoading ? (
+          <div className="space-y-2 mt-auto">
+            <div className="h-7 bg-white/[0.08] rounded-lg w-32 animate-pulse" />
+            <div className="h-3 bg-white/[0.05] rounded w-24 animate-pulse" />
+          </div>
+        ) : (
+          <div className="mt-auto min-w-0">
+            <p
+              className="font-bold text-light leading-tight truncate"
+              style={{ fontSize: 'clamp(1.125rem, 2.2vw, 1.75rem)' }}
+              title={typeof value === 'string' ? value : undefined}
+            >
+              {value}
+            </p>
+            {subtitle && (
+              <p className="text-xs text-gray mt-1.5 truncate" title={subtitle}>
+                {subtitle}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+};
 
 const HomePage = () => {
   const navigate = useNavigate();
   const { user, logout, isAdmin } = useAuthStore();
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
+  const isAdminUser = isAdmin();
 
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
+
+  const { data: todayStats, isLoading: isLoadingToday } = useQuery({
+    queryKey: ['home-today-stats'],
+    queryFn: () => ordersService.getStats('today'),
+    enabled: isAdminUser,
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+  });
+
+  const { data: topProductsToday, isLoading: isLoadingTopProducts } = useQuery({
+    queryKey: ['home-top-products-today'],
+    queryFn: () => ordersService.getProductStats('today'),
+    enabled: isAdminUser,
+    staleTime: 60_000,
+  });
+
+  const ventasHoy = parseFloat(todayStats?.total_revenue || 0);
+  const pedidosHoy = todayStats?.total_orders || 0;
+  const pagosPendientes = parseFloat(todayStats?.unpaid_total || 0);
+  const itemsPendientes = todayStats?.total_unpaid_items || 0;
+  const ticketPromedio = pedidosHoy > 0 ? ventasHoy / pedidosHoy : 0;
+
+  const topProducto = topProductsToday?.data?.[0];
 
   const allModules = [
     {
@@ -273,76 +408,138 @@ const HomePage = () => {
 
       {/* Main Content */}
       <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        {/* Welcome section with quick stats */}
+        {/* Welcome section */}
         <div className="mb-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6">
               {/* Greeting */}
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-light mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   {greeting}, {user?.first_name || user?.username}
                 </h2>
-                <p className="text-gray text-lg">Selecciona un módulo para comenzar tu sesión</p>
+                <p className="text-gray text-base md:text-lg">
+                  {isAdminUser
+                    ? 'Panorama de tu negocio en tiempo real'
+                    : 'Selecciona un módulo para comenzar tu sesión'}
+                </p>
               </div>
 
-              {/* Quick stats inline */}
-              <div className="flex gap-3 flex-wrap">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="px-4 py-3 bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 rounded-lg backdrop-blur-sm flex items-center gap-3"
-                >
-                  <div className="p-2 bg-primary/20 rounded-lg">
-                    <Zap className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray">Módulos activos</p>
-                    <p className="text-2xl font-bold text-light leading-none">{modules.length}</p>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="px-4 py-3 bg-gradient-to-br from-secondary/10 to-primary/10 border border-secondary/20 rounded-lg backdrop-blur-sm flex items-center gap-3"
-                >
-                  <div className="p-2 bg-secondary/20 rounded-lg">
-                    <Activity className="w-5 h-5 text-secondary" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray">Sistema</p>
-                    <p className="text-sm font-bold text-light leading-none flex items-center gap-1">
-                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                      Operativo
-                    </p>
-                  </div>
-                </motion.div>
-
+              {/* Status chips */}
+              <div className="flex gap-2.5 flex-wrap">
+                <div className="px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg backdrop-blur-sm flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs text-gray">Sistema</span>
+                  <span className="text-xs font-semibold text-light">Operativo</span>
+                </div>
                 {hasPendingRequests && (
-                  <motion.div
+                  <motion.button
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="px-4 py-3 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-lg backdrop-blur-sm flex items-center gap-3 animate-pulse"
+                    onClick={() => navigate('/musica')}
+                    className="px-3 py-2 bg-purple-500/10 border border-purple-500/30 rounded-lg backdrop-blur-sm flex items-center gap-2 hover:bg-purple-500/20 transition-colors"
                   >
-                    <div className="p-2 bg-purple-500/20 rounded-lg">
-                      <Music className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray">Canciones pendientes</p>
-                      <p className="text-2xl font-bold text-light leading-none">{pendingCount}</p>
-                    </div>
-                  </motion.div>
+                    <Music className="w-4 h-4 text-purple-400" />
+                    <span className="text-xs text-gray">Canciones</span>
+                    <span className="text-xs font-bold text-light px-1.5 py-0.5 rounded-full bg-purple-500/30">
+                      {pendingCount}
+                    </span>
+                  </motion.button>
                 )}
               </div>
             </div>
           </motion.div>
+
+          {/* ── Admin KPIs ── */}
+          {isAdminUser && (
+            <motion.section
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              aria-label="Indicadores clave del negocio"
+              className="space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-secondary/10 border border-secondary/20">
+                    <Activity className="w-4 h-4 text-secondary" />
+                  </div>
+                  <h3 className="text-sm md:text-base font-bold text-light tracking-wide">
+                    Hoy en Frostbyte
+                  </h3>
+                  <span className="text-[10px] uppercase tracking-widest text-gray ml-1">
+                    Actualizado automáticamente
+                  </span>
+                </div>
+                <button
+                  onClick={() => navigate('/analytics')}
+                  className="hidden sm:flex items-center gap-1.5 text-xs text-secondary hover:text-light transition-colors"
+                >
+                  Ver dashboard completo
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
+                <KpiCard
+                  icon={CircleDollarSign}
+                  label="Ventas de hoy"
+                  value={formatCurrencyCompact(ventasHoy)}
+                  subtitle={`${todayStats?.total_paid_items || 0} items cobrados`}
+                  accent="green"
+                  isLoading={isLoadingToday}
+                  delay={0.05}
+                  onClick={() => navigate('/analytics')}
+                />
+                <KpiCard
+                  icon={ShoppingCart}
+                  label="Pedidos de hoy"
+                  value={pedidosHoy}
+                  subtitle={pedidosHoy === 1 ? '1 pedido registrado' : `${pedidosHoy} pedidos registrados`}
+                  accent="secondary"
+                  isLoading={isLoadingToday}
+                  delay={0.1}
+                  onClick={() => navigate('/pedidos')}
+                />
+                <KpiCard
+                  icon={Receipt}
+                  label="Ticket promedio"
+                  value={formatCurrencyCompact(ticketPromedio)}
+                  subtitle="Por pedido de hoy"
+                  accent="primary"
+                  isLoading={isLoadingToday}
+                  delay={0.15}
+                />
+                <KpiCard
+                  icon={AlertTriangle}
+                  label="Pagos pendientes"
+                  value={formatCurrencyCompact(pagosPendientes)}
+                  subtitle={`${itemsPendientes} items sin cobrar`}
+                  accent="amber"
+                  isLoading={isLoadingToday}
+                  delay={0.2}
+                  onClick={() => navigate('/pedidos')}
+                  badge={itemsPendientes > 0 ? 'Revisar' : null}
+                />
+                <KpiCard
+                  icon={Star}
+                  label="Top producto hoy"
+                  value={topProducto?.product_name || 'Sin ventas'}
+                  subtitle={
+                    topProducto
+                      ? `${topProducto.quantity_sold} vendidos · ${formatCurrencyCompact(topProducto.revenue)}`
+                      : 'Aún no hay registros'
+                  }
+                  accent="purple"
+                  isLoading={isLoadingTopProducts}
+                  delay={0.25}
+                />
+              </div>
+            </motion.section>
+          )}
         </div>
 
         {/* Module Cards - Compact grid layout */}
