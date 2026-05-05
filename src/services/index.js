@@ -6,4 +6,5 @@ export { ordersService } from './orders.service';
 export { musicService } from './music.service';
 export { gamesService } from './games.service';
 export { feedbackService } from './feedback.service';
+export { motherDedicationsService } from './motherDedications.service';
 export { apiClient, ENDPOINTS } from './api';

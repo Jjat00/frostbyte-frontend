@@ -64,6 +64,13 @@ export const ENDPOINTS = {
   AI_QUIZ_RECOMMEND: '/motivational/quiz/',
   AI_VOICE_TRANSCRIBE: '/motivational/transcribe/',
 
+  // Día de la Madre
+  MOTHERS_DAY_PHRASE: '/motivational/phrase/dia-madre/',
+  MOTHERS_DAY_GENERATE_PHRASE: '/motivational/generate-mothers-day-phrase/',
+  MOTHERS_DAY_GENERATE_IMAGE: '/motivational/generate-mothers-day-image/',
+  MOTHER_DEDICATIONS: '/motivational/mother-dedications/',
+  MOTHER_DEDICATIONS_CREATE: '/motivational/mother-dedications/create/',
+
   // Recetarios
   RECETARIOS: '/recetarios/recipes/',
   RECETARIO_DETAIL: (slug) => `/recetarios/recipes/${slug}/`,

@@ -282,3 +282,14 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #00e0ff 0%, #ff00d4 100%);
 }
+
+/* Marquee infinito (muro de dedicatorias del Día de la Madre) */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee linear infinite;
+  width: max-content;
+}

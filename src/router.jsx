@@ -91,6 +91,11 @@ const GamesAdminPage = lazyLoad(() => import("./pages/game/GamesAdminPage"));
 const ImpostorSetupPage = lazyLoad(() => import("./pages/game/impostor-frostbyte/ImpostorSetupPage"));
 const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/ImpostorGamePage"));
 
+// Día de la Madre — Generador público de tarjetas
+const MothersDayGeneratorPage = lazyLoad(() =>
+  import("./pages/mothers-day/MothersDayGeneratorPage")
+);
+
 const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
 const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
 
@@ -614,6 +619,15 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <ImpostorGamePage />
+      </Lazy>
+    ),
+  },
+  // Día de la Madre — generador público de tarjetas, sin autenticación
+  {
+    path: "/dia-madre/generador",
+    element: (
+      <Lazy>
+        <MothersDayGeneratorPage />
       </Lazy>
     ),
   },
