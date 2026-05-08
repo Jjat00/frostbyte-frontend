@@ -38,29 +38,23 @@ const FloatingText = ({ message, position, index }) => {
 
   const rawOpacity = useTransform(
     scrollYProgress,
-    [threshold - 0.04, threshold, threshold + 0.02],
-    [0, 1, 1]
+    [threshold - 0.06, threshold, threshold + 0.06, threshold + 0.12],
+    [0, 1, 1, 0]
   );
   const rawY = useTransform(
     scrollYProgress,
-    [threshold - 0.04, threshold, threshold + 0.06],
-    [60, 0, -8]
-  );
-  const rawRotate = useTransform(
-    scrollYProgress,
-    [threshold - 0.04, threshold, threshold + 0.08],
-    [position.rotate + (position.side === "left" ? -25 : 25), position.rotate, position.rotate * 0.6]
+    [threshold - 0.06, threshold, threshold + 0.12],
+    [20, 0, -10]
   );
   const rawScale = useTransform(
     scrollYProgress,
-    [threshold - 0.04, threshold, threshold + 0.03],
-    [0.3, position.scale, position.scale]
+    [threshold - 0.06, threshold, threshold + 0.12],
+    [0.85, position.scale, position.scale]
   );
 
-  const opacity = useSpring(rawOpacity, { stiffness: 120, damping: 14 });
-  const y = useSpring(rawY, { stiffness: 80, damping: 8, mass: 1.2 });
-  const rotate = useSpring(rawRotate, { stiffness: 60, damping: 6, mass: 1.5 });
-  const scale = useSpring(rawScale, { stiffness: 150, damping: 10, mass: 0.8 });
+  const opacity = useSpring(rawOpacity, { stiffness: 60, damping: 22, mass: 1 });
+  const y = useSpring(rawY, { stiffness: 50, damping: 22, mass: 1 });
+  const scale = useSpring(rawScale, { stiffness: 60, damping: 22, mass: 1 });
 
   return (
     <motion.div
@@ -68,9 +62,9 @@ const FloatingText = ({ message, position, index }) => {
       style={{
         top: position.top,
         left: position.left,
+        rotate: position.rotate,
         opacity,
         y,
-        rotate,
         scale,
       }}
     >

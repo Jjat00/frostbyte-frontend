@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Instagram, MapPin, Sparkles, Heart } from "lucide-react";
+import { ChevronDown, Instagram, Sparkles, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
@@ -15,6 +15,34 @@ const socialLinks = [
   { icon: Instagram, href: "https://www.instagram.com/frostbyte.col/", label: "Instagram" },
   { icon: TikTokIcon, href: "https://www.tiktok.com/@frostbyte.col", label: "TikTok" },
 ];
+
+const DAY_NAMES = [
+  "DOMINGO",
+  "LUNES",
+  "MARTES",
+  "MIÉRCOLES",
+  "JUEVES",
+  "VIERNES",
+  "SÁBADO",
+];
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "BUENOS DÍAS";
+  if (hour >= 12 && hour < 18) return "BUENAS TARDES";
+  return "BUENAS NOCHES";
+};
+
+const getDateStrip = () => {
+  const today = new Date();
+  const dates = [];
+  for (let i = -2; i <= 2; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    dates.push({ day: d.getDate(), isCurrent: i === 0 });
+  }
+  return dates;
+};
 
 function drawCanvasFlower(ctx, cx, cy, size, opacity) {
   ctx.save();
@@ -61,6 +89,9 @@ const HeroMothersDay = () => {
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
   const canvasRef = useRef(null);
   const sectionRef = useRef(null);
+  const greeting = getGreeting();
+  const dayName = DAY_NAMES[new Date().getDay()];
+  const dateStrip = getDateStrip();
 
   useEffect(() => {
     const fetchPhrase = async () => {
@@ -272,29 +303,33 @@ const HeroMothersDay = () => {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      {/* Fondo cálido: rosa profundo a durazno tenue */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#2a1218] via-[#241019] to-[#1a0c14]" />
+      {/* Fondo rosa profundo y vibrante */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#4a1430] via-[#3a0f24] to-[#1f0814]" />
 
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 opacity-[0.18]"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 30%, rgba(244,143,177,0.4) 0%, transparent 50%),
-                           radial-gradient(circle at 80% 70%, rgba(255,180,140,0.3) 0%, transparent 50%),
-                           radial-gradient(circle at 50% 50%, rgba(232,200,150,0.2) 0%, transparent 60%)`,
+          backgroundImage: `radial-gradient(circle at 20% 30%, rgba(236,72,153,0.7) 0%, transparent 55%),
+                           radial-gradient(circle at 80% 70%, rgba(244,114,182,0.55) 0%, transparent 55%),
+                           radial-gradient(circle at 50% 50%, rgba(251,113,133,0.45) 0%, transparent 65%)`,
         }}
       />
 
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-300/15 rounded-full filter blur-[120px] animate-pulse" />
+        <div className="absolute top-20 left-10 w-[28rem] h-[28rem] bg-pink-500/35 rounded-full filter blur-[130px] animate-pulse" />
         <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-amber-300/12 rounded-full filter blur-[120px] animate-pulse"
+          className="absolute bottom-20 right-10 w-[28rem] h-[28rem] bg-rose-500/30 rounded-full filter blur-[130px] animate-pulse"
           style={{ animationDelay: "1s" }}
         />
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-rose-300/[0.1] rounded-full filter blur-[150px] animate-pulse"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-fuchsia-400/20 rounded-full filter blur-[160px] animate-pulse"
           style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute top-1/3 right-1/4 w-72 h-72 bg-pink-300/20 rounded-full filter blur-[110px] animate-pulse"
+          style={{ animationDelay: "2.5s" }}
         />
       </div>
 
@@ -310,6 +345,33 @@ const HeroMothersDay = () => {
               <Heart size={14} className="fill-pink-300 text-pink-300" />
               BEBIDAS HELADAS &middot; CUMBAL, NARI&Ntilde;O
             </span>
+          </motion.div>
+
+          {/* Saludo + día + strip de fechas */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="flex flex-col items-center gap-1"
+          >
+            <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-pink-100/75">
+              {greeting}
+            </span>
+            <span className="text-base sm:text-lg font-bold tracking-wider uppercase bg-gradient-to-r from-pink-200 via-rose-300 to-amber-200 bg-clip-text text-transparent">
+              {dayName}
+            </span>
+            <div className="flex items-center gap-4 mt-1">
+              {dateStrip.map((d, i) => (
+                <span
+                  key={i}
+                  className={`text-xs sm:text-sm font-medium ${
+                    d.isCurrent ? "text-pink-200 font-bold" : "text-pink-200/35"
+                  }`}
+                >
+                  {String(d.day).padStart(2, "0")}
+                </span>
+              ))}
+            </div>
           </motion.div>
 
           <motion.h1
@@ -362,20 +424,6 @@ const HeroMothersDay = () => {
               className="bg-gradient-to-r from-pink-400 to-rose-400 text-white font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-pink-400/50 transition-all duration-300 border-0"
             >
               Explorar Carta
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-2 border-pink-300/50 text-pink-100 font-bold text-lg px-8 py-6 hover:bg-pink-400/10 hover:border-pink-300 hover:shadow-xl hover:shadow-pink-400/30 transition-all duration-300"
-            >
-              <a
-                href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MapPin size={20} className="mr-2" />
-                Ubicaci&oacute;n en Cumbal
-              </a>
             </Button>
             <Button
               asChild

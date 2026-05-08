@@ -202,7 +202,7 @@ const CartaBackground = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 100) {
             const alpha = (1 - dist / 100) * 0.08;
-            ctx.strokeStyle = `rgba(200, 180, 255, ${alpha})`;
+            ctx.strokeStyle = `rgba(244, 114, 182, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -414,7 +414,7 @@ const CartaList = () => {
   if (!activeCategories.length) return null;
 
   return (
-    <section id="carta" className="py-10 sm:py-16 relative overflow-hidden" style={{ background: 'linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)' }}>
+    <section id="carta" className="py-10 sm:py-16 relative overflow-hidden" style={{ background: 'linear-gradient(to bottom, #2a0d1a, #3a0f24, #2a0d1a)' }}>
       <CartaBackground />
 
       <div className="container mx-auto px-4 max-w-3xl relative z-10">
