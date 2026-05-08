@@ -134,7 +134,7 @@ const Footer = () => {
                 href="https://wa.me/573164277879"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-gray hover:text-green-400 transition-colors duration-300"
+                className="flex items-center gap-2 text-gray hover:text-pink-400 transition-colors duration-300"
               >
                 <MessageCircle size={16} />
                 WhatsApp

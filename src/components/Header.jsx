@@ -47,15 +47,15 @@ ListItem.displayName = "ListItem";
  * categorySlug: slug de la categoría en BD (null = siempre visible)
  */
 const BEVERAGE_SECTIONS = [
-  { key: "desguayabator", label: "🩹 Desguayabator", href: "#desguayabator", categorySlug: null, className: "text-emerald-400 hover:text-emerald-300" },
-  { key: "agua", label: "💧 Agua", href: "#agua", categorySlug: null, className: "text-cyan-400 hover:text-cyan-300" },
+  { key: "desguayabator", label: "🩹 Desguayabator", href: "#desguayabator", categorySlug: null, className: "text-rose-400 hover:text-rose-300" },
+  { key: "agua", label: "💧 Agua", href: "#agua", categorySlug: null, className: "text-pink-400 hover:text-pink-300" },
   { key: "granizados", label: "Granizados", href: "#granizados", categorySlug: "granizados" },
   { key: "frappes", label: "Frappes", href: "#frappes", categorySlug: "frappes" },
   { key: "sodas", label: "Sodas Italianas", href: "#sodas", categorySlug: "sodas-italianas" },
   { key: "micheladas", label: "Micheladas", href: "#micheladas", categorySlug: "micheladas" },
   { key: "cervezas", label: "🍺 Cervezas", href: "#cervezas", categorySlug: "cervezas" },
   { key: "cuates", label: "🍹 Cuates", href: "#cuates", categorySlug: "cuates" },
-  { key: "luladas", label: "🍋 Luladas", href: "#luladas", categorySlug: "luladas", className: "text-lime-400 hover:text-lime-300" },
+  { key: "luladas", label: "🍋 Luladas", href: "#luladas", categorySlug: "luladas", className: "text-pink-400 hover:text-pink-300" },
   { key: "mocktails", label: "Cocteles", href: "#mocktails", categorySlug: "mocktails" },
   { key: "shots", label: "Shots", href: "#shots", categorySlug: "shots" },
   { key: "vinos", label: "🍷 Vinos", href: "#vinos", categorySlug: "vinos" },
@@ -287,7 +287,7 @@ const Header = () => {
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Mas en Frostbyte</p>
               <a
                 href="#que-te-provoca"
-                className="block text-violet-400 hover:text-violet-300 transition-colors duration-300 font-medium"
+                className="block text-rose-400 hover:text-rose-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 ✨ Recomendador de Bebidas
@@ -301,21 +301,21 @@ const Header = () => {
               </a>
               <a
                 href="#descuento-cumple"
-                className="block text-amber-400 hover:text-amber-300 transition-colors duration-300 font-medium"
+                className="block text-rose-400 hover:text-rose-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🎂 Descuento de Cumple
               </a>
               <a
                 href="#solicitar-cancion"
-                className="block text-green-400 hover:text-green-300 transition-colors duration-300 font-medium"
+                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 🎵 Pedir Cancion
               </a>
               <a
                 href="#feedback"
-                className="block text-teal-400 hover:text-teal-300 transition-colors duration-300 font-medium"
+                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 💬 Tu Opinion
@@ -353,7 +353,7 @@ const Header = () => {
                 href="https://wa.me/573164277879"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-green-400 hover:text-green-300 transition-colors duration-300 font-medium"
+                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 💬 WhatsApp

@@ -41,14 +41,14 @@ const SPECIAL_SECTIONS = [
   {
     id: "agua",
     name: "Agua",
-    gradient: "from-cyan-400 to-blue-400",
+    gradient: "from-pink-400 to-rose-400",
     icon: Droplets,
     items: [{ name: "Botella de Agua", price: "$2.000" }],
   },
   {
     id: "que-te-provoca",
     name: "Recomendador de Bebidas",
-    gradient: "from-violet-400 to-fuchsia-500",
+    gradient: "from-rose-400 to-pink-500",
     icon: Sparkles,
     description: "Deja que te recomendemos la bebida perfecta para ti.",
   },
@@ -62,28 +62,28 @@ const SPECIAL_SECTIONS = [
   {
     id: "descuento-cumple",
     name: "Descuento de Cumple",
-    gradient: "from-amber-400 to-orange-500",
+    gradient: "from-rose-400 to-pink-500",
     icon: Cake,
     description: "Si es tu cumple, tendras un descuento especial.",
   },
   {
     id: "solicitar-cancion",
     name: "Pedir Cancion",
-    gradient: "from-green-400 to-emerald-500",
+    gradient: "from-rose-400 to-fuchsia-500",
     icon: Music,
     description: "Pide tu cancion favorita y la ponemos para ti.",
   },
   {
     id: "feedback",
     name: "Tu Opinion",
-    gradient: "from-teal-400 to-cyan-500",
+    gradient: "from-pink-400 to-rose-500",
     icon: MessageSquare,
     description: "Dejanos tu opinion, sugerencias o comentarios.",
   },
   {
     id: "frostbyte-play",
     name: "Frostbyte Play",
-    gradient: "from-violet-400 to-amber-400",
+    gradient: "from-rose-400 to-pink-500",
     icon: Gamepad2,
     tableOnly: true,
     description: "Juega mientras esperas tu pedido.",
@@ -133,17 +133,17 @@ const CartaBackground = () => {
           vy: -0.1 - Math.random() * 0.3,
           size: 0.8 + Math.random() * 2,
           alpha: 0.15 + Math.random() * 0.4,
-          hue: [300, 190, 260, 220][Math.floor(Math.random() * 4)],
+          hue: [340, 350, 320, 330][Math.floor(Math.random() * 4)],
           phase: Math.random() * Math.PI * 2,
         });
       }
       // large glowing orbs that drift
       orbs.push(
-        { x: w * 0.15, y: h * 0.25, r: 200, hue: 300, speed: 0.2, phase: 0 },
-        { x: w * 0.85, y: h * 0.4, r: 180, hue: 190, speed: 0.15, phase: 2 },
-        { x: w * 0.5, y: h * 0.7, r: 220, hue: 260, speed: 0.18, phase: 4 },
-        { x: w * 0.3, y: h * 0.9, r: 150, hue: 190, speed: 0.22, phase: 1 },
-        { x: w * 0.7, y: h * 0.15, r: 160, hue: 300, speed: 0.17, phase: 3 },
+        { x: w * 0.15, y: h * 0.25, r: 200, hue: 340, speed: 0.2, phase: 0 },
+        { x: w * 0.85, y: h * 0.4, r: 180, hue: 350, speed: 0.15, phase: 2 },
+        { x: w * 0.5, y: h * 0.7, r: 220, hue: 320, speed: 0.18, phase: 4 },
+        { x: w * 0.3, y: h * 0.9, r: 150, hue: 330, speed: 0.22, phase: 1 },
+        { x: w * 0.7, y: h * 0.15, r: 160, hue: 340, speed: 0.17, phase: 3 },
       );
     };
 

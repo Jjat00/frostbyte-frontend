@@ -84,17 +84,17 @@ const ProductSkeleton = () => (
 const sodasStyles = {
   "soda-italiana-de-fresa": {
     icon: Cherry,
-    gradient: "from-red-400 to-pink-500",
+    gradient: "from-rose-400 to-pink-500",
     image: "./SODA-ITALIANA-FRESA-9715.jpg",
   },
   "soda-italiana-de-maracuya": {
     icon: Citrus,
-    gradient: "from-yellow-400 to-orange-500",
+    gradient: "from-rose-400 to-pink-500",
     image: "./RJjIk1U1.jpg",
   },
   "soda-italiana-de-mango": {
     icon: Sun,
-    gradient: "from-yellow-300 to-orange-400",
+    gradient: "from-fuchsia-300 to-rose-400",
     image: "https://images.unsplash.com/photo-1546173159-315724a31696",
   },
 };

@@ -38,7 +38,7 @@ const ProductCard = ({ product, index, styles }) => {
       className="group relative"
     >
       <div
-        className={`liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-secondary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(0,224,255,0.1)] ${
+        className={`liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-secondary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(236,72,153,0.1)] ${
           product.is_coming_soon ? "opacity-60" : ""
         }`}
       >
@@ -131,49 +131,49 @@ const ProductSkeleton = () => (
 const coctelesStyles = {
   mojito: {
     icon: GlassWater,
-    gradient: "from-green-400 to-emerald-600",
+    gradient: "from-pink-400 to-rose-600",
     liquor: "Ron BACARDI Superior",
     image: "https://images.unsplash.com/photo-1652780093319-559c3b12225a",
   },
   margarita: {
     icon: Martini,
-    gradient: "from-lime-300 to-yellow-400",
+    gradient: "from-rose-300 to-pink-400",
     liquor: "Tequila JOSE CUERVO",
     image: "https://images.unsplash.com/photo-1700909592926-c07b0c2a0bed",
   },
   margarota: {
     icon: PartyPopper,
-    gradient: "from-yellow-400 to-amber-500",
+    gradient: "from-fuchsia-300 to-pink-400",
     liquor: "Tequila JOSE CUERVO",
     image: "./margarota.jpeg",
   },
   caipiroshka: {
     icon: Citrus,
-    gradient: "from-lime-500 to-green-700",
+    gradient: "from-pink-500 to-rose-700",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1581284744588-af12206e90db",
   },
   "cuba-libre": {
     icon: Skull,
-    gradient: "from-red-900 to-black",
+    gradient: "from-rose-900 to-black",
     liquor: "Ron BACARDI Superior",
     image: "https://images.unsplash.com/photo-1665940487849-abe2980c05ab",
   },
   gintonic: {
     icon: Wine,
-    gradient: "from-purple-400 to-indigo-600",
+    gradient: "from-rose-400 to-pink-600",
     liquor: "Ginebra BEEFEATER",
     image: "/shutterstock-1504207547.jpg",
   },
   "moscow-mule": {
     icon: GlassWater,
-    gradient: "from-amber-200 to-orange-300",
+    gradient: "from-pink-200 to-rose-300",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1527628126150-086ff233b951",
   },
   "blue-long": {
     icon: Palmtree,
-    gradient: "from-blue-400 to-cyan-600",
+    gradient: "from-pink-400 to-rose-600",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1682629906883-76eaa5e03693",
   },

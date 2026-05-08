@@ -23,7 +23,7 @@ const ProductCard = ({ product, index, styles }) => {
       whileHover={{ y: -10 }}
       className="group relative"
     >
-      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-yellow-500/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(234,179,8,0.1)]">
+      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-rose-500/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(244,114,182,0.1)]">
         <div className="h-48 overflow-hidden relative">
           <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
           {styles.image ? (
@@ -44,12 +44,12 @@ const ProductCard = ({ product, index, styles }) => {
           >
             <Icon className="text-dark" size={24} />
           </div>
-          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-yellow-400 transition-colors duration-300">
+          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-rose-400 transition-colors duration-300">
             {product.name}
           </h3>
           <p className="text-gray mb-4 grow text-sm">{product.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-linear-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -75,22 +75,22 @@ const ProductSkeleton = () => (
 const cervezasStyles = {
   budweiser: {
     icon: Sparkles,
-    gradient: "from-red-500 to-red-700",
+    gradient: "from-rose-500 to-rose-700",
     image: "/2dff99a28b761aa32527776df5e1c4a7.jpg",
   },
   poker: {
     icon: Beer,
-    gradient: "from-yellow-500 to-amber-600",
+    gradient: "from-pink-500 to-rose-600",
     image: "/cerveza-poker.jpg",
   },
   coronita: {
     icon: Star,
-    gradient: "from-yellow-400 to-amber-500",
+    gradient: "from-pink-400 to-rose-500",
     image: "/cerveza-corona.png",
   },
   corona: {
     icon: Crown,
-    gradient: "from-yellow-300 to-yellow-500",
+    gradient: "from-pink-300 to-pink-500",
     image: "/cerveza-corona.png",
   },
 };
@@ -99,7 +99,7 @@ const getCervezaStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
   const localStyles = cervezasStyles[slug] || {
     icon: Beer,
-    gradient: "from-yellow-400 to-amber-500",
+    gradient: "from-pink-400 to-rose-500",
   };
 
   // Priorizar image_url de la API sobre estilos locales
@@ -119,8 +119,8 @@ const Cervezas = () => {
   return (
     <section id="cervezas" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-yellow-500 rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-amber-500 rounded-full filter blur-[100px]"></div>
+        <div className="absolute top-0 left-1/4 w-64 h-64 bg-pink-500 rounded-full filter blur-[100px]"></div>
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-rose-500 rounded-full filter blur-[100px]"></div>
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -131,7 +131,7 @@ const Cervezas = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-pink-400 to-rose-500 bg-clip-text text-transparent">
               CERVEZAS
             </span>
           </h2>

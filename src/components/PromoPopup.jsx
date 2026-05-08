@@ -24,7 +24,7 @@ const FloatingParticle = ({ delay, duration, startX, startY }) => (
       ease: "easeOut",
     }}
   >
-    <Snowflake className="text-amber-300/40" size={12} />
+    <Snowflake className="text-rose-300/40" size={12} />
   </motion.div>
 );
 
@@ -86,10 +86,10 @@ const PromoPopup = () => {
           >
             <div className="relative w-full max-w-md pointer-events-auto">
               {/* Glow effect detrás del modal */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/30 via-orange-500/20 to-amber-600/30 rounded-3xl blur-2xl animate-pulse" />
+              <div className="absolute -inset-4 bg-gradient-to-r from-rose-500/30 via-pink-500/20 to-rose-600/30 rounded-3xl blur-2xl animate-pulse" />
 
               {/* Contenedor principal */}
-              <div className="relative bg-gradient-to-br from-amber-950/95 via-amber-900/95 to-orange-950/95 border-2 border-amber-500/50 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/20">
+              <div className="relative bg-gradient-to-br from-rose-950/95 via-rose-900/95 to-pink-950/95 border-2 border-rose-500/50 rounded-3xl overflow-hidden shadow-2xl shadow-rose-500/20">
                 {/* Partículas flotantes */}
                 <div className="absolute inset-0 overflow-hidden">
                   {[...Array(8)].map((_, i) => (
@@ -105,14 +105,14 @@ const PromoPopup = () => {
 
                 {/* Efectos de fondo */}
                 <div className="absolute inset-0">
-                  <div className="absolute top-0 right-0 w-40 h-40 bg-amber-400/20 rounded-full filter blur-[60px]" />
-                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-500/20 rounded-full filter blur-[50px]" />
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-rose-400/20 rounded-full filter blur-[60px]" />
+                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-pink-500/20 rounded-full filter blur-[50px]" />
                 </div>
 
                 {/* Botón cerrar */}
                 <button
                   onClick={handleClose}
-                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-dark/50 border border-amber-500/30 text-amber-300 hover:bg-dark hover:border-amber-400 transition-all duration-300 hover:scale-110"
+                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-dark/50 border border-rose-500/30 text-rose-300 hover:bg-dark hover:border-rose-400 transition-all duration-300 hover:scale-110"
                 >
                   <X size={20} />
                 </button>
@@ -124,13 +124,13 @@ const PromoPopup = () => {
                     initial={{ scale: 0, rotate: -10 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/30 to-orange-500/30 border border-red-400/50 rounded-full px-4 py-1.5 mb-4"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-rose-500/30 to-pink-500/30 border border-rose-400/50 rounded-full px-4 py-1.5 mb-4"
                   >
-                    <Sparkles className="text-amber-300 animate-pulse" size={16} />
-                    <span className="text-amber-200 font-bold text-sm uppercase tracking-wider">
+                    <Sparkles className="text-rose-300 animate-pulse" size={16} />
+                    <span className="text-rose-200 font-bold text-sm uppercase tracking-wider">
                       Promo Fin de Semana
                     </span>
-                    <Sparkles className="text-amber-300 animate-pulse" size={16} />
+                    <Sparkles className="text-rose-300 animate-pulse" size={16} />
                   </motion.div>
 
                   {/* Icono de café */}
@@ -140,7 +140,7 @@ const PromoPopup = () => {
                     transition={{ delay: 0.3 }}
                     className="mb-4"
                   >
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl shadow-lg shadow-amber-500/40 mx-auto">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-rose-400 to-pink-600 rounded-2xl shadow-lg shadow-rose-500/40 mx-auto">
                       <Coffee className="text-dark" size={40} />
                     </div>
                   </motion.div>
@@ -153,7 +153,7 @@ const PromoPopup = () => {
                     className="text-2xl sm:text-3xl font-black text-light mb-2"
                   >
                     GRANIZADO DE{" "}
-                    <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-rose-300 to-pink-400 bg-clip-text text-transparent">
                       CAFE
                     </span>
                   </motion.h2>
@@ -163,7 +163,7 @@ const PromoPopup = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="text-amber-200/80 mb-6"
+                    className="text-rose-200/80 mb-6"
                   >
                     Refrescante y energizante
                   </motion.p>
@@ -173,15 +173,15 @@ const PromoPopup = () => {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-                    className="bg-gradient-to-br from-dark/60 to-dark/40 border border-amber-500/40 rounded-2xl p-6 mb-6"
+                    className="bg-gradient-to-br from-dark/60 to-dark/40 border border-rose-500/40 rounded-2xl p-6 mb-6"
                   >
-                    <div className="text-amber-300/80 text-lg mb-2">
-                      Lleva <span className="font-bold text-amber-200">2</span> granizados por
+                    <div className="text-rose-300/80 text-lg mb-2">
+                      Lleva <span className="font-bold text-rose-200">2</span> granizados por
                     </div>
 
                     {/* Precio promocional */}
                     <div className="relative inline-block mb-3">
-                      <span className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-400 bg-clip-text text-transparent">
+                      <span className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-rose-300 via-pink-300 to-fuchsia-400 bg-clip-text text-transparent">
                         {formatPrice(12000)}
                       </span>
                     </div>
@@ -193,16 +193,16 @@ const PromoPopup = () => {
                           {formatPrice(16000)}
                         </span>
                       </div>
-                      <div className="bg-green-500/20 border border-green-400/50 rounded-full px-3 py-1">
-                        <span className="text-green-400 font-bold text-sm">
+                      <div className="bg-rose-500/20 border border-rose-400/50 rounded-full px-3 py-1">
+                        <span className="text-rose-400 font-bold text-sm">
                           Ahorras {formatPrice(4000)}
                         </span>
                       </div>
                     </div>
 
                     {/* Precio por unidad */}
-                    <div className="mt-3 text-amber-300/60 text-sm">
-                      Cada granizado a solo <span className="font-bold text-amber-200">{formatPrice(6000)}</span>
+                    <div className="mt-3 text-rose-300/60 text-sm">
+                      Cada granizado a solo <span className="font-bold text-rose-200">{formatPrice(6000)}</span>
                     </div>
                   </motion.div>
 
@@ -215,13 +215,13 @@ const PromoPopup = () => {
                   >
                     <button
                       onClick={handleGoToGranizados}
-                      className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-dark font-bold py-3 px-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/30"
+                      className="flex-1 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-400 hover:to-pink-400 text-dark font-bold py-3 px-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-rose-500/30"
                     >
                       Ver Granizados
                     </button>
                     <button
                       onClick={handleClose}
-                      className="flex-1 bg-dark/50 border border-amber-500/30 text-amber-300 hover:bg-dark hover:border-amber-400 font-semibold py-3 px-6 rounded-xl transition-all duration-300"
+                      className="flex-1 bg-dark/50 border border-rose-500/30 text-rose-300 hover:bg-dark hover:border-rose-400 font-semibold py-3 px-6 rounded-xl transition-all duration-300"
                     >
                       Ahora no
                     </button>

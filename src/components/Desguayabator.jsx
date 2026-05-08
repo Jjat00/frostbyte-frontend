@@ -17,12 +17,12 @@ const formatPrice = (price) => {
 const flavorStyles = {
   "desguayabator-maracuya": {
     icon: Star,
-    gradient: "from-yellow-400 to-orange-500",
-    glowGradient: "from-yellow-400 to-orange-500",
-    borderColor: "border-yellow-500/50",
-    shadowColor: "hover:shadow-yellow-500/30",
-    bgColor: "bg-yellow-500",
-    textColor: "text-yellow-400",
+    gradient: "from-rose-400 to-pink-500",
+    glowGradient: "from-rose-400 to-pink-500",
+    borderColor: "border-rose-500/50",
+    shadowColor: "hover:shadow-rose-500/30",
+    bgColor: "bg-rose-500",
+    textColor: "text-rose-400",
   },
   "desguayabator-fresa": {
     icon: Heart,
@@ -36,7 +36,7 @@ const flavorStyles = {
   "desguayabator-coco": {
     icon: Sparkles,
     gradient: "from-white to-gray-300",
-    glowGradient: "from-white to-cyan-300",
+    glowGradient: "from-white to-pink-200",
     borderColor: "border-white/50",
     shadowColor: "hover:shadow-white/30",
     bgColor: "bg-white",
@@ -44,12 +44,12 @@ const flavorStyles = {
   },
   "desguayabator-naranja-mandarina": {
     icon: Zap,
-    gradient: "from-orange-400 to-orange-600",
-    glowGradient: "from-orange-400 to-red-500",
-    borderColor: "border-orange-500/50",
-    shadowColor: "hover:shadow-orange-500/30",
-    bgColor: "bg-orange-500",
-    textColor: "text-orange-400",
+    gradient: "from-pink-400 to-rose-600",
+    glowGradient: "from-pink-400 to-rose-500",
+    borderColor: "border-rose-500/50",
+    shadowColor: "hover:shadow-rose-500/30",
+    bgColor: "bg-rose-500",
+    textColor: "text-rose-400",
   },
 };
 
@@ -58,12 +58,12 @@ const getFlavorStyles = (product) => {
   return (
     flavorStyles[slug] || {
       icon: Zap,
-      gradient: "from-emerald-400 to-cyan-400",
-      glowGradient: "from-emerald-400 to-cyan-400",
-      borderColor: "border-emerald-500/50",
-      shadowColor: "hover:shadow-emerald-500/30",
-      bgColor: "bg-emerald-500",
-      textColor: "text-emerald-400",
+      gradient: "from-fuchsia-400 to-pink-400",
+      glowGradient: "from-fuchsia-400 to-pink-400",
+      borderColor: "border-pink-500/50",
+      shadowColor: "hover:shadow-pink-500/30",
+      bgColor: "bg-pink-500",
+      textColor: "text-pink-400",
     }
   );
 };
@@ -300,13 +300,13 @@ const Desguayabator = () => {
     >
       {/* Epic background effects */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500 rounded-full filter blur-[150px] opacity-20 animate-pulse"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-rose-500 rounded-full filter blur-[150px] opacity-20 animate-pulse"></div>
         <div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500 rounded-full filter blur-[150px] opacity-20 animate-pulse"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500 rounded-full filter blur-[150px] opacity-20 animate-pulse"
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500 rounded-full filter blur-[200px] opacity-10 animate-pulse"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-fuchsia-500 rounded-full filter blur-[200px] opacity-10 animate-pulse"
           style={{ animationDelay: "0.5s" }}
         ></div>
       </div>
@@ -317,7 +317,7 @@ const Desguayabator = () => {
           className="w-full h-full"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(16, 185, 129, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.3) 1px, transparent 1px)",
+              "linear-gradient(rgba(236, 72, 153, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(236, 72, 153, 0.3) 1px, transparent 1px)",
             backgroundSize: "50px 50px",
           }}
         ></div>
@@ -327,23 +327,23 @@ const Desguayabator = () => {
         {/* Header Section */}
         <div className="text-center mb-16">
           {/* Badge exclusivo */}
-          <div className="desg-badge inline-flex items-center gap-2 bg-linear-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/50 rounded-full px-4 sm:px-6 py-2 mb-6">
+          <div className="desg-badge inline-flex items-center gap-2 bg-linear-to-r from-rose-500/20 to-pink-500/20 border border-rose-500/50 rounded-full px-4 sm:px-6 py-2 mb-6">
             <AlertCircle
-              className="text-emerald-400 animate-pulse hidden sm:block"
+              className="text-rose-400 animate-pulse hidden sm:block"
               size={18}
             />
-            <span className="text-emerald-400 font-bold text-xs sm:text-sm tracking-wider uppercase">
+            <span className="text-rose-400 font-bold text-xs sm:text-sm tracking-wider uppercase">
               ¡Cura Guayabos Garantizado!
             </span>
             <AlertCircle
-              className="text-emerald-400 animate-pulse hidden sm:block"
+              className="text-rose-400 animate-pulse hidden sm:block"
               size={18}
             />
           </div>
 
           {/* Título principal */}
           <h2 className="desg-title text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6">
-            <span className="bg-linear-to-r from-emerald-400 via-cyan-400 to-green-400 bg-clip-text text-transparent drop-shadow-lg">
+            <span className="bg-linear-to-r from-pink-300 via-rose-300 to-fuchsia-300 bg-clip-text text-transparent drop-shadow-lg">
               DESGUAYABATOR
             </span>
           </h2>
@@ -351,15 +351,15 @@ const Desguayabator = () => {
           {/* Subtítulo */}
           <p className="desg-subtitle text-base sm:text-xl md:text-2xl text-gray max-w-3xl mx-auto mb-4 px-2">
             La bebida más famosa de Cumbal para{" "}
-            <span className="text-emerald-400 font-bold">curar el guayabo</span>.
+            <span className="text-rose-400 font-bold">curar el guayabo</span>.
             Fórmula secreta con Electrolit + Bonfiest para revivir después de
             una noche épica
           </p>
 
           {/* Info de ingredientes */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8">
-            <div className="desg-ingredient-left flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
-              <Zap className="text-cyan-400" size={18} />
+            <div className="desg-ingredient-left flex items-center gap-2 bg-dark-secondary/80 border border-rose-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
+              <Zap className="text-pink-400" size={18} />
               <span className="text-light font-semibold text-sm sm:text-base">
                 Electrolit
               </span>
@@ -367,10 +367,10 @@ const Desguayabator = () => {
                 Hidratación Total
               </span>
             </div>
-            <span className="text-emerald-400 text-xl sm:text-2xl font-bold">
+            <span className="text-rose-400 text-xl sm:text-2xl font-bold">
               +
             </span>
-            <div className="desg-ingredient-right flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
+            <div className="desg-ingredient-right flex items-center gap-2 bg-dark-secondary/80 border border-rose-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
               <Heart className="text-red-400" size={18} />
               <span className="text-light font-semibold text-sm sm:text-base">
                 Bonfiest
@@ -384,15 +384,15 @@ const Desguayabator = () => {
 
         {/* Precio destacado */}
         <div className="desg-price text-center mb-12">
-          <div className="inline-flex flex-col items-center bg-linear-to-br from-emerald-500/20 to-cyan-500/20 border-2 border-emerald-500/50 rounded-3xl px-8 sm:px-12 py-6 sm:py-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-cyan-500/10 animate-pulse"></div>
+          <div className="inline-flex flex-col items-center bg-linear-to-br from-rose-500/20 to-pink-500/20 border-2 border-rose-500/50 rounded-3xl px-8 sm:px-12 py-6 sm:py-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-linear-to-r from-rose-500/10 to-pink-500/10 animate-pulse"></div>
             <span className="text-gray text-base sm:text-lg mb-2 relative z-10">
               Precio único
             </span>
-            <span className="text-4xl sm:text-5xl md:text-6xl font-black bg-linear-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent relative z-10">
+            <span className="text-4xl sm:text-5xl md:text-6xl font-black bg-linear-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent relative z-10">
               {formatPrice(defaultPrice)}
             </span>
-            <span className="text-emerald-400 text-sm mt-2 relative z-10">
+            <span className="text-rose-400 text-sm mt-2 relative z-10">
               Cualquier sabor
             </span>
           </div>
@@ -402,7 +402,7 @@ const Desguayabator = () => {
         <div className="mb-8">
           <h3 className="text-center text-2xl font-bold text-light mb-8">
             Elige tu sabor de{" "}
-            <span className="text-emerald-400">Electrolit</span>
+            <span className="text-rose-400">Electrolit</span>
           </h3>
         </div>
 
@@ -423,12 +423,12 @@ const Desguayabator = () => {
         {/* Call to action */}
         <div className="text-center mt-16">
           <p className="desg-protip text-gray text-lg">
-            <Zap className="inline text-emerald-400 mr-2" size={20} />
-            <span className="text-emerald-400 font-semibold">
+            <Zap className="inline text-rose-400 mr-2" size={20} />
+            <span className="text-rose-400 font-semibold">
               Pro tip:
             </span>{" "}
             Pídelo antes de que el guayabo te gane la batalla
-            <Zap className="inline text-emerald-400 ml-2" size={20} />
+            <Zap className="inline text-rose-400 ml-2" size={20} />
           </p>
         </div>
       </div>

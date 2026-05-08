@@ -26,7 +26,7 @@ const formatPrice = (price) => {
 };
 
 const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
-  <div className="poison-card w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border border-purple-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+  <div className="poison-card w-[calc(50%-6px)] sm:w-[140px] lg:w-[160px] bg-dark/60 border border-pink-500/30 rounded-2xl p-4 text-center cursor-pointer hover:border-pink-400/60 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300">
     <div
       className={`w-12 h-12 bg-linear-to-br ${gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg`}
     >
@@ -34,7 +34,7 @@ const PoisonOption = ({ name, brand, price, icon: Icon, gradient }) => (
     </div>
     <h4 className="text-light font-bold text-base">{name}</h4>
     <p className="text-gray text-xs mb-2">{brand}</p>
-    <span className="text-purple-400 font-bold text-sm">{price}</span>
+    <span className="text-pink-400 font-bold text-sm">{price}</span>
   </div>
 );
 
@@ -65,11 +65,11 @@ const ThickGlassFilter = () => (
 // Tarjeta liquid glass — vidrio grueso con distorsión en bordes
 const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
-  const ringColor = styles.ringColor || "border-cyan-400";
+  const ringColor = styles.ringColor || "border-pink-400";
 
   return (
     <div className="gran-card group relative h-full">
-      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(34,211,238,0.05)]">
+      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(236,72,153,0.05)]">
         {/* Capa de vidrio grueso — distorsión sutil en los bordes por la concavidad */}
         <div
           className="absolute inset-0 rounded-3xl pointer-events-none"
@@ -195,9 +195,9 @@ const flavorShots = [
     licor: "Tequila",
     price: "+$5.000",
     icon: Droplets,
-    gradient: "from-green-400 to-emerald-600",
-    textColor: "text-green-400",
-    borderColor: "border-green-500/30",
+    gradient: "from-pink-400 to-rose-600",
+    textColor: "text-pink-400",
+    borderColor: "border-rose-500/30",
   },
   {
     name: "Maracuyá",
@@ -205,9 +205,9 @@ const flavorShots = [
     licor: "Whisky",
     price: "+$5.000",
     icon: Droplets,
-    gradient: "from-yellow-300 to-amber-500",
-    textColor: "text-yellow-400",
-    borderColor: "border-yellow-500/30",
+    gradient: "from-rose-300 to-pink-500",
+    textColor: "text-rose-400",
+    borderColor: "border-rose-500/30",
   },
   {
     name: "Fresita",
@@ -215,9 +215,9 @@ const flavorShots = [
     licor: "Ron",
     price: "+$5.000",
     icon: Droplets,
-    gradient: "from-red-400 to-rose-600",
-    textColor: "text-red-400",
-    borderColor: "border-red-500/30",
+    gradient: "from-rose-400 to-pink-600",
+    textColor: "text-rose-400",
+    borderColor: "border-rose-500/30",
   },
   {
     name: "Tentaxxion",
@@ -225,9 +225,9 @@ const flavorShots = [
     licor: "Vodka",
     price: "+$5.000",
     icon: Droplets,
-    gradient: "from-purple-400 to-fuchsia-600",
-    textColor: "text-purple-400",
-    borderColor: "border-purple-500/30",
+    gradient: "from-pink-400 to-rose-600",
+    textColor: "text-pink-400",
+    borderColor: "border-pink-500/30",
   },
 ];
 
@@ -256,35 +256,35 @@ const poisonShots = [
     brand: "Beefeater",
     price: "+$20.000",
     icon: Martini,
-    gradient: "from-blue-400 to-blue-600",
+    gradient: "from-pink-400 to-pink-600",
   },
   {
     name: "Vodka",
     brand: "Absolut",
     price: "+$10.000",
     icon: Wine,
-    gradient: "from-sky-300 to-sky-500",
+    gradient: "from-pink-300 to-pink-500",
   },
   {
     name: "Whisky",
     brand: "Jack Daniels",
     price: "+$12.000",
     icon: Flame,
-    gradient: "from-amber-500 to-amber-700",
+    gradient: "from-rose-500 to-rose-700",
   },
   {
     name: "Tequila",
     brand: "Jose Cuervo",
     price: "+$9.000",
     icon: Citrus,
-    gradient: "from-yellow-400 to-orange-500",
+    gradient: "from-fuchsia-400 to-rose-500",
   },
   {
     name: "Ron",
     brand: "Bacardi",
     price: "+$6.000",
     icon: Anchor,
-    gradient: "from-red-500 to-red-700",
+    gradient: "from-rose-500 to-rose-700",
   },
   {
     name: "Aguardiente",
@@ -349,7 +349,7 @@ const Granizados = ({ showExtras = true }) => {
           let offsetX = 0;
           let offsetY = 0;
           let alpha = 0.12;
-          let r = 34, g = 211, b = 238;
+          let r = 236, g = 72, b = 153;
 
           if (dist < HOVER_RADIUS) {
             const intensity = 1 - dist / HOVER_RADIUS;
@@ -361,9 +361,9 @@ const Granizados = ({ showExtras = true }) => {
             offsetY = Math.sin(angle) * wave;
 
             alpha = 0.12 + ease * 0.55;
-            r = Math.round(34 * (1 - ease) + 255 * ease);
-            g = Math.round(211 * (1 - ease) + 0 * ease);
-            b = Math.round(238 * (1 - ease) + 212 * ease);
+            r = Math.round(236 * (1 - ease) + 249 * ease);
+            g = Math.round(72 * (1 - ease) + 168 * ease);
+            b = Math.round(153 * (1 - ease) + 212 * ease);
           }
 
           const px = baseX + offsetX;
@@ -501,7 +501,7 @@ const Granizados = ({ showExtras = true }) => {
     <section
       ref={sectionRef}
       id="granizados"
-      className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-blue-950 to-indigo-950"
+      className="py-20 relative overflow-hidden bg-linear-to-br from-slate-900 via-pink-950 to-rose-950"
     >
       {/* SVG filter para vidrio grueso */}
       <ThickGlassFilter />
@@ -512,11 +512,11 @@ const Granizados = ({ showExtras = true }) => {
         className="absolute inset-0 pointer-events-none"
       />
 
-      {/* Neon ambiental — cyan + magenta estilo Frostbyte */}
+      {/* Neon ambiental — rosa cálido Día de la Madre */}
       <div className="absolute inset-0 opacity-25">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px]" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-500/70 rounded-full filter blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/70 rounded-full filter blur-[100px]" />
       </div>
 
       {/* Líneas divisoras con toque neón */}
@@ -527,7 +527,7 @@ const Granizados = ({ showExtras = true }) => {
         {/* Section header */}
         <div className="text-center mb-16">
           <h2 className="gran-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            <span className="bg-linear-to-r from-cyan-200 via-primary to-secondary bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(34,211,238,0.3)]">
+            <span className="bg-linear-to-r from-pink-200 via-primary to-secondary bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(236,72,153,0.3)]">
               GRANIZADOS
             </span>
           </h2>
@@ -559,10 +559,10 @@ const Granizados = ({ showExtras = true }) => {
         {/* Sección Envenenar - controlada por show_extras */}
         {showExtras && (
           <div className="poison-section mt-20">
-            <div className="bg-linear-to-br from-purple-900/30 to-pink-900/30 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+            <div className="bg-linear-to-br from-rose-900/30 to-pink-900/30 border-2 border-rose-500/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
               {/* Efectos de fondo */}
               <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-[100px]"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500 rounded-full filter blur-[100px]"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-pink-500 rounded-full filter blur-[80px]"></div>
               </div>
 
@@ -571,18 +571,18 @@ const Granizados = ({ showExtras = true }) => {
                 <div className="text-center mb-8">
                   <div className="poison-title flex items-center justify-center gap-3 mb-4">
                     <Skull
-                      className="text-purple-400 hidden sm:block"
+                      className="text-rose-400 hidden sm:block"
                       size={32}
                     />
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
                       ¿QUIERES{" "}
-                      <span className="bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      <span className="bg-linear-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">
                         ENVENENARLO
                       </span>
                       ?
                     </h3>
                     <Skull
-                      className="text-purple-400 hidden sm:block"
+                      className="text-rose-400 hidden sm:block"
                       size={32}
                     />
                   </div>
@@ -601,18 +601,18 @@ const Granizados = ({ showExtras = true }) => {
 
                 {/* Ejemplo visual */}
                 <div className="poison-formula mt-8 flex justify-center">
-                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-purple-500/30">
+                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-rose-500/30">
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🍹 Granizado
                     </span>
-                    <Plus className="text-purple-400 shrink-0" size={20} />
+                    <Plus className="text-rose-400 shrink-0" size={20} />
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🥃 Shot
                     </span>
-                    <span className="text-purple-400 text-xl sm:text-2xl shrink-0">
+                    <span className="text-rose-400 text-xl sm:text-2xl shrink-0">
                       =
                     </span>
-                    <span className="text-purple-400 font-bold text-sm sm:text-base whitespace-nowrap">
+                    <span className="text-rose-400 font-bold text-sm sm:text-base whitespace-nowrap">
                       ☠️ ENVENENADO
                     </span>
                   </div>
@@ -624,7 +624,7 @@ const Granizados = ({ showExtras = true }) => {
 
         {showExtras && (
           <div className="mt-12">
-            <div className="relative bg-linear-to-br from-emerald-900/20 via-dark/60 to-cyan-900/20 border-2 border-cyan-500/30 rounded-3xl overflow-hidden">
+            <div className="relative bg-linear-to-br from-rose-900/20 via-dark/60 to-pink-900/20 border-2 border-pink-500/30 rounded-3xl overflow-hidden">
               <div className="relative h-48 sm:h-56 overflow-hidden">
                 <img
                   src="/shots2.png"
@@ -633,24 +633,24 @@ const Granizados = ({ showExtras = true }) => {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-dark via-dark/70 to-transparent" />
-                <div className="absolute inset-0 bg-linear-to-r from-cyan-500/5 to-emerald-500/5" />
+                <div className="absolute inset-0 bg-linear-to-r from-pink-500/5 to-fuchsia-500/5" />
               </div>
 
               <div className="relative z-10 px-6 sm:px-10 pb-8 -mt-12">
                 <div className="text-center mb-8">
                   <div className="flex items-center justify-center gap-3 mb-3">
                     <Sparkles
-                      className="text-cyan-400 hidden sm:block"
+                      className="text-pink-400 hidden sm:block"
                       size={28}
                     />
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
                       SHOTS DE{" "}
-                      <span className="bg-linear-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                      <span className="bg-linear-to-r from-pink-400 to-fuchsia-400 bg-clip-text text-transparent">
                         SABORES
                       </span>
                     </h3>
                     <Sparkles
-                      className="text-cyan-400 hidden sm:block"
+                      className="text-pink-400 hidden sm:block"
                       size={28}
                     />
                   </div>
@@ -667,18 +667,18 @@ const Granizados = ({ showExtras = true }) => {
                 </div>
 
                 <div className="mt-8 flex justify-center">
-                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-cyan-500/30">
+                  <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 bg-dark/50 rounded-full px-3 sm:px-6 py-3 border border-pink-500/30">
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       🍹 Granizado
                     </span>
-                    <Plus className="text-cyan-400 shrink-0" size={20} />
+                    <Plus className="text-pink-400 shrink-0" size={20} />
                     <span className="text-light font-semibold text-sm sm:text-base whitespace-nowrap">
                       💧 Shot de Sabor
                     </span>
-                    <span className="text-cyan-400 text-xl sm:text-2xl shrink-0">
+                    <span className="text-pink-400 text-xl sm:text-2xl shrink-0">
                       =
                     </span>
-                    <span className="text-cyan-400 font-bold text-sm sm:text-base whitespace-nowrap">
+                    <span className="text-pink-400 font-bold text-sm sm:text-base whitespace-nowrap">
                       ✨ SABOR ÚNICO
                     </span>
                   </div>

@@ -1,32 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark: #0a0b14;
-  --color-dark-secondary: #1b1f3b;
-  --color-light: #e8f6ff;
-  --color-gray: #8a8d9c;
-  --color-primary: #ff00d4;
-  --color-secondary: #00e0ff;
+  --color-dark: #1a0712;
+  --color-dark-secondary: #261020;
+  --color-light: #fff0f5;
+  --color-gray: #b89aa6;
+  --color-primary: #ec4899;
+  --color-secondary: #f9a8d4;
 
-  --color-border: oklch(0.27 0.03 255);
-  --color-input: oklch(0.27 0.03 255);
-  --color-ring: #ff00d4;
-  --color-background: #0a0b14;
-  --color-foreground: #e8f6ff;
+  --color-border: oklch(0.27 0.05 340);
+  --color-input: oklch(0.27 0.05 340);
+  --color-ring: #ec4899;
+  --color-background: #1a0712;
+  --color-foreground: #fff0f5;
 
-  --color-card: #0a0b14;
-  --color-card-foreground: #e8f6ff;
-  --color-popover: #0a0b14;
-  --color-popover-foreground: #e8f6ff;
-  --color-primary-foreground: #0a0b14;
-  --color-secondary-foreground: #0a0b14;
+  --color-card: #1a0712;
+  --color-card-foreground: #fff0f5;
+  --color-popover: #1a0712;
+  --color-popover-foreground: #fff0f5;
+  --color-primary-foreground: #1a0712;
+  --color-secondary-foreground: #1a0712;
 
-  --color-muted: oklch(0.27 0.03 255);
-  --color-muted-foreground: oklch(0.55 0.02 250);
-  --color-accent: oklch(0.27 0.03 255);
-  --color-accent-foreground: #e8f6ff;
+  --color-muted: oklch(0.27 0.05 340);
+  --color-muted-foreground: oklch(0.65 0.04 340);
+  --color-accent: oklch(0.27 0.05 340);
+  --color-accent-foreground: #fff0f5;
   --color-destructive: oklch(0.6 0.2 25);
-  --color-destructive-foreground: #e8f6ff;
+  --color-destructive-foreground: #fff0f5;
 
   --radius-lg: 0.5rem;
   --radius-md: calc(0.5rem - 2px);
@@ -271,16 +271,16 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0b14;
+  background: #1a0712;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ff00d4 0%, #00e0ff 100%);
+  background: linear-gradient(180deg, #ec4899 0%, #fbbf77 100%);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #00e0ff 0%, #ff00d4 100%);
+  background: linear-gradient(180deg, #fbbf77 0%, #ec4899 100%);
 }
 
 /* Marquee infinito (muro de dedicatorias del Día de la Madre) */

@@ -31,7 +31,7 @@ const ProductCard = ({ product, index, styles }) => {
           <div className={`absolute inset-2 rounded-full border-2 ${styles.ringColor} opacity-60`}></div>
           
           {/* Contenedor de imagen circular */}
-          <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden bg-gradient-to-br from-purple-600/30 to-purple-900/30 flex items-center justify-center">
+          <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden bg-gradient-to-br from-pink-600/30 to-rose-900/30 flex items-center justify-center">
             {styles.image ? (
               <img
                 alt={product.name}
@@ -108,32 +108,32 @@ const ProductSkeleton = () => (
 const cuatesStyles = {
   "cuates-limon": {
     icon: Citrus,
-    gradient: "from-lime-400 to-green-500",
+    gradient: "from-pink-400 to-rose-500",
     image: "/cuates-limon.png",
-    ringColor: "border-yellow-400",
-    labelBg: "bg-gradient-to-r from-orange-500 to-orange-600",
-    priceButtonBg: "bg-gradient-to-r from-orange-500 to-orange-600",
-    splashBg: "bg-lime-400",
+    ringColor: "border-rose-400",
+    labelBg: "bg-gradient-to-r from-rose-500 to-rose-600",
+    priceButtonBg: "bg-gradient-to-r from-rose-500 to-rose-600",
+    splashBg: "bg-rose-400",
     splash: true,
   },
   "cuates-fresa": {
     icon: Cherry,
-    gradient: "from-pink-400 to-red-500",
+    gradient: "from-pink-400 to-rose-500",
     image: "/cuate-fresa.png",
-    ringColor: "border-orange-400",
-    labelBg: "bg-gradient-to-r from-red-500 to-red-600",
-    priceButtonBg: "bg-gradient-to-r from-red-500 to-red-600",
+    ringColor: "border-pink-400",
+    labelBg: "bg-gradient-to-r from-pink-500 to-pink-600",
+    priceButtonBg: "bg-gradient-to-r from-pink-500 to-pink-600",
     splashBg: "bg-pink-400",
     splash: true,
   },
   "cuates-mango": {
     icon: Sun,
-    gradient: "from-yellow-400 to-orange-500",
+    gradient: "from-rose-400 to-fuchsia-500",
     image: "/cuate-mango.png",
-    ringColor: "border-yellow-400",
-    labelBg: "bg-gradient-to-r from-lime-500 to-lime-600",
-    priceButtonBg: "bg-gradient-to-r from-lime-500 to-lime-600",
-    splashBg: "bg-yellow-400",
+    ringColor: "border-rose-400",
+    labelBg: "bg-gradient-to-r from-fuchsia-500 to-fuchsia-600",
+    priceButtonBg: "bg-gradient-to-r from-fuchsia-500 to-fuchsia-600",
+    splashBg: "bg-rose-400",
     splash: true,
   },
 };
@@ -142,11 +142,11 @@ const getCuatesStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
   const localStyles = cuatesStyles[slug] || {
     icon: Citrus,
-    gradient: "from-lime-400 to-green-500",
-    ringColor: "border-yellow-400",
-    labelBg: "bg-gradient-to-r from-orange-500 to-orange-600",
-    priceButtonBg: "bg-gradient-to-r from-orange-500 to-orange-600",
-    splashBg: "bg-lime-400",
+    gradient: "from-pink-400 to-rose-500",
+    ringColor: "border-rose-400",
+    labelBg: "bg-gradient-to-r from-rose-500 to-rose-600",
+    priceButtonBg: "bg-gradient-to-r from-rose-500 to-rose-600",
+    splashBg: "bg-rose-400",
     splash: true,
   };
 
@@ -167,7 +167,7 @@ const Cuates = () => {
   return (
     <section
       id="cuates"
-      className="py-20 relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900"
+      className="py-20 relative overflow-hidden bg-gradient-to-br from-pink-700 via-rose-800 to-fuchsia-900"
     >
       {/* Patrón de fondo decorativo */}
       <div className="absolute inset-0 opacity-20">
@@ -181,9 +181,9 @@ const Cuates = () => {
 
       {/* Efectos de luz ambiental */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px]"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-yellow-500 rounded-full filter blur-[120px]"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400 rounded-full filter blur-[120px]"></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-rose-500 rounded-full filter blur-[120px]"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-fuchsia-500 rounded-full filter blur-[120px]"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-400 rounded-full filter blur-[120px]"></div>
       </div>
 
       {/* Líneas divisoras decorativas */}
@@ -199,7 +199,7 @@ const Cuates = () => {
           className="text-center mb-16"
         >
           <h2 className="text-5xl md:text-7xl font-black text-white mb-4 drop-shadow-2xl uppercase tracking-wider">
-            <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-pink-300 via-rose-400 to-fuchsia-400 bg-clip-text text-transparent">
               LOS CUATES
             </span>
           </h2>

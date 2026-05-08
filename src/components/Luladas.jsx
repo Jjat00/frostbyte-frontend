@@ -14,11 +14,11 @@ const formatPrice = (price) => {
 
 const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
-  const ringColor = styles.ringColor || "border-lime-400";
+  const ringColor = styles.ringColor || "border-rose-400";
 
   return (
     <div className="lulada-card group relative h-full">
-      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(132,204,22,0.08)]">
+      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(244,114,182,0.08)]">
         {/* Blur de fondo */}
         <div
           className="absolute inset-0 rounded-3xl pointer-events-none"
@@ -68,7 +68,7 @@ const ProductCard = ({ product, index, styles }) => {
           <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center line-clamp-2 leading-tight">
             {product.name}
           </h3>
-          <div className="w-10 h-0.5 bg-lime-400/60 rounded-full mt-2"></div>
+          <div className="w-10 h-0.5 bg-rose-400/60 rounded-full mt-2"></div>
         </div>
 
         {/* Descripcion */}
@@ -84,7 +84,7 @@ const ProductCard = ({ product, index, styles }) => {
                 <span className="text-[11px] text-slate-500 uppercase font-semibold tracking-widest mb-0.5">
                   {variant.name}
                 </span>
-                <span className="text-lg font-black text-lime-400">
+                <span className="text-lg font-black text-rose-400">
                   {formatPrice(variant.price)}
                 </span>
               </div>
@@ -168,24 +168,24 @@ const Luladas = ({ showExtras = true }) => {
     <section
       ref={sectionRef}
       id="luladas"
-      className="py-20 relative overflow-hidden bg-linear-to-br from-green-950 via-emerald-950 to-lime-950"
+      className="py-20 relative overflow-hidden bg-linear-to-br from-pink-950 via-rose-950 to-fuchsia-950"
     >
       {/* Neon ambiental — verde/lima estilo tropical */}
       <div className="absolute inset-0 opacity-25">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-lime-500 rounded-full filter blur-[120px]" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-500 rounded-full filter blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-green-400/70 rounded-full filter blur-[100px]" />
+        <div className="absolute top-20 left-10 w-96 h-96 bg-rose-500 rounded-full filter blur-[120px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-fuchsia-400/70 rounded-full filter blur-[100px]" />
       </div>
 
       {/* Lineas divisoras */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-lime-400/40 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-emerald-400/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-rose-400/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-pink-400/30 to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="lulada-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            <span className="bg-linear-to-r from-lime-300 via-green-400 to-emerald-400 bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(132,204,22,0.3)]">
+            <span className="bg-linear-to-r from-pink-300 via-rose-400 to-fuchsia-400 bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(244,114,182,0.3)]">
               LULADAS
             </span>
           </h2>

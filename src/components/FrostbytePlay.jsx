@@ -12,10 +12,10 @@ const games = [
       "Juego de reflejos ultra rapido. Compite con tus amigos para ver quien reacciona mas rapido.",
     icon: Zap,
     minPlayers: 2,
-    accent: "violet",
-    gradient: "from-violet-500 via-purple-500 to-amber-500",
-    border: "border-violet-500/40",
-    shadow: "shadow-violet-500/20",
+    accent: "rose",
+    gradient: "from-rose-500 via-pink-500 to-fuchsia-500",
+    border: "border-rose-500/40",
+    shadow: "shadow-rose-500/20",
     features: ["Juego de reflejos", "Rondas rapidas"],
   },
   {
@@ -25,10 +25,10 @@ const games = [
       "Descubre al impostor entre tus amigos. Un celular, muchas sospechas. Encuentra quien no pertenece.",
     icon: Search,
     minPlayers: 3,
-    accent: "red",
-    gradient: "from-red-500 via-rose-500 to-orange-500",
-    border: "border-red-500/40",
-    shadow: "shadow-red-500/20",
+    accent: "rose",
+    gradient: "from-rose-500 via-pink-500 to-fuchsia-500",
+    border: "border-rose-500/40",
+    shadow: "shadow-rose-500/20",
     features: ["Juego de deduccion", "Conversacion en grupo"],
   },
 ];
@@ -105,12 +105,12 @@ const FrostbytePlay = () => {
       className="py-20 bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary relative overflow-hidden"
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-violet-500/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-rose-500/30 rounded-full blur-3xl animate-pulse" />
         <div
-          className="absolute bottom-1/4 -right-20 w-96 h-96 bg-red-500/20 rounded-full blur-3xl animate-pulse"
+          className="absolute bottom-1/4 -right-20 w-96 h-96 bg-rose-500/20 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: "1s" }}
         />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -126,16 +126,16 @@ const FrostbytePlay = () => {
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
             >
-              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-violet-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.6)]" />
+              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-rose-400 drop-shadow-[0_0_15px_rgba(244,63,94,0.6)]" />
             </motion.div>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-amber-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_20px_rgba(139,92,246,0.4)]">
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-400 via-pink-400 to-fuchsia-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]">
               Frostbyte Play
             </h2>
             <motion.div
               animate={{ rotate: [0, -10, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
             >
-              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" />
+              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-fuchsia-400 drop-shadow-[0_0_15px_rgba(232,121,249,0.6)]" />
             </motion.div>
           </div>
           <p className="text-xl text-gray/80 max-w-3xl mx-auto mb-2">
