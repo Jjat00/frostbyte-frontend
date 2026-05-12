@@ -34,6 +34,19 @@ function base64ToBlob(base64, mimeType) {
   return new Blob([new Uint8Array(byteNumbers)], { type: mimeType });
 }
 
+function trackMothersDayEvent(eventType) {
+  try {
+    fetch(`${env.API_BASE_URL}/motivational/mothers-day-track/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event_type: eventType }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    // El tracking nunca debe romper la UI.
+  }
+}
+
 const AnimatedBackground = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
     {/* Fondo cálido maternal: rosa profundo a durazno tenue */}
@@ -226,6 +239,7 @@ const ResultCard = ({ result, onReset }) => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    trackMothersDayEvent("downloaded");
   };
 
   const handleShare = async () => {
@@ -241,12 +255,14 @@ const ResultCard = ({ result, onReset }) => {
             text: result.phrase_used || "Feliz Día Mamá",
             files: [file],
           });
+          trackMothersDayEvent("shared");
           return;
         }
         await navigator.share({
           title: "Feliz Día Mamá",
           text: result.phrase_used || "Feliz Día Mamá",
         });
+        trackMothersDayEvent("shared");
       } catch (err) {
         if (err.name !== "AbortError") {
           setShareError("No se pudo compartir. Puedes descargar la imagen.");
@@ -257,6 +273,7 @@ const ResultCard = ({ result, onReset }) => {
         await navigator.clipboard.writeText(dataUri);
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);
+        trackMothersDayEvent("shared");
       } catch {
         setShareError("No se pudo copiar. Usa el botón de descarga.");
       }
@@ -406,6 +423,7 @@ const MothersDayGeneratorPage = () => {
     reader.onload = (e) => setPhotoPreview(e.target.result);
     reader.readAsDataURL(file);
     setError(null);
+    trackMothersDayEvent("photo_uploaded");
   }, []);
 
   const handleFileRemove = useCallback(() => {
