@@ -512,7 +512,7 @@ const Granizados = ({ showExtras = true }) => {
         className="absolute inset-0 pointer-events-none"
       />
 
-      {/* Neon ambiental — rosa cálido Día de la Madre */}
+      {/* Neon ambiental — rosa cálido Mes de la Madre */}
       <div className="absolute inset-0 opacity-25">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px]" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px]" />

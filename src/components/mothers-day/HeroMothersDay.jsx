@@ -382,7 +382,7 @@ const HeroMothersDay = () => {
           >
             FROSTBYTE
             <span className="block bg-gradient-to-r from-pink-200 via-rose-300 to-amber-200 bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest mt-2">
-              FELIZ D&Iacute;A MAM&Aacute;
+              FELIZ MES, MAM&Aacute;
             </span>
           </motion.h1>
 

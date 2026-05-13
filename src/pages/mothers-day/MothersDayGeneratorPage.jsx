@@ -251,16 +251,16 @@ const ResultCard = ({ result, onReset }) => {
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
-            title: "Feliz Día Mamá",
-            text: result.phrase_used || "Feliz Día Mamá",
+            title: "Feliz Mes, Mamá",
+            text: result.phrase_used || "Feliz Mes, Mamá",
             files: [file],
           });
           trackMothersDayEvent("shared");
           return;
         }
         await navigator.share({
-          title: "Feliz Día Mamá",
-          text: result.phrase_used || "Feliz Día Mamá",
+          title: "Feliz Mes, Mamá",
+          text: result.phrase_used || "Feliz Mes, Mamá",
         });
         trackMothersDayEvent("shared");
       } catch (err) {
@@ -313,7 +313,7 @@ const ResultCard = ({ result, onReset }) => {
       >
         <img
           src={dataUri}
-          alt="Tarjeta del Día de la Madre generada con IA"
+          alt="Tarjeta del Mes de la Madre generada con IA"
           className="w-full object-contain"
         />
       </motion.div>
@@ -545,7 +545,7 @@ const MothersDayGeneratorPage = () => {
 
       <main
         className="relative min-h-screen flex flex-col items-center px-4 py-12 sm:py-16"
-        aria-label="Generador de tarjetas del Día de la Madre"
+        aria-label="Generador de tarjetas del Mes de la Madre"
       >
         <motion.div
           initial={{ opacity: 0, x: -12 }}
@@ -569,7 +569,7 @@ const MothersDayGeneratorPage = () => {
         >
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-300/20 to-amber-300/20 border border-pink-300/50 rounded-full text-pink-200 text-xs font-semibold tracking-widest mb-4">
             <Heart size={12} className="fill-pink-300 text-pink-300" />
-            FROSTBYTE &middot; D&Iacute;A DE LA MADRE
+            FROSTBYTE &middot; MES DE LA MADRE
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight">
             Tarjeta para{" "}
@@ -598,7 +598,7 @@ const MothersDayGeneratorPage = () => {
               <form
                 onSubmit={handleGenerate}
                 noValidate
-                aria-label="Formulario para generar tarjeta del Día de la Madre"
+                aria-label="Formulario para generar tarjeta del Mes de la Madre"
                 className="space-y-5 p-6 sm:p-8 bg-white/[0.03] backdrop-blur-sm border border-pink-300/20 rounded-3xl shadow-[0_0_60px_rgba(248,165,184,0.08)]"
               >
                 <PhotoDropzone

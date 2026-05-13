@@ -2,17 +2,17 @@ import React from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 const messages = [
-  { text: "Feliz Día Mamá", emoji: "🌷" },
+  { text: "Feliz Mes, Mamá", emoji: "🌷" },
   { text: "Te amo Mamá", emoji: "💐" },
   { text: "Mamá", emoji: "🌸" },
   { text: "Gracias Mamá", emoji: "🌺" },
   { text: "Madre", emoji: "🌹" },
-  { text: "Día de la Madre", emoji: "💗" },
+  { text: "Mes de la Madre", emoji: "💗" },
   { text: "Eres mi todo", emoji: "🌻" },
-  { text: "Feliz Día", emoji: "🌷" },
+  { text: "Feliz Mes", emoji: "🌷" },
   { text: "Mamá", emoji: "🌼" },
   { text: "Te amo Mamá", emoji: "💖" },
-  { text: "Feliz Día Mamá", emoji: "🌺" },
+  { text: "Feliz Mes, Mamá", emoji: "🌺" },
   { text: "Madre", emoji: "🌷" },
 ];
 

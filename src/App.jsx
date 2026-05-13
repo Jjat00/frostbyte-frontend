@@ -40,7 +40,7 @@ function App() {
     <>
       <div className="min-h-screen bg-dark overflow-hidden">
         <Header />
-        {/* Capas ambientales del Día de la Madre */}
+        {/* Capas ambientales del Mes de la Madre */}
         <FloatingPetals />
         <ScrollFelizDia />
         <GrowingStem />
