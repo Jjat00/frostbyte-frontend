@@ -45,8 +45,8 @@ function TablePage() {
     data: order,
     isError,
   } = useQuery({
-    queryKey: ["public-order", verifiedCode, tableNum],
-    queryFn: () => publicOrdersService.verifyOrder(verifiedCode, tableNum),
+    queryKey: ["public-order", verifiedCode],
+    queryFn: () => publicOrdersService.verifyOrder(verifiedCode),
     enabled: !!verifiedCode,
     refetchInterval: 30000,
     staleTime: 15000,
@@ -124,7 +124,6 @@ function TablePage() {
             </div>
           ) : (
             <AccessCodeBanner
-              tableNumber={tableNum}
               onVerified={handleVerified}
             />
           )}

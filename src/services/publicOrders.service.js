@@ -3,13 +3,12 @@ import { env } from "@/config/env";
 const API_URL = env.API_BASE_URL;
 
 export const publicOrdersService = {
-  async verifyOrder(accessCode, tableNumber) {
+  async verifyOrder(accessCode) {
     const response = await fetch(`${API_URL}/public-orders/verify/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         access_code: accessCode,
-        table_number: tableNumber,
       }),
     });
 
