@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Loader2, AlertCircle, Radio } from "lucide-react";
 
-const AccessCodeBanner = ({ tableNumber, onVerified }) => {
+const AccessCodeBanner = ({ onVerified }) => {
   const [code, setCode] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +60,7 @@ const AccessCodeBanner = ({ tableNumber, onVerified }) => {
       const { publicOrdersService } = await import(
         "@/services/publicOrders.service"
       );
-      const order = await publicOrdersService.verifyOrder(fullCode, tableNumber);
+      const order = await publicOrdersService.verifyOrder(fullCode);
       onVerified(order, fullCode);
     } catch (err) {
       setError(err.message || "Código incorrecto");
