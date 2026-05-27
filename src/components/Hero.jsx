@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { ChevronDown, Instagram, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
-import { useInViewport } from "@/hooks";
+import { useInViewport, useIsMobile } from "@/hooks";
 
 gsap.registerPlugin(useGSAP);
 
@@ -68,6 +68,7 @@ const Hero = () => {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const isInView = useInViewport(sectionRef);
+  const isMobile = useIsMobile();
   const greeting = getGreeting();
   const dayName = DAY_NAMES[new Date().getDay()];
   const dateStrip = getDateStrip();
@@ -388,10 +389,12 @@ const Hero = () => {
       <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
-      />
+      {!isMobile && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 pointer-events-none"
+        />
+      )}
 
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>

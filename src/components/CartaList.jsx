@@ -11,7 +11,7 @@ import {
   Gamepad2,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import { useActiveCategories, useProductsByCategory, useInViewport } from "@/hooks";
+import { useActiveCategories, useProductsByCategory, useInViewport, useIsMobile } from "@/hooks";
 import { getCategoryStyles } from "@/lib/productStyles";
 
 const formatPrice = (price) => {
@@ -101,9 +101,10 @@ const scrollTo = (id) => {
 const CartaBackground = () => {
   const canvasRef = useRef(null);
   const isInView = useInViewport(canvasRef);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || isMobile) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -220,8 +221,9 @@ const CartaBackground = () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
     };
-  }, [isInView]);
+  }, [isInView, isMobile]);
 
+  if (isMobile) return null;
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
 };
 

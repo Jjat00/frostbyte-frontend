@@ -17,3 +17,6 @@ export { useImageUpload } from './useImageUpload';
 // Viewport visibility hook
 export { useInViewport } from './useInViewport';
 
+// Mobile detection hook
+export { useIsMobile } from './useIsMobile';
+

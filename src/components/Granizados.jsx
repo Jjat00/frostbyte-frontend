@@ -14,7 +14,7 @@ import {
   Droplets,
   Sparkles,
 } from "lucide-react";
-import { useProductsByCategory, useInViewport } from "@/hooks";
+import { useProductsByCategory, useInViewport, useIsMobile } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -302,6 +302,7 @@ const Granizados = ({ showExtras = true }) => {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const isInView = useInViewport(sectionRef);
+  const isMobile = useIsMobile();
 
   // Canvas animation — pausada cuando la seccion no esta en viewport
   useEffect(() => {
@@ -479,11 +480,13 @@ const Granizados = ({ showExtras = true }) => {
       {/* SVG filter para vidrio grueso */}
       <ThickGlassFilter />
 
-      {/* Grid canvas interactivo */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
-      />
+      {/* Grid canvas interactivo (solo desktop) */}
+      {!isMobile && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 pointer-events-none"
+        />
+      )}
 
       {/* Neon ambiental — cyan + magenta estilo Frostbyte */}
       <div className="absolute inset-0 opacity-25">
