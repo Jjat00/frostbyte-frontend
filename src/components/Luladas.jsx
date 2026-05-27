@@ -1,11 +1,6 @@
-import React, { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import React from "react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -128,36 +123,8 @@ const Luladas = ({ showExtras = true }) => {
   const { data, isLoading, error } = useProductsByCategory("luladas");
   const products = data?.results || [];
 
-  const sectionRef = useRef(null);
-
-  useGSAP(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const title = section.querySelector(".lulada-title");
-    const subtitle = section.querySelector(".lulada-subtitle");
-    const cards = section.querySelectorAll(".lulada-card");
-
-    if (title) {
-      gsap.fromTo(title, { scale: 1.5, opacity: 0 }, {
-        scale: 1, opacity: 1, ease: "none",
-        scrollTrigger: { trigger: title, start: "top 85%", end: "top 40%", scrub: true },
-      });
-    }
-
-    if (subtitle) {
-      gsap.fromTo(subtitle, { opacity: 0, y: 24 }, {
-        opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
-        scrollTrigger: { trigger: subtitle, start: "top 85%", toggleActions: "play none none none" },
-      });
-    }
-
-    // Product cards: visibles de inmediato, sin reveal por scroll
-  }, { scope: sectionRef, dependencies: [products] });
-
   return (
     <section
-      ref={sectionRef}
       id="luladas"
       className="py-20 relative overflow-hidden bg-linear-to-br from-green-950 via-emerald-950 to-lime-950"
     >

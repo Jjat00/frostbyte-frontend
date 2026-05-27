@@ -14,3 +14,6 @@ export { useWebSocket } from './useWebSocket';
 export { useImageGeneration, useGenerationHistory, useImageValidation } from './useImageGeneration';
 export { useImageUpload } from './useImageUpload';
 
+// Viewport visibility hook
+export { useInViewport } from './useInViewport';
+

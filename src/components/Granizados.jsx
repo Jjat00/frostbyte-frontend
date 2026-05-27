@@ -14,7 +14,7 @@ import {
   Droplets,
   Sparkles,
 } from "lucide-react";
-import { useProductsByCategory } from "@/hooks";
+import { useProductsByCategory, useInViewport } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -301,9 +301,11 @@ const Granizados = ({ showExtras = true }) => {
 
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
+  const isInView = useInViewport(sectionRef);
 
-  // Canvas animation — kept exactly as-is
+  // Canvas animation — pausada cuando la seccion no esta en viewport
   useEffect(() => {
+    if (!isInView) return;
     const canvas = canvasRef.current;
     const section = sectionRef.current;
     if (!canvas || !section) return;
@@ -424,35 +426,16 @@ const Granizados = ({ showExtras = true }) => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [isInView]);
 
   // GSAP ScrollTrigger animations
   useGSAP(() => {
     const section = sectionRef.current;
     if (!section) return;
 
-    const title = section.querySelector(".gran-title");
-    const subtitle = section.querySelector(".gran-subtitle");
-    const cards = section.querySelectorAll(".gran-card");
     const poisonSection = section.querySelector(".poison-section");
 
-    // Title: scrub scale 1.5 → 1 with opacity
-    if (title) {
-      gsap.fromTo(title, { scale: 1.5, opacity: 0 }, {
-        scale: 1, opacity: 1, ease: "none",
-        scrollTrigger: { trigger: title, start: "top 85%", end: "top 40%", scrub: true },
-      });
-    }
-
-    // Subtitle: fade-up
-    if (subtitle) {
-      gsap.fromTo(subtitle, { opacity: 0, y: 24 }, {
-        opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
-        scrollTrigger: { trigger: subtitle, start: "top 85%", toggleActions: "play none none none" },
-      });
-    }
-
-    // Product cards: visibles de inmediato, sin reveal por scroll
+    // Title, subtitle y product cards: visibles de inmediato, sin reveal por scroll
 
     // Poison section
     if (poisonSection) {

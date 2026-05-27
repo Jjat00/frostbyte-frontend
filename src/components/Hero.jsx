@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { ChevronDown, Instagram, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { env } from "@/config/env";
+import { useInViewport } from "@/hooks";
 
 gsap.registerPlugin(useGSAP);
 
@@ -66,12 +67,14 @@ const Hero = () => {
   const [isStreaming, setIsStreaming] = useState(false);
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
+  const isInView = useInViewport(sectionRef);
   const greeting = getGreeting();
   const dayName = DAY_NAMES[new Date().getDay()];
   const dateStrip = getDateStrip();
 
-  // Binary grid canvas animation
+  // Binary grid canvas animation — pausada cuando la seccion no esta en viewport
   useEffect(() => {
+    if (!isInView) return;
     const canvas = canvasRef.current;
     const section = sectionRef.current;
     if (!canvas || !section) return;
@@ -181,7 +184,7 @@ const Hero = () => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [isInView]);
 
   useEffect(() => {
     const fetchMotivationalPhrase = async () => {
