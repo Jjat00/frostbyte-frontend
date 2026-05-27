@@ -241,7 +241,7 @@ const Hero = () => {
       const scrollIndicator = section.querySelector(".hero-scroll-indicator");
 
       // Set initial invisible states
-      gsap.set(badge, { autoAlpha: 0, scale: 0 });
+      gsap.set(badge, { autoAlpha: 0, y: -10 });
       gsap.set(greeting, { autoAlpha: 0, y: -20 });
       gsap.set(dateStrip, { autoAlpha: 0, y: 20 });
       gsap.set(letters, { autoAlpha: 0 });
@@ -253,12 +253,12 @@ const Hero = () => {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // 1. Badge — elastic scale
+      // 1. Badge — fade-down suave
       tl.to(badge, {
         autoAlpha: 1,
-        scale: 1,
-        duration: 0.7,
-        ease: "elastic.out(1, 0.5)",
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out",
       });
 
       // 2. Greeting
@@ -323,28 +323,28 @@ const Hero = () => {
         "-=0.2",
       );
 
-      // 6. CTA buttons with back ease
+      // 6. CTA buttons — fade-up suave sin overshoot
       tl.to(
         ctaBtns,
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.5,
-          stagger: 0.12,
-          ease: "back.out(1.7)",
+          duration: 0.45,
+          stagger: 0.08,
+          ease: "power2.out",
         },
         "-=0.2",
       );
 
-      // 7. Social links elastic bounce
+      // 7. Social links — fade lateral suave
       tl.to(
         socialLinks,
         {
           autoAlpha: 1,
           x: 0,
-          duration: 0.6,
-          stagger: 0.15,
-          ease: "elastic.out(1, 0.6)",
+          duration: 0.45,
+          stagger: 0.08,
+          ease: "power2.out",
         },
         "-=0.2",
       );
