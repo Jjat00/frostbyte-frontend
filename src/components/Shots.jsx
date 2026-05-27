@@ -47,12 +47,8 @@ const flavorShots = [
   },
 ];
 
-const FlavorShotCard = ({ shot, index }) => (
+const FlavorShotCard = ({ shot }) => (
   <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5, delay: index * 0.1 }}
     whileHover={{ y: -8, scale: 1.05 }}
     className={`group relative bg-dark/60 backdrop-blur-sm border ${shot.borderColor} rounded-2xl p-5 text-center cursor-default hover:shadow-lg transition-all duration-300`}
     style={{ "--glow": shot.glowColor }}
@@ -88,10 +84,6 @@ const ShotCard = ({ shot, index, styles }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
       whileHover={{ y: -10, scale: 1.02 }}
       className="group relative"
     >

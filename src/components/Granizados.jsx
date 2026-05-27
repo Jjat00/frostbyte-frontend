@@ -452,17 +452,7 @@ const Granizados = ({ showExtras = true }) => {
       });
     }
 
-    // Product cards: batch stagger
-    if (cards.length) {
-      gsap.set(cards, { autoAlpha: 0, y: 60, scale: 0.9 });
-      ScrollTrigger.batch(cards, {
-        start: "top 88%",
-        once: true,
-        onEnter: (batch) => gsap.to(batch, {
-          autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out", stagger: 0.12,
-        }),
-      });
-    }
+    // Product cards: visibles de inmediato, sin reveal por scroll
 
     // Poison section
     if (poisonSection) {

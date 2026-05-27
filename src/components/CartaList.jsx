@@ -1,5 +1,4 @@
 import React, { useMemo, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import {
   ChevronRight,
   Eye,
@@ -247,13 +246,7 @@ const CategoryGroup = ({ category }) => {
   if (!products.length) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
-      className="mb-10"
-    >
+    <div className="mb-10">
       {/* Category header */}
       <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-white/[0.08]">
         <h3
@@ -315,7 +308,7 @@ const CategoryGroup = ({ category }) => {
           );
         })}
       </ul>
-    </motion.div>
+    </div>
   );
 };
 
@@ -323,13 +316,7 @@ const SpecialSectionItem = ({ section }) => {
   const Icon = section.icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4 }}
-      className="mb-10"
-    >
+    <div className="mb-10">
       <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-white/[0.08]">
         <div className="flex items-center gap-1.5 min-w-0">
           <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white/50 flex-shrink-0" />
@@ -372,7 +359,7 @@ const SpecialSectionItem = ({ section }) => {
           ))}
         </ul>
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -419,13 +406,7 @@ const CartaList = () => {
 
       <div className="container mx-auto px-4 max-w-3xl relative z-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8 sm:mb-12"
-        >
+        <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-3xl md:text-5xl font-black mb-3">
             <span className="bg-linear-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
               NUESTRA CARTA
@@ -436,7 +417,7 @@ const CartaList = () => {
             <span className="text-primary/70">"Ver detalles"</span> en cada
             seccion para ver imagenes y mas info.
           </p>
-        </motion.div>
+        </div>
 
         {/* Carta border container */}
         <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl sm:rounded-2xl px-4 py-5 sm:p-6 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)]">
