@@ -244,12 +244,7 @@ const Hero = () => {
       gsap.set(badge, { autoAlpha: 0, scale: 0 });
       gsap.set(greeting, { autoAlpha: 0, y: -20 });
       gsap.set(dateStrip, { autoAlpha: 0, y: 20 });
-      gsap.set(letters, {
-        autoAlpha: 0,
-        y: (i) => gsap.utils.random(-120, -60),
-        x: (i) => gsap.utils.random(-80, 80),
-        rotation: (i) => gsap.utils.random(-45, 45),
-      });
+      gsap.set(letters, { autoAlpha: 0 });
       if (phrase) gsap.set(phrase, { autoAlpha: 0, y: 30 });
       gsap.set(description, { autoAlpha: 0, y: 30 });
       gsap.set(ctaBtns, { autoAlpha: 0, y: 40 });
@@ -290,19 +285,16 @@ const Hero = () => {
         "-=0.3",
       );
 
-      // 3. Letters fly in from random positions, stagger from center
+      // 3. Letters: fade-in suave con stagger sutil
       tl.to(
         letters,
         {
           autoAlpha: 1,
-          y: 0,
-          x: 0,
-          rotation: 0,
-          duration: 0.8,
-          stagger: { amount: 0.4, from: "center", ease: "power2.inOut" },
-          ease: "back.out(1.4)",
+          duration: 0.4,
+          stagger: 0.04,
+          ease: "power2.out",
         },
-        "-=0.3",
+        "-=0.2",
       );
 
       // 4. Motivational phrase
