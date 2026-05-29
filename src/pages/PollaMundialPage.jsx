@@ -82,7 +82,7 @@ const useCountdown = (target) => {
 
 const CountdownUnit = ({ value, label }) => (
   <div className="flex flex-col items-center">
-    <div className="liquid-glass min-w-[68px] sm:min-w-[88px] px-3 py-3 sm:py-4 rounded-2xl border border-primary/30">
+    <div className="liquid-glass relative overflow-hidden min-w-[68px] sm:min-w-[88px] px-3 py-3 sm:py-4 rounded-2xl border border-primary/30">
       <span className="block text-3xl sm:text-5xl font-black bg-linear-to-b from-light to-secondary bg-clip-text text-transparent tabular-nums">
         {String(value).padStart(2, "0")}
       </span>
@@ -322,7 +322,7 @@ const PollaMundialPage = () => {
           ].map((item, i) => (
             <div
               key={i}
-              className="liquid-glass rounded-2xl p-6 text-center border border-white/[0.06]"
+              className="liquid-glass relative overflow-hidden rounded-2xl p-6 text-center border border-white/[0.06]"
             >
               <item.icon className="mx-auto text-primary mb-3" size={28} />
               <p className="text-xs uppercase tracking-widest text-gray">
@@ -347,7 +347,7 @@ const PollaMundialPage = () => {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="liquid-glass-interactive group rounded-2xl p-6 border border-white/[0.06] hover:border-primary/40 transition-colors"
+              className="liquid-glass-interactive group relative overflow-hidden rounded-2xl p-6 border border-white/[0.06] hover:border-primary/40 transition-colors"
             >
               <div className="w-12 h-12 rounded-xl bg-linear-to-br from-primary/20 to-secondary/20 border border-primary/30 flex items-center justify-center mb-4">
                 <step.icon className="text-primary" size={22} />
@@ -421,7 +421,7 @@ const PollaMundialPage = () => {
           className="max-w-3xl mx-auto grid sm:grid-cols-[1fr_auto_1fr] items-center gap-5"
         >
           {/* Tu pronóstico */}
-          <div className="liquid-glass rounded-2xl p-6 border border-primary/30 text-center">
+          <div className="liquid-glass relative overflow-hidden rounded-2xl p-6 border border-primary/30 text-center">
             <p className="text-[11px] uppercase tracking-widest text-primary font-semibold mb-4">
               Tu pronóstico
             </p>
@@ -438,7 +438,7 @@ const PollaMundialPage = () => {
           <div className="text-center text-gray font-black text-lg">VS</div>
 
           {/* Resultado real */}
-          <div className="liquid-glass rounded-2xl p-6 border border-secondary/30 text-center">
+          <div className="liquid-glass relative overflow-hidden rounded-2xl p-6 border border-secondary/30 text-center">
             <p className="text-[11px] uppercase tracking-widest text-secondary font-semibold mb-4">
               Resultado real
             </p>
@@ -468,7 +468,7 @@ const PollaMundialPage = () => {
         />
         <motion.div
           variants={fadeUp}
-          className="max-w-2xl mx-auto liquid-glass rounded-2xl border border-white/[0.06] overflow-hidden"
+          className="max-w-2xl mx-auto liquid-glass relative rounded-2xl border border-white/[0.06] overflow-hidden"
         >
           <div className="grid grid-cols-[auto_1fr_auto] gap-4 px-6 py-3 border-b border-white/[0.08] text-[11px] uppercase tracking-widest text-gray font-semibold">
             <span>Pos</span>
@@ -536,7 +536,7 @@ const PollaMundialPage = () => {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="flex gap-4 liquid-glass-light rounded-2xl p-6 border border-white/[0.06]"
+              className="flex gap-4 liquid-glass-light relative overflow-hidden rounded-2xl p-6 border border-white/[0.06]"
             >
               <div className="shrink-0 w-11 h-11 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center">
                 <rule.icon className="text-primary" size={20} />
