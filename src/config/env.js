@@ -15,6 +15,9 @@ export const env = {
   APP_NAME: import.meta.env.VITE_APP_NAME || "Frostbyte",
   APP_ENV: import.meta.env.VITE_APP_ENV || "development",
 
+  // Google Sign-In (login de clientes). OAuth 2.0 Client ID (Web application).
+  GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
+
   // Feature flags
   ENABLE_MOCK_DATA: import.meta.env.VITE_ENABLE_MOCK_DATA === "true",
 

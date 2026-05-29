@@ -16,10 +16,14 @@ import {
   Flame,
   ShieldCheck,
   ListChecks,
+  LogOut,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
+import AuthModal from "@/components/auth/AuthModal";
+import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 
 // Pitazo inicial del Mundial 2026
 const KICKOFF = new Date("2026-06-11T18:00:00-05:00");
@@ -179,6 +183,20 @@ const FLAGS = ["🇦🇷", "🇧🇷", "🇨🇴", "🇫🇷", "🇪🇸", "🇩
 const PollaMundialPage = () => {
   const t = useCountdown(KICKOFF);
   const heroRef = useRef(null);
+  const [authOpen, setAuthOpen] = useState(false);
+
+  const customer = useCustomerAuthStore((s) => s.customer);
+  const isAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
+  const logout = useCustomerAuthStore((s) => s.logout);
+
+  const firstName =
+    customer?.first_name || customer?.full_name?.split(" ")[0] || "crack";
+
+  const POLLA_BENEFITS = [
+    "Quedas inscrito en la Polla Mundialista",
+    "Te avisamos cuando abran los pronósticos",
+    "Sin contraseñas: entras con tu cuenta de Google",
+  ];
 
   return (
     <div className="min-h-screen bg-dark text-light overflow-x-hidden">
@@ -200,9 +218,41 @@ const PollaMundialPage = () => {
             <ArrowLeft size={18} />
             FROSTBYTE
           </Link>
-          <span className="hidden sm:inline-block text-xs uppercase tracking-[0.25em] text-primary font-semibold">
-            Polla Mundialista 2026
-          </span>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2 sm:gap-3">
+              {customer?.avatar_url ? (
+                <img
+                  src={customer.avatar_url}
+                  alt={firstName}
+                  className="h-8 w-8 rounded-full border border-primary/40 object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-primary to-secondary text-sm font-bold text-dark">
+                  {firstName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <span className="hidden text-sm font-semibold text-light sm:inline">
+                {firstName}
+              </span>
+              <button
+                onClick={logout}
+                aria-label="Cerrar sesión"
+                className="rounded-full p-1.5 text-gray transition-colors hover:bg-white/10 hover:text-primary"
+                title="Cerrar sesión"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setAuthOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-primary to-secondary px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-dark shadow-lg shadow-primary/30 transition-transform hover:scale-105"
+            >
+              <Trophy size={14} />
+              Inscribirme
+            </button>
+          )}
         </div>
       </nav>
 
@@ -281,23 +331,31 @@ const PollaMundialPage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              {isAuthenticated ? (
+                <span className="inline-flex items-center gap-2 rounded-full border-2 border-secondary/50 bg-secondary/10 px-7 py-4 text-lg font-bold text-secondary">
+                  <Check size={20} />
+                  ¡Estás dentro, {firstName}!
+                </span>
+              ) : (
+                <Button
+                  onClick={() => setAuthOpen(true)}
+                  className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+                >
+                  <Trophy size={20} className="mr-1" />
+                  Inscríbete con Google
+                </Button>
+              )}
               <Button
                 onClick={() =>
                   document
                     .getElementById("como-funciona")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-                className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+                variant="outline"
+                className="border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 transition-all duration-300"
               >
                 Cómo funciona
                 <ChevronRight size={20} className="ml-1" />
-              </Button>
-              <Button
-                variant="outline"
-                disabled
-                className="border-2 border-primary/40 text-primary/80 font-bold text-lg px-8 py-6 cursor-not-allowed"
-              >
-                Inscripciones muy pronto
               </Button>
             </div>
           </motion.div>
@@ -557,16 +615,25 @@ const PollaMundialPage = () => {
             ¿Listo para demostrar que sabes de fútbol?
           </h2>
           <p className="text-gray text-lg mb-8">
-            Las inscripciones abren muy pronto. Síguenos para no quedarte por
-            fuera de la Polla Mundialista 2026.
+            {isAuthenticated
+              ? "Ya estás inscrito en la Polla Mundialista. Te avisaremos apenas abran los pronósticos del primer partido."
+              : "Inscríbete gratis con tu cuenta de Google y prepárate para competir por el premio de la Polla Mundialista 2026."}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              disabled
-              className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 cursor-not-allowed opacity-80"
-            >
-              Inscripciones muy pronto
-            </Button>
+            {isAuthenticated ? (
+              <span className="inline-flex items-center gap-2 rounded-full border-2 border-secondary/50 bg-secondary/10 px-8 py-4 text-lg font-bold text-secondary">
+                <Check size={20} />
+                Inscripción confirmada
+              </span>
+            ) : (
+              <Button
+                onClick={() => setAuthOpen(true)}
+                className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+              >
+                <Trophy size={20} className="mr-1" />
+                Inscríbete con Google
+              </Button>
+            )}
             <Button
               asChild
               variant="outline"
@@ -585,6 +652,14 @@ const PollaMundialPage = () => {
       </Section>
 
       <Footer />
+
+      <AuthModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        title="Únete a la Polla"
+        subtitle="Inscríbete con tu cuenta de Google y compite por $500.000."
+        benefits={POLLA_BENEFITS}
+      />
     </div>
   );
 };
