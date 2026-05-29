@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ChevronDown, Instagram, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronDown, Instagram, Trophy, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { env } from "@/config/env";
 import { useInViewport, useIsMobile } from "@/hooks";
 
@@ -469,32 +469,34 @@ const Hero = () => {
             Nariño.
           </p>
 
-          {/* Botones */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              onClick={() =>
-                document
-                  .getElementById("menu")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="hero-cta-btn bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+          {/* CTA destacado: Polla Mundialista */}
+          <div className="flex justify-center">
+            <Link
+              to="/polla-mundial"
+              className="hero-cta-btn group relative w-full max-w-xl inline-flex items-center gap-4 sm:gap-5 px-6 sm:px-8 py-5 rounded-2xl bg-linear-to-r from-primary to-secondary text-dark overflow-hidden shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all duration-300 hover:scale-[1.02]"
             >
-              Explorar Carta
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="hero-cta-btn border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 hover:border-primary hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
-            >
-              <a
-                href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MapPin size={20} className="mr-2" />
-                Ubicación en Cumbal
-              </a>
-            </Button>
+              {/* Glow / shimmer */}
+              <span className="absolute inset-0 bg-linear-to-r from-white/0 via-white/30 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+              <span className="absolute -inset-1 rounded-2xl ring-2 ring-primary/50 animate-pulse pointer-events-none" />
+
+              <div className="relative shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-dark/15 backdrop-blur-sm flex items-center justify-center">
+                <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
+              </div>
+
+              <div className="relative flex-1 text-left">
+                <span className="block text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] opacity-80">
+                  ⚽ Mundial 2026 · ¡Participa ya!
+                </span>
+                <span className="block text-lg sm:text-2xl font-black leading-tight">
+                  Polla Mundialista
+                </span>
+                <span className="block text-xs sm:text-sm font-bold">
+                  Pronostica y gana $500.000
+                </span>
+              </div>
+
+              <ArrowRight className="relative shrink-0 w-6 h-6 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
 
           {/* Redes sociales */}

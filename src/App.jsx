@@ -16,6 +16,7 @@ import SolicitarMusica from "@/components/SolicitarMusica";
 import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
+import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import { env } from "@/config/env";
 
@@ -40,6 +41,7 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
+          <PollaMundialBanner />
           <CartaList />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />

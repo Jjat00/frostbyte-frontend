@@ -223,6 +223,16 @@ const Header = () => {
                   </NavigationMenuItem>
                 ))}
                 <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      to="/polla-mundial"
+                      className="ml-1 inline-flex items-center gap-1.5 rounded-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm tracking-wide whitespace-nowrap shadow-[0_0_18px_rgba(255,0,212,0.35)] hover:shadow-[0_0_26px_rgba(255,0,212,0.55)] transition-all duration-300"
+                    >
+                      🏆 Polla Mundial
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
                   <NavigationMenuLink
                     asChild
                     className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
@@ -263,6 +273,13 @@ const Header = () => {
             exit={{ opacity: 0, height: 0 }}
             className="liquid-glass md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.08] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
           >
+            <Link
+              to="/polla-mundial"
+              className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-center shadow-[0_0_20px_rgba(255,0,212,0.3)]"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              🏆 Polla Mundialista · Gana $500.000
+            </Link>
             <a
               href="#carta"
               className="block text-primary hover:text-primary/80 transition-colors duration-300 font-bold"
