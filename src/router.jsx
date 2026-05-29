@@ -93,6 +93,8 @@ const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/
 
 const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
 const PollaMundialPage = lazyLoad(() => import("./pages/PollaMundialPage"));
+const PrivacyPolicyPage = lazyLoad(() => import("./pages/legal/PrivacyPolicyPage"));
+const TermsOfServicePage = lazyLoad(() => import("./pages/legal/TermsOfServicePage"));
 const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
 
 // Fallback de carga mínimo
@@ -150,6 +152,23 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <PollaMundialPage />
+      </Lazy>
+    ),
+  },
+  // Páginas legales (públicas) - requeridas por Google OAuth
+  {
+    path: "/privacidad",
+    element: (
+      <Lazy>
+        <PrivacyPolicyPage />
+      </Lazy>
+    ),
+  },
+  {
+    path: "/terminos",
+    element: (
+      <Lazy>
+        <TermsOfServicePage />
       </Lazy>
     ),
   },

@@ -210,18 +210,18 @@ const Footer = () => {
                 © 2026 Frostbyte Cumbal. Todos los derechos reservados.
               </p>
               <div className="flex space-x-6">
-                <a
-                  href="#"
+                <Link
+                  to="/privacidad"
                   className="text-gray hover:text-primary transition-colors duration-300 text-sm"
                 >
                   Política de Privacidad
-                </a>
-                <a
-                  href="#"
+                </Link>
+                <Link
+                  to="/terminos"
                   className="text-gray hover:text-primary transition-colors duration-300 text-sm"
                 >
                   Términos de Servicio
-                </a>
+                </Link>
               </div>
             </div>
           </div>
