@@ -92,6 +92,7 @@ const ImpostorSetupPage = lazyLoad(() => import("./pages/game/impostor-frostbyte
 const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/ImpostorGamePage"));
 
 const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
+const PollaMundialPage = lazyLoad(() => import("./pages/PollaMundialPage"));
 const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
 
 // Fallback de carga mínimo
@@ -140,6 +141,15 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <LandingPage />
+      </Lazy>
+    ),
+  },
+  // Polla Mundialista 2026 (pública)
+  {
+    path: "/polla-mundial",
+    element: (
+      <Lazy>
+        <PollaMundialPage />
       </Lazy>
     ),
   },
