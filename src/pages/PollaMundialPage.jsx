@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/auth/AuthModal";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import PollaApp from "@/pages/polla/PollaApp";
 
 // Pitazo inicial del Mundial 2026
 const KICKOFF = new Date("2026-06-11T18:00:00-05:00");
@@ -197,6 +198,11 @@ const PollaMundialPage = () => {
     "Te avisamos cuando abran los pronósticos",
     "Sin contraseñas: entras con tu cuenta de Google",
   ];
+
+  // Cuando el cliente inicia sesión, ve la app de la Polla (tabs), no el landing.
+  if (isAuthenticated) {
+    return <PollaApp />;
+  }
 
   return (
     <div className="min-h-screen bg-dark text-light overflow-x-hidden">
