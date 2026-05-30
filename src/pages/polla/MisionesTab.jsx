@@ -57,7 +57,7 @@ const MissionRow = ({ mission, index }) => {
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-sm font-black text-light">{mission.title}</h3>
+            <h3 className="line-clamp-2 text-sm font-black text-light">{mission.title}</h3>
             <span
               className={cn(
                 "inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold",
@@ -70,7 +70,7 @@ const MissionRow = ({ mission, index }) => {
               {mission.reward}
             </span>
           </div>
-          <p className="mt-0.5 text-xs leading-snug text-gray">{mission.desc}</p>
+          <p className="mt-0.5 line-clamp-3 text-xs leading-snug text-gray">{mission.desc}</p>
 
           {/* Barra de progreso */}
           <div className="mt-2.5 flex items-center gap-2">
@@ -105,7 +105,7 @@ const MisionesTab = () => {
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/20 to-secondary/20">
           <FlagIcon className="text-primary" size={20} />
         </div>
-        <div>
+        <div className="min-w-0">
           <h2 className="text-xl font-black text-light">Misiones</h2>
           <p className="mt-0.5 text-sm leading-snug text-gray">
             Completa retos para ganar puntos extra e insignias.{" "}
@@ -118,7 +118,7 @@ const MisionesTab = () => {
       </div>
 
       {/* Resumen de mis pronosticos */}
-      <div className="mb-6 grid grid-cols-4 gap-2">
+      <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2">
         {STATS.map((s) => (
           <div
             key={s.key}

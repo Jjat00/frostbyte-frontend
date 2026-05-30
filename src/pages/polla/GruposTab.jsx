@@ -161,7 +161,7 @@ const GruposTab = () => {
               key={v.id}
               onClick={() => setView(v.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-bold transition-all",
+                "flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-bold transition-all",
                 active
                   ? "bg-linear-to-r from-primary to-secondary text-dark"
                   : "text-gray hover:text-light"
@@ -175,7 +175,7 @@ const GruposTab = () => {
       </div>
 
       {/* Grilla de grupos */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {GROUPS.map((g, i) => (
           <GroupCard key={g.letter} group={g} index={i} view={view} />
         ))}

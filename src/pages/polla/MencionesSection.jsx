@@ -162,7 +162,7 @@ const AwardCard = ({ award, pick, onOpen }) => {
     <button
       onClick={onOpen}
       className={cn(
-        "liquid-glass-interactive relative flex w-full flex-col items-center gap-2 rounded-2xl border p-3 text-center transition-all",
+        "liquid-glass-interactive relative flex w-full flex-col items-center gap-2 rounded-2xl border p-2.5 sm:p-3 text-center transition-all",
         chosen
           ? "border-secondary/40 bg-secondary/[0.04]"
           : "border-white/[0.07] hover:border-primary/40"
@@ -261,7 +261,7 @@ const MencionesSection = () => {
             </p>
 
             <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                 {firstRow.map((a) => (
                   <AwardCard
                     key={a.id}
@@ -271,7 +271,7 @@ const MencionesSection = () => {
                   />
                 ))}
               </div>
-              <div className="mx-auto grid w-2/3 grid-cols-2 gap-2.5">
+              <div className="mx-auto grid w-2/3 grid-cols-2 gap-2 sm:gap-2.5">
                 {secondRow.map((a) => (
                   <AwardCard
                     key={a.id}

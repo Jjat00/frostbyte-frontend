@@ -87,7 +87,7 @@ const useCountdown = (target) => {
 
 const CountdownUnit = ({ value, label }) => (
   <div className="flex flex-col items-center">
-    <div className="liquid-glass relative overflow-hidden min-w-[68px] sm:min-w-[88px] px-3 py-3 sm:py-4 rounded-2xl border border-primary/30">
+    <div className="liquid-glass relative overflow-hidden min-w-[62px] sm:min-w-[88px] px-2.5 sm:px-3 py-3 sm:py-4 rounded-2xl border border-primary/30">
       <span className="block text-3xl sm:text-5xl font-black bg-linear-to-b from-light to-secondary bg-clip-text text-transparent tabular-nums">
         {String(value).padStart(2, "0")}
       </span>
@@ -328,7 +328,7 @@ const PollaMundialPage = () => {
               <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">
                 {t.live ? "¡El balón ya rueda!" : "Faltan para el pitazo inicial"}
               </p>
-              <div className="flex items-center justify-center gap-3 sm:gap-5">
+              <div className="flex items-center justify-center gap-2 sm:gap-5">
                 <CountdownUnit value={t.days} label="Días" />
                 <CountdownUnit value={t.hours} label="Horas" />
                 <CountdownUnit value={t.minutes} label="Min" />
@@ -377,7 +377,7 @@ const PollaMundialPage = () => {
         />
         <motion.div
           variants={fadeUp}
-          className="grid sm:grid-cols-3 gap-4 max-w-4xl mx-auto"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto"
         >
           {[
             { icon: Target, label: "Pronosticas", value: "Cada partido" },
@@ -406,7 +406,7 @@ const PollaMundialPage = () => {
           title="Cómo funciona"
           subtitle="De entrar a ganar en seis pasos. Sencillo para jugar, emocionante para competir."
         />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
           {STEPS.map((step, i) => (
             <motion.div
               key={i}
@@ -430,7 +430,7 @@ const PollaMundialPage = () => {
           title="Sistema de puntos"
           subtitle="Acertar el marcador exacto vale más que solo acertar al ganador. Así premia el riesgo y la buena lectura del partido."
         />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
           {SCORING.map((s, i) => (
             <motion.div
               key={i}
@@ -482,7 +482,7 @@ const PollaMundialPage = () => {
         />
         <motion.div
           variants={fadeUp}
-          className="max-w-3xl mx-auto grid sm:grid-cols-[1fr_auto_1fr] items-center gap-5"
+          className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-5"
         >
           {/* Tu pronóstico */}
           <div className="liquid-glass relative overflow-hidden rounded-2xl p-6 border border-primary/30 text-center">
@@ -595,7 +595,7 @@ const PollaMundialPage = () => {
           title="Reglas clave"
           subtitle="Para que todos compitan en igualdad de condiciones."
         />
-        <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
           {RULES.map((rule, i) => (
             <motion.div
               key={i}

@@ -69,7 +69,7 @@ const TONE = {
   final: "bg-white/[0.06] text-light",
 };
 
-const BOX = "h-12 w-12 rounded-2xl text-2xl font-black tabular-nums sm:h-14 sm:w-14 sm:text-3xl";
+const BOX = "h-13 w-13 rounded-2xl text-2xl font-black tabular-nums sm:h-14 sm:w-14 sm:text-3xl";
 
 /* ── Caja de marcador: input numérico (editable) o display (solo lectura) ── */
 const ScoreBox = ({ value, onChange, editable = false, tone = "final" }) => {
@@ -231,7 +231,7 @@ const DateGroup = ({ label, matches, preds, onChange }) => {
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between gap-2 border-y border-white/[0.06] bg-white/[0.02] px-2 py-2.5"
       >
-        <span className="text-xs font-bold uppercase tracking-widest text-gray">
+        <span className="text-xs font-bold uppercase tracking-normal sm:tracking-widest text-gray">
           {label.toUpperCase()}
         </span>
         <span className="flex items-center gap-2">
@@ -329,7 +329,7 @@ const PartidosTab = () => {
       </h3>
 
       {/* Filtros */}
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         {FIXTURE_FILTERS.map((f) => {
           const active = filter === f.id;
           return (
@@ -337,7 +337,7 @@ const PartidosTab = () => {
               key={f.id}
               onClick={() => setFilter(f.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-bold transition-all",
+                "flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-bold transition-all",
                 active
                   ? "border-primary bg-primary/10 text-primary"
                   : "border-white/10 text-gray hover:border-white/20 hover:text-light"
