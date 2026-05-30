@@ -147,6 +147,15 @@ export const TEAMS = GROUPS.reduce((acc, g) => {
 
 export const teamByCode = (code) => TEAMS[code] || { name: code, code, iso2: null };
 
+// Forma reciente (mock determinista) para los puntitos bajo cada seleccion.
+// w = victoria, d = empate, l = derrota. Rota segun el codigo del equipo.
+const FORM_BASE = ["w", "w", "d", "l", "w"];
+export const teamForm = (code) => {
+  const shift =
+    [...String(code)].reduce((s, c) => s + c.charCodeAt(0), 0) % FORM_BASE.length;
+  return FORM_BASE.slice(shift).concat(FORM_BASE.slice(0, shift));
+};
+
 // ─────────────────────────────────────────────────────────────────────────
 // Tabla de posiciones de EJEMPLO (vista previa de como se vera en vivo).
 // Determinista: rota que equipo encabeza segun el indice del grupo.
@@ -180,157 +189,285 @@ export const groupStandings = (group, groupIndex) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────
-// Partidos de EJEMPLO para la pestana Predicciones. locksAt se calcula
-// relativo a "ahora" para que el contador corra como en la referencia.
+// Formateo de fecha/hora en hora de Colombia (America/Bogota, UTC-5).
+// kickoff se guarda en UTC y se muestra siempre en hora local de Colombia.
 // ─────────────────────────────────────────────────────────────────────────
-const hours = (h) => new Date(Date.now() + h * 3600 * 1000);
+const BOGOTA = "America/Bogota";
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
+// "Jue 11 jun"
+export const matchDayLabel = (date) => {
+  const wd = new Intl.DateTimeFormat("es-CO", { timeZone: BOGOTA, weekday: "short" })
+    .format(date)
+    .replace(".", "");
+  const d = new Intl.DateTimeFormat("es-CO", { timeZone: BOGOTA, day: "numeric" }).format(date);
+  const mo = new Intl.DateTimeFormat("es-CO", { timeZone: BOGOTA, month: "short" })
+    .format(date)
+    .replace(".", "");
+  return `${cap(wd)} ${d} ${mo}`;
+};
+
+// "14:00" (24h)
+export const matchTime = (date) =>
+  new Intl.DateTimeFormat("es-CO", {
+    timeZone: BOGOTA,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+
+// Clave estable para agrupar por dia (YYYY-MM-DD en hora de Colombia)
+export const matchDayKey = (date) =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: BOGOTA,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+
+// ─────────────────────────────────────────────────────────────────────────
+// Calendario REAL de la Jornada 1 del Mundial 2026 (24 partidos, 11-17 jun).
+// Emparejamientos, sedes y horarios verificados cruzando Wikipedia, FIFA.com,
+// ESPN y medios (NBC/Sky/Fox Sports). kickoff en UTC.
+//
+// Para mostrar los 3 estados de la UI, la app se presenta como si fuera mitad
+// de la jornada: los partidos del 11 jun como finalizados, uno del 12 en vivo
+// y el resto proximos. Los MARCADORES y PRONOSTICOS son de ejemplo (los
+// partidos aun no se juegan); los EMPAREJAMIENTOS y horarios son reales.
+// ─────────────────────────────────────────────────────────────────────────
 export const FIXTURES = [
-  // En vivo
+  // ── Jue 11 jun (finalizados, marcadores de ejemplo) ──
   {
     id: "m1",
     group: "A",
-    round: "Fase de grupos · J1",
     home: "MEX",
     away: "RSA",
-    dateLabel: "Inauguración",
-    time: "18:00",
-    status: "live",
-    minute: 63,
+    kickoff: new Date("2026-06-11T19:00:00Z"),
+    status: "finished",
     homeScore: 2,
     awayScore: 1,
-    myPred: { h: 2, a: 0 },
+    myPred: { h: 2, a: 1 },
+    earned: 3,
   },
   {
     id: "m2",
-    group: "J",
-    round: "Fase de grupos · J1",
-    home: "ARG",
-    away: "ALG",
-    dateLabel: "Hoy",
-    time: "20:00",
-    status: "live",
-    minute: 27,
-    homeScore: 1,
-    awayScore: 0,
-    myPred: { h: 3, a: 0 },
+    group: "A",
+    home: "KOR",
+    away: "CZE",
+    kickoff: new Date("2026-06-12T02:00:00Z"),
+    status: "finished",
+    homeScore: 0,
+    awayScore: 1,
+    myPred: { h: 1, a: 2 },
+    earned: 1,
   },
-  // Proximos (con contador de bloqueo)
+  // ── Vie 12 jun ──
   {
     id: "m3",
-    group: "K",
-    round: "Fase de grupos · J1",
-    home: "COL",
-    away: "UZB",
-    dateLabel: "Vie 12 jun",
-    time: "16:00",
-    status: "upcoming",
-    locksAt: hours(26),
-    myPred: null,
-    featured: true,
-  },
-  {
-    id: "m4",
-    group: "H",
-    round: "Fase de grupos · J1",
-    home: "ESP",
-    away: "CPV",
-    dateLabel: "Vie 12 jun",
-    time: "19:00",
-    status: "upcoming",
-    locksAt: hours(29),
-    myPred: { h: 3, a: 0 },
+    group: "B",
+    home: "CAN",
+    away: "BIH",
+    kickoff: new Date("2026-06-12T19:00:00Z"),
+    status: "live",
+    minute: 38,
+    homeScore: 1,
+    awayScore: 0,
+    myPred: { h: 2, a: 0 },
   },
   {
     id: "m5",
-    group: "C",
-    round: "Fase de grupos · J1",
-    home: "BRA",
-    away: "MAR",
-    dateLabel: "Sáb 13 jun",
-    time: "15:00",
+    group: "D",
+    home: "USA",
+    away: "PAR",
+    kickoff: new Date("2026-06-13T01:00:00Z"),
     status: "upcoming",
-    locksAt: hours(49),
-    myPred: null,
+    myPred: { h: 2, a: 1 },
+  },
+  // ── Sáb 13 jun ──
+  {
+    id: "m4",
+    group: "B",
+    home: "QAT",
+    away: "SUI",
+    kickoff: new Date("2026-06-13T19:00:00Z"),
+    status: "upcoming",
+    myPred: { h: 0, a: 2 },
   },
   {
     id: "m6",
-    group: "K",
-    round: "Fase de grupos · J1",
-    home: "POR",
-    away: "COD",
-    dateLabel: "Sáb 13 jun",
-    time: "18:00",
+    group: "C",
+    home: "BRA",
+    away: "MAR",
+    kickoff: new Date("2026-06-13T22:00:00Z"),
     status: "upcoming",
-    locksAt: hours(52),
-    myPred: null,
+    myPred: { h: 3, a: 1 },
   },
   {
     id: "m7",
-    group: "I",
-    round: "Fase de grupos · J1",
-    home: "FRA",
-    away: "SEN",
-    dateLabel: "Dom 14 jun",
-    time: "14:00",
+    group: "C",
+    home: "HAI",
+    away: "SCO",
+    kickoff: new Date("2026-06-14T01:00:00Z"),
     status: "upcoming",
-    locksAt: hours(72),
     myPred: null,
   },
   {
     id: "m8",
-    group: "L",
-    round: "Fase de grupos · J1",
-    home: "ENG",
-    away: "CRO",
-    dateLabel: "Dom 14 jun",
-    time: "17:00",
+    group: "D",
+    home: "AUS",
+    away: "TUR",
+    kickoff: new Date("2026-06-14T04:00:00Z"),
     status: "upcoming",
-    locksAt: hours(75),
     myPred: null,
   },
-  // Finalizados (con puntos ganados)
+  // ── Dom 14 jun ──
+  {
+    id: "m11",
+    group: "F",
+    home: "NED",
+    away: "JPN",
+    kickoff: new Date("2026-06-14T20:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
   {
     id: "m9",
-    group: "D",
-    round: "Fase de grupos · J1",
-    home: "USA",
-    away: "PAR",
-    dateLabel: "Ayer",
-    time: "20:00",
-    status: "finished",
-    homeScore: 1,
-    awayScore: 1,
-    myPred: { h: 1, a: 1 },
-    earned: 3,
+    group: "E",
+    home: "GER",
+    away: "CUW",
+    kickoff: new Date("2026-06-14T22:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m12",
+    group: "F",
+    home: "SWE",
+    away: "TUN",
+    kickoff: new Date("2026-06-15T02:00:00Z"),
+    status: "upcoming",
+    myPred: null,
   },
   {
     id: "m10",
     group: "E",
-    round: "Fase de grupos · J1",
-    home: "GER",
-    away: "CUW",
-    dateLabel: "Ayer",
-    time: "17:00",
-    status: "finished",
-    homeScore: 3,
-    awayScore: 0,
-    myPred: { h: 2, a: 0 },
-    earned: 1,
+    home: "CIV",
+    away: "ECU",
+    kickoff: new Date("2026-06-15T04:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  // ── Lun 15 jun ──
+  {
+    id: "m15",
+    group: "H",
+    home: "ESP",
+    away: "CPV",
+    kickoff: new Date("2026-06-15T16:00:00Z"),
+    status: "upcoming",
+    myPred: { h: 3, a: 0 },
   },
   {
-    id: "m11",
-    group: "B",
-    round: "Fase de grupos · J1",
-    home: "CAN",
-    away: "BIH",
-    dateLabel: "Ayer",
-    time: "14:00",
-    status: "finished",
-    homeScore: 0,
-    awayScore: 2,
-    myPred: { h: 1, a: 1 },
-    earned: 0,
+    id: "m13",
+    group: "G",
+    home: "BEL",
+    away: "EGY",
+    kickoff: new Date("2026-06-15T19:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m16",
+    group: "H",
+    home: "KSA",
+    away: "URU",
+    kickoff: new Date("2026-06-15T22:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m14",
+    group: "G",
+    home: "IRN",
+    away: "NZL",
+    kickoff: new Date("2026-06-16T01:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  // ── Mar 16 jun ──
+  {
+    id: "m17",
+    group: "I",
+    home: "FRA",
+    away: "SEN",
+    kickoff: new Date("2026-06-16T19:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m18",
+    group: "I",
+    home: "IRQ",
+    away: "NOR",
+    kickoff: new Date("2026-06-16T22:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m19",
+    group: "J",
+    home: "ARG",
+    away: "ALG",
+    kickoff: new Date("2026-06-17T01:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m20",
+    group: "J",
+    home: "AUT",
+    away: "JOR",
+    kickoff: new Date("2026-06-17T04:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  // ── Mié 17 jun ──
+  {
+    id: "m21",
+    group: "K",
+    home: "POR",
+    away: "COD",
+    kickoff: new Date("2026-06-17T17:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m23",
+    group: "L",
+    home: "ENG",
+    away: "CRO",
+    kickoff: new Date("2026-06-17T20:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m24",
+    group: "L",
+    home: "GHA",
+    away: "PAN",
+    kickoff: new Date("2026-06-17T23:00:00Z"),
+    status: "upcoming",
+    myPred: null,
+  },
+  {
+    id: "m22",
+    group: "K",
+    home: "UZB",
+    away: "COL",
+    kickoff: new Date("2026-06-18T02:00:00Z"),
+    status: "upcoming",
+    myPred: { h: 1, a: 2 },
+    featured: true,
   },
 ];
 

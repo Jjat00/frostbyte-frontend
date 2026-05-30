@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock,
-  Minus,
-  Plus,
   Flame,
-  Target,
-  Check,
   Radio,
   Pencil,
   Calendar,
+  ChevronDown,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
@@ -18,277 +16,292 @@ import {
   FIXTURES,
   FIXTURE_FILTERS,
   teamByCode,
+  teamForm,
+  matchTime,
+  matchDayLabel,
+  matchDayKey,
 } from "@/data/mundial2026";
 
-/* Contador hacia el bloqueo del pronostico (corre cada segundo) */
-const useLockCountdown = (target) => {
-  const compute = () => {
-    if (!target) return null;
-    const diff = target.getTime() - Date.now();
-    if (diff <= 0) return { locked: true };
-    return {
-      locked: false,
-      d: Math.floor(diff / 86400000),
-      h: Math.floor((diff / 3600000) % 24),
-      m: Math.floor((diff / 60000) % 60),
-      s: Math.floor((diff / 1000) % 60),
-    };
-  };
-  const [t, setT] = useState(compute);
-  useEffect(() => {
-    const id = setInterval(() => setT(compute()), 1000);
-    return () => clearInterval(id);
-  }, [target]);
-  return t;
+/* Un pronóstico está completo cuando tiene ambos marcadores */
+const isComplete = (p) =>
+  p && p.h !== "" && p.h != null && p.a !== "" && p.a != null;
+
+/* Agrupa partidos por día (hora de Colombia) y ordena cronológicamente */
+const groupByDate = (matches) => {
+  const map = {};
+  matches.forEach((m) => {
+    const key = matchDayKey(m.kickoff);
+    if (!map[key]) map[key] = { key, label: matchDayLabel(m.kickoff), matches: [] };
+    map[key].matches.push(m);
+  });
+  return Object.values(map)
+    .map((g) => ({ ...g, matches: g.matches.sort((a, b) => a.kickoff - b.kickoff) }))
+    .sort((a, b) => a.key.localeCompare(b.key));
 };
 
-const LockBanner = ({ target }) => {
-  const t = useLockCountdown(target);
-  if (!t) return null;
-  const txt = t.locked
-    ? "Pronósticos cerrados"
-    : `${t.d}d ${String(t.h).padStart(2, "0")}h ${String(t.m).padStart(2, "0")}m ${String(t.s).padStart(2, "0")}s`;
-  return (
-    <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/[0.07] px-3 py-2 text-xs text-primary">
-      <Lock size={13} className="shrink-0" />
-      <span className="text-gray">Se bloquea en</span>
-      <span className="ml-auto font-bold tabular-nums tracking-wide">{txt}</span>
-    </div>
-  );
-};
-
-/* Lado de un equipo: bandera + codigo + nombre */
-const TeamSide = ({ code, align = "left" }) => {
-  const team = teamByCode(code);
-  return (
-    <div
-      className={cn(
-        "flex min-w-0 items-center gap-2.5",
-        align === "right" && "flex-row-reverse text-right"
-      )}
-    >
-      <Flag iso2={team.iso2} name={team.name} size={34} />
-      <div className="min-w-0">
-        <p className="text-sm font-black leading-tight text-light">{code}</p>
-        <p className="truncate text-[11px] leading-tight text-gray">
-          {team.name}
-        </p>
-      </div>
-    </div>
-  );
-};
-
-/* Stepper de marcador (mockup interactivo, sin guardar nada real) */
-const ScoreStepper = ({ value, onChange }) => (
-  <div className="flex flex-col items-center gap-1.5">
-    <button
-      onClick={() => onChange(Math.min(20, value + 1))}
-      className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-gray transition-colors hover:border-primary/50 hover:text-primary"
-      aria-label="Sumar"
-    >
-      <Plus size={14} />
-    </button>
-    <span className="w-9 text-center text-3xl font-black tabular-nums text-light">
-      {value}
-    </span>
-    <button
-      onClick={() => onChange(Math.max(0, value - 1))}
-      className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-gray transition-colors hover:border-primary/50 hover:text-primary"
-      aria-label="Restar"
-    >
-      <Minus size={14} />
-    </button>
+/* ── Puntitos de forma reciente ── */
+const FORM_COLOR = { w: "bg-emerald-400", d: "bg-gray/50", l: "bg-red-400" };
+const FormDots = ({ code }) => (
+  <div className="flex justify-center gap-1">
+    {teamForm(code).map((r, i) => (
+      <span key={i} className={cn("h-1.5 w-1.5 rounded-full", FORM_COLOR[r])} />
+    ))}
   </div>
 );
 
-const PredictorRow = ({ match }) => {
-  const [pred, setPred] = useState(match.myPred || { h: 0, a: 0 });
-  const [saved, setSaved] = useState(Boolean(match.myPred));
-
-  const home = teamByCode(match.home);
-  const away = teamByCode(match.away);
-
+/* ── Columna de una selección (bandera + nombre + forma) ── */
+const TeamColumn = ({ code }) => {
+  const team = teamByCode(code);
   return (
-    <div className="mt-3 rounded-2xl border border-white/[0.07] bg-dark/40 p-3">
-      <div className="flex items-center justify-center gap-4 sm:gap-6">
-        <Flag iso2={home.iso2} name={home.name} size={30} />
-        <ScoreStepper
-          value={pred.h}
-          onChange={(h) => {
-            setPred((p) => ({ ...p, h }));
-            setSaved(false);
-          }}
-        />
-        <span className="text-lg font-black text-gray">-</span>
-        <ScoreStepper
-          value={pred.a}
-          onChange={(a) => {
-            setPred((p) => ({ ...p, a }));
-            setSaved(false);
-          }}
-        />
-        <Flag iso2={away.iso2} name={away.name} size={30} />
-      </div>
-      <button
-        onClick={() => setSaved(true)}
+    <div className="flex flex-col items-center gap-1.5 text-center">
+      <Flag iso2={team.iso2} name={team.name} size={48} rounded="rounded-md" />
+      <p className="line-clamp-2 text-xs font-bold leading-tight text-light">
+        {team.name}
+      </p>
+      <FormDots code={code} />
+    </div>
+  );
+};
+
+/* Tonos de las cajas de marcador (solo lectura) */
+const TONE = {
+  live: "bg-white/[0.06] text-light ring-1 ring-red-500/30",
+  final: "bg-white/[0.06] text-light",
+};
+
+const BOX = "h-12 w-12 rounded-2xl text-2xl font-black tabular-nums sm:h-14 sm:w-14 sm:text-3xl";
+
+/* ── Caja de marcador: input numérico (editable) o display (solo lectura) ── */
+const ScoreBox = ({ value, onChange, editable = false, tone = "final" }) => {
+  const filled = value !== "" && value != null;
+
+  if (!editable) {
+    return (
+      <div
         className={cn(
-          "mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-all",
-          saved
-            ? "border border-secondary/40 bg-secondary/10 text-secondary"
-            : "bg-linear-to-r from-primary to-secondary text-dark hover:shadow-lg hover:shadow-primary/30"
+          "flex items-center justify-center",
+          BOX,
+          filled ? TONE[tone] : "border-2 border-dashed border-white/15 text-gray/40"
         )}
       >
-        {saved ? (
-          <>
-            <Check size={16} /> Pronóstico guardado
-          </>
-        ) : (
-          <>
-            <Target size={16} /> Guardar pronóstico
-          </>
-        )}
-      </button>
-    </div>
-  );
-};
-
-/* Resultado en vivo / final con el pronostico del usuario */
-const ScoreBoard = ({ match }) => {
-  const live = match.status === "live";
-  return (
-    <div className="mt-3 flex items-center justify-center gap-3 rounded-2xl border border-white/[0.07] bg-dark/40 py-3">
-      <span className="text-4xl font-black tabular-nums text-light">
-        {match.homeScore}
-      </span>
-      <span className="text-2xl font-black text-gray">-</span>
-      <span className="text-4xl font-black tabular-nums text-light">
-        {match.awayScore}
-      </span>
-      {live && (
-        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-bold text-red-400">
-          <Radio size={11} className="animate-pulse" />
-          {match.minute}&apos;
-        </span>
-      )}
-    </div>
-  );
-};
-
-const PredChip = ({ match }) => {
-  if (!match.myPred) {
-    return (
-      <span className="text-[11px] text-gray/70">No pronosticaste este partido</span>
+        {filled ? value : ""}
+      </div>
     );
   }
-  const finished = match.status === "finished";
+
   return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-[11px] text-gray">
-        Tu pronóstico:{" "}
-        <span className="font-bold text-light">
+    <input
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      maxLength={2}
+      value={value ?? ""}
+      onChange={(e) => {
+        const digits = e.target.value.replace(/\D/g, "").slice(0, 2);
+        if (digits === "") return onChange("");
+        onChange(String(Math.min(20, parseInt(digits, 10))));
+      }}
+      aria-label="Marcador"
+      className={cn(
+        "appearance-none text-center transition-all focus:outline-none focus:ring-2 focus:ring-primary",
+        BOX,
+        filled
+          ? "border-0 bg-linear-to-br from-primary to-secondary text-dark"
+          : "border-2 border-dashed border-primary/40 bg-primary/[0.04] text-light"
+      )}
+    />
+  );
+};
+
+/* Píldora de estadísticas (bloqueada, decorativa) */
+const StatsPill = () => (
+  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray/70">
+    Estadísticas <Lock size={10} />
+  </span>
+);
+
+/* Resultado para partidos en vivo / finalizados: pronóstico + puntos */
+const ResultInfo = ({ match }) => {
+  if (!match.myPred) {
+    return <span className="text-[10px] text-gray/60">Sin pronóstico</span>;
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] text-gray">
+        Tu:{" "}
+        <b className="text-light">
           {match.myPred.h}-{match.myPred.a}
-        </span>
+        </b>
       </span>
-      {finished &&
+      {match.status === "finished" &&
         (match.earned > 0 ? (
           <span
             className={cn(
-              "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold",
+              "inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-bold",
               match.earned >= 3
                 ? "bg-linear-to-r from-primary to-secondary text-dark"
                 : "bg-secondary/15 text-secondary"
             )}
           >
-            {match.earned >= 3 && <Flame size={12} />}+{match.earned} pts
+            {match.earned >= 3 && <Flame size={10} />}+{match.earned}
           </span>
         ) : (
-          <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-bold text-gray">
-            +0 pts
+          <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] font-bold text-gray">
+            +0
           </span>
         ))}
     </div>
   );
 };
 
-const MatchCard = ({ match }) => {
-  const statusMeta = {
-    live: { label: "EN VIVO", cls: "text-red-400 bg-red-500/10" },
-    upcoming: { label: match.time, cls: "text-gray bg-white/[0.04]" },
-    finished: { label: "FINAL", cls: "text-gray bg-white/[0.04]" },
-  }[match.status];
+/* ── Tarjeta compacta de un partido ── */
+const CompactMatchCard = ({ match, pred, onChange }) => {
+  const isLive = match.status === "live";
+  const isUpcoming = match.status === "upcoming";
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={cn(
-        "liquid-glass relative overflow-hidden rounded-2xl border p-4",
-        match.featured ? "border-primary/40" : "border-white/[0.07]"
-      )}
-    >
+    <div className={cn("relative px-2 py-4", match.featured && "bg-primary/[0.04]")}>
       {match.featured && (
-        <span className="absolute right-3 top-3 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary">
-          ⭐ Colombia
+        <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary">
+          <Star size={9} /> Colombia
         </span>
       )}
-      {/* Cabecera: ronda + estado */}
-      <div className="mb-3 flex items-center justify-between">
-        <span className="text-[10px] uppercase tracking-widest text-gray/70">
-          {match.round}
-        </span>
-        {!match.featured && (
-          <span
-            className={cn(
-              "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
-              statusMeta.cls
-            )}
-          >
-            {statusMeta.label}
+
+      {/* Etiqueta superior */}
+      <p className="mb-3 text-center text-[11px] text-gray">
+        Grupo {match.group} · Jornada 1 ·{" "}
+        <span className="text-light/80">{matchTime(match.kickoff)}</span>
+        {isLive && (
+          <span className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-1.5 py-0.5 align-middle text-[10px] font-bold text-red-400">
+            <Radio size={9} className="animate-pulse" />
+            {match.minute}&apos;
           </span>
         )}
+      </p>
+
+      <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-2">
+        <TeamColumn code={match.home} />
+
+        <div className="flex flex-col items-center gap-2 pt-1">
+          {isUpcoming ? (
+            <>
+              <div className="flex items-center gap-2">
+                <ScoreBox
+                  value={pred.h}
+                  editable
+                  onChange={(h) => onChange({ ...pred, h })}
+                />
+                <span className="text-[11px] font-bold text-gray">VS</span>
+                <ScoreBox
+                  value={pred.a}
+                  editable
+                  onChange={(a) => onChange({ ...pred, a })}
+                />
+              </div>
+              <StatsPill />
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <ScoreBox value={String(match.homeScore)} tone={isLive ? "live" : "final"} />
+                <span className="text-sm font-black text-gray">-</span>
+                <ScoreBox value={String(match.awayScore)} tone={isLive ? "live" : "final"} />
+              </div>
+              <ResultInfo match={match} />
+            </>
+          )}
+        </div>
+
+        <TeamColumn code={match.away} />
       </div>
+    </div>
+  );
+};
 
-      {/* Equipos */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <TeamSide code={match.home} align="left" />
-        <span className="px-1 text-xs font-black text-gray">VS</span>
-        <TeamSide code={match.away} align="right" />
-      </div>
+/* ── Grupo de partidos por fecha (plegable, con contador) ── */
+const DateGroup = ({ label, matches, preds, onChange }) => {
+  const [open, setOpen] = useState(true);
+  const total = matches.length;
+  const done = matches.filter((m) => isComplete(preds[m.id])).length;
+  const allDone = done === total;
 
-      {/* Cuerpo segun estado */}
-      {match.status === "upcoming" && (
-        <>
-          <div className="mt-3">
-            <LockBanner target={match.locksAt} />
-          </div>
-          <PredictorRow match={match} />
-        </>
-      )}
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between gap-2 border-y border-white/[0.06] bg-white/[0.02] px-2 py-2.5"
+      >
+        <span className="text-xs font-bold uppercase tracking-widest text-gray">
+          {label.toUpperCase()}
+        </span>
+        <span className="flex items-center gap-2">
+          <span
+            className={cn(
+              "rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+              allDone
+                ? "border-secondary/40 bg-secondary/10 text-secondary"
+                : "border-amber-500/30 bg-amber-500/10 text-amber-400"
+            )}
+          >
+            {done}/{total} pronósticos
+          </span>
+          <ChevronDown
+            size={16}
+            className={cn("text-gray transition-transform", open && "rotate-180")}
+          />
+        </span>
+      </button>
 
-      {(match.status === "live" || match.status === "finished") && (
-        <>
-          <ScoreBoard match={match} />
-          <div className="mt-3 border-t border-white/[0.06] pt-2.5">
-            <PredChip match={match} />
-          </div>
-        </>
-      )}
-    </motion.div>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="divide-y divide-white/[0.05]">
+              {matches.map((m) => (
+                <CompactMatchCard
+                  key={m.id}
+                  match={m}
+                  pred={preds[m.id] || { h: "", a: "" }}
+                  onChange={(v) => onChange(m.id, v)}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
 const PartidosTab = () => {
   const [filter, setFilter] = useState("upcoming");
 
-  const counts = useMemo(() => {
-    return FIXTURES.reduce((acc, m) => {
-      acc[m.status] = (acc[m.status] || 0) + 1;
-      return acc;
-    }, {});
-  }, []);
+  // Pronósticos en estado local (mockup): se siembran desde los de ejemplo.
+  const [preds, setPreds] = useState(() => {
+    const init = {};
+    FIXTURES.forEach((m) => {
+      if (m.myPred) init[m.id] = { h: String(m.myPred.h), a: String(m.myPred.a) };
+    });
+    return init;
+  });
+  const setPred = (id, val) => setPreds((p) => ({ ...p, [id]: val }));
+
+  const counts = useMemo(
+    () =>
+      FIXTURES.reduce((acc, m) => {
+        acc[m.status] = (acc[m.status] || 0) + 1;
+        return acc;
+      }, {}),
+    []
+  );
 
   const list = FIXTURES.filter((m) => m.status === filter);
+  const groups = groupByDate(list);
 
   return (
     <div>
@@ -300,8 +313,8 @@ const PartidosTab = () => {
         <div>
           <h2 className="text-xl font-black text-light">Tus pronósticos</h2>
           <p className="mt-0.5 text-sm leading-snug text-gray">
-            Pon tu marcador antes de que empiece el partido. Marcador exacto = 3
-            pts, resultado correcto = 1 pt.
+            Escribe tu marcador antes de que empiece el partido. Marcador exacto
+            = 3 pts, resultado correcto = 1 pt.
           </p>
         </div>
       </div>
@@ -316,7 +329,7 @@ const PartidosTab = () => {
       </h3>
 
       {/* Filtros */}
-      <div className="mb-5 flex gap-2">
+      <div className="mb-4 flex gap-2">
         {FIXTURE_FILTERS.map((f) => {
           const active = filter === f.id;
           return (
@@ -349,20 +362,24 @@ const PartidosTab = () => {
         })}
       </div>
 
-      {/* Lista */}
-      <AnimatePresence mode="popLayout">
-        {list.length ? (
-          <div className="space-y-3">
-            {list.map((m) => (
-              <MatchCard key={m.id} match={m} />
-            ))}
-          </div>
-        ) : (
-          <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray">
-            No hay partidos en esta categoría por ahora.
-          </p>
-        )}
-      </AnimatePresence>
+      {/* Lista agrupada por fecha */}
+      {groups.length ? (
+        <div className="space-y-2">
+          {groups.map((g) => (
+            <DateGroup
+              key={g.key}
+              label={g.label}
+              matches={g.matches}
+              preds={preds}
+              onChange={setPred}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray">
+          No hay partidos en esta categoría por ahora.
+        </p>
+      )}
     </div>
   );
 };
