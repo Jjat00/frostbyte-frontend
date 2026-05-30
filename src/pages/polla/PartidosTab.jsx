@@ -9,9 +9,11 @@ import {
   Check,
   Radio,
   Pencil,
+  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
+import MencionesSection from "./MencionesSection";
 import {
   FIXTURES,
   FIXTURE_FILTERS,
@@ -303,6 +305,15 @@ const PartidosTab = () => {
           </p>
         </div>
       </div>
+
+      {/* Menciones / pronósticos del torneo */}
+      <MencionesSection />
+
+      {/* Partidos */}
+      <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray">
+        <Calendar size={14} className="text-primary" />
+        Partidos
+      </h3>
 
       {/* Filtros */}
       <div className="mb-5 flex gap-2">

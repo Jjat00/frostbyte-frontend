@@ -374,6 +374,49 @@ export const PRIZE = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────
+// Menciones / pronosticos del torneo completo (mockup).
+// Se eligen una sola vez; valen mas puntos que un partido normal.
+//   type "team"   -> se elige una seleccion (campeon, subcampeon)
+//   type "player" -> se elige un jugador (goleador, MVP)
+//   type "keeper" -> se elige un arquero (guante de oro)
+// ─────────────────────────────────────────────────────────────────────────
+export const AWARDS = [
+  { id: "champion", title: "Campeón", hint: "¿Quién levanta la copa?", points: 25, type: "team" },
+  { id: "runnerup", title: "Subcampeón", hint: "El finalista que pierde", points: 15, type: "team" },
+  { id: "scorer", title: "Goleador", hint: "Bota de Oro del torneo", points: 35, type: "player" },
+  { id: "mvp", title: "MVP", hint: "Mejor jugador (Balón de Oro)", points: 10, type: "player" },
+  { id: "glove", title: "Guante de Oro", hint: "Mejor arquero", points: 10, type: "keeper" },
+];
+
+// Jugadores estrella de EJEMPLO para Goleador / MVP (team = codigo de su seleccion).
+export const STAR_PLAYERS = [
+  { name: "Lionel Messi", team: "ARG" },
+  { name: "Kylian Mbappé", team: "FRA" },
+  { name: "Vinícius Jr.", team: "BRA" },
+  { name: "Erling Haaland", team: "NOR" },
+  { name: "Harry Kane", team: "ENG" },
+  { name: "Cristiano Ronaldo", team: "POR" },
+  { name: "Lamine Yamal", team: "ESP" },
+  { name: "Luis Díaz", team: "COL" },
+  { name: "Jude Bellingham", team: "ENG" },
+  { name: "Julián Álvarez", team: "ARG" },
+  { name: "Mohamed Salah", team: "EGY" },
+  { name: "Florian Wirtz", team: "GER" },
+];
+
+// Arqueros de EJEMPLO para Guante de Oro.
+export const STAR_KEEPERS = [
+  { name: "Emiliano Martínez", team: "ARG" },
+  { name: "Alisson Becker", team: "BRA" },
+  { name: "Thibaut Courtois", team: "BEL" },
+  { name: "Unai Simón", team: "ESP" },
+  { name: "Mike Maignan", team: "FRA" },
+  { name: "Camilo Vargas", team: "COL" },
+  { name: "Yassine Bono", team: "MAR" },
+  { name: "Jordan Pickford", team: "ENG" },
+];
+
+// ─────────────────────────────────────────────────────────────────────────
 // Misiones de EJEMPLO.
 // ─────────────────────────────────────────────────────────────────────────
 export const MISSIONS = [
