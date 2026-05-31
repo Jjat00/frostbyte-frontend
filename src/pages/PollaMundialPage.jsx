@@ -8,7 +8,6 @@ import {
   CalendarClock,
   Lock,
   Users,
-  Medal,
   Sparkles,
   CircleDot,
   ChevronRight,
@@ -18,6 +17,11 @@ import {
   ListChecks,
   LogOut,
   Check,
+  Swords,
+  Crown,
+  Award,
+  TrendingUp,
+  GitBranch,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,6 +30,12 @@ import AuthModal from "@/components/auth/AuthModal";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { usePollaTournament } from "@/hooks/usePolla";
 import PollaApp from "@/pages/polla/PollaApp";
+import {
+  MatchCardPreview,
+  BracketPreview,
+  GroupTablePreview,
+  RankingPreview,
+} from "@/pages/polla/LandingPreviews";
 
 // Pitazo inicial del Mundial 2026 (respaldo si el backend aun no responde;
 // la hora real llega desde el torneo via usePollaTournament).
@@ -108,33 +118,33 @@ const CountdownUnit = ({ value, label }) => (
 const STEPS = [
   {
     icon: Users,
-    title: "1. Inscríbete con Google",
-    desc: "Entra con tu cuenta de Google en un toque. Sin contraseñas, sin formularios eternos. Quedas registrado en la Polla Mundialista.",
+    title: "1. Entra en un toque",
+    desc: "Entras con tu cuenta de Google, sin contraseñas ni formularios eternos. Quedas registrado en la Polla Mundialista al instante.",
   },
   {
     icon: Target,
-    title: "2. Pronostica cada partido",
-    desc: "Antes de cada juego dices el marcador exacto que crees que va a quedar. Ejemplo: Colombia 2 - 1 Brasil.",
+    title: "2. Pronostica los marcadores",
+    desc: "Antes de cada partido dices el marcador exacto que crees que va a quedar. Ejemplo: Colombia 2 - 1 Brasil.",
+  },
+  {
+    icon: Swords,
+    title: "3. Arma tu eliminación",
+    desc: "Con tu tabla de grupos se abre tu llave: eliges quién avanza ronda a ronda hasta coronar a tu campeón.",
   },
   {
     icon: Lock,
-    title: "3. Cierre al pitazo inicial",
-    desc: "Cuando arranca el partido tus pronósticos se bloquean. No se puede editar después: el que madruga, juega.",
+    title: "4. Cierre al pitazo inicial",
+    desc: "Cuando arranca el partido tus pronósticos se bloquean. No se edita después: el que madruga, juega.",
   },
   {
     icon: Sparkles,
-    title: "4. Suma puntos automáticamente",
-    desc: "Al terminar cada partido el sistema compara tu pronóstico con el resultado real y te asigna puntos al instante.",
+    title: "5. Suma por varias vías",
+    desc: "Marcadores, avance en la eliminación, menciones del torneo y misiones: todo suma a tu puntaje, automáticamente.",
   },
   {
     icon: Trophy,
-    title: "5. Escala en la tabla",
-    desc: "Una tabla de posiciones en vivo muestra quién va ganando durante todo el Mundial. La rivalidad está servida.",
-  },
-  {
-    icon: Medal,
-    title: "6. Gana el premio",
-    desc: "Quien más puntos acumule al final del Mundial se corona campeón de la Polla y se lleva el premio.",
+    title: "6. Escala y gana el premio",
+    desc: "Una tabla en vivo muestra quién va ganando. Quien más puntos acumule al final se corona y se lleva el premio.",
   },
 ];
 
@@ -181,8 +191,51 @@ const RULES = [
   },
   {
     icon: ListChecks,
-    title: "Todos los partidos cuentan",
-    desc: "Desde la fase de grupos hasta la gran final. Cada acierto te acerca al premio.",
+    title: "Cuenta todo el Mundial",
+    desc: "Grupos, eliminación, menciones y misiones: hay varias formas de sumar de principio a fin.",
+  },
+];
+
+// Otras vías de puntos además del marcador
+const EXTRA_POINTS = [
+  {
+    icon: TrendingUp,
+    title: "Avance en la eliminación",
+    desc: "Arma tu llave y acierta quién pasa cada ronda. Suma desde +2 por cruce y hasta +20 por coronar a tu campeón.",
+  },
+  {
+    icon: Award,
+    title: "Menciones del torneo",
+    desc: "Tus apuestas grandes: campeón, subcampeón, goleador y más. Si le atinas, suman al final.",
+  },
+  {
+    icon: ListChecks,
+    title: "Misiones",
+    desc: "Retos que dan puntos extra: completa tus pronósticos, encadena aciertos y más.",
+  },
+];
+
+// Cómo se arma el bracket de eliminación encadenado
+const BRACKET_STEPS = [
+  {
+    icon: Target,
+    title: "Completa tus grupos",
+    desc: "Pronostica los 72 partidos de la fase de grupos. Con tus marcadores armamos tu tabla.",
+  },
+  {
+    icon: GitBranch,
+    title: "Se desbloquea tu llave",
+    desc: "Tus 1.º y 2.º de cada grupo (más los mejores terceros) entran a tu bracket de eliminación.",
+  },
+  {
+    icon: Swords,
+    title: "Eliges quién avanza",
+    desc: "Ronda por ronda decides quién pasa. Tu pick salta automáticamente a la siguiente llave.",
+  },
+  {
+    icon: Crown,
+    title: "Hasta tu campeón",
+    desc: "Sigues avanzando hasta coronar al que crees que levanta la copa. Cada acierto de avance suma.",
   },
 ];
 
@@ -221,7 +274,7 @@ const PollaMundialPage = () => {
         <title>Polla Mundialista 2026 | Frostbyte</title>
         <meta
           name="description"
-          content="Participa en la Polla Mundialista de Frostbyte: pronostica los marcadores del Mundial 2026, suma puntos y gana el premio. Pronostica, acierta y corónate campeón."
+          content="Participa en la Polla Mundialista de Frostbyte: pronostica los marcadores del Mundial 2026, arma tu bracket de eliminación, suma con menciones y misiones, y gana $500.000. Pronostica, acierta y corónate campeón."
         />
       </Helmet>
 
@@ -267,7 +320,7 @@ const PollaMundialPage = () => {
               className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-primary to-secondary px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-dark shadow-lg shadow-primary/30 transition-transform hover:scale-105"
             >
               <Trophy size={14} />
-              Inscribirme
+              Empezar a jugar
             </button>
           )}
         </div>
@@ -329,9 +382,9 @@ const PollaMundialPage = () => {
             </h1>
 
             <p className="text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-              Pronostica los marcadores del Mundial, suma puntos con cada acierto
-              y compite contra todo Frostbyte. El que mejor adivine se corona
-              campeón y se lleva <span className="text-secondary font-semibold">$500.000</span>.
+              Pronostica los marcadores, arma tu camino al campeón y suma puntos
+              con cada acierto. El que mejor lea el Mundial se corona y se lleva{" "}
+              <span className="text-secondary font-semibold">$500.000</span>.
             </p>
 
             {/* Countdown */}
@@ -359,7 +412,7 @@ const PollaMundialPage = () => {
                   className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
                 >
                   <Trophy size={20} className="mr-1" />
-                  Inscríbete con Google
+                  Empezar a jugar
                 </Button>
               )}
               <Button
@@ -439,7 +492,7 @@ const PollaMundialPage = () => {
         <SectionTitle
           kicker="El que más acierte, gana"
           title="Sistema de puntos"
-          subtitle="Acertar el marcador exacto vale más que solo acertar al ganador. Así premia el riesgo y la buena lectura del partido."
+          subtitle="Acertar el marcador exacto vale más que solo el ganador. Y además sumas por avanzar en la eliminación, por tus menciones y por misiones."
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
           {SCORING.map((s, i) => (
@@ -475,100 +528,98 @@ const PollaMundialPage = () => {
             </motion.div>
           ))}
         </div>
+        <div className="mt-10 max-w-4xl mx-auto">
+          <p className="text-center text-sm font-semibold text-light mb-5">
+            Y suma por otras tres vías
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {EXTRA_POINTS.map((s, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className="liquid-glass-light relative overflow-hidden rounded-2xl p-6 border border-white/[0.06]"
+              >
+                <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-4">
+                  <s.icon className="text-primary" size={20} />
+                </div>
+                <h3 className="font-bold text-light mb-2">{s.title}</h3>
+                <p className="text-gray text-sm leading-relaxed">{s.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ASÍ SE VE TU PRONÓSTICO (vista real) */}
+      <Section className="bg-dark-secondary/30">
+        <SectionTitle
+          kicker="Tal cual lo verás"
+          title="Así se ve tu pronóstico"
+          subtitle="Escribes tu marcador antes del partido y, al terminar, ves cuántos puntos sumaste. Marcador exacto: +3. Solo el resultado: +1."
+        />
+        <motion.div variants={fadeUp}>
+          <MatchCardPreview />
+        </motion.div>
+      </Section>
+
+      {/* CAMINO AL CAMPEÓN (BRACKET) */}
+      <Section>
+        <SectionTitle
+          kicker="Lo nuevo"
+          title="Arma tu camino al campeón"
+          subtitle="Cuando terminas la fase de grupos se abre tu bracket de eliminación: una llave que se arma con tus propios pronósticos y avanzas hasta coronar a tu campeón."
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+          {BRACKET_STEPS.map((step, i) => (
+            <motion.div
+              key={i}
+              variants={fadeUp}
+              className="liquid-glass-interactive group relative overflow-hidden rounded-2xl p-6 border border-white/[0.06] hover:border-primary/40 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-secondary text-sm font-black text-dark">
+                  {i + 1}
+                </span>
+                <step.icon className="text-primary" size={20} />
+              </div>
+              <h3 className="text-base font-bold text-light mb-2">{step.title}</h3>
+              <p className="text-gray text-sm leading-relaxed">{step.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+        <motion.div variants={fadeUp} className="mt-10">
+          <BracketPreview />
+        </motion.div>
         <motion.p
           variants={fadeUp}
           className="text-center text-xs text-gray/70 mt-8 max-w-2xl mx-auto"
         >
-          * El puntaje final puede ajustarse antes del inicio del torneo. Las
-          reglas exactas se confirmarán al abrir las inscripciones.
+          Acertar quién avanza suma aparte del marcador: más puntos mientras más
+          avanzada la ronda, y el premio gordo por coronar a tu campeón.
         </motion.p>
       </Section>
 
-      {/* EJEMPLO PRÁCTICO */}
+      {/* GRUPOS Y POSICIONES (vista real) */}
       <Section className="bg-dark-secondary/30">
         <SectionTitle
-          kicker="Así se ven los puntos"
-          title="Ejemplo práctico"
-          subtitle="Partido: Argentina vs México. Pronosticaste 2-1 y el partido quedó 2-1: marcador exacto."
+          kicker="Las tablas"
+          title="Grupos y posiciones"
+          subtitle="Sigue los 12 grupos con las posiciones en vivo. Los 2 primeros de cada grupo (más los mejores terceros) avanzan a tu eliminación."
         />
-        <motion.div
-          variants={fadeUp}
-          className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-5"
-        >
-          {/* Tu pronóstico */}
-          <div className="liquid-glass relative overflow-hidden rounded-2xl p-6 border border-primary/30 text-center">
-            <p className="text-[11px] uppercase tracking-widest text-primary font-semibold mb-4">
-              Tu pronóstico
-            </p>
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-3xl">🇦🇷</span>
-              <span className="text-3xl font-black text-light tabular-nums">
-                2 - 1
-              </span>
-              <span className="text-3xl">🇲🇽</span>
-            </div>
-          </div>
-
-          {/* VS */}
-          <div className="text-center text-gray font-black text-lg">VS</div>
-
-          {/* Resultado real */}
-          <div className="liquid-glass relative overflow-hidden rounded-2xl p-6 border border-secondary/30 text-center">
-            <p className="text-[11px] uppercase tracking-widest text-secondary font-semibold mb-4">
-              Resultado real
-            </p>
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-3xl">🇦🇷</span>
-              <span className="text-3xl font-black text-light tabular-nums">
-                2 - 1
-              </span>
-              <span className="text-3xl">🇲🇽</span>
-            </div>
-          </div>
-        </motion.div>
-        <motion.div variants={fadeUp} className="text-center mt-6">
-          <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-linear-to-r from-primary to-secondary text-dark font-bold">
-            <Flame size={18} />
-            +3 puntos · ¡Marcador exacto!
-          </span>
+        <motion.div variants={fadeUp}>
+          <GroupTablePreview />
         </motion.div>
       </Section>
 
-      {/* TABLA DE POSICIONES (EJEMPLO) */}
+      {/* CLASIFICACIÓN (vista real) */}
       <Section>
         <SectionTitle
           kicker="La competencia"
-          title="Tabla de posiciones"
-          subtitle="Una tabla en vivo muestra quién va ganando durante todo el Mundial. Así se vería (ejemplo)."
+          title="Clasificación general"
+          subtitle="Una tabla en vivo con podio muestra quién va ganando durante todo el Mundial. Así se ve por dentro."
         />
-        <motion.div
-          variants={fadeUp}
-          className="max-w-2xl mx-auto liquid-glass relative rounded-2xl border border-white/[0.06] overflow-hidden"
-        >
-          <div className="grid grid-cols-[auto_1fr_auto] gap-4 px-6 py-3 border-b border-white/[0.08] text-[11px] uppercase tracking-widest text-gray font-semibold">
-            <span>Pos</span>
-            <span>Participante</span>
-            <span>Puntos</span>
-          </div>
-          {[
-            { pos: 1, name: "Mariana", pts: 23, medal: "🥇" },
-            { pos: 2, name: "Juan", pts: 15, medal: "🥈" },
-            { pos: 3, name: "Ana", pts: 10, medal: "🥉" },
-          ].map((row) => (
-            <div
-              key={row.pos}
-              className={cn(
-                "grid grid-cols-[auto_1fr_auto] gap-4 px-6 py-4 items-center border-b border-white/[0.04] last:border-0",
-                row.pos === 1 && "bg-primary/[0.06]"
-              )}
-            >
-              <span className="text-xl w-8 text-center">{row.medal}</span>
-              <span className="font-bold text-light">{row.name}</span>
-              <span className="text-xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent tabular-nums">
-                {row.pts}
-              </span>
-            </div>
-          ))}
+        <motion.div variants={fadeUp}>
+          <RankingPreview />
         </motion.div>
       </Section>
 
@@ -634,13 +685,13 @@ const PollaMundialPage = () => {
           <p className="text-gray text-lg mb-8">
             {isAuthenticated
               ? "Ya estás inscrito en la Polla Mundialista. Te avisaremos apenas abran los pronósticos del primer partido."
-              : "Inscríbete gratis con tu cuenta de Google y prepárate para competir por el premio de la Polla Mundialista 2026."}
+              : "Entra gratis y prepárate para competir por el premio de la Polla Mundialista 2026."}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {isAuthenticated ? (
               <span className="inline-flex items-center gap-2 rounded-full border-2 border-secondary/50 bg-secondary/10 px-8 py-4 text-lg font-bold text-secondary">
                 <Check size={20} />
-                Inscripción confirmada
+                Ya estás jugando
               </span>
             ) : (
               <Button
@@ -648,7 +699,7 @@ const PollaMundialPage = () => {
                 className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
               >
                 <Trophy size={20} className="mr-1" />
-                Inscríbete con Google
+                Empezar a jugar
               </Button>
             )}
             <Button
@@ -674,7 +725,7 @@ const PollaMundialPage = () => {
         open={authOpen}
         onClose={() => setAuthOpen(false)}
         title="Únete a la Polla"
-        subtitle="Inscríbete con tu cuenta de Google y compite por $500.000."
+        subtitle="Entra y compite por $500.000 en la Polla Mundialista."
         benefits={POLLA_BENEFITS}
       />
     </div>
