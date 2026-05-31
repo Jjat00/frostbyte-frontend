@@ -8,10 +8,12 @@ import {
   Calendar,
   ChevronDown,
   Star,
+  Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
 import MencionesSection from "./MencionesSection";
+import EliminacionBracket from "./EliminacionBracket";
 import { usePollaMatches, useSavePrediction } from "@/hooks/usePolla";
 import {
   FIXTURE_FILTERS,
@@ -364,6 +366,7 @@ const LoadingState = () => (
 );
 
 const PartidosTab = () => {
+  const [view, setView] = useState("grupos"); // grupos | eliminacion
   const [filter, setFilter] = useState("upcoming");
 
   // Trae TODOS los partidos una sola vez; se filtra en cliente.
@@ -405,19 +408,26 @@ const PartidosTab = () => {
     );
   };
 
-  // Contadores por estado (sobre el total).
-  const counts = useMemo(
-    () =>
-      matches.reduce((acc, m) => {
-        acc[m.status] = (acc[m.status] || 0) + 1;
-        return acc;
-      }, {}),
+  // Solo partidos CONFIRMADOS (con ambas selecciones definidas). Los cruces de
+  // eliminación con cupo por definir ("1A", "Ganador 73") viven en el bracket.
+  const confirmed = useMemo(
+    () => matches.filter((m) => m.home?.code && m.away?.code),
     [matches]
   );
 
+  // Contadores por estado (sobre los confirmados).
+  const counts = useMemo(
+    () =>
+      confirmed.reduce((acc, m) => {
+        acc[m.status] = (acc[m.status] || 0) + 1;
+        return acc;
+      }, {}),
+    [confirmed]
+  );
+
   const list = useMemo(
-    () => matches.filter((m) => m.status === filter),
-    [matches, filter]
+    () => confirmed.filter((m) => m.status === filter),
+    [confirmed, filter]
   );
   const groups = useMemo(() => groupByDate(list), [list]);
 
@@ -444,72 +454,97 @@ const PartidosTab = () => {
       {/* Menciones / pronósticos del torneo */}
       <MencionesSection />
 
-      {/* Partidos */}
-      <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray">
-        <Calendar size={14} className="text-primary" />
-        Partidos
-      </h3>
-
-      {/* Filtros */}
-      <div className="mb-4 flex flex-wrap gap-2">
-        {FIXTURE_FILTERS.map((f) => {
-          const active = filter === f.id;
+      {/* Toggle: Fase de grupos (marcadores) / Eliminación (bracket) */}
+      <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+        {[
+          { id: "grupos", label: "Fase de grupos", icon: Calendar },
+          { id: "eliminacion", label: "Eliminación", icon: Trophy },
+        ].map((v) => {
+          const active = view === v.id;
           return (
             <button
-              key={f.id}
-              onClick={() => setFilter(f.id)}
+              key={v.id}
+              onClick={() => setView(v.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-bold transition-all",
+                "flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-bold transition-all",
                 active
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-white/10 text-gray hover:border-white/20 hover:text-light"
+                  ? "bg-linear-to-r from-primary to-secondary text-dark"
+                  : "text-gray hover:text-light"
               )}
             >
-              {f.id === "live" && (
-                <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
-              )}
-              {f.label}
-              {counts[f.id] ? (
-                <span
-                  className={cn(
-                    "ml-0.5 rounded-full px-1.5 text-[10px]",
-                    active ? "bg-primary/20" : "bg-white/[0.06]"
-                  )}
-                >
-                  {counts[f.id]}
-                </span>
-              ) : null}
+              <v.icon size={15} />
+              {v.label}
             </button>
           );
         })}
       </div>
 
-      {/* Lista agrupada por fecha */}
-      {isLoading ? (
-        <LoadingState />
-      ) : isError ? (
-        <p className="rounded-2xl border border-red-500/20 bg-red-500/[0.04] py-10 text-center text-sm text-red-400">
-          No pudimos cargar los partidos. Intenta de nuevo en un momento.
-        </p>
-      ) : groups.length ? (
-        <div className="space-y-2">
-          {groups.map((g) => (
-            <DateGroup
-              key={g.key}
-              label={g.label}
-              matches={g.matches}
-              preds={preds}
-              onChange={setPred}
-              onSave={onSave}
-              pendingSlug={pendingSlug}
-              errors={errors}
-            />
-          ))}
-        </div>
+      {view === "eliminacion" ? (
+        <EliminacionBracket onGoToGroups={() => setView("grupos")} />
       ) : (
-        <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray">
-          No hay partidos en esta categoría por ahora.
-        </p>
+        <>
+          {/* Filtros */}
+          <div className="mb-4 flex flex-wrap gap-2">
+            {FIXTURE_FILTERS.map((f) => {
+              const active = filter === f.id;
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => setFilter(f.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-bold transition-all",
+                    active
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-white/10 text-gray hover:border-white/20 hover:text-light"
+                  )}
+                >
+                  {f.id === "live" && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
+                  )}
+                  {f.label}
+                  {counts[f.id] ? (
+                    <span
+                      className={cn(
+                        "ml-0.5 rounded-full px-1.5 text-[10px]",
+                        active ? "bg-primary/20" : "bg-white/[0.06]"
+                      )}
+                    >
+                      {counts[f.id]}
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Lista agrupada por fecha */}
+          {isLoading ? (
+            <LoadingState />
+          ) : isError ? (
+            <p className="rounded-2xl border border-red-500/20 bg-red-500/[0.04] py-10 text-center text-sm text-red-400">
+              No pudimos cargar los partidos. Intenta de nuevo en un momento.
+            </p>
+          ) : groups.length ? (
+            <div className="space-y-2">
+              {groups.map((g) => (
+                <DateGroup
+                  key={g.key}
+                  label={g.label}
+                  matches={g.matches}
+                  preds={preds}
+                  onChange={setPred}
+                  onSave={onSave}
+                  pendingSlug={pendingSlug}
+                  errors={errors}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray">
+              No hay partidos en esta categoría por ahora.
+            </p>
+          )}
+        </>
       )}
     </div>
   );

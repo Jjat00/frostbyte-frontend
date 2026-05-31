@@ -15,6 +15,7 @@ export const pollaKeys = {
   groups: () => ["polla", "groups"],
   standings: () => ["polla", "standings"],
   awards: () => ["polla", "awards"],
+  bracket: () => ["polla", "bracket"],
   ranking: () => ["polla", "ranking"],
   missions: () => ["polla", "missions"],
   myStats: () => ["polla", "me", "stats"],
@@ -75,6 +76,26 @@ export function usePollaAwards(options = {}) {
   });
 }
 
+/**
+ * Bracket encadenado de la fase de eliminación. Normaliza `kickoff` (ISO) a
+ * Date en cada cruce de cada ronda.
+ */
+export function usePollaBracket(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.bracket(),
+    queryFn: () => pollaService.getBracket(),
+    select: (data) => ({
+      ...data,
+      rounds: (data?.rounds || []).map((r) => ({
+        ...r,
+        matches: (r.matches || []).map((m) => ({ ...m, kickoff: new Date(m.kickoff) })),
+      })),
+    }),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
 export function usePollaRanking(options = {}) {
   return useQuery({
     queryKey: pollaKeys.ranking(),
@@ -114,6 +135,23 @@ export function useSavePrediction() {
       qc.invalidateQueries({ queryKey: pollaKeys.missions() });
       qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
       qc.invalidateQueries({ queryKey: pollaKeys.myPredictions() });
+      // Los marcadores de grupo definen el desbloqueo y la siembra del bracket.
+      qc.invalidateQueries({ queryKey: pollaKeys.bracket() });
+    },
+  });
+}
+
+/** Guarda el pick de avance de un cruce de eliminación. */
+export function useSaveBracketPick() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slug, winner_code }) =>
+      pollaService.saveBracketPick(slug, { winner_code }),
+    onSuccess: () => {
+      // El backend propaga y poda picks de abajo: refrescamos el bracket entero.
+      qc.invalidateQueries({ queryKey: pollaKeys.bracket() });
+      qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
+      qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
     },
   });
 }

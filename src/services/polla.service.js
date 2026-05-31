@@ -31,6 +31,9 @@ export const pollaService = {
   async getAwards() {
     return (await customerClient.get(ENDPOINTS.POLLA_AWARDS)).data;
   },
+  async getBracket() {
+    return (await customerClient.get(ENDPOINTS.POLLA_BRACKET)).data;
+  },
   async getRanking() {
     return (await customerClient.get(ENDPOINTS.POLLA_RANKING)).data;
   },
@@ -53,6 +56,12 @@ export const pollaService = {
   async saveAwardPick(code, payload) {
     // payload: { team_code } | { player_id }
     return (await customerClient.put(ENDPOINTS.POLLA_AWARD_PICK(code), payload)).data;
+  },
+  async saveBracketPick(slug, { winner_code }) {
+    // Devuelve el bracket completo, ya propagado.
+    return (
+      await customerClient.put(ENDPOINTS.POLLA_BRACKET_PICK(slug), { winner_code })
+    ).data;
   },
 };
 
