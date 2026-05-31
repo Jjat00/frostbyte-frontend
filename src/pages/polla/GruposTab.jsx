@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { LayoutGrid, Table2, Home, Info } from "lucide-react";
+import { LayoutGrid, Table2, Home, Info, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
-import { GROUPS, CONF_META, groupStandings } from "@/data/mundial2026";
+import { CONF_META } from "@/data/mundial2026";
+import { usePollaGroups, usePollaStandings } from "@/hooks/usePolla";
 
 const VIEWS = [
   { id: "teams", label: "Equipos", icon: LayoutGrid },
@@ -27,7 +28,7 @@ const ConfDot = ({ conf }) => {
   );
 };
 
-/* Vista de equipos: 4 selecciones del grupo */
+/* Vista de equipos: selecciones del grupo */
 const TeamsView = ({ group }) => (
   <ul className="divide-y divide-white/[0.05]">
     {group.teams.map((t) => (
@@ -35,9 +36,9 @@ const TeamsView = ({ group }) => (
         <Flag iso2={t.iso2} name={t.name} size={30} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-light">{t.name}</p>
-          <ConfDot conf={t.conf} />
+          <ConfDot conf={t.confederation} />
         </div>
-        {t.host ? (
+        {t.is_host ? (
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary">
             <Home size={10} /> Sede
           </span>
@@ -49,9 +50,18 @@ const TeamsView = ({ group }) => (
   </ul>
 );
 
-/* Vista de tabla: posiciones (datos de ejemplo) */
-const TableView = ({ group, index }) => {
-  const rows = groupStandings(group, index);
+/* Vista de tabla: posiciones reales de la fase de grupos */
+const TableView = ({ standingGroup }) => {
+  const rows = standingGroup?.rows || [];
+
+  if (rows.length === 0) {
+    return (
+      <p className="py-3 text-center text-[11px] text-gray/60">
+        Aún no hay posiciones para este grupo.
+      </p>
+    );
+  }
+
   return (
     <table className="w-full text-sm">
       <thead>
@@ -64,8 +74,8 @@ const TableView = ({ group, index }) => {
         </tr>
       </thead>
       <tbody>
-        {rows.map((r, i) => {
-          const qualifies = i < 2; // top 2 avanzan directo
+        {rows.map((r) => {
+          const qualifies = r.rank <= 2; // top 2 avanzan directo
           return (
             <tr
               key={r.code}
@@ -81,7 +91,7 @@ const TableView = ({ group, index }) => {
                     qualifies ? "text-secondary" : "text-gray/60"
                   )}
                 >
-                  {i + 1}
+                  {r.rank}
                 </span>
               </td>
               <td className="py-2">
@@ -107,7 +117,7 @@ const TableView = ({ group, index }) => {
   );
 };
 
-const GroupCard = ({ group, index, view }) => (
+const GroupCard = ({ group, index, view, standingGroup }) => (
   <motion.div
     layout
     initial={{ opacity: 0, y: 14 }}
@@ -128,13 +138,57 @@ const GroupCard = ({ group, index, view }) => (
     {view === "teams" ? (
       <TeamsView group={group} />
     ) : (
-      <TableView group={group} index={index} />
+      <TableView standingGroup={standingGroup} />
     )}
   </motion.div>
 );
 
+/* Placeholder de carga: tarjeta con bordes/fondo del tema cyberpunk */
+const GroupCardSkeleton = () => (
+  <div className="liquid-glass relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+    <div className="mb-3 flex items-center gap-2">
+      <span className="h-7 w-7 animate-pulse rounded-lg bg-white/[0.06]" />
+      <span className="h-3 w-20 animate-pulse rounded bg-white/[0.06]" />
+    </div>
+    <div className="space-y-3">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <span className="h-[30px] w-[30px] animate-pulse rounded-full bg-white/[0.06]" />
+          <span className="h-3 flex-1 animate-pulse rounded bg-white/[0.06]" />
+          <span className="h-3 w-8 animate-pulse rounded bg-white/[0.06]" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const GruposTab = () => {
   const [view, setView] = useState("teams");
+
+  const {
+    data: groups,
+    isLoading: groupsLoading,
+    isError: groupsError,
+  } = usePollaGroups();
+  // Las posiciones solo se necesitan para la vista "Tabla".
+  const {
+    data: standings,
+    isLoading: standingsLoading,
+    isError: standingsError,
+  } = usePollaStandings({ enabled: view === "table" });
+
+  const groupList = groups || [];
+  const standingsList = standings || [];
+
+  // Índice por letra para emparejar cada grupo con su tabla de posiciones.
+  const standingsByLetter = standingsList.reduce((acc, sg) => {
+    acc[sg.letter] = sg;
+    return acc;
+  }, {});
+
+  const loading =
+    groupsLoading || (view === "table" && standingsLoading && groupList.length);
+  const error = groupsError || (view === "table" && standingsError);
 
   return (
     <div>
@@ -174,17 +228,49 @@ const GruposTab = () => {
         })}
       </div>
 
-      {/* Grilla de grupos */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {GROUPS.map((g, i) => (
-          <GroupCard key={g.letter} group={g} index={i} view={view} />
-        ))}
-      </div>
+      {/* Estado de error */}
+      {error && (
+        <div className="flex items-center gap-3 rounded-2xl border border-red-400/20 bg-red-400/[0.05] px-4 py-5 text-sm text-gray">
+          <AlertTriangle className="shrink-0 text-red-400/80" size={18} />
+          No pudimos cargar los grupos. Intenta de nuevo en un momento.
+        </div>
+      )}
 
-      {view === "table" && (
+      {/* Estado de carga: skeleton de 12 tarjetas */}
+      {!error && loading && (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <GroupCardSkeleton key={i} />
+          ))}
+        </div>
+      )}
+
+      {/* Estado vacío */}
+      {!error && !loading && groupList.length === 0 && (
+        <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-8 text-center text-sm text-gray/70">
+          Todavía no hay grupos disponibles.
+        </p>
+      )}
+
+      {/* Grilla de grupos */}
+      {!error && !loading && groupList.length > 0 && (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {groupList.map((g, i) => (
+            <GroupCard
+              key={g.letter}
+              group={g}
+              index={i}
+              view={view}
+              standingGroup={standingsByLetter[g.letter]}
+            />
+          ))}
+        </div>
+      )}
+
+      {view === "table" && !error && !loading && groupList.length > 0 && (
         <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-[11px] text-gray/60">
           <Info size={12} />
-          Tabla de ejemplo · se llenará en vivo durante el Mundial.
+          Posiciones en tiempo real · se actualizan con cada partido del Mundial.
         </p>
       )}
     </div>

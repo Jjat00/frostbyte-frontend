@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 import { ArrowLeft, Target, LayoutGrid, Trophy, Flag, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
-import { MY_STATS } from "@/data/mundial2026";
+import { useMyStats } from "@/hooks/usePolla";
 import PartidosTab from "./PartidosTab";
 import GruposTab from "./GruposTab";
 import RankingTab from "./RankingTab";
@@ -23,6 +23,7 @@ const PollaApp = () => {
 
   const customer = useCustomerAuthStore((s) => s.customer);
   const logout = useCustomerAuthStore((s) => s.logout);
+  const { data: stats } = useMyStats();
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "crack";
 
@@ -55,7 +56,7 @@ const PollaApp = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Pildora de puntos */}
             <span className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-primary to-secondary px-3.5 py-1.5 text-sm font-black text-dark shadow-lg shadow-primary/30">
-              {MY_STATS.points}
+              {stats?.points ?? 0}
               <span className="text-[11px] font-bold">pts</span>
             </span>
 

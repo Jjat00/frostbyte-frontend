@@ -12,7 +12,7 @@ import {
   Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { MISSIONS, MY_STATS } from "@/data/mundial2026";
+import { usePollaMissions } from "@/hooks/usePolla";
 
 const MISSION_ICONS = {
   first: Sparkles,
@@ -25,13 +25,13 @@ const MISSION_ICONS = {
 
 const STATS = [
   { key: "points", label: "Puntos", value: (s) => s.points },
-  { key: "exactHits", label: "Exactos", value: (s) => s.exactHits },
-  { key: "correctHits", label: "Aciertos", value: (s) => s.correctHits },
+  { key: "exact_hits", label: "Exactos", value: (s) => s.exact_hits },
+  { key: "correct_hits", label: "Aciertos", value: (s) => s.correct_hits },
   { key: "predicted", label: "Jugados", value: (s) => s.predicted },
 ];
 
 const MissionRow = ({ mission, index }) => {
-  const Icon = MISSION_ICONS[mission.id] || Star;
+  const Icon = MISSION_ICONS[mission.code] || Star;
   const pct = Math.min(100, Math.round((mission.progress / mission.total) * 100));
   return (
     <motion.div
@@ -95,27 +95,77 @@ const MissionRow = ({ mission, index }) => {
   );
 };
 
+// Encabezado fijo reutilizado en todos los estados
+const Header = ({ done, total }) => (
+  <div className="mb-5 flex items-start gap-3">
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/20 to-secondary/20">
+      <FlagIcon className="text-primary" size={20} />
+    </div>
+    <div className="min-w-0">
+      <h2 className="text-xl font-black text-light">Misiones</h2>
+      <p className="mt-0.5 text-sm leading-snug text-gray">
+        Completa retos para ganar puntos extra e insignias.{" "}
+        {done != null && total != null ? (
+          <>
+            <span className="font-bold text-secondary">
+              {done}/{total}
+            </span>{" "}
+            completadas.
+          </>
+        ) : null}
+      </p>
+    </div>
+  </div>
+);
+
 const MisionesTab = () => {
-  const done = MISSIONS.filter((m) => m.done).length;
+  const { data, isLoading, isError } = usePollaMissions();
+
+  if (isLoading) {
+    return (
+      <div>
+        <Header />
+        {/* Skeleton del resumen de estadisticas */}
+        <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-[68px] animate-pulse rounded-2xl border border-white/[0.06] bg-white/[0.02]"
+            />
+          ))}
+        </div>
+        {/* Skeleton de la lista de misiones */}
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-[92px] animate-pulse rounded-2xl border border-white/[0.06] bg-white/[0.02]"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div>
+        <Header />
+        <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray">
+          No pudimos cargar las misiones. Intentalo de nuevo en un momento.
+        </p>
+      </div>
+    );
+  }
+
+  const missions = data?.missions ?? [];
+  const stats = data?.my_stats ?? {};
+  const done = missions.filter((m) => m.done).length;
 
   return (
     <div>
       {/* Encabezado */}
-      <div className="mb-5 flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/20 to-secondary/20">
-          <FlagIcon className="text-primary" size={20} />
-        </div>
-        <div className="min-w-0">
-          <h2 className="text-xl font-black text-light">Misiones</h2>
-          <p className="mt-0.5 text-sm leading-snug text-gray">
-            Completa retos para ganar puntos extra e insignias.{" "}
-            <span className="font-bold text-secondary">
-              {done}/{MISSIONS.length}
-            </span>{" "}
-            completadas.
-          </p>
-        </div>
-      </div>
+      <Header done={done} total={missions.length} />
 
       {/* Resumen de mis pronosticos */}
       <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -125,7 +175,7 @@ const MisionesTab = () => {
             className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-3 text-center"
           >
             <p className="text-2xl font-black tabular-nums bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {s.value(MY_STATS)}
+              {s.value(stats)}
             </p>
             <p className="text-[10px] uppercase tracking-wider text-gray">
               {s.label}
@@ -135,11 +185,17 @@ const MisionesTab = () => {
       </div>
 
       {/* Lista de misiones */}
-      <div className="space-y-3">
-        {MISSIONS.map((m, i) => (
-          <MissionRow key={m.id} mission={m} index={i} />
-        ))}
-      </div>
+      {missions.length ? (
+        <div className="space-y-3">
+          {missions.map((m, i) => (
+            <MissionRow key={m.code} mission={m} index={i} />
+          ))}
+        </div>
+      ) : (
+        <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray">
+          No hay misiones disponibles por ahora.
+        </p>
+      )}
     </div>
   );
 };
