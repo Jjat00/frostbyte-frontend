@@ -24,10 +24,12 @@ import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/auth/AuthModal";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import { usePollaTournament } from "@/hooks/usePolla";
 import PollaApp from "@/pages/polla/PollaApp";
 
-// Pitazo inicial del Mundial 2026
-const KICKOFF = new Date("2026-06-11T18:00:00-05:00");
+// Pitazo inicial del Mundial 2026 (respaldo si el backend aun no responde;
+// la hora real llega desde el torneo via usePollaTournament).
+const KICKOFF_FALLBACK = new Date("2026-06-11T14:00:00-05:00");
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -66,8 +68,11 @@ const SectionTitle = ({ kicker, title, subtitle }) => (
 );
 
 const useCountdown = (target) => {
+  const targetMs = target ? target.getTime() : null;
   const compute = () => {
-    const diff = target.getTime() - Date.now();
+    if (targetMs == null)
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, live: false };
+    const diff = targetMs - Date.now();
     if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, live: true };
     return {
       days: Math.floor(diff / 86400000),
@@ -78,10 +83,12 @@ const useCountdown = (target) => {
     };
   };
   const [time, setTime] = useState(compute);
+  // Recalcula al montar y cada vez que cambie el kickoff (p. ej. al llegar del backend).
   useEffect(() => {
+    setTime(compute());
     const id = setInterval(() => setTime(compute()), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [targetMs]);
   return time;
 };
 
@@ -182,7 +189,11 @@ const RULES = [
 const FLAGS = ["🇦🇷", "🇧🇷", "🇨🇴", "🇫🇷", "🇪🇸", "🇩🇪", "🇲🇽", "🇵🇹", "🇺🇾", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇳🇱", "🇺🇸"];
 
 const PollaMundialPage = () => {
-  const t = useCountdown(KICKOFF);
+  const { data: tournament } = usePollaTournament();
+  const kickoff = tournament?.kickoff
+    ? new Date(tournament.kickoff)
+    : KICKOFF_FALLBACK;
+  const t = useCountdown(kickoff);
   const heroRef = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
 
