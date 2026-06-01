@@ -1,0 +1,170 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { pollaService } from "@/services/polla.service";
+
+/**
+ * Hooks de React Query para la Polla Mundialista.
+ *
+ * Las lecturas tienen un staleTime corto (1 min) porque los datos cambian en
+ * vivo durante el torneo. Las mutaciones invalidan las queries afectadas.
+ */
+export const pollaKeys = {
+  all: ["polla"],
+  tournament: () => ["polla", "tournament"],
+  matches: (params) => ["polla", "matches", params || {}],
+  match: (slug) => ["polla", "match", slug],
+  groups: () => ["polla", "groups"],
+  standings: () => ["polla", "standings"],
+  awards: () => ["polla", "awards"],
+  bracket: () => ["polla", "bracket"],
+  ranking: () => ["polla", "ranking"],
+  missions: () => ["polla", "missions"],
+  myStats: () => ["polla", "me", "stats"],
+  myPredictions: () => ["polla", "predictions", "me"],
+};
+
+const LIVE_STALE = 60 * 1000; // 1 min
+const STATIC_STALE = 30 * 60 * 1000; // 30 min (grupos, torneo: cambian poco)
+
+export function usePollaTournament(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.tournament(),
+    queryFn: () => pollaService.getTournament(),
+    staleTime: STATIC_STALE,
+    ...options,
+  });
+}
+
+/**
+ * Lista de partidos. `params` admite { status, stage, group, team, featured }.
+ * Normaliza `kickoff` (ISO string) a objeto Date para los helpers de fecha.
+ */
+export function usePollaMatches(params = {}, options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.matches(params),
+    queryFn: () => pollaService.getMatches(params),
+    select: (data) =>
+      (data || []).map((m) => ({ ...m, kickoff: new Date(m.kickoff) })),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+export function usePollaGroups(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.groups(),
+    queryFn: () => pollaService.getGroups(),
+    staleTime: STATIC_STALE,
+    ...options,
+  });
+}
+
+export function usePollaStandings(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.standings(),
+    queryFn: () => pollaService.getStandings(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+export function usePollaAwards(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.awards(),
+    queryFn: () => pollaService.getAwards(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/**
+ * Bracket encadenado de la fase de eliminación. Normaliza `kickoff` (ISO) a
+ * Date en cada cruce de cada ronda.
+ */
+export function usePollaBracket(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.bracket(),
+    queryFn: () => pollaService.getBracket(),
+    select: (data) => ({
+      ...data,
+      rounds: (data?.rounds || []).map((r) => ({
+        ...r,
+        matches: (r.matches || []).map((m) => ({ ...m, kickoff: new Date(m.kickoff) })),
+      })),
+    }),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+export function usePollaRanking(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.ranking(),
+    queryFn: () => pollaService.getRanking(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+export function usePollaMissions(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.missions(),
+    queryFn: () => pollaService.getMissions(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+export function useMyStats(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.myStats(),
+    queryFn: () => pollaService.getMyStats(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Guarda (upsert) el pronóstico de un partido. */
+export function useSavePrediction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slug, home_score, away_score }) =>
+      pollaService.savePrediction(slug, { home_score, away_score }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["polla", "matches"] });
+      qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
+      qc.invalidateQueries({ queryKey: pollaKeys.missions() });
+      qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
+      qc.invalidateQueries({ queryKey: pollaKeys.myPredictions() });
+      // Los marcadores de grupo definen el desbloqueo y la siembra del bracket.
+      qc.invalidateQueries({ queryKey: pollaKeys.bracket() });
+    },
+  });
+}
+
+/** Guarda el pick de avance de un cruce de eliminación. */
+export function useSaveBracketPick() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slug, winner_code }) =>
+      pollaService.saveBracketPick(slug, { winner_code }),
+    onSuccess: () => {
+      // El backend propaga y poda picks de abajo: refrescamos el bracket entero.
+      qc.invalidateQueries({ queryKey: pollaKeys.bracket() });
+      qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
+      qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
+    },
+  });
+}
+
+/** Guarda (upsert) la elección de una mención. */
+export function useSaveAwardPick() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ code, ...payload }) => pollaService.saveAwardPick(code, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: pollaKeys.awards() });
+      qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
+      qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
+    },
+  });
+}

@@ -82,6 +82,22 @@ export const ENDPOINTS = {
   VIDEO_PLAYER_NEXT: '/video-requests/player/next/',
   VIDEO_PLAYER_PAUSE: '/video-requests/player/pause/',
   VIDEO_PLAYER_RESUME: '/video-requests/player/resume/',
+
+  // Polla Mundialista 2026
+  POLLA_TOURNAMENT: '/polla/tournament/',
+  POLLA_GROUPS: '/polla/groups/',
+  POLLA_STANDINGS: '/polla/standings/',
+  POLLA_MATCHES: '/polla/matches/',
+  POLLA_MATCH_DETAIL: (slug) => `/polla/matches/${slug}/`,
+  POLLA_MATCH_PREDICT: (slug) => `/polla/matches/${slug}/predict/`,
+  POLLA_MY_PREDICTIONS: '/polla/predictions/me/',
+  POLLA_AWARDS: '/polla/awards/',
+  POLLA_AWARD_PICK: (code) => `/polla/awards/${code}/pick/`,
+  POLLA_BRACKET: '/polla/bracket/',
+  POLLA_BRACKET_PICK: (slug) => `/polla/bracket/${slug}/pick/`,
+  POLLA_RANKING: '/polla/ranking/',
+  POLLA_MISSIONS: '/polla/missions/',
+  POLLA_MY_STATS: '/polla/me/stats/',
 };
 
 export default ENDPOINTS;
