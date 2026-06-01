@@ -129,7 +129,7 @@ const STEPS = [
   {
     icon: Swords,
     title: "3. Arma tu eliminación",
-    desc: "Con tu tabla de grupos se abre tu llave: eliges quién avanza ronda a ronda hasta coronar a tu campeón.",
+    desc: "Cuando terminan los grupos, la llave se arma con los clasificados reales y eliges quién avanza hasta tu campeón.",
   },
   {
     icon: Lock,
@@ -215,27 +215,27 @@ const EXTRA_POINTS = [
   },
 ];
 
-// Cómo se arma el bracket de eliminación encadenado
+// Cómo funciona el bracket de eliminación (con los clasificados reales)
 const BRACKET_STEPS = [
   {
     icon: Target,
-    title: "Completa tus grupos",
-    desc: "Pronostica los 72 partidos de la fase de grupos. Con tus marcadores armamos tu tabla.",
+    title: "Termina la fase de grupos",
+    desc: "Al cerrarse los grupos del Mundial ya se conocen las 32 selecciones que avanzan a la eliminación.",
   },
   {
     icon: GitBranch,
-    title: "Se desbloquea tu llave",
-    desc: "Tus 1.º y 2.º de cada grupo (más los mejores terceros) entran a tu bracket de eliminación.",
+    title: "Se abre la llave real",
+    desc: "Tu bracket se arma con los clasificados reales: todos parten de los mismos equipos verdaderos.",
   },
   {
     icon: Swords,
     title: "Eliges quién avanza",
-    desc: "Ronda por ronda decides quién pasa. Tu pick salta automáticamente a la siguiente llave.",
+    desc: "Ronda por ronda decides quién pasa. Si tu elegido cae, la llave se reconecta con el que avanzó de verdad.",
   },
   {
     icon: Crown,
     title: "Hasta tu campeón",
-    desc: "Sigues avanzando hasta coronar al que crees que levanta la copa. Cada acierto de avance suma.",
+    desc: "Sigues hasta coronar al que crees que levanta la copa. Acertar el avance suma más en cada ronda.",
   },
 ];
 
@@ -567,7 +567,7 @@ const PollaMundialPage = () => {
         <SectionTitle
           kicker="Lo nuevo"
           title="Arma tu camino al campeón"
-          subtitle="Cuando terminas la fase de grupos se abre tu bracket de eliminación: una llave que se arma con tus propios pronósticos y avanzas hasta coronar a tu campeón."
+          subtitle="Cuando termina la fase de grupos se abre la llave con los 32 clasificados reales: eliges quién avanza ronda a ronda y, si tu elegido cae, se reconecta con el que pasó de verdad. Nunca quedas fuera."
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
           {BRACKET_STEPS.map((step, i) => (
@@ -604,7 +604,7 @@ const PollaMundialPage = () => {
         <SectionTitle
           kicker="Las tablas"
           title="Grupos y posiciones"
-          subtitle="Sigue los 12 grupos con las posiciones en vivo. Los 2 primeros de cada grupo (más los mejores terceros) avanzan a tu eliminación."
+          subtitle="Sigue los 12 grupos con las posiciones en vivo. Los 2 primeros de cada grupo (más los 8 mejores terceros) avanzan a la eliminación."
         />
         <motion.div variants={fadeUp}>
           <GroupTablePreview />

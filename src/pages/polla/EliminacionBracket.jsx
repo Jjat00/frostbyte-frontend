@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Lock,
   Trophy,
@@ -267,49 +266,29 @@ const CrossCard = ({ match, scores, setScore, onSavePred, onPick, pendingPick, p
   );
 };
 
-/* ── Estado bloqueado: progreso hacia los 72 ── */
-const LockedState = ({ predicted, total, onGoToGroups }) => {
-  const pct = Math.min(100, Math.round((predicted / total) * 100));
-  const left = Math.max(0, total - predicted);
-  return (
-    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 text-center">
-      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/15 to-secondary/15 text-primary">
-        <Lock size={26} />
-      </div>
-      <h3 className="text-lg font-black text-light">La llave está cerrada</h3>
-      <p className="mx-auto mt-1 max-w-sm text-sm leading-snug text-gray">
-        Completa los <b className="text-light">{total}</b> pronósticos de la fase
-        de grupos para desbloquear la eliminación. Con tu tabla armamos tus
-        clasificados y de ahí avanzas hasta tu campeón.
-      </p>
-
-      <div className="mx-auto mt-5 max-w-xs">
-        <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold">
-          <span className="text-gray">Progreso</span>
-          <span className="text-primary">
-            {predicted}/{total}
-          </span>
-        </div>
-        <div className="h-2.5 overflow-hidden rounded-full bg-white/[0.06]">
-          <motion.div
-            className="h-full rounded-full bg-linear-to-r from-primary to-secondary"
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.5 }}
-          />
-        </div>
-      </div>
-
-      <button
-        onClick={onGoToGroups}
-        className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-primary to-secondary px-5 py-2.5 text-sm font-black text-dark shadow-lg shadow-primary/30"
-      >
-        {left > 0 ? `Te faltan ${left} pronósticos` : "Ir a pronosticar"}
-        <ChevronRight size={15} />
-      </button>
+/* ── Estado de espera: la llave se abre al terminar los grupos ── */
+const WaitingState = ({ onGoToGroups }) => (
+  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 text-center">
+    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/15 to-secondary/15 text-primary">
+      <Lock size={26} />
     </div>
-  );
-};
+    <h3 className="text-lg font-black text-light">La eliminación aún no abre</h3>
+    <p className="mx-auto mt-1 max-w-sm text-sm leading-snug text-gray">
+      La llave se arma con los <b className="text-light">clasificados reales</b>:
+      se habilita cuando termine la fase de grupos del Mundial. Cuando abra,
+      predices quién avanza ronda a ronda hasta el campeón. Mientras tanto,
+      asegura tus marcadores de grupos.
+    </p>
+
+    <button
+      onClick={onGoToGroups}
+      className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-primary to-secondary px-5 py-2.5 text-sm font-black text-dark shadow-lg shadow-primary/30"
+    >
+      Ir a pronosticar
+      <ChevronRight size={15} />
+    </button>
+  </div>
+);
 
 /* ── Banner del campeón ── */
 const ChampionBanner = ({ champion }) => (
@@ -423,14 +402,8 @@ const EliminacionBracket = ({ onGoToGroups }) => {
     );
   }
 
-  if (!data?.unlocked) {
-    return (
-      <LockedState
-        predicted={data?.group_predicted ?? 0}
-        total={data?.group_total ?? 72}
-        onGoToGroups={onGoToGroups}
-      />
-    );
+  if (!data?.open) {
+    return <WaitingState onGoToGroups={onGoToGroups} />;
   }
 
   return (
