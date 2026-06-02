@@ -84,6 +84,10 @@ const TONE = {
 
 const BOX = "h-13 w-13 rounded-2xl text-2xl font-black tabular-nums sm:h-14 sm:w-14 sm:text-3xl";
 
+// Referencia estable para el caso "sin datos": evita que el default `[]` cree un
+// array nuevo en cada render y dispare en bucle el efecto que siembra preds.
+const EMPTY_MATCHES = [];
+
 /* ── Caja de marcador: input numerico (editable) o display (solo lectura) ── */
 const ScoreBox = ({ value, onChange, onBlur, editable = false, disabled = false, tone = "final" }) => {
   const filled = value !== "" && value != null;
@@ -370,7 +374,8 @@ const PartidosTab = () => {
   const [filter, setFilter] = useState("upcoming");
 
   // Trae TODOS los partidos una sola vez; se filtra en cliente.
-  const { data: matches = [], isLoading, isError } = usePollaMatches({});
+  const { data, isLoading, isError } = usePollaMatches({});
+  const matches = data ?? EMPTY_MATCHES;
   const savePrediction = useSavePrediction();
 
   // Pronosticos en estado local indexados por slug; se siembran desde my_prediction.

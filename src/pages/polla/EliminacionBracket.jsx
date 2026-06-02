@@ -312,6 +312,10 @@ const ChampionBanner = ({ champion }) => (
   </div>
 );
 
+// Referencia estable para "sin datos" (mismo motivo que en PartidosTab): evita
+// que el efecto que siembra marcadores entre en bucle durante la carga.
+const EMPTY_ROUNDS = [];
+
 const EliminacionBracket = ({ onGoToGroups }) => {
   const { data, isLoading, isError } = usePollaBracket();
   const savePick = useSaveBracketPick();
@@ -320,7 +324,7 @@ const EliminacionBracket = ({ onGoToGroups }) => {
   const [scores, setScores] = useState({});
   const [errors, setErrors] = useState({});
 
-  const rounds = data?.rounds || [];
+  const rounds = data?.rounds ?? EMPTY_ROUNDS;
 
   // Siembra el estado local de marcadores desde my_prediction.
   useEffect(() => {
