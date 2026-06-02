@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { ArrowLeft, Target, LayoutGrid, Trophy, Flag, LogOut } from "lucide-react";
@@ -12,22 +12,30 @@ import RankingTab from "./RankingTab";
 import MisionesTab from "./MisionesTab";
 
 const TABS = [
-  { id: "partidos", label: "Partidos", icon: Target, Component: PartidosTab },
-  { id: "grupos", label: "Grupos", icon: LayoutGrid, Component: GruposTab },
-  { id: "ranking", label: "Ranking", icon: Trophy, Component: RankingTab },
-  { id: "misiones", label: "Misiones", icon: Flag, Component: MisionesTab },
+  { id: "partidos", path: "/partidos", label: "Partidos", icon: Target, Component: PartidosTab },
+  { id: "grupos", path: "/grupos", label: "Grupos", icon: LayoutGrid, Component: GruposTab },
+  { id: "ranking", path: "/ranking", label: "Ranking", icon: Trophy, Component: RankingTab },
+  { id: "misiones", path: "/misiones", label: "Misiones", icon: Flag, Component: MisionesTab },
 ];
 
 const PollaApp = () => {
-  const [active, setActive] = useState("partidos");
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const isAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
   const customer = useCustomerAuthStore((s) => s.customer);
   const logout = useCustomerAuthStore((s) => s.logout);
   const { data: stats } = useMyStats();
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "crack";
 
-  const ActiveComponent = TABS.find((t) => t.id === active).Component;
+  // Solo para clientes con sesión; el resto vuelve al landing de la Polla.
+  if (!isAuthenticated) return <Navigate to="/polla-mundial" replace />;
+
+  // El tab activo se deriva de la ruta (/partidos, /grupos, …).
+  const activeTab = TABS.find((t) => t.path === location.pathname) ?? TABS[0];
+  const active = activeTab.id;
+  const ActiveComponent = activeTab.Component;
 
   return (
     <div className="min-h-screen bg-dark text-light">
@@ -92,7 +100,7 @@ const PollaApp = () => {
             return (
               <button
                 key={t.id}
-                onClick={() => setActive(t.id)}
+                onClick={() => navigate(t.path)}
                 className={cn(
                   "relative flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-bold transition-colors",
                   isActive ? "text-primary" : "text-gray hover:text-light"
@@ -138,7 +146,7 @@ const PollaApp = () => {
             return (
               <button
                 key={t.id}
-                onClick={() => setActive(t.id)}
+                onClick={() => navigate(t.path)}
                 className="relative flex flex-col items-center gap-1 py-2.5"
               >
                 {isActive && (

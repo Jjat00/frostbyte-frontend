@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import {
@@ -29,7 +29,6 @@ import Footer from "@/components/Footer";
 import AuthModal from "@/components/auth/AuthModal";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { usePollaTournament } from "@/hooks/usePolla";
-import PollaApp from "@/pages/polla/PollaApp";
 import {
   MatchCardPreview,
   BracketPreview,
@@ -263,9 +262,10 @@ const PollaMundialPage = () => {
     "Sin contraseñas: entras con tu cuenta de Google",
   ];
 
-  // Cuando el cliente inicia sesión, ve la app de la Polla (tabs), no el landing.
+  // Cuando el cliente inicia sesión, la app de la Polla vive en sus propias
+  // rutas (/partidos, /grupos, …). El landing es solo para quien no ha entrado.
   if (isAuthenticated) {
-    return <PollaApp />;
+    return <Navigate to="/partidos" replace />;
   }
 
   return (

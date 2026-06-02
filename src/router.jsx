@@ -93,6 +93,7 @@ const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/
 
 const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
 const PollaMundialPage = lazyLoad(() => import("./pages/PollaMundialPage"));
+const PollaApp = lazyLoad(() => import("./pages/polla/PollaApp"));
 const PrivacyPolicyPage = lazyLoad(() => import("./pages/legal/PrivacyPolicyPage"));
 const TermsOfServicePage = lazyLoad(() => import("./pages/legal/TermsOfServicePage"));
 const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
@@ -155,6 +156,16 @@ export const router = createBrowserRouter([
       </Lazy>
     ),
   },
+  // App de la Polla: una ruta por tab (requiere sesión de cliente; si no, el
+  // propio PollaApp redirige a /polla-mundial).
+  ...["/partidos", "/grupos", "/ranking", "/misiones"].map((path) => ({
+    path,
+    element: (
+      <Lazy>
+        <PollaApp />
+      </Lazy>
+    ),
+  })),
   // Páginas legales (públicas) - requeridas por Google OAuth
   {
     path: "/privacidad",
