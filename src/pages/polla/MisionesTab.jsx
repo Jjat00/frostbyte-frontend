@@ -30,6 +30,11 @@ const STATS = [
   { key: "predicted", label: "Jugados", value: (s) => s.predicted },
 ];
 
+// Misiones ocultas por ahora (la API las sigue enviando). Se ocultan hasta
+// implementar su mecánica real.
+// TODO: reactivar "invite" (Trae la banda) cuando exista el flujo de invitar amigos.
+const HIDDEN_MISSIONS = ["invite"];
+
 const MissionRow = ({ mission, index }) => {
   const Icon = MISSION_ICONS[mission.code] || Star;
   const pct = Math.min(100, Math.round((mission.progress / mission.total) * 100));
@@ -158,7 +163,9 @@ const MisionesTab = () => {
     );
   }
 
-  const missions = data?.missions ?? [];
+  const missions = (data?.missions ?? []).filter(
+    (m) => !HIDDEN_MISSIONS.includes(m.code)
+  );
   const stats = data?.my_stats ?? {};
   const done = missions.filter((m) => m.done).length;
 
