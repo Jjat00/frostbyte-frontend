@@ -60,6 +60,15 @@ const getDateStrip = () => {
   return dates;
 };
 
+// Clave de fecha local (YYYY-MM-DD) para cachear la frase del día en el cliente.
+const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase";
+const localDateKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+};
+
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
   const [displayedPhrase, setDisplayedPhrase] = useState("");
@@ -188,6 +197,25 @@ const Hero = () => {
   }, [isInView]);
 
   useEffect(() => {
+    const today = localDateKey();
+
+    // 1) Si ya tenemos la frase de hoy en cache local, la usamos al instante:
+    //    sin red ni parpadeo de carga (la frase es la misma todo el día).
+    try {
+      const raw = localStorage.getItem(PHRASE_STORAGE_KEY);
+      if (raw) {
+        const cached = JSON.parse(raw);
+        if (cached?.phrase && cached?.date === today) {
+          setMotivationalPhrase(cached.phrase);
+          setIsLoadingPhrase(false);
+          return;
+        }
+      }
+    } catch {
+      // localStorage no disponible o JSON inválido: continuamos al fetch.
+    }
+
+    // 2) Sin cache válida: pedimos al backend (que también cachea la frase del día).
     const fetchMotivationalPhrase = async () => {
       try {
         const response = await fetch(
@@ -196,6 +224,14 @@ const Hero = () => {
         const data = await response.json();
         if (response.ok && data.phrase) {
           setMotivationalPhrase(data.phrase);
+          try {
+            localStorage.setItem(
+              PHRASE_STORAGE_KEY,
+              JSON.stringify({ phrase: data.phrase, date: data.date || today }),
+            );
+          } catch {
+            // Si no se puede escribir en localStorage, no es crítico.
+          }
         }
       } catch (error) {
         console.error("Error al obtener la frase motivacional:", error);
