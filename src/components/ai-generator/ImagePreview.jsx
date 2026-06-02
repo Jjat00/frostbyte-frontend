@@ -32,7 +32,7 @@ export function ImagePreview({
           <div className="flex-1 min-w-[200px] max-w-sm">
             <p className="text-xs text-gray mb-1.5">Original</p>
             <div className="bg-dark border border-gray/20 rounded-xl overflow-hidden aspect-square flex items-center justify-center">
-              <img
+              <img loading="lazy" decoding="async"
                 src={originalUrl}
                 alt="Imagen original"
                 className="w-full h-full object-contain"
@@ -43,7 +43,7 @@ export function ImagePreview({
             <div className="flex-1 min-w-[200px] max-w-sm">
               <p className="text-xs text-gray mb-1.5">Referencia de estilo</p>
               <div className="bg-dark border border-gray/20 rounded-xl overflow-hidden aspect-square flex items-center justify-center">
-                <img
+                <img loading="lazy" decoding="async"
                   src={referenceUrl}
                   alt="Referencia de estilo"
                   className="w-full h-full object-contain"
@@ -64,7 +64,7 @@ export function ImagePreview({
           className="bg-dark border border-gray/20 rounded-xl overflow-hidden aspect-video flex items-center justify-center min-h-[280px]"
           style={checkerboardStyle}
         >
-          <img
+          <img loading="lazy" decoding="async"
             src={generatedUrl}
             alt="Imagen generada"
             className="w-full h-full object-contain relative z-10"

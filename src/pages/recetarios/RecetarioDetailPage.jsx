@@ -125,7 +125,7 @@ const RecetarioDetailPage = () => {
       >
         {recipe.image_url && (
           <div className="h-48 sm:h-64 overflow-hidden">
-            <img
+            <img loading="lazy" decoding="async"
               src={recipe.image_url}
               alt={recipe.name}
               className="w-full h-full object-cover"
@@ -246,7 +246,7 @@ const RecetarioDetailPage = () => {
                   </p>
                 )}
                 {step.image_url && (
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={step.image_url}
                     alt={`Paso ${step.step_number}`}
                     className="rounded-lg max-h-48 object-cover"
@@ -314,7 +314,7 @@ const RecetarioDetailPage = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {recipe.images.map((img) => (
               <div key={img.id} className="space-y-1">
-                <img
+                <img loading="lazy" decoding="async"
                   src={img.image_url}
                   alt={img.caption || "Imagen de receta"}
                   className="rounded-lg w-full h-32 object-cover"

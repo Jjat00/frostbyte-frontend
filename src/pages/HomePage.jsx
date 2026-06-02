@@ -351,7 +351,7 @@ const HomePage = () => {
               title="Ver Carta Pública"
             >
               <div className="relative">
-                <img src="/logo.png" alt="Frostbyte" className="w-12 h-12 group-hover:scale-110 transition-transform duration-300" />
+                <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-12 h-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-full opacity-0 group-hover:opacity-50 blur transition-opacity" />
               </div>
               <div>

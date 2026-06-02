@@ -25,6 +25,23 @@ export const pollaKeys = {
 const LIVE_STALE = 60 * 1000; // 1 min
 const STATIC_STALE = 30 * 60 * 1000; // 30 min (grupos, torneo: cambian poco)
 
+// Normalizan `kickoff` (ISO string) a Date. DEFINIDAS A NIVEL DE MÓDULO a
+// propósito: React Query solo memoiza el resultado de `select` si la función
+// mantiene su identidad entre renders. Una `select` inline se re-ejecuta en
+// cada render y devuelve un array nuevo, lo que dispara en bucle cualquier
+// efecto que dependa de `data` (causaba "Maximum update depth exceeded" en
+// PartidosTab).
+const selectMatches = (data) =>
+  (data || []).map((m) => ({ ...m, kickoff: new Date(m.kickoff) }));
+
+const selectBracket = (data) => ({
+  ...data,
+  rounds: (data?.rounds || []).map((r) => ({
+    ...r,
+    matches: (r.matches || []).map((m) => ({ ...m, kickoff: new Date(m.kickoff) })),
+  })),
+});
+
 export function usePollaTournament(options = {}) {
   return useQuery({
     queryKey: pollaKeys.tournament(),
@@ -42,8 +59,7 @@ export function usePollaMatches(params = {}, options = {}) {
   return useQuery({
     queryKey: pollaKeys.matches(params),
     queryFn: () => pollaService.getMatches(params),
-    select: (data) =>
-      (data || []).map((m) => ({ ...m, kickoff: new Date(m.kickoff) })),
+    select: selectMatches,
     staleTime: LIVE_STALE,
     ...options,
   });
@@ -84,13 +100,7 @@ export function usePollaBracket(options = {}) {
   return useQuery({
     queryKey: pollaKeys.bracket(),
     queryFn: () => pollaService.getBracket(),
-    select: (data) => ({
-      ...data,
-      rounds: (data?.rounds || []).map((r) => ({
-        ...r,
-        matches: (r.matches || []).map((m) => ({ ...m, kickoff: new Date(m.kickoff) })),
-      })),
-    }),
+    select: selectBracket,
     staleTime: LIVE_STALE,
     ...options,
   });

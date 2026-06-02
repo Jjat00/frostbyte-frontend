@@ -208,7 +208,7 @@ export function GenerationDetailModal({ generation, isOpen, onClose }) {
                         }}
                       >
                         {localGeneration.original_image_url ? (
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={localGeneration.original_image_url}
                             alt="Original"
                             className="max-w-full max-h-full object-contain"
@@ -232,7 +232,7 @@ export function GenerationDetailModal({ generation, isOpen, onClose }) {
                         }}
                       >
                         {localGeneration.reference_image_url ? (
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={localGeneration.reference_image_url}
                             alt="Referencia"
                             className="max-w-full max-h-full object-contain"
@@ -299,7 +299,7 @@ export function GenerationDetailModal({ generation, isOpen, onClose }) {
                     }}
                   >
                     {localGeneration.generated_image_url ? (
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={localGeneration.generated_image_url}
                         alt="Generada"
                         className="max-w-full max-h-full object-contain"

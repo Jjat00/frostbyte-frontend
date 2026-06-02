@@ -70,7 +70,7 @@ const PollaApp = () => {
 
             {/* Avatar */}
             {customer?.avatar_url ? (
-              <img
+              <img loading="lazy" decoding="async"
                 src={customer.avatar_url}
                 alt={firstName}
                 referrerPolicy="no-referrer"

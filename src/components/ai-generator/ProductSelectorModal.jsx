@@ -125,7 +125,7 @@ export function ProductSelectorModal({
                       backgroundSize: '10px 10px',
                     }}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={generatedImageUrl}
                       alt="Imagen a asignar"
                       className="w-full h-full object-contain"
@@ -191,7 +191,7 @@ export function ProductSelectorModal({
                       {/* Product image */}
                       <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-dark-secondary flex items-center justify-center">
                         {product.image_url ? (
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={product.image_url}
                             alt={product.name}
                             className="w-full h-full object-cover"

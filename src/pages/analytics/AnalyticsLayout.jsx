@@ -59,7 +59,7 @@ const AnalyticsLayout = () => {
           className="flex items-center gap-2 hover:opacity-80 transition-opacity active:scale-95"
           title="Ir al Home"
         >
-          <img src="/logo.png" alt="Frostbyte" className="w-8 h-8" />
+          <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-8 h-8" />
           <span className="font-bold text-light">FROSTBYTE</span>
         </NavLink>
         <button
@@ -193,7 +193,7 @@ const AnalyticsLayout = () => {
             className={`flex items-center hover:opacity-80 transition-opacity group ${collapsed ? "justify-center" : "gap-3"}`}
             title="Ir al Home"
           >
-            <img
+            <img loading="lazy" decoding="async"
               src="/logo.png"
               alt="Frostbyte"
               className={`${collapsed ? "w-9 h-9" : "w-10 h-10"} group-hover:scale-105 transition-transform flex-shrink-0`}

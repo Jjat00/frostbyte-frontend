@@ -336,7 +336,7 @@ const ProductsListPage = () => {
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/[0.09] flex items-center justify-center shrink-0">
                             {shouldShowImage ? (
-                              <img
+                              <img loading="lazy" decoding="async"
                                 src={product.image_url}
                                 alt={product.name}
                                 className="w-full h-full object-cover"

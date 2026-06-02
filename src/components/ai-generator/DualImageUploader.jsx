@@ -65,7 +65,7 @@ export function DualImageUploader({
           {/* Preview */}
           {original.preview && (
             <div className="absolute inset-0 p-2">
-              <img
+              <img loading="lazy" decoding="async"
                 src={original.preview}
                 alt="Original preview"
                 className="w-full h-full object-contain rounded-lg"
@@ -160,7 +160,7 @@ export function DualImageUploader({
           {/* Preview */}
           {reference.preview && (
             <div className="absolute inset-0 p-2">
-              <img
+              <img loading="lazy" decoding="async"
                 src={reference.preview}
                 alt="Reference preview"
                 className="w-full h-full object-contain rounded-lg"

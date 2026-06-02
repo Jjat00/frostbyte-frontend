@@ -111,7 +111,7 @@ const ImageField = ({ value, onChange, label, compact = false }) => {
           </div>
         )}
         {value && (
-          <img
+          <img loading="lazy" decoding="async"
             src={value}
             alt="Preview"
             className="h-16 rounded object-cover"
@@ -165,7 +165,7 @@ const ImageField = ({ value, onChange, label, compact = false }) => {
 
           {value && !isUploading ? (
             <div className="relative rounded-lg overflow-hidden border border-white/[0.12]">
-              <img
+              <img loading="lazy" decoding="async"
                 src={value}
                 alt="Preview"
                 className="w-full h-48 object-cover"
@@ -221,7 +221,7 @@ const ImageField = ({ value, onChange, label, compact = false }) => {
             className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
           />
           {value && (
-            <img
+            <img loading="lazy" decoding="async"
               src={value}
               alt="Preview"
               className="h-32 rounded-lg object-cover"

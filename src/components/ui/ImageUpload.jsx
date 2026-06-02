@@ -131,7 +131,7 @@ export function ImageUpload({ value, onChange, error: externalError, disabled = 
         {/* Preview de imagen */}
         {value && !isUploading && (
           <div className="absolute inset-0 p-2">
-            <img
+            <img loading="lazy" decoding="async"
               src={value}
               alt="Preview"
               className="w-full h-full object-contain rounded-lg"

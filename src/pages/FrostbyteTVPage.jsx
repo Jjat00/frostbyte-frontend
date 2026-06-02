@@ -187,7 +187,7 @@ const ProductSlide = ({ product, index, total, accent }) => {
         <div className="ft-scan" />
         <div className="ft-glow-ring" />
         {product.image_url ? (
-          <img src={product.image_url} alt={product.name} className="ft-prod-img" />
+          <img loading="lazy" decoding="async" src={product.image_url} alt={product.name} className="ft-prod-img" />
         ) : (
           <div className="ft-prod-placeholder">
             <span>{String(product.name || "").slice(0, 1).toUpperCase()}</span>

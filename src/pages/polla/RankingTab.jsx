@@ -17,7 +17,7 @@ const initials = (name) =>
 const Avatar = ({ name, src, size = 40, highlight }) => {
   if (src) {
     return (
-      <img
+      <img loading="lazy" decoding="async"
         src={src}
         alt={name}
         referrerPolicy="no-referrer"

@@ -842,7 +842,7 @@ const LandingNav = () => {
       <nav className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link to="/landing" className="flex items-center space-x-2">
-            <img
+            <img loading="lazy" decoding="async"
               src="/logo.png"
               alt="Frostbyte"
               width={40}

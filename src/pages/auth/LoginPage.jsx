@@ -72,7 +72,7 @@ const LoginPage = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="inline-flex items-center justify-center mb-4"
           >
-            <img src="/logo.png" alt="Frostbyte" className="w-16 h-16" />
+            <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-16 h-16" />
           </motion.div>
           <h1 className="text-3xl font-bold text-light tracking-wider">FROSTBYTE</h1>
           <p className="text-gray mt-2">Panel de Inventario</p>

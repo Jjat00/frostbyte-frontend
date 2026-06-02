@@ -262,6 +262,78 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   Optimización de rendimiento en móvil
+   ───────────────────────────────────────────────────────────────
+   En GPUs de gama media/baja, `backdrop-filter` y los `filter: blur`
+   de gran radio (orbes de glow) recomponen la capa en cada repintado.
+   Con animaciones infinitas encima (animate-pulse) eso ocurre en cada
+   frame → CPU/GPU al 100% sostenido: el dispositivo se calienta y va
+   lento. En móvil reducimos drásticamente esos efectos manteniendo el
+   look lo más parecido posible. Los spinners (animate-spin) se respetan
+   porque comunican carga.
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* backdrop-filter es lo más caro: lo desactivamos y compensamos con
+     un fondo translúcido sólido para conservar legibilidad */
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .liquid-glass,
+  .liquid-glass-light,
+  .liquid-glass-interactive,
+  .liquid-glass-pill {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .liquid-glass {
+    background: rgba(18, 20, 38, 0.72);
+  }
+  .liquid-glass-interactive {
+    background: rgba(18, 20, 38, 0.66);
+  }
+  .liquid-glass-light,
+  .liquid-glass-pill {
+    background: rgba(18, 20, 38, 0.55);
+  }
+
+  /* Orbes de glow: bajar el radio de blur reduce el coste de forma
+     ~cuadrática (120px → 40px ≈ 9× más barato) sin perder el efecto.
+     No tocamos blur-[1px] (uso fino y funcional). */
+  [class*="blur-[50px]"],
+  [class*="blur-[60px]"],
+  [class*="blur-[80px]"],
+  [class*="blur-[100px]"],
+  [class*="blur-[120px]"],
+  [class*="blur-[130px]"],
+  [class*="blur-[150px]"],
+  [class*="blur-[200px]"],
+  .blur-2xl,
+  .blur-3xl {
+    filter: blur(40px) !important;
+  }
+
+  /* Animaciones decorativas infinitas: detenerlas evita la recomposición
+     continua de la GPU. NO incluimos animate-spin (spinners de carga). */
+  .animate-pulse,
+  .animate-ping {
+    animation: none !important;
+  }
+}
+
+/* Respeta la preferencia del sistema de reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }

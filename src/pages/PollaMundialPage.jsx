@@ -291,7 +291,7 @@ const PollaMundialPage = () => {
           {isAuthenticated ? (
             <div className="flex items-center gap-2 sm:gap-3">
               {customer?.avatar_url ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={customer.avatar_url}
                   alt={firstName}
                   className="h-8 w-8 rounded-full border border-primary/40 object-cover"

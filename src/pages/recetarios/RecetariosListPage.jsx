@@ -162,7 +162,7 @@ const RecetariosListPage = () => {
                 {/* Image */}
                 {recipe.image_url ? (
                   <div className="h-40 overflow-hidden">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={recipe.image_url}
                       alt={recipe.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

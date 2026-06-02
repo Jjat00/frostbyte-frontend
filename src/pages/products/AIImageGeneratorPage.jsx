@@ -466,7 +466,7 @@ const AIImageGeneratorPage = () => {
                       Original
                     </p>
                     <div className="w-full aspect-square max-w-[280px] bg-dark border border-gray/20 rounded-xl overflow-hidden flex items-center justify-center p-2">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={displayOriginalUrl}
                         alt="Imagen original"
                         className="max-w-full max-h-full w-auto h-auto object-contain"
@@ -480,7 +480,7 @@ const AIImageGeneratorPage = () => {
                       Referencia de estilo
                     </p>
                     <div className="w-full aspect-square max-w-[280px] bg-dark border border-gray/20 rounded-xl overflow-hidden flex items-center justify-center p-2">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={displayReferenceUrl}
                         alt="Referencia de estilo"
                         className="max-w-full max-h-full w-auto h-auto object-contain"
@@ -517,7 +517,7 @@ const AIImageGeneratorPage = () => {
                       : {}
                   }
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={generatedData.generated_image_url}
                     alt="Imagen generada"
                     className="max-w-full max-h-full w-auto h-auto object-contain"

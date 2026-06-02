@@ -38,7 +38,7 @@ const RecommendedProducts = ({ excludeProducts = [] }) => {
             className="backdrop-blur-sm bg-white/[0.04] border border-white/[0.08] rounded-lg overflow-hidden"
           >
             {product.image_url ? (
-              <img
+              <img loading="lazy" decoding="async"
                 src={product.image_url}
                 alt={product.product_name}
                 className="w-full h-20 md:h-24 object-cover"

@@ -107,7 +107,7 @@ const Contact = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="bg-dark-secondary border border-gray/20 rounded-xl p-6 hover:border-primary/50 transition-all duration-300"
             >
-              <img 
+              <img loading="lazy" decoding="async" 
                 className="w-full h-64 object-cover rounded-lg" 
                 alt="Ubicación de la tienda Frostbyte con letreros de neón"
                src="https://images.unsplash.com/photo-1664285758313-08c2a113d1f2" />

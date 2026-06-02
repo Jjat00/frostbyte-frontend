@@ -383,13 +383,20 @@ const PartidosTab = () => {
   const [errors, setErrors] = useState({});
 
   // Sincroniza el estado local cuando llegan/actualizan los partidos.
+  // Si no hay slugs nuevos devolvemos `prev` (misma referencia) para que React
+  // omita el re-render: esto evita cualquier bucle aunque `matches` cambiara de
+  // referencia sin cambiar de contenido.
   useEffect(() => {
     setPreds((prev) => {
+      let changed = false;
       const next = { ...prev };
       matches.forEach((m) => {
-        if (!(m.slug in next)) next[m.slug] = predFromMatch(m);
+        if (!(m.slug in next)) {
+          next[m.slug] = predFromMatch(m);
+          changed = true;
+        }
       });
-      return next;
+      return changed ? next : prev;
     });
   }, [matches]);
 

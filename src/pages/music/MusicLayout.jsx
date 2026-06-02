@@ -119,7 +119,7 @@ const MusicLayout = () => {
           className="flex items-center gap-2 hover:opacity-80 transition-opacity active:scale-95"
           title="Ir al Home"
         >
-          <img src="/logo.png" alt="Frostbyte" className="w-8 h-8" />
+          <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-8 h-8" />
           <span className="font-bold text-light">FROSTBYTE</span>
         </NavLink>
         <button
@@ -235,7 +235,7 @@ const MusicLayout = () => {
             className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
             title="Ir al Home"
           >
-            <img src="/logo.png" alt="Frostbyte" className="w-10 h-10 group-hover:scale-105 transition-transform" />
+            <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-10 h-10 group-hover:scale-105 transition-transform" />
             <div>
               <h1 className="text-lg font-bold text-light tracking-wider group-hover:text-secondary transition-colors">FROSTBYTE</h1>
               <p className="text-xs text-secondary">Música</p>

@@ -121,7 +121,7 @@ const QuotaBar = ({ quota, onReset, isResetting }) => {
 
 const VideoResultCard = ({ video, onPlay, onAdd }) => (
   <div className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] transition">
-    <img
+    <img loading="lazy" decoding="async"
       src={video.thumbnail}
       alt={video.title}
       className="w-24 h-14 md:w-32 md:h-20 rounded object-cover shrink-0"
@@ -349,7 +349,7 @@ const YouTubeAdminPage = () => {
           </h2>
           {nowPlaying?.video_id ? (
             <div className="flex items-center gap-4">
-              <img
+              <img loading="lazy" decoding="async"
                 src={nowPlaying.thumbnail}
                 alt={nowPlaying.title}
                 className="w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover shrink-0"
@@ -465,7 +465,7 @@ const YouTubeAdminPage = () => {
                   key={video.id}
                   className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.08]"
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={video.thumbnail}
                     alt={video.title}
                     className="w-20 h-12 md:w-28 md:h-16 rounded object-cover shrink-0"

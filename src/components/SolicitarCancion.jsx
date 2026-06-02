@@ -38,7 +38,7 @@ const SpotifyTrackCard = ({ track, onSelect, isLoading }) => (
     className="w-full flex items-center gap-3 p-3 bg-white/[0.08] backdrop-blur-md border border-white/10 rounded-xl hover:border-primary/40 hover:bg-white/[0.08] transition-all duration-200 text-left disabled:opacity-50"
   >
     {track.image ? (
-      <img src={track.image} alt={track.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+      <img loading="lazy" decoding="async" src={track.image} alt={track.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
     ) : (
       <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
         <Music className="w-5 h-5 text-gray" />
@@ -120,7 +120,7 @@ const NowPlayingBar = ({ data }) => {
       {/* Album art + info */}
       <div className="flex items-center gap-4 mb-4">
         {data.image && (
-          <img
+          <img loading="lazy" decoding="async"
             src={data.image}
             alt={data.name}
             className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover shadow-lg shadow-primary/20 border border-white/10"
@@ -439,7 +439,7 @@ const SolicitarCancion = () => {
                     >
                       <div className="flex items-center gap-3">
                         {request.spotify_track_image ? (
-                          <img src={request.spotify_track_image} alt={request.song_name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                          <img loading="lazy" decoding="async" src={request.spotify_track_image} alt={request.song_name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                         ) : (
                           <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                             <Music className="w-4 h-4 text-white/30" />

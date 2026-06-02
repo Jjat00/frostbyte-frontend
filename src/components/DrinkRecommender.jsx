@@ -213,7 +213,7 @@ function ResultCard({ result, onReset }) {
       {/* Image */}
       {product.image_url && (
         <div className="w-full aspect-video rounded-xl overflow-hidden border border-white/10">
-          <img
+          <img loading="lazy" decoding="async"
             src={product.image_url}
             alt={product.name}
             className="w-full h-full object-cover"

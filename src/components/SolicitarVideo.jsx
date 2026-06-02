@@ -39,7 +39,7 @@ const YouTubeVideoCard = ({ video, onSelect, isLoading }) => (
     className="w-full flex items-center gap-3 p-3 bg-white/[0.08] backdrop-blur-md border border-white/10 rounded-xl hover:border-red-400/40 hover:bg-white/[0.08] transition-all duration-200 text-left disabled:opacity-50"
   >
     {video.thumbnail ? (
-      <img
+      <img loading="lazy" decoding="async"
         src={video.thumbnail}
         alt={video.title}
         className="w-20 h-12 rounded-lg object-cover flex-shrink-0"
@@ -74,7 +74,7 @@ const NowPlayingCard = ({ video }) => {
         {/* Thumbnail */}
         <div className="relative flex-shrink-0">
           {video.thumbnail ? (
-            <img
+            <img loading="lazy" decoding="async"
               src={video.thumbnail}
               alt={video.title}
               className="w-24 h-16 md:w-32 md:h-20 rounded-xl object-cover border border-white/10"
@@ -380,7 +380,7 @@ const SolicitarVideo = () => {
                     >
                       <div className="flex items-center gap-3">
                         {request.thumbnail ? (
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={request.thumbnail}
                             alt={request.title}
                             className="w-16 h-10 rounded-lg object-cover flex-shrink-0"

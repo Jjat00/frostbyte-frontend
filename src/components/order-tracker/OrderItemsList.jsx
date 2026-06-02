@@ -23,7 +23,7 @@ const OrderItemsList = ({ items }) => {
           }`}
         >
           {item.product_image ? (
-            <img
+            <img loading="lazy" decoding="async"
               src={item.product_image}
               alt={item.product_name}
               className="w-10 h-10 rounded-lg object-cover flex-shrink-0"

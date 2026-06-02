@@ -242,7 +242,7 @@ const NowPlayingPanel = ({ isConnected }) => {
         <>
           <div className="flex items-center gap-4 mb-4">
             {nowPlaying.image && (
-              <img src={nowPlaying.image} alt={nowPlaying.name} className="w-20 h-20 rounded-lg object-cover flex-shrink-0 shadow-lg" />
+              <img loading="lazy" decoding="async" src={nowPlaying.image} alt={nowPlaying.name} className="w-20 h-20 rounded-lg object-cover flex-shrink-0 shadow-lg" />
             )}
             <div className="flex-1 min-w-0">
               <p className="text-light font-bold text-lg truncate">{nowPlaying.name}</p>
@@ -381,7 +381,7 @@ const SpotifyQueuePanel = ({ isConnected }) => {
           <div key={`${track.uri}-${idx}`} className={`flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.04] ${track.is_request ? 'border-l-2 border-primary/50' : ''}`}>
             <span className="text-xs text-gray/50 w-5 text-right flex-shrink-0">{idx + 1}</span>
             {track.image ? (
-              <img src={track.image} alt={track.name} className="w-9 h-9 rounded object-cover flex-shrink-0" />
+              <img loading="lazy" decoding="async" src={track.image} alt={track.name} className="w-9 h-9 rounded object-cover flex-shrink-0" />
             ) : (
               <div className="w-9 h-9 rounded bg-white/[0.08] flex items-center justify-center flex-shrink-0">
                 <Music className="w-4 h-4 text-gray" />
@@ -508,7 +508,7 @@ const AdminSearch = ({ isConnected }) => {
           {results.map((track) => (
             <div key={track.uri} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.04] group">
               {track.image ? (
-                <img src={track.image} alt={track.name} className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                <img loading="lazy" decoding="async" src={track.image} alt={track.name} className="w-10 h-10 rounded object-cover flex-shrink-0" />
               ) : (
                 <div className="w-10 h-10 rounded bg-white/[0.08] flex items-center justify-center flex-shrink-0">
                   <Music className="w-4 h-4 text-gray" />
@@ -581,7 +581,7 @@ const SongRequestCard = ({ request, onUpdateStatus, onPlayNow, onDelete }) => {
     >
       <div className="flex items-start gap-3 mb-3">
         {request.spotify_track_image ? (
-          <img src={request.spotify_track_image} alt={request.song_name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+          <img loading="lazy" decoding="async" src={request.spotify_track_image} alt={request.song_name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
         ) : (
           <div className={`w-12 h-12 flex-shrink-0 rounded-lg ${status.badgeClass} flex items-center justify-center`}>
             <Music className="w-6 h-6" />
