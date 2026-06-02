@@ -73,12 +73,12 @@ const vinosStyles = {
   "gato-negro": {
     icon: Wine,
     gradient: "from-red-500 to-red-700",
-    image: "/vino2.jpg",
+    image: "/vino2.webp",
   },
   "casillero-del-diablo": {
     icon: Sparkles,
     gradient: "from-red-600 to-red-900",
-    image: "/vino3.jpg",
+    image: "/vino3.webp",
   },
 };
 

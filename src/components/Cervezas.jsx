@@ -82,12 +82,12 @@ const cervezasStyles = {
   coronita: {
     icon: Star,
     gradient: "from-yellow-400 to-amber-500",
-    image: "/cerveza-corona.png",
+    image: "/cerveza-corona.webp",
   },
   corona: {
     icon: Crown,
     gradient: "from-yellow-300 to-yellow-500",
-    image: "/cerveza-corona.png",
+    image: "/cerveza-corona.webp",
   },
 };
 

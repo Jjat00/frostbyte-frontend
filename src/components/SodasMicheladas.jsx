@@ -81,7 +81,7 @@ const sodasStyles = {
   "soda-italiana-de-fresa": {
     icon: Cherry,
     gradient: "from-red-400 to-pink-500",
-    image: "./SODA-ITALIANA-FRESA-9715.jpg",
+    image: "./SODA-ITALIANA-FRESA-9715.webp",
   },
   "soda-italiana-de-maracuya": {
     icon: Citrus,

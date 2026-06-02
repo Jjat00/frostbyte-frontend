@@ -208,7 +208,7 @@ const productStyles = {
   "michelada-corona": {
     icon: Crown,
     gradient: "from-yellow-300 to-yellow-500",
-    image: "/cerveza-corona.png",
+    image: "/cerveza-corona.webp",
   },
 
   // Shots
@@ -243,7 +243,7 @@ const productStyles = {
   "ron-bacardi": {
     icon: Anchor,
     gradient: "from-red-500 to-red-700",
-    image: "/080480015206.jpg",
+    image: "/080480015206.webp",
     brand: "Bacardi",
     licor: "Superior",
   },

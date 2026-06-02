@@ -198,7 +198,7 @@ const Shots = () => {
           <div className="relative bg-linear-to-br from-dark-secondary/80 to-dark/80 border-2 border-primary/30 rounded-3xl overflow-hidden">
             <div className="relative h-56 sm:h-72 md:h-80 overflow-hidden">
               <img
-                src="/shots1.png"
+                src="/shots1.webp"
                 alt="Shots de Sabores Frostbyte"
                 className="w-full h-full object-cover object-center"
                 loading="lazy"

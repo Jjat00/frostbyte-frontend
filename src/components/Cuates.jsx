@@ -105,7 +105,7 @@ const cuatesStyles = {
   "cuates-limon": {
     icon: Citrus,
     gradient: "from-lime-400 to-green-500",
-    image: "/cuates-limon.png",
+    image: "/cuates-limon.webp",
     ringColor: "border-yellow-400",
     labelBg: "bg-gradient-to-r from-orange-500 to-orange-600",
     priceButtonBg: "bg-gradient-to-r from-orange-500 to-orange-600",
@@ -115,7 +115,7 @@ const cuatesStyles = {
   "cuates-fresa": {
     icon: Cherry,
     gradient: "from-pink-400 to-red-500",
-    image: "/cuate-fresa.png",
+    image: "/cuate-fresa.webp",
     ringColor: "border-orange-400",
     labelBg: "bg-gradient-to-r from-red-500 to-red-600",
     priceButtonBg: "bg-gradient-to-r from-red-500 to-red-600",
@@ -125,7 +125,7 @@ const cuatesStyles = {
   "cuates-mango": {
     icon: Sun,
     gradient: "from-yellow-400 to-orange-500",
-    image: "/cuate-mango.png",
+    image: "/cuate-mango.webp",
     ringColor: "border-yellow-400",
     labelBg: "bg-gradient-to-r from-lime-500 to-lime-600",
     priceButtonBg: "bg-gradient-to-r from-lime-500 to-lime-600",

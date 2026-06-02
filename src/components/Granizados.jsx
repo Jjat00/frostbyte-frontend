@@ -603,7 +603,7 @@ const Granizados = ({ showExtras = true }) => {
             <div className="relative bg-linear-to-br from-emerald-900/20 via-dark/60 to-cyan-900/20 border-2 border-cyan-500/30 rounded-3xl overflow-hidden">
               <div className="relative h-48 sm:h-56 overflow-hidden">
                 <img
-                  src="/shots2.png"
+                  src="/shots2.webp"
                   alt="Shots de Sabores"
                   className="w-full h-full object-cover object-center"
                   loading="lazy"
