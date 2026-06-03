@@ -178,3 +178,16 @@ export function useSaveAwardPick() {
     },
   });
 }
+
+/** Quita (deja vacía) la elección de una mención. */
+export function useClearAwardPick() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (code) => pollaService.clearAwardPick(code),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: pollaKeys.awards() });
+      qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
+      qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
+    },
+  });
+}

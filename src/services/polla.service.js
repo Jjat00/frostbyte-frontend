@@ -57,6 +57,10 @@ export const pollaService = {
     // payload: { team_code } | { player_id }
     return (await customerClient.put(ENDPOINTS.POLLA_AWARD_PICK(code), payload)).data;
   },
+  async clearAwardPick(code) {
+    // Quita la elección de la mención (la deja vacía).
+    return (await customerClient.delete(ENDPOINTS.POLLA_AWARD_PICK(code))).data;
+  },
   async saveBracketPick(slug, { winner_code }) {
     // Devuelve el bracket completo, ya propagado.
     return (

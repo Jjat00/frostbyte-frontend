@@ -14,10 +14,15 @@ import {
   Search,
   Lock,
   Loader2,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
-import { usePollaAwards, useSaveAwardPick } from "@/hooks/usePolla";
+import {
+  usePollaAwards,
+  useSaveAwardPick,
+  useClearAwardPick,
+} from "@/hooks/usePolla";
 
 const AWARD_ICONS = {
   champion: Trophy,
@@ -36,11 +41,21 @@ const optionsFor = (options, type) =>
     : options?.player || [];
 
 /* ── Hoja de seleccion (modal bottom-sheet mobile) ── */
-const PickerSheet = ({ award, options, onClose, onPick, isPending }) => {
+const PickerSheet = ({
+  award,
+  options,
+  currentPick,
+  onClose,
+  onPick,
+  onClear,
+  isPending,
+  isClearing,
+}) => {
   const [q, setQ] = useState("");
   const Icon = AWARD_ICONS[award.code] || Star;
   const isTeam = award.type === "team";
   const opts = optionsFor(options, award.type);
+  const busy = isPending || isClearing;
   const filtered = q
     ? opts.filter((o) => o.name.toLowerCase().includes(q.toLowerCase()))
     : opts;
@@ -96,6 +111,27 @@ const PickerSheet = ({ award, options, onClose, onPick, isPending }) => {
           </div>
         </div>
 
+        {/* Quitar seleccion (solo si la mencion ya tiene una elegida) */}
+        {currentPick && (
+          <div className="border-b border-white/[0.06] px-3 py-2">
+            <button
+              onClick={onClear}
+              disabled={busy}
+              className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5 text-left transition-colors hover:border-red-400/40 hover:bg-red-400/[0.06] disabled:opacity-50"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-gray">
+                <Trash2 size={14} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-light">Quitar selección</p>
+                <p className="truncate text-[11px] text-gray">
+                  Dejar «{award.title}» sin pronóstico
+                </p>
+              </div>
+            </button>
+          </div>
+        )}
+
         {/* Lista */}
         <div className="relative flex-1 overflow-y-auto p-2">
           {filtered.length ? (
@@ -103,12 +139,18 @@ const PickerSheet = ({ award, options, onClose, onPick, isPending }) => {
               // team opt: {code,name,iso2}; player/keeper opt: {id,name,team_code,iso2}
               const optKey = isTeam ? o.code : o.id;
               const optCode = isTeam ? o.code : o.team_code;
+              const isSelected = isTeam
+                ? currentPick?.team_code === o.code
+                : currentPick?.player_id === o.id;
               return (
                 <button
                   key={optKey}
                   onClick={() => onPick(o)}
-                  disabled={isPending}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05] disabled:opacity-50"
+                  disabled={busy}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05] disabled:opacity-50",
+                    isSelected && "bg-secondary/[0.08] ring-1 ring-secondary/40"
+                  )}
                 >
                   <Flag iso2={o.iso2} name={o.name} size={28} />
                   <div className="min-w-0 flex-1">
@@ -116,9 +158,15 @@ const PickerSheet = ({ award, options, onClose, onPick, isPending }) => {
                       {o.name}
                     </p>
                   </div>
-                  <span className="text-xs font-black text-gray/60">
-                    {optCode}
-                  </span>
+                  {isSelected ? (
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary text-dark">
+                      <Check size={12} strokeWidth={3} />
+                    </span>
+                  ) : (
+                    <span className="text-xs font-black text-gray/60">
+                      {optCode}
+                    </span>
+                  )}
                 </button>
               );
             })
@@ -126,8 +174,8 @@ const PickerSheet = ({ award, options, onClose, onPick, isPending }) => {
             <p className="py-10 text-center text-sm text-gray">Sin resultados.</p>
           )}
 
-          {/* Overlay mientras se guarda la eleccion */}
-          {isPending && (
+          {/* Overlay mientras se guarda o se quita la eleccion */}
+          {busy && (
             <div className="absolute inset-0 flex items-center justify-center bg-dark/40 backdrop-blur-[1px]">
               <Loader2 size={22} className="animate-spin text-primary" />
             </div>
@@ -213,6 +261,7 @@ const MencionesSection = () => {
 
   const { data, isLoading, isError } = usePollaAwards();
   const saveAwardPick = useSaveAwardPick();
+  const clearAwardPick = useClearAwardPick();
 
   const awards = data?.awards || [];
   const options = data?.options || { team: [], player: [], keeper: [] };
@@ -229,6 +278,13 @@ const MencionesSection = () => {
         ? { code: active.code, team_code: opt.code }
         : { code: active.code, player_id: opt.id };
     saveAwardPick.mutate(payload, {
+      onSuccess: () => setActive(null),
+    });
+  };
+
+  const handleClear = () => {
+    if (!active) return;
+    clearAwardPick.mutate(active.code, {
       onSuccess: () => setActive(null),
     });
   };
@@ -329,9 +385,12 @@ const MencionesSection = () => {
           <PickerSheet
             award={active}
             options={options}
+            currentPick={active.my_pick}
             onClose={() => setActive(null)}
             onPick={handlePick}
+            onClear={handleClear}
             isPending={saveAwardPick.isPending}
+            isClearing={clearAwardPick.isPending}
           />
         )}
       </AnimatePresence>
