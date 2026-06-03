@@ -509,29 +509,40 @@ const Hero = () => {
           <div className="flex justify-center">
             <Link
               to="/polla-mundial"
-              className="hero-cta-btn group relative w-full max-w-xl inline-flex items-center gap-4 sm:gap-5 px-6 sm:px-8 py-5 rounded-2xl bg-linear-to-r from-primary to-secondary text-dark overflow-hidden shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all duration-300 hover:scale-[1.02]"
+              className="hero-cta-btn group relative w-full max-w-xl flex flex-col gap-3 px-5 sm:px-7 py-5 rounded-2xl bg-linear-to-r from-primary via-violet-500 to-secondary text-black overflow-hidden shadow-2xl shadow-primary/50 hover:shadow-primary/70 transition-all duration-300 hover:scale-[1.02]"
             >
-              {/* Glow / shimmer */}
-              <span className="absolute inset-0 bg-linear-to-r from-white/0 via-white/30 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-              <span className="absolute -inset-1 rounded-2xl ring-2 ring-primary/50 animate-pulse pointer-events-none" />
+              {/* Glow / shimmer + anillo */}
+              <span className="absolute inset-0 bg-linear-to-r from-white/0 via-white/40 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none" />
+              <span className="absolute -inset-1 rounded-2xl ring-2 ring-primary/60 animate-pulse pointer-events-none" />
 
-              <div className="relative shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-dark/15 backdrop-blur-sm flex items-center justify-center">
-                <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
+              {/* Fila 1: identidad de la polla */}
+              <div className="relative flex items-center gap-3 sm:gap-4 w-full">
+                <div className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center">
+                  <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="block text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.2em]">
+                    ⚽ Mundial 2026 · ¡Participa ya!
+                  </span>
+                  <span className="block text-xl sm:text-2xl font-black leading-tight">
+                    Polla Mundialista
+                  </span>
+                </div>
+                <ArrowRight className="shrink-0 w-6 h-6 group-hover:translate-x-1 transition-transform" />
               </div>
 
-              <div className="relative flex-1 text-left">
-                <span className="block text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] opacity-80">
-                  ⚽ Mundial 2026 · ¡Participa ya!
+              {/* Fila 2: premio destacado */}
+              <div className="relative flex items-center justify-center gap-2 sm:gap-3 w-full border-t border-black/20 pt-3">
+                <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wide">
+                  Gana
                 </span>
-                <span className="block text-lg sm:text-2xl font-black leading-tight">
-                  Polla Mundialista
+                <span className="text-3xl sm:text-4xl font-black tracking-tight leading-none">
+                  $500.000
                 </span>
-                <span className="block text-xs sm:text-sm font-bold">
-                  Pronostica y gana $500.000
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wide">
+                  medio millón
                 </span>
               </div>
-
-              <ArrowRight className="relative shrink-0 w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 

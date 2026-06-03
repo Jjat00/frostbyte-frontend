@@ -383,9 +383,27 @@ const PollaMundialPage = () => {
 
             <p className="text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
               Pronostica los marcadores, arma tu camino al campeón y suma puntos
-              con cada acierto. El que mejor lea el Mundial se corona y se lleva{" "}
-              <span className="text-secondary font-semibold">$500.000</span>.
+              con cada acierto. El que mejor lea el Mundial se corona y se lleva
+              el premio.
             </p>
+
+            {/* Premio destacado en el hero (visible sin scroll) */}
+            <div className="flex justify-center">
+              <div className="inline-flex items-center gap-4 sm:gap-5 rounded-2xl border border-primary/40 bg-linear-to-r from-primary/10 via-dark-secondary/40 to-secondary/10 px-6 py-4 sm:px-8 sm:py-5 backdrop-blur-sm shadow-xl shadow-primary/10">
+                <Trophy className="text-primary shrink-0" size={40} />
+                <div className="text-left">
+                  <span className="block text-[10px] sm:text-xs uppercase tracking-[0.25em] text-gray font-bold">
+                    Premio al campeón
+                  </span>
+                  <span className="block text-4xl sm:text-6xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent leading-none">
+                    $500.000
+                  </span>
+                  <span className="block text-sm sm:text-base font-semibold text-secondary mt-0.5">
+                    medio millón de pesos · en efectivo
+                  </span>
+                </div>
+              </div>
+            </div>
 
             {/* Countdown */}
             <div className="space-y-3">

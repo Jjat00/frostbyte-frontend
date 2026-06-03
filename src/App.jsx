@@ -41,16 +41,21 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
-          <PollaMundialBanner />
+          {/* Anuncio de la Polla Mundialista — aparece varias veces a lo largo
+              de la carta con distintas variantes para mantener el premio
+              ($500.000) visible sin saturar. */}
+          <PollaMundialBanner variant="feature" />
           <CartaList />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
           <WaterSection />
+          <PollaMundialBanner variant="strip" />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
           <SolicitarMusica />
+          <PollaMundialBanner variant="prize" />
           <FeedbackSection />
           <Features />
           {/* <Gallery /> */}
