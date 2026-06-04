@@ -5,7 +5,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { router } from './router';
 import { env } from '@/config';
+import { captureReferralFromUrl } from '@/utils/referral';
 import '@/index.css';
+
+// Captura el código de invitación (?ref=) antes de montar el router, para que
+// la redirección de la landing no descarte el parámetro.
+captureReferralFromUrl();
 
 // Crear cliente de React Query
 const queryClient = new QueryClient({

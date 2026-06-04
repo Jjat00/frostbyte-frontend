@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { pollaService } from "@/services/polla.service";
+import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 
 /**
  * Hooks de React Query para la Polla Mundialista.
@@ -20,6 +21,7 @@ export const pollaKeys = {
   missions: () => ["polla", "missions"],
   myStats: () => ["polla", "me", "stats"],
   myPredictions: () => ["polla", "predictions", "me"],
+  referral: () => ["polla", "referral"],
 };
 
 const LIVE_STALE = 60 * 1000; // 1 min
@@ -147,6 +149,8 @@ export function useSavePrediction() {
       qc.invalidateQueries({ queryKey: pollaKeys.myPredictions() });
       // Los marcadores de grupo definen el desbloqueo y la siembra del bracket.
       qc.invalidateQueries({ queryKey: pollaKeys.bracket() });
+      // Si este usuario fue invitado, su 1er pronóstico califica al invitador.
+      qc.invalidateQueries({ queryKey: pollaKeys.referral() });
     },
   });
 }
@@ -188,6 +192,33 @@ export function useClearAwardPick() {
       qc.invalidateQueries({ queryKey: pollaKeys.awards() });
       qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
       qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
+    },
+  });
+}
+
+/**
+ * Estado de invitación del cliente: { code, invited, qualified, points, cap,
+ * points_per }. Requiere sesión (endpoint IsAuthenticated).
+ */
+export function useReferral(options = {}) {
+  const isAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
+  return useQuery({
+    queryKey: pollaKeys.referral(),
+    queryFn: () => pollaService.getReferral(),
+    enabled: isAuthenticated,
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Registra que el cliente fue invitado con un código. */
+export function useClaimReferral() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (code) => pollaService.claimReferral(code),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: pollaKeys.referral() });
+      qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
     },
   });
 }

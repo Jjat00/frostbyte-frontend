@@ -43,6 +43,15 @@ export const pollaService = {
   async getMyStats() {
     return (await customerClient.get(ENDPOINTS.POLLA_MY_STATS)).data;
   },
+  async getReferral() {
+    // { code, invited, qualified, points, cap, points_per }
+    return (await customerClient.get(ENDPOINTS.POLLA_REFERRAL)).data;
+  },
+  async claimReferral(code) {
+    return (
+      await customerClient.post(ENDPOINTS.POLLA_REFERRAL_CLAIM, { code })
+    ).data;
+  },
 
   // ── Escrituras (requieren sesión de cliente) ──
   async savePrediction(slug, { home_score, away_score }) {

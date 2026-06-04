@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { customerAuthService } from "../services/customerAuth.service";
+import { pollaService } from "../services/polla.service";
+import { consumeStoredReferral } from "../utils/referral";
 
 /**
  * Estado global de la SESIÓN DE CLIENTE (login con Google).
@@ -21,6 +23,18 @@ export const useCustomerAuthStore = create((set, get) => ({
     try {
       const { user } = await customerAuthService.loginWithGoogle(credential);
       set({ customer: user, isAuthenticated: true, isLoading: false });
+
+      // Si el usuario llegó por un enlace de invitación, registrar el vínculo.
+      // No debe romper el login si falla; el token ya quedó guardado.
+      const ref = consumeStoredReferral();
+      if (ref) {
+        try {
+          await pollaService.claimReferral(ref);
+        } catch {
+          // Código inválido / ya jugó / ya vinculado: silencioso.
+        }
+      }
+
       return { success: true, user };
     } catch (error) {
       const message =

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePollaMissions } from "@/hooks/usePolla";
+import InviteFriendsCard from "./InviteFriendsCard";
 
 const MISSION_ICONS = {
   first: Sparkles,
@@ -173,6 +174,9 @@ const MisionesTab = () => {
     <div>
       {/* Encabezado */}
       <Header done={done} total={missions.length} />
+
+      {/* Invitar amigos: gana puntos trayendo a tu banda */}
+      <InviteFriendsCard />
 
       {/* Resumen de mis pronosticos */}
       <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2">

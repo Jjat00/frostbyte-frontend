@@ -98,6 +98,8 @@ export const ENDPOINTS = {
   POLLA_RANKING: '/polla/ranking/',
   POLLA_MISSIONS: '/polla/missions/',
   POLLA_MY_STATS: '/polla/me/stats/',
+  POLLA_REFERRAL: '/polla/referral/',
+  POLLA_REFERRAL_CLAIM: '/polla/referral/claim/',
 };
 
 export default ENDPOINTS;
