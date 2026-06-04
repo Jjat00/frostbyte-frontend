@@ -30,6 +30,37 @@ apiClient.interceptors.request.use(
   }
 );
 
+/**
+ * Renueva el access token usando el refresh token.
+ *
+ * El backend rota los refresh tokens (ROTATE_REFRESH_TOKENS) e invalida el
+ * viejo (BLACKLIST_AFTER_ROTATION). Por eso hay que guardar el refresh nuevo
+ * que devuelve la respuesta: si seguimos mandando el viejo, el backend lo
+ * rechaza en la siguiente renovación y la sesión muere antes de tiempo.
+ */
+async function refreshStaffToken() {
+  const refreshToken = localStorage.getItem(REFRESH_KEY);
+  if (!refreshToken) {
+    throw new Error('No refresh token');
+  }
+
+  const response = await axios.post(`${env.API_BASE_URL}/auth/refresh/`, {
+    refresh: refreshToken,
+  });
+
+  const { access, refresh } = response.data;
+  localStorage.setItem(TOKEN_KEY, access);
+  if (refresh) {
+    localStorage.setItem(REFRESH_KEY, refresh);
+  }
+  return access;
+}
+
+// Promesa de refresh compartida: peticiones que reciben 401 a la vez esperan
+// la MISMA renovación en lugar de disparar refreshes paralelos que se
+// invalidarían entre sí por la rotación de tokens.
+let refreshPromise = null;
+
 // Response interceptor - manejo de errores y refresh token
 apiClient.interceptors.response.use(
   (response) => {
@@ -51,18 +82,12 @@ apiClient.interceptors.response.use(
       }
 
       try {
-        const refreshToken = localStorage.getItem(REFRESH_KEY);
-        if (!refreshToken) {
-          throw new Error('No refresh token');
+        if (!refreshPromise) {
+          refreshPromise = refreshStaffToken().finally(() => {
+            refreshPromise = null;
+          });
         }
-
-        // Intentar refrescar el token
-        const response = await axios.post(`${env.API_BASE_URL}/auth/refresh/`, {
-          refresh: refreshToken,
-        });
-
-        const { access } = response.data;
-        localStorage.setItem(TOKEN_KEY, access);
+        const access = await refreshPromise;
 
         // Reintentar la petición original con el nuevo token
         originalRequest.headers.Authorization = `Bearer ${access}`;

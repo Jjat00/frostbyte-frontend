@@ -33,6 +33,40 @@ customerClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+/**
+ * Renueva el access token usando el refresh token.
+ *
+ * El backend rota los refresh tokens (ROTATE_REFRESH_TOKENS) y mete el viejo
+ * a una lista negra (BLACKLIST_AFTER_ROTATION). Por eso es IMPRESCINDIBLE
+ * guardar el refresh token nuevo que devuelve la respuesta: si seguimos usando
+ * el viejo, el backend lo rechaza en la siguiente renovación y la sesión muere.
+ * Guardar el rotado mantiene la "ventana deslizante": la sesión se renueva con
+ * cada uso y dura indefinidamente mientras el cliente siga entrando.
+ */
+async function refreshCustomerToken() {
+  const refreshToken = localStorage.getItem(CUSTOMER_REFRESH_KEY);
+  if (!refreshToken) {
+    throw new Error("No refresh token");
+  }
+
+  const response = await axios.post(`${env.API_BASE_URL}/auth/refresh/`, {
+    refresh: refreshToken,
+  });
+
+  const { access, refresh } = response.data;
+  localStorage.setItem(CUSTOMER_TOKEN_KEY, access);
+  // Persistir el refresh rotado; si el backend no rotara, mantenemos el actual.
+  if (refresh) {
+    localStorage.setItem(CUSTOMER_REFRESH_KEY, refresh);
+  }
+  return access;
+}
+
+// Promesa de refresh compartida: si varias peticiones reciben 401 a la vez
+// (p. ej. al cargar la Polla), todas esperan la MISMA renovación en lugar de
+// disparar refreshes en paralelo que se invalidarían entre sí por la rotación.
+let refreshPromise = null;
+
 // Response: refresh automático del token de cliente ante 401
 customerClient.interceptors.response.use(
   (response) => response,
@@ -51,17 +85,12 @@ customerClient.interceptors.response.use(
       }
 
       try {
-        const refreshToken = localStorage.getItem(CUSTOMER_REFRESH_KEY);
-        if (!refreshToken) {
-          throw new Error("No refresh token");
+        if (!refreshPromise) {
+          refreshPromise = refreshCustomerToken().finally(() => {
+            refreshPromise = null;
+          });
         }
-
-        const response = await axios.post(`${env.API_BASE_URL}/auth/refresh/`, {
-          refresh: refreshToken,
-        });
-
-        const { access } = response.data;
-        localStorage.setItem(CUSTOMER_TOKEN_KEY, access);
+        const access = await refreshPromise;
         originalRequest.headers.Authorization = `Bearer ${access}`;
         return customerClient(originalRequest);
       } catch (refreshError) {
