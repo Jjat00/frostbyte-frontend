@@ -6,9 +6,11 @@ import { useReferral } from "@/hooks/usePolla";
 import { buildReferralLink } from "@/utils/referral";
 
 const SHARE_TITLE = "Polla Mundialista Frostbyte";
-const shareText = (link) =>
-  `¡Pronostica el Mundial 2026 conmigo en la Polla de Frostbyte y compite por premios! ` +
-  `Entra con mi invitación: ${link}`;
+// Mensaje SIN el enlace: el enlace va aparte (en `url` para navigator.share),
+// así no se duplica al compartir por WhatsApp.
+const SHARE_MESSAGE =
+  "¡Pronostica el Mundial 2026 conmigo en la Polla de Frostbyte y compite por premios! " +
+  "Entra con mi invitación:";
 
 const InviteFriendsCard = () => {
   const { data, isLoading } = useReferral();
@@ -48,17 +50,18 @@ const InviteFriendsCard = () => {
   };
 
   const share = async () => {
-    const text = shareText(link);
     if (navigator.share) {
       try {
-        await navigator.share({ title: SHARE_TITLE, text, url: link });
+        // El enlace va en `url` (no en `text`) para que no se repita.
+        await navigator.share({ title: SHARE_TITLE, text: SHARE_MESSAGE, url: link });
         return;
       } catch {
         // Usuario canceló o no soportado: caer a WhatsApp.
       }
     }
+    // wa.me solo acepta un texto: aquí sí incluimos el enlace una vez.
     window.open(
-      `https://wa.me/?text=${encodeURIComponent(text)}`,
+      `https://wa.me/?text=${encodeURIComponent(`${SHARE_MESSAGE} ${link}`)}`,
       "_blank",
       "noopener,noreferrer"
     );
