@@ -22,6 +22,9 @@ export const pollaKeys = {
   myStats: () => ["polla", "me", "stats"],
   myPredictions: () => ["polla", "predictions", "me"],
   referral: () => ["polla", "referral"],
+  adminOverview: () => ["polla", "admin", "overview"],
+  adminPlayers: (q) => ["polla", "admin", "players", q || ""],
+  adminPlayer: (userId) => ["polla", "admin", "player", String(userId ?? "")],
 };
 
 const LIVE_STALE = 60 * 1000; // 1 min
@@ -220,5 +223,40 @@ export function useClaimReferral() {
       qc.invalidateQueries({ queryKey: pollaKeys.referral() });
       qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
     },
+  });
+}
+
+// ── Administración (sesión de staff) ────────────────────────────────────────
+// Estos hooks consumen los endpoints `/polla/admin/*` con la sesión de staff
+// (token admin). No usan la sesión de cliente Google.
+
+/** KPIs agregados del torneo y avance global de misiones. */
+export function usePollaAdminOverview(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.adminOverview(),
+    queryFn: () => pollaService.adminOverview(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Lista de jugadores con su desglose de puntos. `q` filtra por nombre/email. */
+export function usePollaAdminPlayers(q = "", options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.adminPlayers(q),
+    queryFn: () => pollaService.adminPlayers(q),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Detalle de un jugador: score, pronósticos, misiones y referidos. */
+export function usePollaAdminPlayer(userId, options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.adminPlayer(userId),
+    queryFn: () => pollaService.adminPlayer(userId),
+    enabled: !!userId,
+    staleTime: LIVE_STALE,
+    ...options,
   });
 }

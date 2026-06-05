@@ -100,6 +100,11 @@ export const ENDPOINTS = {
   POLLA_MY_STATS: '/polla/me/stats/',
   POLLA_REFERRAL: '/polla/referral/',
   POLLA_REFERRAL_CLAIM: '/polla/referral/claim/',
+
+  // Polla - Dashboard de administración (solo staff/admin)
+  POLLA_ADMIN_OVERVIEW: '/polla/admin/overview/',
+  POLLA_ADMIN_PLAYERS: '/polla/admin/',
+  POLLA_ADMIN_PLAYER: (userId) => `/polla/admin/${userId}/`,
 };
 
 export default ENDPOINTS;

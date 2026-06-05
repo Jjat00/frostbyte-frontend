@@ -1,3 +1,4 @@
+import apiClient from "./api/client";
 import customerClient from "./api/customerClient";
 import { ENDPOINTS } from "./api/endpoints";
 
@@ -75,6 +76,20 @@ export const pollaService = {
     return (
       await customerClient.put(ENDPOINTS.POLLA_BRACKET_PICK(slug), { winner_code })
     ).data;
+  },
+
+  // ── Administración (sesión de staff: requiere rol admin) ──
+  // Usan `apiClient` (token de staff), NO el customerClient: el backend
+  // protege estos endpoints con IsAdminUser.
+  async adminOverview() {
+    return (await apiClient.get(ENDPOINTS.POLLA_ADMIN_OVERVIEW)).data;
+  },
+  async adminPlayers(q = "") {
+    const params = q ? { q } : {};
+    return (await apiClient.get(ENDPOINTS.POLLA_ADMIN_PLAYERS, { params })).data;
+  },
+  async adminPlayer(userId) {
+    return (await apiClient.get(ENDPOINTS.POLLA_ADMIN_PLAYER(userId))).data;
   },
 };
 

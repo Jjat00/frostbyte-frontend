@@ -29,6 +29,8 @@ import {
   AlertTriangle,
   Star,
   CircleDollarSign,
+  Trophy,
+  Users,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -318,6 +320,22 @@ const HomePage = () => {
         { icon: DollarSign, text: 'Ingresos vs Gastos' },
         { icon: PieChart, text: 'Distribucion' },
         { icon: BarChart3, text: 'Tendencias' },
+      ],
+    },
+    {
+      id: 'polla-admin',
+      title: 'Polla Mundial',
+      description: 'Monitorea el ranking y el avance de cada jugador del Mundial 2026',
+      icon: Trophy,
+      path: '/polla-admin',
+      color: 'from-amber-400 to-yellow-500',
+      bgColor: 'bg-amber-400/10',
+      borderColor: 'border-amber-400/30',
+      glowColor: 'group-hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]',
+      features: [
+        { icon: Trophy, text: 'Ranking' },
+        { icon: Users, text: 'Jugadores' },
+        { icon: BarChart3, text: 'Misiones' },
       ],
     },
   ];
