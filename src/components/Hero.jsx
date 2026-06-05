@@ -71,9 +71,7 @@ const localDateKey = () => {
 
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
-  const [displayedPhrase, setDisplayedPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
-  const [isStreaming, setIsStreaming] = useState(false);
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const isInView = useInViewport(sectionRef);
@@ -242,168 +240,25 @@ const Hero = () => {
     fetchMotivationalPhrase();
   }, []);
 
-  // Streaming effect word by word
-  useEffect(() => {
-    if (!motivationalPhrase || isLoadingPhrase) return;
-    const words = motivationalPhrase.split(" ");
-    setIsStreaming(true);
-    setDisplayedPhrase("");
-    let index = 0;
-    const interval = setInterval(() => {
-      index++;
-      setDisplayedPhrase(words.slice(0, index).join(" "));
-      if (index >= words.length) {
-        clearInterval(interval);
-        setIsStreaming(false);
-      }
-    }, 80);
-    return () => clearInterval(interval);
-  }, [motivationalPhrase, isLoadingPhrase]);
-
   // GSAP entrance animations
   useGSAP(
     () => {
       const section = sectionRef.current;
       if (!section) return;
 
-      const badge = section.querySelector(".hero-badge");
-      const greeting = section.querySelector(".hero-greeting");
-      const dateStrip = section.querySelector(".hero-subtitle");
-      const letters = section.querySelectorAll(".hero-title-letter");
-      const phrase = section.querySelector(".hero-phrase");
-      const description = section.querySelector(".hero-description");
-      const ctaBtns = section.querySelectorAll(".hero-cta-btn");
-      const socialLinks = section.querySelectorAll(".hero-social-link");
+      // El contenido del hero aparece de golpe, sin animaciones de entrada
+      // (ni stagger del título ni revelado escalonado de los bloques).
+      // Solo conservamos el rebote sutil del indicador de scroll.
       const scrollIndicator = section.querySelector(".hero-scroll-indicator");
-
-      // Set initial invisible states
-      gsap.set(badge, { autoAlpha: 0, y: -10 });
-      gsap.set(greeting, { autoAlpha: 0, y: -20 });
-      gsap.set(dateStrip, { autoAlpha: 0, y: 20 });
-      gsap.set(letters, { autoAlpha: 0 });
-      if (phrase) gsap.set(phrase, { autoAlpha: 0, y: 30 });
-      gsap.set(description, { autoAlpha: 0, y: 30 });
-      gsap.set(ctaBtns, { autoAlpha: 0, y: 40 });
-      gsap.set(socialLinks, { autoAlpha: 0, x: -40 });
-      gsap.set(scrollIndicator, { autoAlpha: 0 });
-
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      // 1. Badge — fade-down suave
-      tl.to(badge, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-
-      // 2. Greeting
-      tl.to(
-        greeting,
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        "-=0.3",
-      );
-
-      // 3. Date strip
-      tl.to(
-        dateStrip,
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        "-=0.3",
-      );
-
-      // 3. Letters: fade-in suave con stagger sutil
-      tl.to(
-        letters,
-        {
-          autoAlpha: 1,
-          duration: 0.4,
-          stagger: 0.04,
-          ease: "power2.out",
-        },
-        "-=0.2",
-      );
-
-      // 4. Motivational phrase
-      if (phrase) {
-        tl.to(
-          phrase,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.2",
-        );
+      if (scrollIndicator) {
+        gsap.to(scrollIndicator, {
+          y: 10,
+          duration: 1,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
       }
-
-      // 5. Description
-      tl.to(
-        description,
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-        },
-        "-=0.2",
-      );
-
-      // 6. CTA buttons — fade-up suave sin overshoot
-      tl.to(
-        ctaBtns,
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.45,
-          stagger: 0.08,
-          ease: "power2.out",
-        },
-        "-=0.2",
-      );
-
-      // 7. Social links — fade lateral suave
-      tl.to(
-        socialLinks,
-        {
-          autoAlpha: 1,
-          x: 0,
-          duration: 0.45,
-          stagger: 0.08,
-          ease: "power2.out",
-        },
-        "-=0.2",
-      );
-
-      // 8. Scroll indicator + infinite bounce
-      tl.to(
-        scrollIndicator,
-        {
-          autoAlpha: 1,
-          duration: 0.8,
-          ease: "power1.out",
-          onComplete: () => {
-            gsap.to(scrollIndicator, {
-              y: 10,
-              duration: 1,
-              repeat: -1,
-              yoyo: true,
-              ease: "sine.inOut",
-            });
-          },
-        },
-        "-=0.2",
-      );
     },
     { scope: sectionRef },
   );
@@ -489,11 +344,7 @@ const Hero = () => {
               </p>
               <div className="w-16 h-[2px] bg-linear-to-r from-primary to-secondary mx-auto mt-2 mb-4" />
               <p className="text-secondary text-base sm:text-lg md:text-xl leading-relaxed font-medium italic">
-                &ldquo;{displayedPhrase}
-                {isStreaming && (
-                  <span className="inline-block w-0.5 h-5 bg-secondary ml-0.5 animate-pulse align-middle" />
-                )}
-                {!isStreaming && <>&rdquo;</>}
+                &ldquo;{motivationalPhrase}&rdquo;
               </p>
             </div>
           )}

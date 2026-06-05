@@ -177,46 +177,27 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
+          <div>
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider">
               <Bot size={16} />
               POTENCIADO CON INTELIGENCIA ARTIFICIAL
             </span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-[clamp(2.8rem,11vw,9rem)] font-black text-light leading-none tracking-tight"
-          >
+          <h1 className="text-[clamp(2.8rem,11vw,9rem)] font-black text-light leading-none tracking-tight">
             FROSTBYTE
             <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-widest mt-2">
               TU NEGOCIO. OTRO NIVEL.
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-gray text-lg md:text-xl leading-relaxed max-w-3xl mx-auto"
-          >
+          <p className="text-gray text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
             La plataforma all-in-one que transforma la forma en que gestionas
             tu restaurante o bar. Menu digital con IA que recomienda, genera
             contenido y entiende a tus clientes.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               onClick={() =>
                 document
@@ -238,14 +219,9 @@ const HeroSection = () => {
                 Ver Demo en Vivo
               </a>
             </Button>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-6 pt-4"
-          >
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
             {[
               "Menu inteligente",
               "Recomendaciones por voz",
@@ -260,7 +236,7 @@ const HeroSection = () => {
                 {item}
               </span>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
 
