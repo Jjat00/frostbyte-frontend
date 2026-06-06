@@ -184,7 +184,9 @@ const Hero = () => {
 
           {/* Headline */}
           <h1 className="w-full text-center font-black text-light leading-none tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)]">
-            <span className="block whitespace-nowrap text-[clamp(2.3rem,10vw,8.5rem)]">
+            {/* flex + justify-center centra aunque el texto sea más ancho que el
+                contenedor (text-align no lo hace); el clamp lo mantiene dentro del viewport */}
+            <span className="flex w-full justify-center whitespace-nowrap text-[clamp(2rem,9vw,7.5rem)]">
               FROSTBYTE
             </span>
             <span className="mt-2 block bg-linear-to-r from-secondary to-grass bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest">
