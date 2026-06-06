@@ -29,6 +29,7 @@ const ProductFormPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    history: '',
     image_url: '',
     category: '',
     is_active: true,
@@ -41,6 +42,7 @@ const ProductFormPage = () => {
 
   const [errors, setErrors] = useState({});
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
+  const [isGeneratingHistory, setIsGeneratingHistory] = useState(false);
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
 
   // Obtener categorías
@@ -62,6 +64,7 @@ const ProductFormPage = () => {
       setFormData({
         name: productData.name || '',
         description: productData.description || '',
+        history: productData.history || '',
         image_url: productData.image_url || '',
         category: productData.category || '',
         is_active: productData.is_active !== false,
@@ -147,6 +150,23 @@ const ProductFormPage = () => {
       alert('No se pudo generar la descripción. Inténtalo de nuevo.');
     } finally {
       setIsGeneratingDescription(false);
+    }
+  };
+
+  const handleSuggestHistory = async () => {
+    if (!formData.name.trim() || isGeneratingHistory) return;
+    setIsGeneratingHistory(true);
+    try {
+      const history = await productsService.suggestHistory(formData.name.trim());
+      setFormData((prev) => ({ ...prev, history }));
+      if (errors.history) {
+        setErrors((prev) => ({ ...prev, history: null }));
+      }
+    } catch (error) {
+      console.error('Error al sugerir historia:', error);
+      alert('No se pudo generar la historia. Inténtalo de nuevo.');
+    } finally {
+      setIsGeneratingHistory(false);
     }
   };
 
@@ -405,6 +425,46 @@ const ProductFormPage = () => {
               />
               {errors.description && (
                 <p className="mt-1 text-sm text-red-400">{errors.description}</p>
+              )}
+            </div>
+
+            {/* Historia (cócteles) */}
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-2">
+                <label className="text-sm font-medium text-gray">
+                  Historia del cóctel
+                </label>
+                <button
+                  type="button"
+                  onClick={handleSuggestHistory}
+                  disabled={!formData.name.trim() || isGeneratingHistory}
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-secondary border border-secondary/30 rounded-lg hover:bg-secondary/10 hover:border-secondary/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-secondary/30"
+                >
+                  {isGeneratingHistory ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Generando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Sugerir con IA
+                    </>
+                  )}
+                </button>
+              </div>
+              <textarea
+                name="history"
+                value={formData.history}
+                onChange={handleInputChange}
+                rows={3}
+                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none ${
+                  errors.history ? 'border-red-500' : 'border-white/[0.12]'
+                }`}
+                placeholder="Breve historia u origen del cóctel. Se mostrará en el menú digital (opcional)."
+              />
+              {errors.history && (
+                <p className="mt-1 text-sm text-red-400">{errors.history}</p>
               )}
             </div>
 

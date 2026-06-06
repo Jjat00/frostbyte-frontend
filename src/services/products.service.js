@@ -113,6 +113,18 @@ export const productsService = {
     });
     return response.data.description;
   },
+
+  /**
+   * Sugerir historia/origen de un cóctel con IA
+   * @param {string} productName - Nombre del cóctel
+   * @returns {Promise<string>} Historia sugerida
+   */
+  async suggestHistory(productName) {
+    const response = await apiClient.post(ENDPOINTS.AI_SUGGEST_HISTORY, {
+      product_name: productName,
+    });
+    return response.data.history;
+  },
 };
 
 /**

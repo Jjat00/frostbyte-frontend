@@ -28,6 +28,7 @@ export const ENDPOINTS = {
   AI_DISCARD: (generationId) => `/ai/generations/${generationId}/discard/`,
   AI_TEMP_IMAGE: (generationId, type) => `/ai/generations/${generationId}/temp-image/${type}/`,
   AI_SUGGEST_DESCRIPTION: '/ai/suggest-description/',
+  AI_SUGGEST_HISTORY: '/ai/suggest-history/',
 
   // Song Requests
   SONG_REQUESTS: '/song-requests/',

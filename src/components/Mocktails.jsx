@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Wine,
   GlassWater,
@@ -9,6 +9,8 @@ import {
   Palmtree,
   Skull,
   Clock,
+  BookOpen,
+  ChevronDown,
 } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 
@@ -20,6 +22,7 @@ const formatPrice = (price) => {
 
 const ProductCard = ({ product, index, styles }) => {
   const Icon = styles.icon;
+  const [showHistory, setShowHistory] = useState(false);
   const variants = product.variants || [];
   const suaveVariant = variants.find((v) => v.name === "Suave");
   const cargadoVariant = variants.find((v) => v.name === "Cargado");
@@ -27,6 +30,7 @@ const ProductCard = ({ product, index, styles }) => {
   const otherVariants = hasSuaveCargado
     ? []
     : variants;
+  const hasHistory = Boolean(product.history && product.history.trim());
 
   return (
     <motion.div
@@ -102,6 +106,40 @@ const ProductCard = ({ product, index, styles }) => {
               </div>
             ))}
           </div>
+
+          {hasHistory && (
+            <div className="mt-4 pt-4 border-t border-gray/10">
+              <button
+                type="button"
+                onClick={() => setShowHistory((prev) => !prev)}
+                aria-expanded={showHistory}
+                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-secondary/90 hover:text-secondary transition-colors"
+              >
+                <BookOpen size={14} />
+                Historia
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-300 ${showHistory ? "rotate-180" : ""}`}
+                />
+              </button>
+              <AnimatePresence initial={false}>
+                {showHistory && (
+                  <motion.div
+                    key="history"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <p className="mt-2 text-sm text-gray leading-relaxed">
+                      {product.history}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
