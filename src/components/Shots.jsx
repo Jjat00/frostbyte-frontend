@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Droplets } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
+import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 const flavorShots = [
   {
@@ -40,7 +41,7 @@ const flavorShots = [
     flavor: "Morado",
     licor: "Vodka",
     price: "$5.000",
-    gradient: "from-purple-400 to-fuchsia-600",
+    gradient: "from-purple-400 to-purple-600",
     textColor: "text-purple-400",
     borderColor: "border-purple-500/40",
     glowColor: "rgba(192, 132, 252, 0.3)",
@@ -87,7 +88,7 @@ const ShotCard = ({ shot, index, styles }) => {
       whileHover={{ y: -10, scale: 1.02 }}
       className="group relative"
     >
-      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-primary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(30,158,90,0.1)]">
+      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-gold/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(242,197,61,0.12)]">
         <div className="h-40 overflow-hidden relative">
           <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
           {styles.image ? (
@@ -108,7 +109,7 @@ const ShotCard = ({ shot, index, styles }) => {
           >
             <Icon className="text-dark" size={24} />
           </div>
-          <h3 className="text-xl font-bold text-light mb-1 group-hover:text-primary transition-colors duration-300">
+          <h3 className="text-xl font-bold text-light mb-1 group-hover:text-gold transition-colors duration-300">
             {shot.name}
           </h3>
           {styles.licor && (
@@ -116,7 +117,7 @@ const ShotCard = ({ shot, index, styles }) => {
           )}
           <p className="text-gray mb-4 grow text-sm">{shot.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -145,11 +146,8 @@ const Shots = () => {
   const shots = data?.results || [];
 
   return (
-    <section id="shots" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-primary rounded-full filter blur-[120px]"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-      </div>
+    <section id="shots" className="py-20 relative overflow-hidden bg-dark">
+      <Mundial26Backdrop />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -158,8 +156,11 @@ const Shots = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
+          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
+            Mundial 2026
+          </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
               SHOTS
             </span>
           </h2>
@@ -195,7 +196,7 @@ const Shots = () => {
           transition={{ duration: 0.7 }}
           className="mt-20"
         >
-          <div className="relative bg-linear-to-br from-dark-secondary/80 to-dark/80 border-2 border-primary/30 rounded-3xl overflow-hidden">
+          <div className="relative bg-linear-to-br from-dark-secondary/80 to-dark/80 border-2 border-gold/30 rounded-3xl overflow-hidden">
             <div className="relative h-56 sm:h-72 md:h-80 overflow-hidden">
               <img
                 src="/shots1.webp"
@@ -204,14 +205,14 @@ const Shots = () => {
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-linear-to-t from-dark via-dark/60 to-transparent" />
-              <div className="absolute inset-0 bg-linear-to-r from-primary/10 to-secondary/10" />
+              <div className="absolute inset-0 bg-linear-to-r from-gold/10 to-grass/10" />
 
               <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-2">
-                  <Droplets className="text-primary" size={28} />
+                  <Droplets className="text-gold" size={28} />
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light">
                     SHOTS DE{" "}
-                    <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                    <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
                       SABORES
                     </span>
                   </h3>

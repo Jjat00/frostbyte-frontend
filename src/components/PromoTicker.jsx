@@ -6,33 +6,41 @@ const PROMOS = [
   { text: "10% OFF POR SEGUIRNOS EN REDES", icon: Instagram },
 ];
 
-const TickerContent = () => (
-  <div className="flex items-center shrink-0">
-    {PROMOS.map((promo, i) => {
-      const Icon = promo.icon;
-      return (
-        <div key={i} className="flex items-center shrink-0 mx-6 sm:mx-10">
-          <Icon className="text-dark shrink-0 mr-2" size={18} />
-          <span className="text-dark font-black text-sm sm:text-base tracking-wide whitespace-nowrap">
-            {promo.text}
-          </span>
-          <span className="text-dark/50 mx-6 sm:mx-10 text-lg select-none">
-            ///
-          </span>
-        </div>
-      );
-    })}
-  </div>
-);
+const TickerContent = ({ onDark = false }) => {
+  // Cintas verde/oro (claras) -> texto oscuro; cinta fire (granate, oscura) -> texto claro.
+  const textColor = onDark ? "text-white" : "text-dark";
+  const sepColor = onDark ? "text-white/50" : "text-dark/50";
+
+  return (
+    <div className="flex items-center shrink-0">
+      {PROMOS.map((promo, i) => {
+        const Icon = promo.icon;
+        return (
+          <div key={i} className="flex items-center shrink-0 mx-6 sm:mx-10">
+            <Icon className={`${textColor} shrink-0 mr-2`} size={18} />
+            <span className={`${textColor} font-black text-sm sm:text-base tracking-wide whitespace-nowrap`}>
+              {promo.text}
+            </span>
+            <span className={`${sepColor} mx-6 sm:mx-10 text-lg select-none`}>
+              ///
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const PromoTicker = ({ variant = "primary" }) => {
   const gradients = {
-    primary: "from-primary via-secondary to-primary",
-    secondary: "from-secondary via-primary to-secondary",
-    fire: "from-amber-400 via-orange-500 to-amber-400",
+    primary: "from-grass via-gold to-grass",
+    secondary: "from-gold via-grass to-gold",
+    fire: "from-red-600 via-[#7d1622] to-red-600",
   };
 
   const gradient = gradients[variant] || gradients.primary;
+  // La cinta "fire" (granate/rojo de afiche) es oscura: texto claro para contraste.
+  const onDark = variant === "fire";
 
   return (
     <div className="relative py-0.5 overflow-hidden select-none">
@@ -53,9 +61,9 @@ const PromoTicker = ({ variant = "primary" }) => {
 
         {/* Contenedor del scroll infinito */}
         <div className="flex animate-ticker hover:[animation-play-state:paused]">
-          <TickerContent />
-          <TickerContent />
-          <TickerContent />
+          <TickerContent onDark={onDark} />
+          <TickerContent onDark={onDark} />
+          <TickerContent onDark={onDark} />
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Cherry, Citrus, Sun } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
+import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -54,7 +55,7 @@ const ProductCard = ({ product, index, styles }) => {
           </h3>
           <p className="text-gray mb-4 grow text-sm">{product.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -119,12 +120,9 @@ const SodasMicheladas = () => {
   return (
     <section
       id="sodas"
-      className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(13,13,26,0.95), rgba(10,10,20,0.95))" }}
+      className="py-20 relative overflow-hidden bg-dark"
     >
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-      </div>
+      <Mundial26Backdrop />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -133,9 +131,12 @@ const SodasMicheladas = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
+          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
+            Refrescantes Mundial 26
+          </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
             SODAS{" "}
-            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
               ITALIANAS
             </span>
           </h2>

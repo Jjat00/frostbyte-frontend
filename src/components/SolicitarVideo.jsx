@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import MusicVisualizer from "@/components/MusicVisualizer";
+import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Youtube,
@@ -230,14 +231,11 @@ const SolicitarVideo = () => {
         background: "linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)",
       }}
     >
+      {/* Capa decorativa de afiche del Mundial (ligera en GPU) */}
+      <Mundial26Backdrop />
+
       {/* Canvas animation - esfera 3D de particulas */}
       <MusicVisualizer isPlaying={!!nowPlaying?.video_id} />
-
-      {/* Neon ambiental rojo */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-red-500 rounded-full filter blur-[120px]" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary rounded-full filter blur-[120px]" />
-      </div>
 
       <div className="container mx-auto px-4 relative z-10 py-16">
         {/* Title */}
@@ -250,7 +248,7 @@ const SolicitarVideo = () => {
         >
           <h2 className="text-4xl md:text-6xl font-black mb-3 flex items-center justify-center gap-3 flex-wrap">
             <Youtube className="w-10 h-10 md:w-14 md:h-14 text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
-            <span className="bg-gradient-to-r from-red-400 via-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+            <span className="bg-gradient-to-r from-red-400 via-gold to-grass bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]">
               PIDE TU VIDEO
             </span>
           </h2>

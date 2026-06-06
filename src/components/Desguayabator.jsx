@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Zap, Heart, Sparkles, Star, AlertCircle } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
+import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -36,7 +37,7 @@ const flavorStyles = {
   "desguayabator-coco": {
     icon: Sparkles,
     gradient: "from-white to-gray-300",
-    glowGradient: "from-white to-cyan-300",
+    glowGradient: "from-white to-gold",
     borderColor: "border-white/50",
     shadowColor: "hover:shadow-white/30",
     bgColor: "bg-white",
@@ -58,12 +59,12 @@ const getFlavorStyles = (product) => {
   return (
     flavorStyles[slug] || {
       icon: Zap,
-      gradient: "from-emerald-400 to-cyan-400",
-      glowGradient: "from-emerald-400 to-cyan-400",
-      borderColor: "border-emerald-500/50",
-      shadowColor: "hover:shadow-emerald-500/30",
-      bgColor: "bg-emerald-500",
-      textColor: "text-emerald-400",
+      gradient: "from-gold to-grass",
+      glowGradient: "from-gold to-grass",
+      borderColor: "border-grass/50",
+      shadowColor: "hover:shadow-grass/30",
+      bgColor: "bg-grass",
+      textColor: "text-grass",
     }
   );
 };
@@ -298,52 +299,30 @@ const Desguayabator = () => {
       id="desguayabator"
       className="py-16 sm:py-24 bg-dark relative overflow-hidden"
     >
-      {/* Epic background effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500 rounded-full filter blur-[150px] opacity-20 animate-pulse"></div>
-        <div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500 rounded-full filter blur-[150px] opacity-20 animate-pulse"
-          style={{ animationDelay: "1s" }}
-        ></div>
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500 rounded-full filter blur-[200px] opacity-10 animate-pulse"
-          style={{ animationDelay: "0.5s" }}
-        ></div>
-      </div>
-
-      {/* Animated grid pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(16, 185, 129, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.3) 1px, transparent 1px)",
-            backgroundSize: "50px 50px",
-          }}
-        ></div>
-      </div>
+      {/* Capa decorativa Sistema 26 (afiche Mundial) */}
+      <Mundial26Backdrop />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header Section */}
         <div className="text-center mb-16">
           {/* Badge exclusivo */}
-          <div className="desg-badge inline-flex items-center gap-2 bg-linear-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/50 rounded-full px-4 sm:px-6 py-2 mb-6">
+          <div className="desg-badge inline-flex items-center gap-2 bg-linear-to-r from-gold/20 to-grass/20 border border-gold/50 rounded-full px-4 sm:px-6 py-2 mb-6">
             <AlertCircle
-              className="text-emerald-400 animate-pulse hidden sm:block"
+              className="text-gold animate-pulse hidden sm:block"
               size={18}
             />
-            <span className="text-emerald-400 font-bold text-xs sm:text-sm tracking-wider uppercase">
+            <span className="text-gold font-bold text-xs sm:text-sm tracking-wider uppercase">
               ¡Cura Guayabos Garantizado!
             </span>
             <AlertCircle
-              className="text-emerald-400 animate-pulse hidden sm:block"
+              className="text-gold animate-pulse hidden sm:block"
               size={18}
             />
           </div>
 
           {/* Título principal */}
           <h2 className="desg-title text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6">
-            <span className="bg-linear-to-r from-emerald-400 via-cyan-400 to-green-400 bg-clip-text text-transparent drop-shadow-lg">
+            <span className="bg-linear-to-r from-gold via-secondary to-grass bg-clip-text text-transparent drop-shadow-lg">
               DESGUAYABATOR
             </span>
           </h2>
@@ -351,15 +330,15 @@ const Desguayabator = () => {
           {/* Subtítulo */}
           <p className="desg-subtitle text-base sm:text-xl md:text-2xl text-gray max-w-3xl mx-auto mb-4 px-2">
             La bebida más famosa de Cumbal para{" "}
-            <span className="text-emerald-400 font-bold">curar el guayabo</span>.
+            <span className="text-gold font-bold">curar el guayabo</span>.
             Fórmula secreta con Electrolit + Bonfiest para revivir después de
             una noche épica
           </p>
 
           {/* Info de ingredientes */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8">
-            <div className="desg-ingredient-left flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
-              <Zap className="text-cyan-400" size={18} />
+            <div className="desg-ingredient-left flex items-center gap-2 bg-dark-secondary/80 border border-grass/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
+              <Zap className="text-gold" size={18} />
               <span className="text-light font-semibold text-sm sm:text-base">
                 Electrolit
               </span>
@@ -367,11 +346,11 @@ const Desguayabator = () => {
                 Hidratación Total
               </span>
             </div>
-            <span className="text-emerald-400 text-xl sm:text-2xl font-bold">
+            <span className="text-gold text-xl sm:text-2xl font-bold">
               +
             </span>
-            <div className="desg-ingredient-right flex items-center gap-2 bg-dark-secondary/80 border border-emerald-500/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
-              <Heart className="text-red-400" size={18} />
+            <div className="desg-ingredient-right flex items-center gap-2 bg-dark-secondary/80 border border-grass/30 rounded-full px-4 sm:px-5 py-2 sm:py-3">
+              <Heart className="text-red-500" size={18} />
               <span className="text-light font-semibold text-sm sm:text-base">
                 Bonfiest
               </span>
@@ -384,15 +363,15 @@ const Desguayabator = () => {
 
         {/* Precio destacado */}
         <div className="desg-price text-center mb-12">
-          <div className="inline-flex flex-col items-center bg-linear-to-br from-emerald-500/20 to-cyan-500/20 border-2 border-emerald-500/50 rounded-3xl px-8 sm:px-12 py-6 sm:py-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-cyan-500/10 animate-pulse"></div>
+          <div className="inline-flex flex-col items-center bg-linear-to-br from-gold/20 to-grass/20 border-2 border-gold/50 rounded-3xl px-8 sm:px-12 py-6 sm:py-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-linear-to-r from-gold/10 to-grass/10 animate-pulse"></div>
             <span className="text-gray text-base sm:text-lg mb-2 relative z-10">
               Precio único
             </span>
-            <span className="text-4xl sm:text-5xl md:text-6xl font-black bg-linear-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent relative z-10">
+            <span className="text-4xl sm:text-5xl md:text-6xl font-black bg-linear-to-r from-gold to-grass bg-clip-text text-transparent relative z-10">
               {formatPrice(defaultPrice)}
             </span>
-            <span className="text-emerald-400 text-sm mt-2 relative z-10">
+            <span className="text-gold text-sm mt-2 relative z-10">
               Cualquier sabor
             </span>
           </div>
@@ -402,7 +381,7 @@ const Desguayabator = () => {
         <div className="mb-8">
           <h3 className="text-center text-2xl font-bold text-light mb-8">
             Elige tu sabor de{" "}
-            <span className="text-emerald-400">Electrolit</span>
+            <span className="text-gold">Electrolit</span>
           </h3>
         </div>
 
@@ -423,12 +402,12 @@ const Desguayabator = () => {
         {/* Call to action */}
         <div className="text-center mt-16">
           <p className="desg-protip text-gray text-lg">
-            <Zap className="inline text-emerald-400 mr-2" size={20} />
-            <span className="text-emerald-400 font-semibold">
+            <Zap className="inline text-gold mr-2" size={20} />
+            <span className="text-gold font-semibold">
               Pro tip:
             </span>{" "}
             Pídelo antes de que el guayabo te gane la batalla
-            <Zap className="inline text-emerald-400 ml-2" size={20} />
+            <Zap className="inline text-gold ml-2" size={20} />
           </p>
         </div>
       </div>

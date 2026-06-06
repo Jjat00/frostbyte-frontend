@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Instagram, Tag, ArrowRight } from "lucide-react";
+import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 const TikTokIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -23,21 +24,23 @@ const SocialDiscountBanner = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-dark-secondary to-secondary/10"
+          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-gold/30 bg-linear-to-br from-grass/15 via-dark-secondary to-gold/10"
         >
-          {/* Glow decorativo */}
-          <div className="absolute -top-16 -right-16 w-40 h-40 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
+          {/* Capa decorativa afiche Mundial 26 */}
+          <Mundial26Backdrop />
 
           <div className="relative p-6">
             {/* Header con icono + porcentaje */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30">
+              <div className="w-11 h-11 rounded-xl bg-linear-to-br from-gold to-grass flex items-center justify-center flex-shrink-0 shadow-lg shadow-grass/30">
                 <Tag size={20} className="text-dark" />
               </div>
               <div>
+                <span className="inline-block text-[10px] uppercase tracking-[0.3em] text-gold font-bold mb-1">
+                  Promo Mundial
+                </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  <span className="text-4xl font-black bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
                     10% OFF
                   </span>
                 </div>
@@ -51,7 +54,7 @@ const SocialDiscountBanner = () => {
             <div className="space-y-2 mb-5">
               {STEPS.map((step) => (
                 <div key={step.num} className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs font-bold text-white/80 flex-shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-xs font-bold text-gold flex-shrink-0">
                     {step.num}
                   </span>
                   <span className="text-white/70 text-sm">{step.text}</span>
@@ -65,7 +68,7 @@ const SocialDiscountBanner = () => {
                 href="https://www.instagram.com/frostbyte.col/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/40 text-white text-sm font-semibold hover:border-primary/70 hover:bg-primary/25 transition-all duration-200"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-grass border border-grass text-dark text-sm font-bold hover:brightness-110 transition-all duration-200"
               >
                 <Instagram size={16} />
                 Seguir en Instagram
@@ -74,7 +77,7 @@ const SocialDiscountBanner = () => {
                 href="https://www.tiktok.com/@frostbyte.col"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-secondary/20 to-secondary/10 border border-secondary/40 text-white text-sm font-semibold hover:border-secondary/70 hover:bg-secondary/25 transition-all duration-200"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gold border border-gold text-dark text-sm font-bold hover:brightness-110 transition-all duration-200"
               >
                 <TikTokIcon size={16} />
                 Seguir en TikTok
@@ -83,7 +86,7 @@ const SocialDiscountBanner = () => {
 
             {/* Urgencia */}
             <p className="text-center text-white/40 text-xs mt-4 flex items-center justify-center gap-1.5">
-              <ArrowRight size={12} className="text-primary" />
+              <ArrowRight size={12} className="text-gold" />
               Válido para tu pedido de hoy
             </p>
           </div>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { feedbackService } from '@/services';
 import { useMutation } from '@tanstack/react-query';
+import { Mundial26Backdrop } from '@/components/mundial/Sistema26';
 
 const feedbackTypes = [
   { value: 'compliment', label: 'Felicitacion', emoji: '🎉' },
@@ -121,11 +122,8 @@ const FeedbackSection = () => {
   const selectedType = feedbackTypes.find(t => t.value === formData.feedback_type);
 
   return (
-    <section id="feedback" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
-      </div>
+    <section id="feedback" className="py-20 bg-dark relative overflow-hidden">
+      <Mundial26Backdrop />
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -135,8 +133,11 @@ const FeedbackSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
+          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
+            Mundial 2026
+          </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
               TU OPINION IMPORTA
             </span>
           </h2>
@@ -156,14 +157,14 @@ const FeedbackSection = () => {
           <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-8 md:p-10 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.25)]">
             {/* Efectos de fondo */}
             <div className="absolute inset-0 opacity-5">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary rounded-full filter blur-[80px]"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gold rounded-full filter blur-[100px]"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-grass rounded-full filter blur-[80px]"></div>
             </div>
 
             <div className="relative z-10">
               {/* Icono decorativo */}
               <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 bg-linear-to-br from-gold to-grass rounded-full flex items-center justify-center">
                   <MessageSquare className="text-dark" size={40} />
                 </div>
               </div>
@@ -180,7 +181,7 @@ const FeedbackSection = () => {
                     name="customer_name"
                     value={formData.customer_name}
                     onChange={handleChange}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all duration-300"
                     placeholder="Ej: Maria"
                     disabled={createMutation.isPending}
                   />
@@ -196,7 +197,7 @@ const FeedbackSection = () => {
                       type="button"
                       onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                       disabled={createMutation.isPending}
-                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 flex items-center justify-between"
+                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all duration-300 flex items-center justify-between"
                     >
                       <span>
                         {selectedType?.emoji} {selectedType?.label}
@@ -214,8 +215,8 @@ const FeedbackSection = () => {
                               setFormData({ ...formData, feedback_type: type.value });
                               setShowTypeDropdown(false);
                             }}
-                            className={`w-full px-4 py-3 text-left hover:bg-secondary/20 transition-colors ${
-                              formData.feedback_type === type.value ? 'bg-secondary/10 text-secondary' : 'text-light'
+                            className={`w-full px-4 py-3 text-left hover:bg-gold/20 transition-colors ${
+                              formData.feedback_type === type.value ? 'bg-gold/10 text-gold' : 'text-light'
                             }`}
                           >
                             {type.emoji} {type.label}
@@ -249,7 +250,7 @@ const FeedbackSection = () => {
                     value={formData.comment}
                     onChange={handleChange}
                     rows="4"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 resize-none"
+                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-gold/50 focus:bg-white/[0.08] transition-all duration-300 resize-none"
                     placeholder="Cuentanos tu experiencia, sugerencias o lo que quieras compartir..."
                     required
                     disabled={createMutation.isPending}
@@ -262,7 +263,7 @@ const FeedbackSection = () => {
                 <Button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="w-full bg-gradient-to-r from-secondary to-primary text-dark font-bold text-lg py-6 hover:shadow-2xl hover:shadow-secondary/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-linear-to-r from-gold to-grass text-dark font-bold text-lg py-6 hover:shadow-2xl hover:shadow-gold/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {createMutation.isPending ? (
                     <>

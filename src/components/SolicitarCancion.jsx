@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import MusicVisualizer from '@/components/MusicVisualizer';
+import { Mundial26Backdrop } from '@/components/mundial/Sistema26';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Music, Search, Loader2, Play, Clock, X, ListMusic, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
@@ -296,6 +297,9 @@ const SolicitarCancion = () => {
 
   return (
     <section id="solicitar-cancion" className="relative overflow-hidden min-h-[80vh] flex flex-col justify-center" style={{ background: 'linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)' }}>
+      {/* Capa decorativa de afiche del Mundial (ligera en GPU) */}
+      <Mundial26Backdrop />
+
       {/* Canvas animation - PROTAGONIST */}
       <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
 

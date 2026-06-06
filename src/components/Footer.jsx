@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
 import { Instagram, MapPin, MessageCircle, Trophy } from "lucide-react";
+import { Big26 } from "@/components/mundial/Sistema26";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -84,11 +85,17 @@ const Footer = () => {
   }, { scope: footerRef });
 
   return (
-    <footer ref={footerRef} className="py-12 border-t border-white/[0.06]" style={{ background: "linear-gradient(to bottom, rgba(13,13,26,0.98), rgba(8,8,16,1))" }}>
-      {/* Top border line animates scaleX from 0 to 1 */}
-      <div className="footer-line h-px bg-gray/20 origin-center" />
+    <footer ref={footerRef} className="relative overflow-hidden py-12 border-t border-white/[0.06]" style={{ background: "linear-gradient(to bottom, rgba(10,11,20,0.98), rgba(7,8,14,1))" }}>
+      {/* Capa decorativa Sistema 26: patron modular muy sutil + "26" tenue de marca de agua */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="t26-pattern absolute inset-0 opacity-40" />
+        <Big26 className="absolute -bottom-[10vh] -right-[2vw] text-[clamp(12rem,34vh,30rem)] leading-none text-white/[0.03]" />
+      </div>
 
-      <div className="container mx-auto px-4 pt-12">
+      {/* Top border line animates scaleX from 0 to 1 */}
+      <div className="footer-line relative h-px bg-gold/20 origin-center" />
+
+      <div className="container relative z-10 mx-auto px-4 pt-12">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Column 1 - Brand */}
           <div className="footer-col">
