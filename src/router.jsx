@@ -93,6 +93,7 @@ const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/
 
 const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
 const PollaMundialPage = lazyLoad(() => import("./pages/PollaMundialPage"));
+const MundialPromoPage = lazyLoad(() => import("./pages/MundialPromoPage"));
 const PollaApp = lazyLoad(() => import("./pages/polla/PollaApp"));
 const PollaAdminDashboard = lazyLoad(() => import("./pages/polla-admin/PollaAdminDashboard"));
 const PollaPlayerDetail = lazyLoad(() => import("./pages/polla-admin/PollaPlayerDetail"));
@@ -155,6 +156,15 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <PollaMundialPage />
+      </Lazy>
+    ),
+  },
+  // Anuncio público con QR para invitar a participar (pantalla del local / redes)
+  {
+    path: "/mundial",
+    element: (
+      <Lazy>
+        <MundialPromoPage />
       </Lazy>
     ),
   },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import {
@@ -248,10 +248,18 @@ const PollaMundialPage = () => {
   const t = useCountdown(kickoff);
   const heroRef = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const customer = useCustomerAuthStore((s) => s.customer);
   const isAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
   const logout = useCustomerAuthStore((s) => s.logout);
+
+  // Llegando desde el QR / anuncio (?login=1): abrir el login de Google de una.
+  useEffect(() => {
+    if (!isAuthenticated && searchParams.get("login") === "1") {
+      setAuthOpen(true);
+    }
+  }, [isAuthenticated, searchParams]);
 
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "crack";
