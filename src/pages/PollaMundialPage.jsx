@@ -39,13 +39,40 @@ import {
   MundialColorField,
   EmblemaMundial,
   TrofeoMundial,
-  GruposMundial,
   Big26,
 } from "@/components/mundial/Sistema26";
+import { GruposDraw } from "@/components/mundial/GruposDraw";
 
 // Pitazo inicial del Mundial 2026 (respaldo si el backend aun no responde;
 // la hora real llega desde el torneo via usePollaTournament).
 const KICKOFF_FALLBACK = new Date("2026-06-11T14:00:00-05:00");
+
+// Paleta multicolor del Mundial 2026 (rota por tarjeta para dar el look vibrante
+// estilo afiche, en vez del magenta/cyan de Frostbyte).
+const ACCENTS = [
+  "text-purple-400",
+  "text-red-400",
+  "text-green-400",
+  "text-gold",
+  "text-secondary",
+  "text-blue-400",
+];
+const CHIPS = [
+  "bg-purple-500/15 border-purple-500/40",
+  "bg-red-500/15 border-red-500/40",
+  "bg-grass/15 border-grass/40",
+  "bg-gold/15 border-gold/40",
+  "bg-secondary/15 border-secondary/40",
+  "bg-blue-500/15 border-blue-500/40",
+];
+const SOLIDS = [
+  "bg-purple-500",
+  "bg-red-500",
+  "bg-grass",
+  "bg-gold",
+  "bg-secondary",
+  "bg-blue-500",
+];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -68,7 +95,7 @@ const Section = ({ children, className }) => (
 const SectionTitle = ({ kicker, title, subtitle }) => (
   <motion.div variants={fadeUp} className="text-center max-w-3xl mx-auto mb-12">
     {kicker && (
-      <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-primary font-semibold mb-3">
+      <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
         {kicker}
       </span>
     )}
@@ -110,8 +137,8 @@ const useCountdown = (target) => {
 
 const CountdownUnit = ({ value, label }) => (
   <div className="flex flex-col items-center">
-    <div className="liquid-glass relative overflow-hidden min-w-[62px] sm:min-w-[88px] px-2.5 sm:px-3 py-3 sm:py-4 rounded-2xl border border-secondary/30">
-      <span className="t26-num block text-3xl sm:text-5xl bg-linear-to-b from-light to-secondary bg-clip-text text-transparent">
+    <div className="liquid-glass relative overflow-hidden min-w-[62px] sm:min-w-[88px] px-2.5 sm:px-3 py-3 sm:py-4 rounded-2xl border border-gold/30">
+      <span className="t26-num block text-3xl sm:text-5xl bg-linear-to-b from-light to-gold bg-clip-text text-transparent">
         {String(value).padStart(2, "0")}
       </span>
     </div>
@@ -160,7 +187,8 @@ const SCORING = [
     icon: Flame,
     title: "Marcador exacto",
     desc: "Acertaste el resultado clavado. Dijiste 2-1 y quedó 2-1.",
-    accent: "from-primary to-secondary",
+    accent: "from-gold to-grass",
+    iconColor: "text-gold",
     highlight: true,
   },
   {
@@ -168,7 +196,8 @@ const SCORING = [
     icon: Target,
     title: "Resultado correcto",
     desc: "Acertaste quién gana o el empate, pero no el marcador exacto.",
-    accent: "from-secondary to-primary",
+    accent: "from-secondary to-blue-500",
+    iconColor: "text-secondary",
   },
   {
     points: "0",
@@ -176,6 +205,7 @@ const SCORING = [
     title: "Resultado incorrecto",
     desc: "Cero puntos, pero siempre queda el próximo partido para remontar.",
     accent: "from-gray/40 to-gray/10",
+    iconColor: "text-gray",
   },
 ];
 
@@ -296,7 +326,7 @@ const PollaMundialPage = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link
             to="/"
-            className="flex items-center gap-2 rounded-md text-sm font-bold tracking-widest text-light transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+            className="flex items-center gap-2 rounded-md text-sm font-bold tracking-widest text-light transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
           >
             <ArrowLeft size={18} />
             FROSTBYTE
@@ -307,11 +337,11 @@ const PollaMundialPage = () => {
                 <img loading="lazy" decoding="async"
                   src={customer.avatar_url}
                   alt={firstName}
-                  className="h-8 w-8 rounded-full border border-primary/40 object-cover"
+                  className="h-8 w-8 rounded-full border border-gold/40 object-cover"
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-primary to-secondary text-sm font-bold text-dark">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-grass to-secondary text-sm font-bold text-dark">
                   {firstName.charAt(0).toUpperCase()}
                 </span>
               )}
@@ -321,7 +351,7 @@ const PollaMundialPage = () => {
               <button
                 onClick={logout}
                 aria-label="Cerrar sesión"
-                className="rounded-full p-1.5 text-gray transition-colors hover:bg-white/10 hover:text-primary"
+                className="rounded-full p-1.5 text-gray transition-colors hover:bg-white/10 hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
                 title="Cerrar sesión"
               >
                 <LogOut size={16} />
@@ -330,7 +360,7 @@ const PollaMundialPage = () => {
           ) : (
             <button
               onClick={() => setAuthOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-primary to-secondary px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-dark shadow-lg shadow-primary/30 transition-transform hover:scale-105"
+              className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-grass to-secondary px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-dark shadow-lg shadow-grass/30 transition-transform hover:scale-105"
             >
               <Trophy size={14} />
               Empezar a jugar
@@ -358,14 +388,14 @@ const PollaMundialPage = () => {
               <EmblemaMundial className="h-24 sm:h-28" loading="eager" />
             </div>
 
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-gold/10 border border-gold/40 rounded-full text-gold text-xs sm:text-sm font-bold tracking-wider">
               <Trophy size={16} />
               MUNDIAL 2026 · FROSTBYTE
             </span>
 
-            <h1 className="text-[clamp(2.6rem,10vw,7rem)] font-black leading-[0.95] tracking-tight">
+            <h1 className="text-[clamp(2.2rem,8.5vw,5.25rem)] font-black leading-[1.02] pb-[0.08em]">
               <span className="block text-light">POLLA</span>
-              <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="block bg-linear-to-r from-gold via-grass to-secondary bg-clip-text text-transparent">
                 MUNDIALISTA
               </span>
             </h1>
@@ -387,7 +417,7 @@ const PollaMundialPage = () => {
                   <span className="t26-num block text-4xl text-gold sm:text-6xl leading-none">
                     $500.000
                   </span>
-                  <span className="block text-sm sm:text-base font-semibold text-secondary mt-0.5">
+                  <span className="block text-sm sm:text-base font-semibold text-grass mt-0.5">
                     medio millón de pesos · en efectivo
                   </span>
                 </div>
@@ -396,7 +426,7 @@ const PollaMundialPage = () => {
 
             {/* Countdown */}
             <div className="space-y-3">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-gold font-bold">
                 {t.live ? "¡El balón ya rueda!" : "Faltan para el pitazo inicial"}
               </p>
               <div className="flex items-center justify-center gap-2 sm:gap-5">
@@ -409,14 +439,14 @@ const PollaMundialPage = () => {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               {isAuthenticated ? (
-                <span className="inline-flex items-center gap-2 rounded-full border-2 border-secondary/50 bg-secondary/10 px-7 py-4 text-lg font-bold text-secondary">
+                <span className="inline-flex items-center gap-2 rounded-full border-2 border-grass/50 bg-grass/10 px-7 py-4 text-lg font-bold text-grass">
                   <Check size={20} />
                   ¡Estás dentro, {firstName}!
                 </span>
               ) : (
                 <Button
                   onClick={() => setAuthOpen(true)}
-                  className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+                  className="bg-linear-to-r from-grass to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-grass/50 transition-all duration-300"
                 >
                   <Trophy size={20} className="mr-1" />
                   Empezar a jugar
@@ -429,7 +459,7 @@ const PollaMundialPage = () => {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
                 variant="outline"
-                className="border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 transition-all duration-300"
+                className="border-2 border-gold/50 text-gold font-bold text-lg px-8 py-6 hover:bg-gold/10 transition-all duration-300"
               >
                 Cómo funciona
                 <ChevronRight size={20} className="ml-1" />
@@ -459,7 +489,10 @@ const PollaMundialPage = () => {
               key={i}
               className="liquid-glass relative overflow-hidden rounded-2xl p-6 text-center border border-white/[0.06]"
             >
-              <item.icon className="mx-auto text-primary mb-3" size={28} />
+              <item.icon
+                className={cn("mx-auto mb-3", ACCENTS[i % ACCENTS.length])}
+                size={28}
+              />
               <p className="text-xs uppercase tracking-widest text-gray">
                 {item.label}
               </p>
@@ -469,7 +502,7 @@ const PollaMundialPage = () => {
         </motion.div>
       </Section>
 
-      {/* LOS GRUPOS DEL MUNDIAL (sorteo oficial) */}
+      {/* LOS GRUPOS DEL MUNDIAL (sorteo oficial, recreado en código) */}
       <Section>
         <SectionTitle
           kicker="Sorteo oficial"
@@ -477,9 +510,7 @@ const PollaMundialPage = () => {
           subtitle="Ya están definidos los 12 grupos. Colombia quedó en el Grupo K. En la polla pronosticas todos los partidos de la fase de grupos, partido por partido."
         />
         <motion.div variants={fadeUp} className="max-w-5xl mx-auto">
-          <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40">
-            <GruposMundial className="absolute inset-0 h-full w-full object-contain" />
-          </div>
+          <GruposDraw />
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
             <span className="inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold/15 px-4 py-2 font-bold text-gold">
               🇨🇴 Colombia · Grupo K
@@ -504,10 +535,15 @@ const PollaMundialPage = () => {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="liquid-glass-interactive group relative overflow-hidden rounded-2xl p-6 border border-white/[0.06] hover:border-primary/40 transition-colors"
+              className="liquid-glass-interactive group relative overflow-hidden rounded-2xl p-6 border border-white/[0.06] hover:border-white/20 transition-colors"
             >
-              <div className="w-12 h-12 rounded-xl bg-linear-to-br from-primary/20 to-secondary/20 border border-primary/30 flex items-center justify-center mb-4">
-                <step.icon className="text-primary" size={22} />
+              <div
+                className={cn(
+                  "w-12 h-12 rounded-xl border flex items-center justify-center mb-4",
+                  CHIPS[i % CHIPS.length],
+                )}
+              >
+                <step.icon className={ACCENTS[i % ACCENTS.length]} size={22} />
               </div>
               <h3 className="text-lg font-bold text-light mb-2">{step.title}</h3>
               <p className="text-gray text-sm leading-relaxed">{step.desc}</p>
@@ -531,12 +567,12 @@ const PollaMundialPage = () => {
               className={cn(
                 "relative rounded-2xl p-6 border overflow-hidden",
                 s.highlight
-                  ? "border-primary/50 liquid-glass"
+                  ? "border-gold/50 liquid-glass"
                   : "border-white/[0.06] liquid-glass-light"
               )}
             >
               {s.highlight && (
-                <span className="absolute top-3 right-3 text-[10px] uppercase tracking-widest bg-primary text-dark font-bold px-2 py-0.5 rounded-full">
+                <span className="absolute top-3 right-3 text-[10px] uppercase tracking-widest bg-gold text-dark font-bold px-2 py-0.5 rounded-full">
                   Máximo
                 </span>
               )}
@@ -550,7 +586,7 @@ const PollaMundialPage = () => {
                 <span className="text-base font-bold text-gray ml-1">pts</span>
               </div>
               <div className="flex items-center gap-2 mb-2">
-                <s.icon className="text-primary" size={18} />
+                <s.icon className={s.iconColor} size={18} />
                 <h3 className="font-bold text-light">{s.title}</h3>
               </div>
               <p className="text-gray text-sm leading-relaxed">{s.desc}</p>
@@ -568,8 +604,13 @@ const PollaMundialPage = () => {
                 variants={fadeUp}
                 className="liquid-glass-light relative overflow-hidden rounded-2xl p-6 border border-white/[0.06]"
               >
-                <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-4">
-                  <s.icon className="text-primary" size={20} />
+                <div
+                  className={cn(
+                    "w-11 h-11 rounded-xl border flex items-center justify-center mb-4",
+                    CHIPS[(i + 3) % CHIPS.length],
+                  )}
+                >
+                  <s.icon className={ACCENTS[(i + 3) % ACCENTS.length]} size={20} />
                 </div>
                 <h3 className="font-bold text-light mb-2">{s.title}</h3>
                 <p className="text-gray text-sm leading-relaxed">{s.desc}</p>
@@ -603,13 +644,18 @@ const PollaMundialPage = () => {
             <motion.div
               key={i}
               variants={fadeUp}
-              className="liquid-glass-interactive group relative overflow-hidden rounded-2xl p-6 border border-white/[0.06] hover:border-primary/40 transition-colors"
+              className="liquid-glass-interactive group relative overflow-hidden rounded-2xl p-6 border border-white/[0.06] hover:border-white/20 transition-colors"
             >
               <div className="flex items-center gap-3 mb-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary to-secondary text-sm font-black text-dark">
+                <span
+                  className={cn(
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-black text-dark",
+                    SOLIDS[i % SOLIDS.length],
+                  )}
+                >
                   {i + 1}
                 </span>
-                <step.icon className="text-primary" size={20} />
+                <step.icon className={ACCENTS[i % ACCENTS.length]} size={20} />
               </div>
               <h3 className="text-base font-bold text-light mb-2">{step.title}</h3>
               <p className="text-gray text-sm leading-relaxed">{step.desc}</p>
@@ -656,7 +702,7 @@ const PollaMundialPage = () => {
       <Section className="bg-dark-secondary/30">
         <motion.div
           variants={fadeUp}
-          className="max-w-3xl mx-auto text-center liquid-glass rounded-3xl p-10 sm:p-14 border border-primary/30 relative overflow-hidden"
+          className="max-w-3xl mx-auto text-center liquid-glass rounded-3xl p-10 sm:p-14 border border-gold/30 relative overflow-hidden"
         >
           <div className="absolute -top-16 -right-16 w-56 h-56 bg-gold/20 rounded-full blur-3xl" />
           <Big26 className="pointer-events-none absolute -bottom-6 -left-2 text-[9rem] text-white/[0.05]" />
@@ -676,7 +722,7 @@ const PollaMundialPage = () => {
           <div className="t26-num relative text-5xl text-gold sm:text-7xl leading-none">
             $500.000
           </div>
-          <p className="text-secondary text-lg font-semibold mt-3">
+          <p className="text-grass text-lg font-semibold mt-3">
             medio millón de pesos
           </p>
           <span className="inline-block mt-6 text-xs uppercase tracking-[0.3em] text-gray font-semibold">
@@ -699,8 +745,13 @@ const PollaMundialPage = () => {
               variants={fadeUp}
               className="flex gap-4 liquid-glass-light relative overflow-hidden rounded-2xl p-6 border border-white/[0.06]"
             >
-              <div className="shrink-0 w-11 h-11 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center">
-                <rule.icon className="text-primary" size={20} />
+              <div
+                className={cn(
+                  "shrink-0 w-11 h-11 rounded-xl border flex items-center justify-center",
+                  CHIPS[i % CHIPS.length],
+                )}
+              >
+                <rule.icon className={ACCENTS[i % ACCENTS.length]} size={20} />
               </div>
               <div>
                 <h3 className="font-bold text-light mb-1">{rule.title}</h3>
@@ -724,14 +775,14 @@ const PollaMundialPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {isAuthenticated ? (
-              <span className="inline-flex items-center gap-2 rounded-full border-2 border-secondary/50 bg-secondary/10 px-8 py-4 text-lg font-bold text-secondary">
+              <span className="inline-flex items-center gap-2 rounded-full border-2 border-grass/50 bg-grass/10 px-8 py-4 text-lg font-bold text-grass">
                 <Check size={20} />
                 Ya estás jugando
               </span>
             ) : (
               <Button
                 onClick={() => setAuthOpen(true)}
-                className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+                className="bg-linear-to-r from-grass to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-grass/50 transition-all duration-300"
               >
                 <Trophy size={20} className="mr-1" />
                 Empezar a jugar
@@ -740,7 +791,7 @@ const PollaMundialPage = () => {
             <Button
               asChild
               variant="outline"
-              className="border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 transition-all duration-300"
+              className="border-2 border-gold/50 text-gold font-bold text-lg px-8 py-6 hover:bg-gold/10 transition-all duration-300"
             >
               <a
                 href="https://www.instagram.com/frostbyte.col/"

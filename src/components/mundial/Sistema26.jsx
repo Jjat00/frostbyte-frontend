@@ -15,10 +15,7 @@ import { cn } from "@/lib/utils";
 
 const ASSETS = {
   emblema: "/mundial/emblema.webp", // emblema oficial sobre blanco
-  emblemaColor: "/mundial/emblema-color.webp", // emblema sobre bloques de color
   trofeo: "/mundial/trofeo.webp", // trofeo sobre negro (para mix-blend screen)
-  grupos: "/mundial/grupos.webp", // sorteo / resultados del sorteo
-  sedes: "/mundial/sedes.webp", // 16 logos de ciudades sede
 };
 
 /** Numerazo "26" geométrico (marca de agua / acento). */
@@ -78,28 +75,6 @@ export const TrofeoMundial = ({
   />
 );
 
-/** Imagen del sorteo de grupos del Mundial 2026. */
-export const GruposMundial = ({ className = "", imgClassName = "" }) => (
-  <img
-    src={ASSETS.grupos}
-    alt="Sorteo de grupos del Mundial 2026 — Colombia en el Grupo K"
-    loading="lazy"
-    decoding="async"
-    className={cn("w-full select-none object-contain", imgClassName, className)}
-  />
-);
-
-/** Tira con los 16 logos de las ciudades sede. */
-export const SedesMundial = ({ className = "" }) => (
-  <img
-    src={ASSETS.sedes}
-    alt="Las 16 ciudades sede del Mundial 2026"
-    loading="lazy"
-    decoding="async"
-    className={cn("w-full select-none object-contain", className)}
-  />
-);
-
 /**
  * Campo de color estilo póster del Mundial (bloques vibrantes morado/rojo/
  * granate/verde/lima + patrón modular + scrim de legibilidad). Capa a sangre
@@ -152,7 +127,7 @@ export const Mundial26Backdrop = ({ className = "", watermark = true }) => (
   >
     <div className="absolute -left-24 -top-24 h-72 w-72 rotate-12 rounded-[3rem] bg-purple-600/25" />
     <div className="absolute -bottom-20 -left-16 h-80 w-80 rounded-tr-full bg-grass/25" />
-    <div className="absolute -right-10 -top-16 h-64 w-64 rounded-bl-full bg-primary/20" />
+    <div className="absolute -right-10 -top-16 h-64 w-64 rounded-bl-full bg-red-600/25" />
     <div className="absolute -bottom-24 -right-20 h-72 w-72 -rotate-12 rounded-[3rem] bg-blue-600/25" />
     <div className="absolute right-[18%] top-10 h-14 w-14 rotate-6 rounded-2xl bg-gold/40" />
     <div className="absolute bottom-[22%] left-[14%] h-10 w-10 -rotate-12 rounded-xl bg-lime-400/40" />
