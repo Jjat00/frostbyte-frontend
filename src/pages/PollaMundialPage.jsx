@@ -35,6 +35,13 @@ import {
   GroupTablePreview,
   RankingPreview,
 } from "@/pages/polla/LandingPreviews";
+import {
+  MundialColorField,
+  EmblemaMundial,
+  TrofeoMundial,
+  GruposMundial,
+  Big26,
+} from "@/components/mundial/Sistema26";
 
 // Pitazo inicial del Mundial 2026 (respaldo si el backend aun no responde;
 // la hora real llega desde el torneo via usePollaTournament).
@@ -103,8 +110,8 @@ const useCountdown = (target) => {
 
 const CountdownUnit = ({ value, label }) => (
   <div className="flex flex-col items-center">
-    <div className="liquid-glass relative overflow-hidden min-w-[62px] sm:min-w-[88px] px-2.5 sm:px-3 py-3 sm:py-4 rounded-2xl border border-primary/30">
-      <span className="block text-3xl sm:text-5xl font-black bg-linear-to-b from-light to-secondary bg-clip-text text-transparent tabular-nums">
+    <div className="liquid-glass relative overflow-hidden min-w-[62px] sm:min-w-[88px] px-2.5 sm:px-3 py-3 sm:py-4 rounded-2xl border border-secondary/30">
+      <span className="t26-num block text-3xl sm:text-5xl bg-linear-to-b from-light to-secondary bg-clip-text text-transparent">
         {String(value).padStart(2, "0")}
       </span>
     </div>
@@ -238,8 +245,6 @@ const BRACKET_STEPS = [
   },
 ];
 
-const FLAGS = ["🇦🇷", "🇧🇷", "🇨🇴", "🇫🇷", "🇪🇸", "🇩🇪", "🇲🇽", "🇵🇹", "🇺🇾", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇳🇱", "🇺🇸"];
-
 const PollaMundialPage = () => {
   const { data: tournament } = usePollaTournament();
   const kickoff = tournament?.kickoff
@@ -277,7 +282,7 @@ const PollaMundialPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-dark text-light overflow-x-hidden">
+    <div className="theme-26 min-h-screen bg-dark text-light overflow-x-hidden">
       <Helmet>
         <title>Polla Mundialista 2026 | Frostbyte</title>
         <meta
@@ -291,7 +296,7 @@ const PollaMundialPage = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link
             to="/"
-            className="flex items-center gap-2 text-sm font-bold tracking-widest text-light hover:text-primary transition-colors"
+            className="flex items-center gap-2 rounded-md text-sm font-bold tracking-widest text-light transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
           >
             <ArrowLeft size={18} />
             FROSTBYTE
@@ -339,36 +344,8 @@ const PollaMundialPage = () => {
         ref={heroRef}
         className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16"
       >
-        <div className="absolute inset-0 opacity-25 pointer-events-none">
-          <div className="absolute top-24 left-8 w-96 h-96 bg-primary rounded-full filter blur-[130px] animate-pulse" />
-          <div
-            className="absolute bottom-16 right-8 w-96 h-96 bg-secondary rounded-full filter blur-[130px] animate-pulse"
-            style={{ animationDelay: "1s" }}
-          />
-        </div>
-
-        {/* Banderas flotantes de fondo */}
-        <div className="absolute inset-0 pointer-events-none select-none">
-          {FLAGS.map((flag, i) => (
-            <motion.span
-              key={i}
-              className="absolute text-2xl sm:text-4xl opacity-20"
-              style={{
-                left: `${(i * 8.3 + 4) % 92}%`,
-                top: `${(i * 37) % 80 + 8}%`,
-              }}
-              animate={{ y: [0, -14, 0] }}
-              transition={{
-                duration: 4 + (i % 4),
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.3,
-              }}
-            >
-              {flag}
-            </motion.span>
-          ))}
-        </div>
+        {/* Campo de color estilo póster del Mundial */}
+        <MundialColorField scrim="full" />
 
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
@@ -377,6 +354,10 @@ const PollaMundialPage = () => {
             transition={{ duration: 0.7, ease: "easeOut" }}
             className="max-w-4xl mx-auto text-center space-y-8"
           >
+            <div className="flex justify-center">
+              <EmblemaMundial className="h-24 sm:h-28" loading="eager" />
+            </div>
+
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider">
               <Trophy size={16} />
               MUNDIAL 2026 · FROSTBYTE
@@ -397,13 +378,13 @@ const PollaMundialPage = () => {
 
             {/* Premio destacado en el hero (visible sin scroll) */}
             <div className="flex justify-center">
-              <div className="inline-flex items-center gap-4 sm:gap-5 rounded-2xl border border-primary/40 bg-linear-to-r from-primary/10 via-dark-secondary/40 to-secondary/10 px-6 py-4 sm:px-8 sm:py-5 backdrop-blur-sm shadow-xl shadow-primary/10">
-                <Trophy className="text-primary shrink-0" size={40} />
+              <div className="inline-flex items-center gap-4 sm:gap-5 rounded-2xl border border-gold/40 bg-linear-to-r from-gold/10 via-dark-secondary/40 to-grass/10 px-6 py-4 sm:px-8 sm:py-5 backdrop-blur-sm shadow-xl shadow-gold/10">
+                <Trophy className="text-gold shrink-0" size={40} />
                 <div className="text-left">
                   <span className="block text-[10px] sm:text-xs uppercase tracking-[0.25em] text-gray font-bold">
                     Premio al campeón
                   </span>
-                  <span className="block text-4xl sm:text-6xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent leading-none">
+                  <span className="t26-num block text-4xl text-gold sm:text-6xl leading-none">
                     $500.000
                   </span>
                   <span className="block text-sm sm:text-base font-semibold text-secondary mt-0.5">
@@ -485,6 +466,28 @@ const PollaMundialPage = () => {
               <p className="text-lg font-bold text-light mt-1">{item.value}</p>
             </div>
           ))}
+        </motion.div>
+      </Section>
+
+      {/* LOS GRUPOS DEL MUNDIAL (sorteo oficial) */}
+      <Section>
+        <SectionTitle
+          kicker="Sorteo oficial"
+          title="Así quedaron los grupos del Mundial 2026"
+          subtitle="Ya están definidos los 12 grupos. Colombia quedó en el Grupo K. En la polla pronosticas todos los partidos de la fase de grupos, partido por partido."
+        />
+        <motion.div variants={fadeUp} className="max-w-5xl mx-auto">
+          <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/40">
+            <GruposMundial className="absolute inset-0 h-full w-full object-contain" />
+          </div>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm">
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold/15 px-4 py-2 font-bold text-gold">
+              🇨🇴 Colombia · Grupo K
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 font-semibold text-gray">
+              48 selecciones · 12 grupos · 104 partidos
+            </span>
+          </div>
         </motion.div>
       </Section>
 
@@ -655,8 +658,14 @@ const PollaMundialPage = () => {
           variants={fadeUp}
           className="max-w-3xl mx-auto text-center liquid-glass rounded-3xl p-10 sm:p-14 border border-primary/30 relative overflow-hidden"
         >
-          <div className="absolute -top-16 -right-16 w-56 h-56 bg-primary/20 rounded-full blur-3xl" />
-          <Trophy className="mx-auto text-primary mb-5" size={48} />
+          <div className="absolute -top-16 -right-16 w-56 h-56 bg-gold/20 rounded-full blur-3xl" />
+          <Big26 className="pointer-events-none absolute -bottom-6 -left-2 text-[9rem] text-white/[0.05]" />
+          {/* Halo oscuro detrás del trofeo: el mix-blend screen necesita fondo
+              oscuro para fundir el negro de la imagen y que el trofeo "flote". */}
+          <div className="relative mx-auto mb-4 w-fit">
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[150%] w-[150%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#0a0b14_55%,transparent_72%)]" />
+            <TrofeoMundial className="relative h-32 w-auto sm:h-40" />
+          </div>
           <h2 className="text-3xl sm:text-4xl font-black text-light mb-3">
             El premio
           </h2>
@@ -664,7 +673,7 @@ const PollaMundialPage = () => {
             El campeón de la Polla Mundialista —quien más puntos acumule al
             final del Mundial— se lleva:
           </p>
-          <div className="text-5xl sm:text-7xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent leading-none">
+          <div className="t26-num relative text-5xl text-gold sm:text-7xl leading-none">
             $500.000
           </div>
           <p className="text-secondary text-lg font-semibold mt-3">
