@@ -130,7 +130,7 @@ const HeroSection = () => {
             b = Math.round(b * (1 - ease) + 212 * ease);
             const scale = 1 + ease * 0.5;
             ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Courier New', monospace`;
-            ctx.shadowColor = `rgba(255, 0, 212, ${ease * 0.7})`;
+            ctx.shadowColor = `rgba(30,158,90, ${ease * 0.7})`;
             ctx.shadowBlur = ease * 16;
           }
 
@@ -387,7 +387,7 @@ const AIFeaturesSection = () => (
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="group"
           >
-            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col transition-all duration-500 hover:border-primary/40 hover:shadow-[0_8px_32px_rgba(255,0,212,0.15)] hover:-translate-y-1">
+            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col transition-all duration-500 hover:border-primary/40 hover:shadow-[0_8px_32px_rgba(30,158,90,0.15)] hover:-translate-y-1">
               <div
                 className={`w-14 h-14 bg-linear-to-br ${feature.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}
               >
@@ -503,7 +503,7 @@ const PlatformSection = () => (
             transition={{ duration: 0.6, delay: index * 0.1 }}
             className="group"
           >
-            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-start transition-all duration-300 hover:border-primary/40 hover:shadow-[0_8px_32px_rgba(255,0,212,0.15)]">
+            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-start transition-all duration-300 hover:border-primary/40 hover:shadow-[0_8px_32px_rgba(30,158,90,0.15)]">
               <div
                 className={`w-16 h-16 bg-linear-to-br ${
                   feature.color === "primary"
@@ -636,7 +636,7 @@ const DemoSection = () => (
             transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
             className="absolute -right-4 top-1/4 hidden lg:block"
           >
-            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-primary/30 rounded-xl p-4 shadow-[0_8px_32px_rgba(255,0,212,0.15)]">
+            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-primary/30 rounded-xl p-4 shadow-[0_8px_32px_rgba(30,158,90,0.15)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
                   <Image size={18} className="text-primary" />
@@ -654,7 +654,7 @@ const DemoSection = () => (
             transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
             className="absolute -left-4 bottom-1/4 hidden lg:block"
           >
-            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-secondary/30 rounded-xl p-4 shadow-[0_8px_32px_rgba(0,224,255,0.15)]">
+            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-secondary/30 rounded-xl p-4 shadow-[0_8px_32px_rgba(242,197,61,0.15)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-secondary/20 rounded-lg flex items-center justify-center">
                   <Brain size={18} className="text-secondary" />

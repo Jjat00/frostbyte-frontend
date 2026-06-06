@@ -82,33 +82,46 @@ export const TrofeoMundial = ({
  *
  * @param {"left"|"full"|"none"} scrim  Oscurecido para legibilidad del texto.
  */
-export const MundialColorField = ({ className = "", scrim = "left" }) => (
+export const MundialColorField = ({
+  className = "",
+  scrim = "soft",
+  watermark = true,
+}) => (
   <div
     aria-hidden
     className={cn(
-      "pointer-events-none absolute inset-0 overflow-hidden",
+      "pointer-events-none absolute inset-0 overflow-hidden bg-[#2b0f33]",
       className,
     )}
   >
-    {/* Bloques de color (cuadrados redondeados + cuartos de círculo) */}
-    <div className="absolute -left-[10%] -top-[18%] h-[70vh] w-[42vw] rotate-6 rounded-[4rem] bg-purple-600/80" />
-    <div className="absolute left-[20%] -top-[12%] h-[100vh] w-[44vw] -rotate-3 rounded-[6rem] bg-red-600/80" />
-    <div className="absolute -top-[22%] right-[24%] h-[48vh] w-[26vw] rounded-[3rem] bg-[#7d1622]/85" />
-    <div className="absolute -right-[6%] -top-[14%] h-[52vh] w-[28vw] rounded-bl-[100%] bg-green-600/85" />
-    <div className="absolute -right-[12%] bottom-[-12%] h-[85vh] w-[28vw] rounded-tl-[6rem] bg-lime-400/80" />
-    <div className="absolute bottom-[-10%] left-[16%] h-[42vh] w-[24vw] rounded-[3rem] bg-blue-600/70" />
+    {/* Grandes regiones de color tipo afiche FIFA 2026 (morado, rojo, granate,
+        verde, lima) — brillantes y orgánicas, cubriendo toda la superficie. */}
+    <div className="absolute -left-[12%] -top-[22%] h-[75vh] w-[52vw] rotate-3 rounded-[42%] bg-purple-600" />
+    <div className="absolute left-[20%] -top-[20%] h-[125vh] w-[52vw] -rotate-6 rounded-[44%] bg-red-600" />
+    <div className="absolute -left-[14%] top-[28%] h-[88vh] w-[58vw] rounded-[46%] bg-[#7d1622]" />
+    <div className="absolute -right-[14%] -top-[16%] h-[68vh] w-[44vw] rounded-[46%] bg-green-600" />
+    <div className="absolute -right-[16%] bottom-[-22%] h-[95vh] w-[46vw] rounded-[44%] bg-lime-400" />
 
-    {/* Patrón modular tenue sobre los bloques */}
-    <div className="t26-pattern absolute inset-0 opacity-70" />
+    {/* Patrón modular sobre los bloques */}
+    <div className="t26-pattern absolute inset-0 opacity-50" />
 
-    {/* Scrim para que el texto del contenido sea legible */}
-    {scrim === "left" && (
-      <div className="absolute inset-0 bg-linear-to-r from-dark via-dark/85 to-dark/35" />
+    {/* Numerazo "26" gigante de fondo (firma del Mundial) */}
+    {watermark && (
+      <Big26 className="absolute right-[1%] top-1/2 -translate-y-1/2 text-[clamp(20rem,62vh,55rem)] leading-none text-white/12" />
     )}
-    {scrim === "full" && <div className="absolute inset-0 bg-dark/60" />}
 
-    {/* Fundido inferior hacia la base oscura */}
-    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-dark to-transparent" />
+    {/* Scrim para legibilidad del contenido (manteniendo la vibra del afiche) */}
+    {scrim === "left" && (
+      <div className="absolute inset-0 bg-linear-to-r from-dark/90 via-dark/55 to-transparent" />
+    )}
+    {scrim === "center" && (
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse,#0a0b14cc_0%,#0a0b1473_45%,transparent_78%)]" />
+    )}
+    {scrim === "soft" && <div className="absolute inset-0 bg-dark/30" />}
+    {scrim === "full" && <div className="absolute inset-0 bg-dark/55" />}
+
+    {/* Fundido inferior hacia la base oscura de la página */}
+    <div className="absolute inset-x-0 bottom-0 h-1/4 bg-linear-to-t from-dark to-transparent" />
   </div>
 );
 

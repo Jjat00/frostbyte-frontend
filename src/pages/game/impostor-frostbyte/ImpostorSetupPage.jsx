@@ -281,7 +281,7 @@ const ImpostorSetupPage = () => {
               onClick={handleStartGame}
               disabled={!canStart || isLoading}
               size="lg"
-              className="w-full bg-gradient-to-r from-red-500 via-primary to-secondary text-white font-bold text-lg py-6 disabled:opacity-40"
+              className="w-full bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg py-6 disabled:opacity-40"
             >
               {isLoading ? (
                 <span className="animate-pulse">Generando palabras...</span>

@@ -241,7 +241,7 @@ const MusicVisualizer = ({ isPlaying = false }) => {
       // atmosphere glow around sphere
       const glowAlpha = 0.04 + energy * 0.08 + beat * 0.03;
       const grad = ctx.createRadialGradient(cx, cy, sphereRadius * 0.5, cx, cy, sphereRadius * 1.8);
-      grad.addColorStop(0, `rgba(255, 0, 212, ${glowAlpha})`);
+      grad.addColorStop(0, `rgba(30,158,90, ${glowAlpha})`);
       grad.addColorStop(0.5, `rgba(120, 0, 200, ${glowAlpha * 0.5})`);
       grad.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = grad;

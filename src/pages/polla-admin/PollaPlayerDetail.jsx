@@ -58,7 +58,7 @@ const PollaPlayerDetail = () => {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,0,212,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,224,255,0.1) 1px, transparent 1px)",
+              "linear-gradient(rgba(30,158,90,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(242,197,61,0.1) 1px, transparent 1px)",
             backgroundSize: "50px 50px",
           }}
         />

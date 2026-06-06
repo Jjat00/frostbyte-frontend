@@ -395,7 +395,7 @@ const PollaMundialPage = () => {
 
             <h1 className="text-[clamp(2.2rem,8.5vw,5.25rem)] font-black leading-[1.02] pb-[0.08em]">
               <span className="block text-light">POLLA</span>
-              <span className="block bg-linear-to-r from-gold via-grass to-secondary bg-clip-text text-transparent">
+              <span className="block bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
                 MUNDIALISTA
               </span>
             </h1>

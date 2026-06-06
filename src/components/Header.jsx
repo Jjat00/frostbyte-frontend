@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useActiveCategories } from "@/hooks";
+import { EmblemaMundial } from "@/components/mundial/Sistema26";
 
 const ListItem = React.forwardRef(
   ({ className, title, children, ...props }, ref) => {
@@ -158,9 +159,14 @@ const Header = () => {
               height={40}
               className="w-10 h-10 object-contain"
             />
-            <span className="text-2xl font-bold text-light tracking-wider">
+            <span className="t26-display text-2xl font-bold text-light tracking-wider">
               FROSTBYTE
             </span>
+            <EmblemaMundial
+              className="ml-1 hidden h-9 p-1 sm:inline-flex"
+              loading="eager"
+              alt="Mundial 2026"
+            />
           </motion.a>
 
           <div className="hidden md:flex items-center">
@@ -226,7 +232,7 @@ const Header = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       to="/polla-mundial"
-                      className="ml-1 inline-flex items-center gap-1.5 rounded-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm tracking-wide whitespace-nowrap shadow-[0_0_18px_rgba(255,0,212,0.35)] hover:shadow-[0_0_26px_rgba(255,0,212,0.55)] transition-all duration-300"
+                      className="ml-1 inline-flex items-center gap-1.5 rounded-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm tracking-wide whitespace-nowrap shadow-[0_0_18px_rgba(242,197,61,0.35)] hover:shadow-[0_0_26px_rgba(242,197,61,0.55)] transition-all duration-300"
                     >
                       🏆 Polla Mundial
                     </Link>
@@ -252,7 +258,7 @@ const Header = () => {
                   .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_rgba(255,0,212,0.4)] transition-all duration-300"
+              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_rgba(242,197,61,0.4)] transition-all duration-300"
             >
               Ver Carta
             </Button>
@@ -275,7 +281,7 @@ const Header = () => {
           >
             <Link
               to="/polla-mundial"
-              className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-center shadow-[0_0_20px_rgba(255,0,212,0.3)]"
+              className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-center shadow-[0_0_20px_rgba(242,197,61,0.3)]"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               🏆 Polla Mundialista · Gana $500.000
@@ -383,7 +389,7 @@ const Header = () => {
                   ?.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_rgba(255,0,212,0.2)]"
+              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_rgba(242,197,61,0.2)]"
             >
               Ver Carta
             </Button>

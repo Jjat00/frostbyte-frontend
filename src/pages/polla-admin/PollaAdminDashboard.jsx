@@ -24,8 +24,8 @@ const fmt = (n) => new Intl.NumberFormat("es-CO").format(n || 0);
 // ── Tarjeta KPI ──────────────────────────────────────────────────────────────
 const StatCard = ({ icon: Icon, label, value, subtitle, accent = "secondary", delay = 0 }) => {
   const palettes = {
-    secondary: { border: "border-secondary/30", icon: "text-secondary drop-shadow-[0_0_10px_rgba(0,224,255,0.6)]", bg: "from-secondary/15 to-secondary/5", glow: "hover:shadow-[0_0_30px_rgba(0,224,255,0.2)]" },
-    primary: { border: "border-primary/30", icon: "text-primary drop-shadow-[0_0_10px_rgba(255,0,212,0.6)]", bg: "from-primary/15 to-primary/5", glow: "hover:shadow-[0_0_30px_rgba(255,0,212,0.2)]" },
+    secondary: { border: "border-secondary/30", icon: "text-secondary drop-shadow-[0_0_10px_rgba(242,197,61,0.6)]", bg: "from-secondary/15 to-secondary/5", glow: "hover:shadow-[0_0_30px_rgba(242,197,61,0.2)]" },
+    primary: { border: "border-primary/30", icon: "text-primary drop-shadow-[0_0_10px_rgba(30,158,90,0.6)]", bg: "from-primary/15 to-primary/5", glow: "hover:shadow-[0_0_30px_rgba(30,158,90,0.2)]" },
     gold: { border: "border-amber-400/30", icon: "text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,0.6)]", bg: "from-amber-400/15 to-amber-400/5", glow: "hover:shadow-[0_0_30px_rgba(251,191,36,0.2)]" },
     green: { border: "border-emerald-400/30", icon: "text-emerald-300 drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]", bg: "from-emerald-400/15 to-emerald-400/5", glow: "hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]" },
   };
@@ -37,7 +37,7 @@ const StatCard = ({ icon: Icon, label, value, subtitle, accent = "secondary", de
       transition={{ duration: 0.4, delay }}
       className={`relative overflow-hidden bg-gradient-to-br ${c.bg} border ${c.border} rounded-2xl p-4 md:p-5 transition-all duration-500 ${c.glow}`}
     >
-      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,rgba(0,224,255,0.3)_1px,transparent_1px),linear-gradient(rgba(255,0,212,0.3)_1px,transparent_1px)] bg-[size:24px_24px]" />
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,rgba(242,197,61,0.3)_1px,transparent_1px),linear-gradient(rgba(30,158,90,0.3)_1px,transparent_1px)] bg-[size:24px_24px]" />
       <div className="relative">
         <div className="flex items-center justify-between mb-2">
           <p className="text-gray text-xs md:text-sm font-medium">{label}</p>
@@ -117,7 +117,7 @@ const PollaAdminDashboard = () => {
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,0,212,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,224,255,0.1) 1px, transparent 1px)",
+              "linear-gradient(rgba(30,158,90,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(242,197,61,0.1) 1px, transparent 1px)",
             backgroundSize: "50px 50px",
           }}
         />

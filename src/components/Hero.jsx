@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { ChevronDown, Instagram, Trophy, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { env } from "@/config/env";
-import { useInViewport, useIsMobile } from "@/hooks";
+import { MundialColorField, EmblemaMundial } from "@/components/mundial/Sistema26";
 
 gsap.registerPlugin(useGSAP);
 
@@ -26,11 +26,6 @@ const socialLinks = [
     label: "TikTok",
   },
 ];
-
-// "Byte" in binary: B=01000010 y=01111001 t=01110100 e=01100101
-const BYTE_BINARY = "01000010011110010111010001100101";
-
-const FROSTBYTE_LETTERS = ["F", "R", "O", "S", "T", "B", "Y", "T", "E"];
 
 const DAY_NAMES = [
   "DOMINGO",
@@ -73,126 +68,9 @@ const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
   const sectionRef = useRef(null);
-  const canvasRef = useRef(null);
-  const isInView = useInViewport(sectionRef);
-  const isMobile = useIsMobile();
   const greeting = getGreeting();
   const dayName = DAY_NAMES[new Date().getDay()];
   const dateStrip = getDateStrip();
-
-  // Binary grid canvas animation — pausada cuando la seccion no esta en viewport
-  useEffect(() => {
-    if (!isInView) return;
-    const canvas = canvasRef.current;
-    const section = sectionRef.current;
-    if (!canvas || !section) return;
-    const ctx = canvas.getContext("2d");
-    let rafId;
-    const mouse = { x: -9999, y: -9999 };
-    const COL_W = 22;
-    const ROW_H = 20;
-    const FONT_SIZE = 12;
-    const HOVER_RADIUS = 140;
-    let flickerPhases = [];
-    let cols = 0;
-    let rows = 0;
-    const buildGrid = () => {
-      cols = Math.ceil(canvas.width / COL_W) + 1;
-      rows = Math.ceil(canvas.height / ROW_H) + 1;
-      const total = cols * rows;
-      flickerPhases = new Float32Array(total);
-      for (let i = 0; i < total; i++) {
-        flickerPhases[i] = Math.random() * Math.PI * 2;
-      }
-    };
-    const resize = () => {
-      canvas.width = section.offsetWidth;
-      canvas.height = section.offsetHeight;
-      buildGrid();
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    const handleMouseMove = (e) => {
-      const rect = section.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-    };
-    const handleMouseLeave = () => {
-      mouse.x = -9999;
-      mouse.y = -9999;
-    };
-    section.addEventListener("mousemove", handleMouseMove);
-    section.addEventListener("mouseleave", handleMouseLeave);
-    ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const t = Date.now() * 0.001;
-      for (let col = 0; col < cols; col++) {
-        for (let row = 0; row < rows; row++) {
-          const idx = col * rows + row;
-          const x = col * COL_W + COL_W / 2;
-          const y = row * ROW_H + ROW_H / 2;
-          const digit = BYTE_BINARY[idx % BYTE_BINARY.length];
-          const phase = flickerPhases[idx];
-          const flicker = 0.5 + 0.5 * Math.sin(t * 0.8 + phase);
-          let alpha = 0.06 + flicker * 0.12;
-          let r = 255,
-            g = 255,
-            b = 255;
-          const colorCycle = Math.sin(t * 0.5 + phase * 1.5);
-          if (colorCycle > 0.3) {
-            r = 180;
-            g = 240;
-            b = 255;
-          } else if (colorCycle < -0.3) {
-            r = 255;
-            g = 180;
-            b = 240;
-          }
-          const dx = x - mouse.x;
-          const dy = y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          let drawX = x;
-          let drawY = y;
-          if (dist < HOVER_RADIUS) {
-            const intensity = 1 - dist / HOVER_RADIUS;
-            const ease = intensity * intensity;
-            const waveFreq = 0.06;
-            const waveAmp = 8;
-            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
-            const angle = Math.atan2(dy, dx);
-            drawX += Math.cos(angle) * wave;
-            drawY += Math.sin(angle) * wave;
-            alpha = Math.min(1, alpha + ease * 0.85);
-            r = Math.round(r * (1 - ease) + 255 * ease);
-            g = Math.round(g * (1 - ease) + 0 * ease);
-            b = Math.round(b * (1 - ease) + 212 * ease);
-            const scale = 1 + ease * 0.5;
-            ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Courier New', monospace`;
-            ctx.shadowColor = `rgba(255, 0, 212, ${ease * 0.7})`;
-            ctx.shadowBlur = ease * 16;
-          }
-          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-          ctx.fillText(digit, drawX, drawY);
-          if (dist < HOVER_RADIUS) {
-            ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
-            ctx.shadowColor = "transparent";
-            ctx.shadowBlur = 0;
-          }
-        }
-      }
-      rafId = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => {
-      section.removeEventListener("mousemove", handleMouseMove);
-      section.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(rafId);
-    };
-  }, [isInView]);
 
   useEffect(() => {
     const today = localDateKey();
@@ -240,15 +118,11 @@ const Hero = () => {
     fetchMotivationalPhrase();
   }, []);
 
-  // GSAP entrance animations
+  // Rebote sutil del indicador de scroll.
   useGSAP(
     () => {
       const section = sectionRef.current;
       if (!section) return;
-
-      // El contenido del hero aparece de golpe, sin animaciones de entrada
-      // (ni stagger del título ni revelado escalonado de los bloques).
-      // Solo conservamos el rebote sutil del indicador de scroll.
       const scrollIndicator = section.querySelector(".hero-scroll-indicator");
       if (scrollIndicator) {
         gsap.to(scrollIndicator, {
@@ -268,31 +142,21 @@ const Hero = () => {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      <div className="absolute inset-0 backdrop-blur-xl bg-black/[0.3]" />
-      <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
-      {!isMobile && (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 pointer-events-none"
-        />
-      )}
-
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>
-        <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px] animate-pulse"
-          style={{ animationDelay: "1s" }}
-        ></div>
-      </div>
+      {/* Fondo estilo póster del Mundial (bloques de color + patrón + "26") */}
+      <MundialColorField scrim="center" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center space-y-8 pb-16">
+        <div className="max-w-4xl mx-auto text-center space-y-7 pb-16">
+          {/* Emblema oficial del Mundial */}
+          <div className="flex justify-center">
+            <EmblemaMundial className="h-24 sm:h-32" loading="eager" />
+          </div>
+
           {/* Badge */}
           <div>
-            <span className="hero-badge inline-block px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap">
-              BEBIDAS HELADAS · CUMBAL, NARIÑO
+            <span className="hero-badge inline-flex items-center gap-2 px-4 py-2 bg-gold/10 border border-gold/40 rounded-full text-gold text-xs sm:text-sm font-bold tracking-wider whitespace-nowrap">
+              <Trophy size={15} />
+              BEBIDAS HELADAS · MUNDIAL 2026 · CUMBAL
             </span>
           </div>
 
@@ -301,7 +165,7 @@ const Hero = () => {
             <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-white/70">
               {greeting}
             </span>
-            <span className="text-base sm:text-lg font-bold tracking-wider uppercase text-primary">
+            <span className="text-base sm:text-lg font-bold tracking-wider uppercase text-secondary">
               {dayName}
             </span>
             <div className="hero-subtitle flex items-center gap-4">
@@ -309,7 +173,7 @@ const Hero = () => {
                 <span
                   key={i}
                   className={`text-xs sm:text-sm font-medium ${
-                    d.isCurrent ? "text-primary" : "text-white/30"
+                    d.isCurrent ? "text-secondary" : "text-white/30"
                   }`}
                 >
                   {String(d.day).padStart(2, "0")}
@@ -319,19 +183,11 @@ const Hero = () => {
           </div>
 
           {/* Headline */}
-          <h1 className="text-[clamp(2.8rem,11vw,9rem)] font-black text-light leading-none tracking-tight w-full">
-            <span className="inline-flex justify-center" aria-label="FROSTBYTE">
-              {FROSTBYTE_LETTERS.map((letter, i) => (
-                <span
-                  key={i}
-                  className="hero-title-letter inline-block"
-                  aria-hidden="true"
-                >
-                  {letter}
-                </span>
-              ))}
+          <h1 className="w-full text-center font-black text-light leading-none tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)]">
+            <span className="block whitespace-nowrap text-[clamp(2.3rem,10vw,8.5rem)]">
+              FROSTBYTE
             </span>
-            <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest mt-2">
+            <span className="mt-2 block bg-linear-to-r from-secondary to-grass bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest">
               CUMBAL, NARIÑO
             </span>
           </h1>
@@ -339,10 +195,10 @@ const Hero = () => {
           {/* Frase motivacional */}
           {!isLoadingPhrase && motivationalPhrase && (
             <div className="hero-phrase max-w-2xl mx-auto text-center">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-gold font-bold">
                 Para hoy
               </p>
-              <div className="w-16 h-[2px] bg-linear-to-r from-primary to-secondary mx-auto mt-2 mb-4" />
+              <div className="w-16 h-[2px] bg-linear-to-r from-gold to-grass mx-auto mt-2 mb-4" />
               <p className="text-secondary text-base sm:text-lg md:text-xl leading-relaxed font-medium italic">
                 &ldquo;{motivationalPhrase}&rdquo;
               </p>
@@ -350,7 +206,7 @@ const Hero = () => {
           )}
 
           {/* Descripción */}
-          <p className="hero-description text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
+          <p className="hero-description text-light/85 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
             Granizados, frappés, cocteles, shots y micheladas con amigos o en
             familia. Bebidas heladas premium con un estilo único en Cumbal,
             Nariño.
@@ -360,15 +216,15 @@ const Hero = () => {
           <div className="flex justify-center">
             <Link
               to="/polla-mundial"
-              className="hero-cta-btn group relative w-full max-w-xl flex flex-col gap-3 px-5 sm:px-7 py-5 rounded-2xl bg-linear-to-r from-primary via-violet-500 to-secondary text-black overflow-hidden shadow-2xl shadow-primary/50 hover:shadow-primary/70 transition-all duration-300 hover:scale-[1.02]"
+              className="hero-cta-btn group relative w-full max-w-xl flex flex-col gap-3 px-5 sm:px-7 py-5 rounded-2xl bg-linear-to-r from-grass to-gold text-dark overflow-hidden shadow-2xl shadow-grass/40 hover:shadow-gold/50 transition-all duration-300 hover:scale-[1.02]"
             >
               {/* Glow / shimmer + anillo */}
               <span className="absolute inset-0 bg-linear-to-r from-white/0 via-white/40 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none" />
-              <span className="absolute -inset-1 rounded-2xl ring-2 ring-primary/60 animate-pulse pointer-events-none" />
+              <span className="absolute -inset-1 rounded-2xl ring-2 ring-gold/60 animate-pulse pointer-events-none" />
 
               {/* Fila 1: identidad de la polla */}
               <div className="relative flex items-center gap-3 sm:gap-4 w-full">
-                <div className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center">
+                <div className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-dark/15 backdrop-blur-sm flex items-center justify-center">
                   <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <div className="flex-1 text-left">
@@ -383,11 +239,11 @@ const Hero = () => {
               </div>
 
               {/* Fila 2: premio destacado */}
-              <div className="relative flex items-center justify-center gap-2 sm:gap-3 w-full border-t border-black/20 pt-3">
+              <div className="relative flex items-center justify-center gap-2 sm:gap-3 w-full border-t border-dark/20 pt-3">
                 <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wide">
                   Gana
                 </span>
-                <span className="text-3xl sm:text-4xl font-black tracking-tight leading-none">
+                <span className="t26-num text-3xl sm:text-4xl tracking-tight leading-none">
                   $500.000
                 </span>
                 <span className="text-xs sm:text-sm font-bold uppercase tracking-wide">
@@ -407,7 +263,7 @@ const Hero = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                className="hero-social-link flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/40 rounded-full text-primary hover:from-primary hover:to-secondary hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-300"
+                className="hero-social-link flex items-center gap-2 px-4 py-2 bg-linear-to-r from-grass/10 to-gold/10 border border-gold/40 rounded-full text-gold hover:from-grass hover:to-gold hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(242,197,61,0.4)] transition-all duration-300"
               >
                 <social.icon size={20} />
                 <span className="text-sm font-semibold">{social.label}</span>
@@ -419,7 +275,7 @@ const Hero = () => {
 
       {/* Scroll indicator */}
       <div className="hero-scroll-indicator absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <ChevronDown className="text-primary" size={40} />
+        <ChevronDown className="text-gold" size={40} />
       </div>
     </section>
   );

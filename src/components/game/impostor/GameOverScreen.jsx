@@ -61,7 +61,7 @@ const GameOverScreen = () => {
             }}
             className="absolute left-1/2 w-3 h-3 rounded-sm"
             style={{
-              backgroundColor: ['#ff00d4', '#00e0ff', '#facc15', '#a855f7', '#ef4444'][i % 5],
+              backgroundColor: ['#1e9e5a', '#f2c53d', '#ef4444', '#a855f7', '#3b82f6'][i % 5],
             }}
           />
         ))}
