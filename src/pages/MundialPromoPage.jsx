@@ -115,14 +115,14 @@ const MundialPromoPage = () => {
             100% Gratis · Mundial 2026
           </span>
 
-          <h1 className="mt-5 leading-[0.92] tracking-tight">
-            <span className="block text-[clamp(1.5rem,4vw,2.5rem)] text-light">
+          <h1 className="mt-5 leading-[0.9] tracking-tight">
+            <span className="block text-[clamp(1.5rem,4.5vw,4rem)] font-black uppercase text-light">
               Gánate
             </span>
-            <span className="t26-num block whitespace-nowrap text-[clamp(2.6rem,7vw,4.75rem)] text-gold drop-shadow-[0_4px_16px_rgba(0,0,0,0.65)]">
+            <span className="t26-num block whitespace-nowrap text-[clamp(2.75rem,9vw,11rem)] text-gold drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)] drop-shadow-[0_0_45px_rgba(242,197,61,0.35)]">
               $500.000
             </span>
-            <span className="mt-1 block text-[clamp(1rem,3vw,1.9rem)] text-light">
+            <span className="mt-1 block text-[clamp(1.1rem,3.2vw,2.75rem)] font-black uppercase text-light">
               en el Mundial
             </span>
           </h1>
