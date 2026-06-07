@@ -388,30 +388,30 @@ html {
   --t26-pattern: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Crect x='4' y='4' width='18' height='18' rx='3'/%3E%3Cpath d='M28 4h18v18a18 18 0 0 0-18-18z'/%3E%3Crect x='4' y='30' width='18' height='18' rx='3'/%3E%3Cpath d='M52 30v18H34a18 18 0 0 1 18-18z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Títulos hero y display: geométrico expandido, energía de afiche */
+/* Títulos hero y display: geométrico PESADO de ancho normal (Black), como los
+   numerales gordos y redondeados del emblema oficial "26" — no expandido. */
 .theme-26 h1,
 .theme-26 .t26-display {
   font-family: "Archivo", sans-serif;
-  font-stretch: 125%;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
-/* Encabezados secundarios: Archivo en negrita pero SIN expandir, para no
-   romper layouts densos (tablas/formularios del panel) con el skin global. */
+/* Encabezados secundarios: Archivo extra-negrita (la identidad real prioriza
+   pesos altos para dar dinamismo), ancho normal para no romper layouts densos. */
 .theme-26 h2,
 .theme-26 h3 {
   font-family: "Archivo", sans-serif;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-/* El numerazo "26" como elemento gráfico (máscara/marco/acento) */
+/* El numerazo "26" como elemento gráfico (máscara/marco/acento): Black, ancho
+   normal y muy apretado, como el emblema real. */
 .t26-num {
   font-family: "Archivo", sans-serif;
-  font-stretch: 125%;
   font-weight: 900;
   line-height: 0.82;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
 }
 
