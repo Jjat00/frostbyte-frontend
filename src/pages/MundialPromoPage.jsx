@@ -35,7 +35,7 @@ const STEPS = [
     icon: Smartphone,
     title: "Entra gratis",
     desc: "Escanea el código con la cámara de tu celular y entra con tu cuenta de Google. Sin pagar, sin contraseñas.",
-    block: "bg-purple-600",
+    block: "bg-blue-600",
   },
   {
     icon: Target,
@@ -93,9 +93,18 @@ const MundialPromoPage = () => {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <Link
             to="/"
-            className="t26-display rounded-md text-lg font-black tracking-[0.18em] text-light transition-colors hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
+            className="flex items-center gap-2.5 rounded-md transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-dark"
           >
-            FROSTBYTE
+            <img
+              src="/logo.png"
+              alt="Frostbyte"
+              width={44}
+              height={44}
+              className="h-10 w-10 shrink-0 object-contain sm:h-11 sm:w-11"
+            />
+            <span className="t26-display text-xl font-black tracking-[0.16em] text-light sm:text-2xl">
+              FROSTBYTE
+            </span>
           </Link>
           <EmblemaMundial className="h-11 p-1.5" />
         </div>
@@ -110,16 +119,31 @@ const MundialPromoPage = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center lg:text-left"
         >
+          {/* Lockup de marca: deja claro que la polla es de Frostbyte */}
+          <div className="mb-4 flex items-center justify-center gap-3 lg:justify-start">
+            <img
+              src="/logo.png"
+              alt="Frostbyte"
+              width={64}
+              height={64}
+              loading="eager"
+              className="h-12 w-12 shrink-0 object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)] sm:h-14 sm:w-14"
+            />
+            <span className="t26-display text-[clamp(1.75rem,5vw,3.75rem)] font-black uppercase leading-none tracking-[0.1em] text-light drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+              Frostbyte
+            </span>
+          </div>
+
           <span className="inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold/15 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-gold sm:text-sm">
             <Gift size={15} />
             100% Gratis · Mundial 2026
           </span>
 
-          <h1 className="mt-5 leading-[0.9] tracking-tight">
+          <h1 className="mt-4 leading-[0.9] tracking-tight">
             <span className="block text-[clamp(1.5rem,4.5vw,4rem)] font-black uppercase text-light">
               Gánate
             </span>
-            <span className="t26-num block whitespace-nowrap text-[clamp(2.75rem,9vw,11rem)] text-gold drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)] drop-shadow-[0_0_45px_rgba(242,197,61,0.35)]">
+            <span className="t26-num block whitespace-nowrap text-[clamp(2.75rem,9vw,11rem)] text-gold drop-shadow-[0_4px_18px_rgba(0,0,0,0.7)]">
               $500.000
             </span>
             <span className="mt-1 block text-[clamp(1.1rem,3.2vw,2.75rem)] font-black uppercase text-light">
