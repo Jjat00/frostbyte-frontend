@@ -41,10 +41,10 @@ const flavorShots = [
     flavor: "Morado",
     licor: "Vodka",
     price: "$5.000",
-    gradient: "from-purple-400 to-purple-600",
-    textColor: "text-purple-400",
-    borderColor: "border-purple-500/40",
-    glowColor: "rgba(192, 132, 252, 0.3)",
+    gradient: "from-blue-400 to-blue-600",
+    textColor: "text-blue-400",
+    borderColor: "border-blue-500/40",
+    glowColor: "rgba(96, 165, 250, 0.3)",
   },
 ];
 
@@ -117,7 +117,7 @@ const ShotCard = ({ shot, index, styles }) => {
           )}
           <p className="text-gray mb-4 grow text-sm">{shot.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-grass">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -160,7 +160,7 @@ const Shots = () => {
             Mundial 2026
           </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-gold">
               SHOTS
             </span>
           </h2>
@@ -212,7 +212,7 @@ const Shots = () => {
                   <Droplets className="text-gold" size={28} />
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light">
                     SHOTS DE{" "}
-                    <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+                    <span className="text-gold">
                       SABORES
                     </span>
                   </h3>

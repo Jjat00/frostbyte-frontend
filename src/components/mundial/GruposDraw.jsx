@@ -97,11 +97,11 @@ export const GruposDraw = ({ className = "" }) => (
   >
     {/* Bloques de color de fondo (estilo afiche del sorteo) */}
     <div aria-hidden className="pointer-events-none absolute inset-0">
-      <div className="absolute -left-20 -top-20 h-64 w-72 rounded-full bg-[#7d1622]" />
-      <div className="absolute -left-12 top-1/4 h-80 w-80 rounded-full bg-purple-600" />
+      <div className="absolute -left-20 -top-20 h-64 w-72 rounded-full bg-red-600" />
+      <div className="absolute -left-12 top-1/4 h-80 w-80 rounded-full bg-blue-600" />
       <div className="absolute left-[28%] -top-[10%] h-[130%] w-1/2 -rotate-6 rounded-[6rem] bg-red-600" />
       <div className="absolute -right-12 -top-12 h-56 w-56 rounded-bl-[100%] bg-green-600" />
-      <div className="absolute -bottom-20 right-0 h-72 w-80 rounded-tl-[7rem] bg-lime-400" />
+      <div className="absolute -bottom-20 right-0 h-72 w-80 rounded-tl-[7rem] bg-gold" />
       <div className="absolute inset-0 bg-dark/25" />
     </div>
 

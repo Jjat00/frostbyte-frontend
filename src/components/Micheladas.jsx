@@ -55,7 +55,7 @@ const ProductCard = ({ product, index, styles }) => {
           </h3>
           <p className="text-gray mb-4 grow text-sm">{product.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-grass">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -108,7 +108,7 @@ const poisonShots = [
     brand: "Absolut",
     price: "+$10.000",
     icon: Wine,
-    gradient: "from-purple-500 to-purple-700",
+    gradient: "from-blue-500 to-blue-700",
   },
   {
     name: "Whisky",
@@ -122,7 +122,7 @@ const poisonShots = [
     brand: "Jose Cuervo",
     price: "+$9.000",
     icon: Citrus,
-    gradient: "from-lime-400 to-grass",
+    gradient: "from-green-400 to-grass",
   },
   {
     name: "Ron",
@@ -163,7 +163,7 @@ const Micheladas = () => {
             Edicion Mundial 2026
           </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-gold">
               MICHELADAS
             </span>
           </h2>
@@ -200,7 +200,7 @@ const Micheladas = () => {
           transition={{ duration: 0.6 }}
           className="mt-20"
         >
-          <div className="bg-linear-to-br from-[#7d1622]/40 to-dark/60 border-2 border-gold/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+          <div className="bg-linear-to-br from-red-900/40 to-dark/60 border-2 border-gold/40 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
             {/* Capa decorativa Sistema 26 */}
             <Mundial26Backdrop watermark={false} />
 
@@ -214,7 +214,7 @@ const Micheladas = () => {
                   />
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-light text-center">
                     ¿QUIERES{" "}
-                    <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+                    <span className="text-gold">
                       ENVENENARLA
                     </span>
                     ?

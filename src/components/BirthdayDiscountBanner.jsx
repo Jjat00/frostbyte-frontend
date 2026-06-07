@@ -23,7 +23,7 @@ const BirthdayDiscountBanner = () => {
           <div className="relative p-6">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-xl bg-linear-to-br from-gold to-grass flex items-center justify-center flex-shrink-0 shadow-lg shadow-gold/30">
+              <div className="w-11 h-11 rounded-xl bg-linear-to-br from-gold to-grass flex items-center justify-center flex-shrink-0">
                 <Cake size={20} className="text-dark" />
               </div>
               <div>
@@ -31,7 +31,7 @@ const BirthdayDiscountBanner = () => {
                   Cumpleaneros
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+                  <span className="text-4xl font-black text-gold">
                     50% OFF
                   </span>
                 </div>

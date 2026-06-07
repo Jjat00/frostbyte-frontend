@@ -142,7 +142,7 @@ function QuizTab({ answers, onChange, onSubmit, loading }) {
                 onClick={() => onChange(q.key, opt.value)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150 ${
                   answers[q.key] === opt.value
-                    ? "border-purple-500/80 bg-purple-500/20 text-purple-200"
+                    ? "border-grass/80 bg-grass/20 text-grass"
                     : "border-white/10 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
                 }`}
               >
@@ -176,7 +176,7 @@ function LoadingState() {
   return (
     <div className="flex flex-col items-center gap-4 py-8">
       <div className="relative">
-        <div className="w-12 h-12 rounded-full border-2 border-purple-500/30 border-t-gold animate-spin" />
+        <div className="w-12 h-12 rounded-full border-2 border-gold/30 border-t-gold animate-spin" />
         <Sparkles size={18} className="absolute inset-0 m-auto text-gold" />
       </div>
       <AnimatePresence mode="wait">
@@ -228,7 +228,7 @@ function ResultCard({ result, onReset }) {
       </span>
 
       {/* Product name */}
-      <h3 className="text-2xl font-extrabold leading-tight bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+      <h3 className="text-2xl font-extrabold leading-tight text-gold">
         {product.name}
       </h3>
 
@@ -239,7 +239,7 @@ function ResultCard({ result, onReset }) {
 
       {/* AI reason */}
       {reason && (
-        <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl px-4 py-3">
+        <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3">
           <p className="text-white/80 text-sm italic leading-relaxed">
             <Sparkles size={13} className="inline mr-1.5 text-gold" />
             {reason}
@@ -358,7 +358,7 @@ export default function DrinkRecommender() {
           Mundial 2026
         </span>
         <div className="flex items-center gap-2.5 mb-5">
-          <div className="p-2 rounded-lg bg-linear-to-br from-purple-500/25 to-gold/20 border border-white/10">
+          <div className="p-2 rounded-lg bg-linear-to-br from-grass/25 to-gold/20 border border-white/10">
             <Sparkles size={18} className="text-gold" />
           </div>
           <div>

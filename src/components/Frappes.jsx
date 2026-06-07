@@ -151,8 +151,8 @@ const Frappes = () => {
           <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
             Mundial 2026
           </span>
-          <h2 className="frappe-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(242,197,61,0.3)]">
+          <h2 className="frappe-title text-4xl md:text-6xl font-black mb-4">
+            <span className="text-gold">
               FRAPPÉS
             </span>
           </h2>

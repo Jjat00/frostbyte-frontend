@@ -40,7 +40,7 @@ const SocialDiscountBanner = () => {
                   Promo Mundial
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+                  <span className="text-4xl font-black text-gold">
                     10% OFF
                   </span>
                 </div>

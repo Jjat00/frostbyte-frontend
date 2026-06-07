@@ -83,7 +83,7 @@ const ProductCard = ({ product, index, styles }) => {
             {suaveVariant && (
               <div className="flex items-center justify-between">
                 <span className="text-gray text-sm">Suave</span>
-                <span className="text-lg font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+                <span className="text-lg font-bold text-grass">
                   {formatPrice(suaveVariant.price)}
                 </span>
               </div>
@@ -91,7 +91,7 @@ const ProductCard = ({ product, index, styles }) => {
             {cargadoVariant && (
               <div className="flex items-center justify-between">
                 <span className="text-gray text-sm">Cargado</span>
-                <span className="text-lg font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+                <span className="text-lg font-bold text-grass">
                   {formatPrice(cargadoVariant.price)}
                 </span>
               </div>
@@ -101,7 +101,7 @@ const ProductCard = ({ product, index, styles }) => {
                 {variants.length > 1 && (
                   <span className="text-gray text-sm">{variant.name}</span>
                 )}
-                <span className={`text-lg font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent ${variants.length === 1 ? "mx-auto" : ""}`}>
+                <span className={`text-lg font-bold text-grass ${variants.length === 1 ? "mx-auto" : ""}`}>
                   {formatPrice(variant.price)}
                 </span>
               </div>
@@ -172,7 +172,7 @@ const coctelesStyles = {
   },
   margarita: {
     icon: Martini,
-    gradient: "from-lime-400 to-gold",
+    gradient: "from-grass to-gold",
     liquor: "Tequila JOSE CUERVO",
     image: "https://images.unsplash.com/photo-1700909592926-c07b0c2a0bed",
   },
@@ -184,19 +184,19 @@ const coctelesStyles = {
   },
   caipiroshka: {
     icon: Citrus,
-    gradient: "from-lime-400 to-grass",
+    gradient: "from-grass to-green-600",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1581284744588-af12206e90db",
   },
   "cuba-libre": {
     icon: Skull,
-    gradient: "from-red-600 to-[#7d1622]",
+    gradient: "from-red-500 to-red-700",
     liquor: "Ron BACARDI Superior",
     image: "https://images.unsplash.com/photo-1665940487849-abe2980c05ab",
   },
   gintonic: {
     icon: Wine,
-    gradient: "from-purple-500 to-purple-600",
+    gradient: "from-blue-500 to-blue-700",
     liquor: "Ginebra BEEFEATER",
     image: "/shutterstock-1504207547.jpg",
   },
@@ -208,7 +208,7 @@ const coctelesStyles = {
   },
   "blue-long": {
     icon: Palmtree,
-    gradient: "from-grass to-lime-400",
+    gradient: "from-blue-500 to-grass",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1682629906883-76eaa5e03693",
   },
@@ -250,7 +250,7 @@ const Mocktails = () => {
             Barra Mundial 26
           </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-gold">
               CÓCTELES
             </span>
           </h2>

@@ -46,7 +46,7 @@ const ProductCard = ({ product, index, styles }) => {
           </h3>
           <p className="text-gray mb-4 grow text-sm">{product.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gold/15">
-            <span className="text-2xl font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-grass">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -127,8 +127,8 @@ const Cervezas = () => {
           <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
             Mundial 2026
           </span>
-          <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-6xl font-black text-gold mb-4">
+            <span>
               CERVEZAS
             </span>
           </h2>

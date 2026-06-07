@@ -55,7 +55,7 @@ const ProductCard = ({ product, index, styles }) => {
           </h3>
           <p className="text-gray mb-4 grow text-sm">{product.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-grass">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -81,7 +81,7 @@ const ProductSkeleton = () => (
 const sodasStyles = {
   "soda-italiana-de-fresa": {
     icon: Cherry,
-    gradient: "from-red-400 to-pink-500",
+    gradient: "from-red-400 to-red-600",
     image: "./SODA-ITALIANA-FRESA-9715.webp",
   },
   "soda-italiana-de-maracuya": {
@@ -136,7 +136,7 @@ const SodasMicheladas = () => {
           </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
             SODAS{" "}
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-gold">
               ITALIANAS
             </span>
           </h2>

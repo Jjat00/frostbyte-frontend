@@ -22,7 +22,7 @@ const WaterSection = () => {
             Hidratacion
           </span>
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-4">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-gold">
               AGUA
             </span>
           </h2>
@@ -62,7 +62,7 @@ const WaterSection = () => {
               </p>
 
               <div className="bg-blue-500/10 border border-gold/30 rounded-2xl px-8 py-4">
-                <span className="text-3xl sm:text-4xl font-black bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+                <span className="text-3xl sm:text-4xl font-black text-grass">
                   $2.000
                 </span>
               </div>

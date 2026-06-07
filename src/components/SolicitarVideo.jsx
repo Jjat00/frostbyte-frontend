@@ -247,8 +247,8 @@ const SolicitarVideo = () => {
           className="text-center mb-10"
         >
           <h2 className="text-4xl md:text-6xl font-black mb-3 flex items-center justify-center gap-3 flex-wrap">
-            <Youtube className="w-10 h-10 md:w-14 md:h-14 text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
-            <span className="bg-gradient-to-r from-red-400 via-gold to-grass bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+            <Youtube className="w-10 h-10 md:w-14 md:h-14 text-red-500" />
+            <span className="text-gold">
               PIDE TU VIDEO
             </span>
           </h2>

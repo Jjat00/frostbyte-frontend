@@ -54,7 +54,7 @@ const StripBanner = () => (
             ⚽ Polla Mundialista
           </span>
           Pronostica y gana{" "}
-          <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+          <span className="text-gold">
             {PRIZE}
           </span>
         </p>
@@ -93,7 +93,7 @@ const PrizeBanner = () => (
           <p className="text-light text-base sm:text-lg font-semibold">
             Pronostica el Mundial y gánate el
           </p>
-          <div className="t26-num my-2 text-6xl sm:text-8xl bg-linear-to-r from-gold to-grass bg-clip-text text-transparent leading-none">
+          <div className="t26-num my-2 text-6xl sm:text-8xl text-gold leading-none">
             {PRIZE}
           </div>
           <p className="text-grass text-lg sm:text-xl font-bold">
@@ -147,7 +147,7 @@ const FeatureBanner = () => (
             <span className="text-[10px] uppercase tracking-[0.25em] text-gray font-bold">
               Premio al campeón
             </span>
-            <span className="t26-num text-3xl sm:text-4xl bg-linear-to-r from-gold to-grass bg-clip-text text-transparent leading-tight">
+            <span className="t26-num text-3xl sm:text-4xl text-gold leading-tight">
               {PRIZE}
             </span>
             <span className="text-[11px] text-grass font-semibold">

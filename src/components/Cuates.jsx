@@ -114,12 +114,12 @@ const cuatesStyles = {
     labelText: "text-dark",
     priceButtonBg: "bg-grass",
     priceText: "text-dark",
-    splashBg: "bg-lime-400",
+    splashBg: "bg-grass",
     splash: true,
   },
   "cuates-fresa": {
     icon: Cherry,
-    gradient: "from-red-500 to-[#7d1622]",
+    gradient: "from-red-500 to-red-700",
     image: "/cuate-fresa.webp",
     ringColor: "border-gold",
     labelBg: "bg-gold",
@@ -136,7 +136,7 @@ const cuatesStyles = {
     ringColor: "border-gold",
     labelBg: "bg-gold",
     labelText: "text-dark",
-    priceButtonBg: "bg-purple-600",
+    priceButtonBg: "bg-blue-600",
     priceText: "text-white",
     splashBg: "bg-gold",
     splash: true,
@@ -153,7 +153,7 @@ const getCuatesStyles = (product) => {
     labelText: "text-dark",
     priceButtonBg: "bg-grass",
     priceText: "text-dark",
-    splashBg: "bg-lime-400",
+    splashBg: "bg-grass",
     splash: true,
   };
 
@@ -194,10 +194,8 @@ const Cuates = () => {
           <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
             Edición Mundial 2026
           </span>
-          <h2 className="text-5xl md:text-7xl font-black text-white mb-4 drop-shadow-2xl uppercase tracking-wider">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
-              LOS CUATES
-            </span>
+          <h2 className="text-5xl md:text-7xl font-black text-gold mb-4 uppercase tracking-wider">
+            LOS CUATES
           </h2>
           <p className="text-white text-lg md:text-xl max-w-2xl mx-auto font-semibold drop-shadow-lg">
             Cuates en Cumbal: cocteles listos con auténtico tequila mexicano.

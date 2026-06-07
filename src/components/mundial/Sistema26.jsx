@@ -76,8 +76,9 @@ export const TrofeoMundial = ({
 );
 
 /**
- * Campo de color estilo póster del Mundial (bloques vibrantes morado/rojo/
- * granate/verde/lima + patrón modular + scrim de legibilidad). Capa a sangre
+ * Campo de color estilo póster del Mundial con la trilogía de sedes (rojo
+ * Canadá, verde México, azul EE.UU.) + acento dorado, en COLOR PLANO sobre base
+ * casi negra, más patrón modular "26" y scrim de legibilidad. Capa a sangre
  * para usar dentro de un contenedor `relative overflow-hidden`.
  *
  * @param {"left"|"full"|"none"} scrim  Oscurecido para legibilidad del texto.
@@ -90,17 +91,18 @@ export const MundialColorField = ({
   <div
     aria-hidden
     className={cn(
-      "pointer-events-none absolute inset-0 overflow-hidden bg-[#2b0f33]",
+      "pointer-events-none absolute inset-0 overflow-hidden bg-[#0a0b14]",
       className,
     )}
   >
-    {/* Grandes regiones de color tipo afiche FIFA 2026 (morado, rojo, granate,
-        verde, lima) — brillantes y orgánicas, cubriendo toda la superficie. */}
-    <div className="absolute -left-[12%] -top-[22%] h-[75vh] w-[52vw] rotate-3 rounded-[42%] bg-purple-600" />
-    <div className="absolute left-[20%] -top-[20%] h-[125vh] w-[52vw] -rotate-6 rounded-[44%] bg-red-600" />
-    <div className="absolute -left-[14%] top-[28%] h-[88vh] w-[58vw] rounded-[46%] bg-[#7d1622]" />
-    <div className="absolute -right-[14%] -top-[16%] h-[68vh] w-[44vw] rounded-[46%] bg-green-600" />
-    <div className="absolute -right-[16%] bottom-[-22%] h-[95vh] w-[46vw] rounded-[44%] bg-lime-400" />
+    {/* Grandes regiones de color PLANO con la trilogía de sedes del Mundial 2026
+        (rojo Canadá, verde México, azul EE.UU.) + un acento dorado, sobre base
+        casi negra — orgánicas, cubriendo toda la superficie. */}
+    <div className="absolute -left-[12%] -top-[22%] h-[75vh] w-[52vw] rotate-3 rounded-[42%] bg-red-600" />
+    <div className="absolute left-[20%] -top-[20%] h-[125vh] w-[52vw] -rotate-6 rounded-[44%] bg-green-600" />
+    <div className="absolute -left-[14%] top-[28%] h-[88vh] w-[58vw] rounded-[46%] bg-blue-700" />
+    <div className="absolute -right-[14%] -top-[16%] h-[68vh] w-[44vw] rounded-[46%] bg-blue-600" />
+    <div className="absolute -right-[16%] bottom-[-22%] h-[95vh] w-[46vw] rounded-[44%] bg-gold" />
 
     {/* Patrón modular sobre los bloques */}
     <div className="t26-pattern absolute inset-0 opacity-50" />
@@ -138,12 +140,12 @@ export const Mundial26Backdrop = ({ className = "", watermark = true }) => (
       className,
     )}
   >
-    <div className="absolute -left-24 -top-24 h-72 w-72 rotate-12 rounded-[3rem] bg-purple-600/25" />
+    <div className="absolute -left-24 -top-24 h-72 w-72 rotate-12 rounded-[3rem] bg-red-600/25" />
     <div className="absolute -bottom-20 -left-16 h-80 w-80 rounded-tr-full bg-grass/25" />
-    <div className="absolute -right-10 -top-16 h-64 w-64 rounded-bl-full bg-red-600/25" />
-    <div className="absolute -bottom-24 -right-20 h-72 w-72 -rotate-12 rounded-[3rem] bg-blue-600/25" />
+    <div className="absolute -right-10 -top-16 h-64 w-64 rounded-bl-full bg-blue-600/25" />
+    <div className="absolute -bottom-24 -right-20 h-72 w-72 -rotate-12 rounded-[3rem] bg-green-600/25" />
     <div className="absolute right-[18%] top-10 h-14 w-14 rotate-6 rounded-2xl bg-gold/40" />
-    <div className="absolute bottom-[22%] left-[14%] h-10 w-10 -rotate-12 rounded-xl bg-lime-400/40" />
+    <div className="absolute bottom-[22%] left-[14%] h-10 w-10 -rotate-12 rounded-xl bg-red-500/40" />
     <div className="t26-pattern absolute inset-0" />
     {watermark && (
       <Big26 className="absolute -bottom-[14vh] -left-[1vw] text-[clamp(16rem,42vh,40rem)] leading-none text-white/[0.035]" />

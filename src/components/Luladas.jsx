@@ -142,8 +142,8 @@ const Luladas = ({ showExtras = true }) => {
           <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
             Frescura tropical
           </span>
-          <h2 className="lulada-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+          <h2 className="lulada-title text-4xl md:text-6xl font-black mb-4">
+            <span className="text-gold">
               LULADAS
             </span>
           </h2>

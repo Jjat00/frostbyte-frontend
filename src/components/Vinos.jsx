@@ -20,7 +20,7 @@ const ProductCard = ({ product, index, styles }) => {
       whileHover={{ y: -10 }}
       className="group relative"
     >
-      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-gold/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(125,22,34,0.25)]">
+      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-gold/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(220,38,38,0.25)]">
         <div className="h-48 overflow-hidden relative">
           <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
           {styles.image ? (
@@ -46,7 +46,7 @@ const ProductCard = ({ product, index, styles }) => {
           </h3>
           <p className="text-gray mb-4 grow text-sm">{product.description}</p>
           <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-grass">
               {formatPrice(defaultVariant?.price)}
             </span>
             <span className="text-gray text-sm">{defaultVariant?.name}</span>
@@ -73,12 +73,12 @@ const ProductSkeleton = () => (
 const vinosStyles = {
   "gato-negro": {
     icon: Wine,
-    gradient: "from-red-600 to-[#7d1622]",
+    gradient: "from-red-600 to-red-900",
     image: "/vino2.webp",
   },
   "casillero-del-diablo": {
     icon: Sparkles,
-    gradient: "from-[#7d1622] to-red-900",
+    gradient: "from-red-700 to-red-950",
     image: "/vino3.webp",
   },
 };
@@ -87,7 +87,7 @@ const getVinoStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
   const localStyles = vinosStyles[slug] || {
     icon: Wine,
-    gradient: "from-red-600 to-[#7d1622]",
+    gradient: "from-red-600 to-red-900",
   };
 
   // Priorizar image_url de la API sobre estilos locales
@@ -121,8 +121,8 @@ const Vinos = () => {
           <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
             Carta Mundial 26
           </span>
-          <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-6xl font-black text-gold mb-4">
+            <span>
               VINOS
             </span>
           </h2>

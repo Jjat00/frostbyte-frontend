@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useActiveCategories, useProductsByCategory } from "@/hooks";
-import { getCategoryStyles } from "@/lib/productStyles";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 const formatPrice = (price) => {
@@ -48,7 +47,7 @@ const SPECIAL_SECTIONS = [
   {
     id: "que-te-provoca",
     name: "Recomendador de Bebidas",
-    gradient: "from-purple-500 to-gold",
+    gradient: "from-blue-500 to-gold",
     icon: Sparkles,
     description: "Deja que te recomendemos la bebida perfecta para ti.",
   },
@@ -69,7 +68,7 @@ const SPECIAL_SECTIONS = [
   {
     id: "solicitar-cancion",
     name: "Pedir Cancion",
-    gradient: "from-grass to-lime-400",
+    gradient: "from-grass to-gold",
     icon: Music,
     description: "Pide tu cancion favorita y la ponemos para ti.",
   },
@@ -83,7 +82,7 @@ const SPECIAL_SECTIONS = [
   {
     id: "frostbyte-play",
     name: "Frostbyte Play",
-    gradient: "from-purple-500 to-gold",
+    gradient: "from-grass to-gold",
     icon: Gamepad2,
     tableOnly: true,
     description: "Juega mientras esperas tu pedido.",
@@ -103,7 +102,6 @@ const CategoryGroup = ({ category }) => {
   const { data, isLoading } = useProductsByCategory(category.slug);
   const products = data?.results || [];
   const sectionId = SECTION_IDS[category.slug];
-  const styles = getCategoryStyles(category.slug);
 
   if (isLoading) {
     return (
@@ -126,7 +124,7 @@ const CategoryGroup = ({ category }) => {
       {/* Category header */}
       <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-white/[0.08]">
         <h3
-          className={`text-lg sm:text-xl md:text-2xl font-black uppercase tracking-wide sm:tracking-wider bg-linear-to-r ${styles.gradient} bg-clip-text text-transparent min-w-0`}
+          className="text-lg sm:text-xl md:text-2xl font-black uppercase tracking-wide sm:tracking-wider text-gold min-w-0"
         >
           {category.name}
         </h3>
@@ -197,7 +195,7 @@ const SpecialSectionItem = ({ section }) => {
         <div className="flex items-center gap-1.5 min-w-0">
           <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white/50 flex-shrink-0" />
           <h3
-            className={`text-base sm:text-lg md:text-2xl font-black uppercase tracking-wide sm:tracking-wider bg-linear-to-r ${section.gradient} bg-clip-text text-transparent min-w-0 truncate`}
+            className="text-base sm:text-lg md:text-2xl font-black uppercase tracking-wide sm:tracking-wider text-gold min-w-0 truncate"
           >
             {section.name}
           </h3>
@@ -287,7 +285,7 @@ const CartaList = () => {
             Mundial 2026
           </span>
           <h2 className="text-3xl md:text-5xl font-black mb-3">
-            <span className="bg-linear-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
+            <span className="text-light">
               NUESTRA CARTA
             </span>
           </h2>

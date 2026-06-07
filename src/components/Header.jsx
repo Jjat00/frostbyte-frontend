@@ -56,7 +56,7 @@ const BEVERAGE_SECTIONS = [
   { key: "micheladas", label: "Micheladas", href: "#micheladas", categorySlug: "micheladas" },
   { key: "cervezas", label: "🍺 Cervezas", href: "#cervezas", categorySlug: "cervezas" },
   { key: "cuates", label: "🍹 Cuates", href: "#cuates", categorySlug: "cuates" },
-  { key: "luladas", label: "🍋 Luladas", href: "#luladas", categorySlug: "luladas", className: "text-lime-400 hover:text-lime-300" },
+  { key: "luladas", label: "🍋 Luladas", href: "#luladas", categorySlug: "luladas", className: "text-green-400 hover:text-green-300" },
   { key: "mocktails", label: "Cocteles", href: "#mocktails", categorySlug: "mocktails" },
   { key: "shots", label: "Shots", href: "#shots", categorySlug: "shots" },
   { key: "vinos", label: "🍷 Vinos", href: "#vinos", categorySlug: "vinos" },
@@ -310,14 +310,14 @@ const Header = () => {
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Mas en Frostbyte</p>
               <a
                 href="#que-te-provoca"
-                className="block text-violet-400 hover:text-violet-300 transition-colors duration-300 font-medium"
+                className="block text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 ✨ Recomendador de Bebidas
               </a>
               <a
                 href="#descuento-redes"
-                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
+                className="block text-sky-400 hover:text-sky-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 📱 Descuento por Redes

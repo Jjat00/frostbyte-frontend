@@ -123,7 +123,7 @@ const Features = () => {
             Edición Mundial 26
           </span>
           <h2 className="features-title text-4xl md:text-6xl font-black text-light mb-4">
-            POR QUÉ <span className="bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">FROSTBYTE</span>
+            POR QUÉ <span className="text-gold">FROSTBYTE</span>
           </h2>
           <p className="features-subtitle text-gray text-lg max-w-2xl mx-auto">
             El lugar perfecto en Cumbal para pasar un buen rato con amigos o en

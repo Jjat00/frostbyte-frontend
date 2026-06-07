@@ -35,11 +35,11 @@ const PromoTicker = ({ variant = "primary" }) => {
   const gradients = {
     primary: "from-grass via-gold to-grass",
     secondary: "from-gold via-grass to-gold",
-    fire: "from-red-600 via-[#7d1622] to-red-600",
+    fire: "from-red-600 via-red-700 to-red-600",
   };
 
   const gradient = gradients[variant] || gradients.primary;
-  // La cinta "fire" (granate/rojo de afiche) es oscura: texto claro para contraste.
+  // La cinta "fire" (rojo de afiche / Canada) es oscura: texto claro para contraste.
   const onDark = variant === "fire";
 
   return (

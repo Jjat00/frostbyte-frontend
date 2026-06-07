@@ -27,12 +27,12 @@ const flavorStyles = {
   },
   "desguayabator-fresa": {
     icon: Heart,
-    gradient: "from-pink-400 to-red-500",
-    glowGradient: "from-pink-400 to-red-500",
-    borderColor: "border-pink-500/50",
-    shadowColor: "hover:shadow-pink-500/30",
-    bgColor: "bg-pink-500",
-    textColor: "text-pink-400",
+    gradient: "from-red-400 to-red-600",
+    glowGradient: "from-red-400 to-red-600",
+    borderColor: "border-red-500/50",
+    shadowColor: "hover:shadow-red-500/30",
+    bgColor: "bg-red-500",
+    textColor: "text-red-400",
   },
   "desguayabator-coco": {
     icon: Sparkles,
@@ -322,7 +322,7 @@ const Desguayabator = () => {
 
           {/* Título principal */}
           <h2 className="desg-title text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-6">
-            <span className="bg-linear-to-r from-gold via-secondary to-grass bg-clip-text text-transparent drop-shadow-lg">
+            <span className="text-gold">
               DESGUAYABATOR
             </span>
           </h2>
@@ -368,7 +368,7 @@ const Desguayabator = () => {
             <span className="text-gray text-base sm:text-lg mb-2 relative z-10">
               Precio único
             </span>
-            <span className="text-4xl sm:text-5xl md:text-6xl font-black bg-linear-to-r from-gold to-grass bg-clip-text text-transparent relative z-10">
+            <span className="text-4xl sm:text-5xl md:text-6xl font-black text-grass relative z-10">
               {formatPrice(defaultPrice)}
             </span>
             <span className="text-gold text-sm mt-2 relative z-10">

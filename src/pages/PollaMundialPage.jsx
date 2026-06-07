@@ -50,7 +50,7 @@ const KICKOFF_FALLBACK = new Date("2026-06-11T14:00:00-05:00");
 // Paleta multicolor del Mundial 2026 (rota por tarjeta para dar el look vibrante
 // estilo afiche, en vez del magenta/cyan de Frostbyte).
 const ACCENTS = [
-  "text-purple-400",
+  "text-red-400",
   "text-red-400",
   "text-green-400",
   "text-gold",
@@ -58,7 +58,7 @@ const ACCENTS = [
   "text-blue-400",
 ];
 const CHIPS = [
-  "bg-purple-500/15 border-purple-500/40",
+  "bg-red-500/15 border-red-500/40",
   "bg-red-500/15 border-red-500/40",
   "bg-grass/15 border-grass/40",
   "bg-gold/15 border-gold/40",
@@ -66,7 +66,7 @@ const CHIPS = [
   "bg-blue-500/15 border-blue-500/40",
 ];
 const SOLIDS = [
-  "bg-purple-500",
+  "bg-red-500",
   "bg-red-500",
   "bg-grass",
   "bg-gold",
@@ -138,7 +138,7 @@ const useCountdown = (target) => {
 const CountdownUnit = ({ value, label }) => (
   <div className="flex flex-col items-center">
     <div className="liquid-glass relative overflow-hidden min-w-[62px] sm:min-w-[88px] px-2.5 sm:px-3 py-3 sm:py-4 rounded-2xl border border-gold/30">
-      <span className="t26-num block text-3xl sm:text-5xl bg-linear-to-b from-light to-gold bg-clip-text text-transparent">
+      <span className="t26-num block text-3xl sm:text-5xl text-gold">
         {String(value).padStart(2, "0")}
       </span>
     </div>
@@ -395,7 +395,7 @@ const PollaMundialPage = () => {
 
             <h1 className="text-[clamp(2.2rem,8.5vw,5.25rem)] font-black leading-[1.02] pb-[0.08em]">
               <span className="block text-light">POLLA</span>
-              <span className="block bg-linear-to-r from-gold to-grass bg-clip-text text-transparent">
+              <span className="block text-gold">
                 MUNDIALISTA
               </span>
             </h1>
@@ -577,10 +577,7 @@ const PollaMundialPage = () => {
                 </span>
               )}
               <div
-                className={cn(
-                  "text-5xl font-black bg-linear-to-r bg-clip-text text-transparent mb-3",
-                  s.accent
-                )}
+                className={cn("text-5xl font-black mb-3", s.iconColor)}
               >
                 {s.points}
                 <span className="text-base font-bold text-gray ml-1">pts</span>
