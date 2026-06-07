@@ -119,21 +119,6 @@ const MundialPromoPage = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center lg:text-left"
         >
-          {/* Lockup de marca: deja claro que la polla es de Frostbyte */}
-          <div className="mb-4 flex items-center justify-center gap-3 lg:justify-start">
-            <img
-              src="/logo.png"
-              alt="Frostbyte"
-              width={64}
-              height={64}
-              loading="eager"
-              className="h-12 w-12 shrink-0 object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)] sm:h-14 sm:w-14"
-            />
-            <span className="t26-display text-[clamp(1.75rem,5vw,3.75rem)] font-black uppercase leading-none tracking-[0.1em] text-light drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-              Frostbyte
-            </span>
-          </div>
-
           <span className="inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold/15 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-gold sm:text-sm">
             <Gift size={15} />
             100% Gratis · Mundial 2026
@@ -147,14 +132,13 @@ const MundialPromoPage = () => {
               $500.000
             </span>
             <span className="mt-1 block text-[clamp(1.1rem,3.2vw,2.75rem)] font-black uppercase text-light">
-              en el Mundial
+              en el Mundial con <span className="text-gold">Frostbyte</span>
             </span>
           </h1>
 
           <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-light/80 sm:text-lg lg:mx-0">
-            Predice los marcadores de los partidos del Mundial 2026 en{" "}
-            <span className="font-semibold text-secondary">Frostbyte</span>.
-            Entrar es totalmente gratis y el que más le atine se lleva{" "}
+            Predice los marcadores de los partidos del Mundial 2026. Entrar es
+            totalmente gratis y el que más le atine se lleva{" "}
             <span className="font-semibold text-gold">
               medio millón de pesos en efectivo
             </span>
