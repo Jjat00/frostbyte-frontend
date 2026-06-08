@@ -95,14 +95,22 @@ export const MundialColorField = ({
       className,
     )}
   >
-    {/* Grandes regiones de color PLANO con la trilogía de sedes del Mundial 2026
-        (rojo Canadá, verde México, azul EE.UU.) + un acento dorado, sobre base
-        casi negra — orgánicas, cubriendo toda la superficie. */}
-    <div className="absolute -left-[12%] -top-[22%] h-[75vh] w-[52vw] rotate-3 rounded-[42%] bg-red-600" />
-    <div className="absolute left-[20%] -top-[20%] h-[125vh] w-[52vw] -rotate-6 rounded-[44%] bg-green-600" />
-    <div className="absolute -left-[14%] top-[28%] h-[88vh] w-[58vw] rounded-[46%] bg-blue-700" />
-    <div className="absolute -right-[14%] -top-[16%] h-[68vh] w-[44vw] rounded-[46%] bg-blue-600" />
-    <div className="absolute -right-[16%] bottom-[-22%] h-[95vh] w-[46vw] rounded-[44%] bg-gold" />
+    {/* Módulos del sistema 26 — cuadrados (borde de cancha) + cuartos de círculo
+        (balón) en COLOR PLANO, con la trilogía de sedes (rojo Canadá, verde
+        México, azul EE.UU.) + acento oro, sobre base casi negra. Es el mismo
+        motivo con que se construye el emblema "26". */}
+    {/* cuadrado rojo — esquina superior izquierda */}
+    <div className="absolute -left-[7%] -top-[15%] h-[52vh] w-[30vw] rounded-[3rem] bg-red-600" />
+    {/* semicírculo azul colgando arriba-centro (balón) */}
+    <div className="absolute left-[31%] -top-[20%] h-[56vh] w-[56vh] rounded-b-full bg-blue-600" />
+    {/* cuadrado verde a sangre por la derecha */}
+    <div className="absolute -right-[8%] -top-[8%] h-[58vh] w-[30vw] rounded-[3rem] bg-green-600" />
+    {/* cuarto de círculo azul — abajo-izquierda, arco hacia el centro */}
+    <div className="absolute -left-[9%] bottom-[-16%] h-[58vh] w-[58vh] rounded-tr-full bg-blue-700" />
+    {/* cuarto de círculo oro (acento) — abajo-derecha */}
+    <div className="absolute right-[7%] bottom-[-14%] h-[40vh] w-[40vh] rounded-tl-full bg-gold" />
+    {/* módulo cuadrado pequeño (ritmo) */}
+    <div className="absolute right-[33%] bottom-[8%] h-[11vh] w-[11vh] rounded-2xl bg-red-600" />
 
     {/* Patrón modular sobre los bloques */}
     <div className="t26-pattern absolute inset-0 opacity-50" />
@@ -140,12 +148,14 @@ export const Mundial26Backdrop = ({ className = "", watermark = true }) => (
       className,
     )}
   >
-    <div className="absolute -left-24 -top-24 h-72 w-72 rotate-12 rounded-[3rem] bg-red-600/25" />
-    <div className="absolute -bottom-20 -left-16 h-80 w-80 rounded-tr-full bg-grass/25" />
-    <div className="absolute -right-10 -top-16 h-64 w-64 rounded-bl-full bg-blue-600/25" />
-    <div className="absolute -bottom-24 -right-20 h-72 w-72 -rotate-12 rounded-[3rem] bg-green-600/25" />
-    <div className="absolute right-[18%] top-10 h-14 w-14 rotate-6 rounded-2xl bg-gold/40" />
-    <div className="absolute bottom-[22%] left-[14%] h-10 w-10 -rotate-12 rounded-xl bg-red-500/40" />
+    {/* Módulos sutiles del sistema 26: cuartos de círculo en las 4 esquinas
+        (arco hacia el centro) + cuadraditos de ritmo, color plano tenue. */}
+    <div className="absolute -left-24 -top-24 h-64 w-64 rounded-br-full bg-red-600/20" />
+    <div className="absolute -right-16 -top-20 h-56 w-56 rounded-bl-full bg-blue-600/20" />
+    <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-tr-full bg-green-600/20" />
+    <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-tl-full bg-blue-700/20" />
+    <div className="absolute right-[16%] top-[14%] h-12 w-12 rounded-xl bg-gold/40" />
+    <div className="absolute left-[12%] bottom-[24%] h-10 w-10 rounded-lg bg-red-500/35" />
     <div className="t26-pattern absolute inset-0" />
     {watermark && (
       <Big26 className="absolute -bottom-[14vh] -left-[1vw] text-[clamp(16rem,42vh,40rem)] leading-none text-white/[0.035]" />
