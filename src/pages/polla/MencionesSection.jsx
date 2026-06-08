@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Trophy,
@@ -60,7 +61,11 @@ const PickerSheet = ({
     ? opts.filter((o) => o.name.toLowerCase().includes(q.toLowerCase()))
     : opts;
 
-  return (
+  // Se renderiza en un portal a <body> para que el overlay escape del stacking
+  // context de <main> (z-10) y de los motion.div animados: si no, su z-[60]
+  // queda atrapado por debajo de la barra de navegación (z-40) y esta captura
+  // los toques sobre las opciones en móvil.
+  return createPortal(
     <motion.div
       className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center"
       initial={{ opacity: 0 }}
@@ -182,7 +187,8 @@ const PickerSheet = ({
           )}
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 };
 
