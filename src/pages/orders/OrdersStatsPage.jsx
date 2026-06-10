@@ -37,6 +37,8 @@ import {
   Package,
   Armchair,
   Receipt,
+  ArrowDown,
+  ArrowUp,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 
@@ -77,6 +79,128 @@ const StatCard = ({ title, value, subtitle, icon: Icon, color }) => {
         </div>
       </div>
     </motion.div>
+  );
+};
+
+const formatFullCurrency = (value) =>
+  new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(parseFloat(value) || 0);
+
+const ProductSalesTable = ({ data }) => {
+  const [sortField, setSortField] = useState('revenue');
+  const [sortDesc, setSortDesc] = useState(true);
+
+  const handleSort = (field) => {
+    if (field === sortField) {
+      setSortDesc((prev) => !prev);
+    } else {
+      setSortField(field);
+      setSortDesc(true);
+    }
+  };
+
+  const sorted = [...data].sort((a, b) =>
+    sortDesc ? b[sortField] - a[sortField] : a[sortField] - b[sortField]
+  );
+
+  const totalRevenue = data.reduce((sum, item) => sum + (item.revenue || 0), 0);
+  const totalQuantity = data.reduce((sum, item) => sum + (item.quantity_sold || 0), 0);
+
+  const SortIcon = ({ field }) => {
+    if (field !== sortField) return null;
+    return sortDesc ? (
+      <ArrowDown className="w-3.5 h-3.5 inline-block ml-1" />
+    ) : (
+      <ArrowUp className="w-3.5 h-3.5 inline-block ml-1" />
+    );
+  };
+
+  return (
+    <div className="overflow-x-auto -mx-4 md:mx-0 px-4 md:px-0">
+      <table className="w-full min-w-[560px] text-sm">
+        <thead>
+          <tr className="border-b border-white/[0.1] text-gray text-xs uppercase tracking-wide">
+            <th className="text-left py-3 pr-3 font-medium">#</th>
+            <th className="text-left py-3 pr-3 font-medium">Producto / Variante</th>
+            <th className="text-right py-3 pr-3 font-medium whitespace-nowrap">Precio unit.</th>
+            <th
+              className="text-right py-3 pr-3 font-medium cursor-pointer select-none hover:text-light whitespace-nowrap"
+              onClick={() => handleSort('quantity_sold')}
+            >
+              Cantidad
+              <SortIcon field="quantity_sold" />
+            </th>
+            <th
+              className="text-right py-3 pr-3 font-medium cursor-pointer select-none hover:text-light whitespace-nowrap"
+              onClick={() => handleSort('revenue')}
+            >
+              Ingresos
+              <SortIcon field="revenue" />
+            </th>
+            <th className="text-right py-3 font-medium whitespace-nowrap">% Ingresos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((item, index) => {
+            const percent = totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0;
+            return (
+              <tr
+                key={`${item.product_id}-${item.variant_id}`}
+                className="border-b border-white/[0.05] hover:bg-white/[0.04] transition-colors"
+              >
+                <td className="py-3 pr-3 text-gray">{index + 1}</td>
+                <td className="py-3 pr-3">
+                  <p className="text-light font-medium">{item.product_name}</p>
+                  {item.variant_name && item.variant_name !== item.product_name && (
+                    <p className="text-xs text-gray">{item.variant_name}</p>
+                  )}
+                </td>
+                <td className="py-3 pr-3 text-right text-gray whitespace-nowrap">
+                  {formatFullCurrency(item.avg_unit_price || item.variant_price)}
+                </td>
+                <td className="py-3 pr-3 text-right text-light font-medium">
+                  {item.quantity_sold}
+                </td>
+                <td className="py-3 pr-3 text-right text-green-400 font-bold whitespace-nowrap">
+                  {formatFullCurrency(item.revenue)}
+                </td>
+                <td className="py-3 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <div className="hidden sm:block w-16 bg-dark rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="h-full bg-green-500"
+                        style={{ width: `${Math.min(percent, 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-gray text-xs w-10 text-right">
+                      {percent.toFixed(1)}%
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+        <tfoot>
+          <tr className="border-t border-white/[0.15]">
+            <td className="py-3 pr-3" />
+            <td className="py-3 pr-3 text-light font-bold">
+              Total ({data.length} variante{data.length !== 1 ? 's' : ''})
+            </td>
+            <td className="py-3 pr-3" />
+            <td className="py-3 pr-3 text-right text-light font-bold">{totalQuantity}</td>
+            <td className="py-3 pr-3 text-right text-green-400 font-bold whitespace-nowrap">
+              {formatFullCurrency(totalRevenue)}
+            </td>
+            <td className="py-3 text-right text-gray text-xs">100%</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   );
 };
 
@@ -340,101 +464,23 @@ const OrdersStatsPage = () => {
         )}
       </div>
 
-      {/* Gráficas de Productos */}
-      {productStats?.data && productStats.data.length > 0 && (
-        <>
-          {/* Cantidad Vendida por Producto */}
-          <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
-            <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
-              <Package className="w-5 h-5 text-blue-400" />
-              Cantidad Vendida por Producto
-            </h2>
-            <div className="h-96 md:h-[500px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={productStats.data.slice(0, 15).map((item) => ({
-                    ...item,
-                    name: item.display_name.length > 30 
-                      ? item.display_name.substring(0, 30) + '...' 
-                      : item.display_name,
-                  }))}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis type="number" stroke="#9CA3AF" style={{ fontSize: '12px' }} />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    stroke="#9CA3AF"
-                    width={95}
-                    style={{ fontSize: '12px' }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB',
-                    }}
-                    formatter={(value) => `${value} unidades`}
-                  />
-                  <Legend />
-                  <Bar dataKey="quantity_sold" name="Cantidad Vendida" fill="#3B82F6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+      {/* Ventas por Producto */}
+      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+        <h2 className="text-lg font-bold text-light mb-1 flex items-center gap-2">
+          <Package className="w-5 h-5 text-blue-400" />
+          Ventas por Producto
+        </h2>
+        <p className="text-xs text-gray mb-4">
+          Items pagados en {getCurrentPeriodLabel().toLowerCase()}. Toca "Cantidad" o "Ingresos" para ordenar.
+        </p>
+        {productStats?.data && productStats.data.length > 0 ? (
+          <ProductSalesTable data={productStats.data} />
+        ) : (
+          <div className="h-32 flex items-center justify-center text-gray">
+            <p>No hay ventas de productos para este período</p>
           </div>
-
-          {/* Ingresos por Producto */}
-          <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
-            <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-400" />
-              Ingresos por Producto
-            </h2>
-            <div className="h-96 md:h-[500px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={productStats.data.slice(0, 15).map((item) => ({
-                    ...item,
-                    name: item.display_name.length > 30 
-                      ? item.display_name.substring(0, 30) + '...' 
-                      : item.display_name,
-                  }))}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis
-                    type="number"
-                    stroke="#9CA3AF"
-                    tickFormatter={(value) => formatCurrency(value)}
-                    style={{ fontSize: '12px' }}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    stroke="#9CA3AF"
-                    width={95}
-                    style={{ fontSize: '12px' }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB',
-                    }}
-                    formatter={(value) => formatCurrencyTooltip(value)}
-                  />
-                  <Legend />
-                  <Bar dataKey="revenue" name="Ingresos" fill="#10B981" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </>
-      )}
+        )}
+      </div>
 
       {/* Gráfica de Mesas Más Frecuentadas */}
       {tableStats?.tables && tableStats.tables.length > 0 && (
