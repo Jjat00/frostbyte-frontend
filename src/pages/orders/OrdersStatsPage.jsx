@@ -90,8 +90,31 @@ const formatFullCurrency = (value) =>
     maximumFractionDigits: 0,
   }).format(parseFloat(value) || 0);
 
-const ProductSalesTable = ({ data }) => {
-  const [sortField, setSortField] = useState('revenue');
+const groupByProduct = (data) => {
+  const byProduct = new Map();
+  for (const item of data) {
+    let group = byProduct.get(item.product_id);
+    if (!group) {
+      group = {
+        product_id: item.product_id,
+        product_name: item.product_name,
+        variants: [],
+        quantity_sold: 0,
+        revenue: 0,
+      };
+      byProduct.set(item.product_id, group);
+    }
+    group.variants.push(item);
+    group.quantity_sold += item.quantity_sold || 0;
+    group.revenue += item.revenue || 0;
+  }
+  const groups = [...byProduct.values()];
+  groups.forEach((group) => group.variants.sort((a, b) => b.revenue - a.revenue));
+  return groups;
+};
+
+const useSortable = (defaultField = 'revenue') => {
+  const [sortField, setSortField] = useState(defaultField);
   const [sortDesc, setSortDesc] = useState(true);
 
   const handleSort = (field) => {
@@ -103,13 +126,6 @@ const ProductSalesTable = ({ data }) => {
     }
   };
 
-  const sorted = [...data].sort((a, b) =>
-    sortDesc ? b[sortField] - a[sortField] : a[sortField] - b[sortField]
-  );
-
-  const totalRevenue = data.reduce((sum, item) => sum + (item.revenue || 0), 0);
-  const totalQuantity = data.reduce((sum, item) => sum + (item.quantity_sold || 0), 0);
-
   const SortIcon = ({ field }) => {
     if (field !== sortField) return null;
     return sortDesc ? (
@@ -118,6 +134,121 @@ const ProductSalesTable = ({ data }) => {
       <ArrowUp className="w-3.5 h-3.5 inline-block ml-1" />
     );
   };
+
+  const sortRows = (rows) =>
+    [...rows].sort((a, b) =>
+      sortDesc ? b[sortField] - a[sortField] : a[sortField] - b[sortField]
+    );
+
+  return { handleSort, SortIcon, sortRows };
+};
+
+const PercentCell = ({ percent }) => (
+  <div className="flex items-center justify-end gap-2">
+    <div className="hidden sm:block w-16 bg-dark rounded-full h-1.5 overflow-hidden">
+      <div
+        className="h-full bg-green-500"
+        style={{ width: `${Math.min(percent, 100)}%` }}
+      />
+    </div>
+    <span className="text-gray text-xs w-10 text-right">{percent.toFixed(1)}%</span>
+  </div>
+);
+
+const ProductGroupedTable = ({ data }) => {
+  const { handleSort, SortIcon, sortRows } = useSortable();
+
+  const groups = sortRows(groupByProduct(data));
+  const totalRevenue = groups.reduce((sum, g) => sum + g.revenue, 0);
+  const totalQuantity = groups.reduce((sum, g) => sum + g.quantity_sold, 0);
+
+  return (
+    <div className="overflow-x-auto -mx-4 md:mx-0 px-4 md:px-0">
+      <table className="w-full min-w-[560px] text-sm">
+        <thead>
+          <tr className="border-b border-white/[0.1] text-gray text-xs uppercase tracking-wide">
+            <th className="text-left py-3 pr-3 font-medium">#</th>
+            <th className="text-left py-3 pr-3 font-medium">Producto</th>
+            <th
+              className="text-right py-3 pr-3 font-medium cursor-pointer select-none hover:text-light whitespace-nowrap"
+              onClick={() => handleSort('quantity_sold')}
+            >
+              Cantidad
+              <SortIcon field="quantity_sold" />
+            </th>
+            <th
+              className="text-right py-3 pr-3 font-medium cursor-pointer select-none hover:text-light whitespace-nowrap"
+              onClick={() => handleSort('revenue')}
+            >
+              Ingresos
+              <SortIcon field="revenue" />
+            </th>
+            <th className="text-right py-3 font-medium whitespace-nowrap">% Ingresos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {groups.map((group, index) => {
+            const percent = totalRevenue > 0 ? (group.revenue / totalRevenue) * 100 : 0;
+            const showBreakdown =
+              group.variants.length > 1 ||
+              (group.variants[0]?.variant_name &&
+                group.variants[0].variant_name !== group.product_name);
+            return (
+              <tr
+                key={group.product_id}
+                className="border-b border-white/[0.05] hover:bg-white/[0.04] transition-colors"
+              >
+                <td className="py-3 pr-3 text-gray align-top">{index + 1}</td>
+                <td className="py-3 pr-3">
+                  <p className="text-light font-medium">{group.product_name}</p>
+                  {showBreakdown && (
+                    <div className="mt-1 space-y-0.5">
+                      {group.variants.map((variant) => (
+                        <p key={variant.variant_id} className="text-xs text-gray whitespace-nowrap">
+                          {variant.quantity_sold} × {variant.variant_name || 'Única'} —{' '}
+                          {formatFullCurrency(variant.revenue)}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </td>
+                <td className="py-3 pr-3 text-right text-light font-medium align-top">
+                  {group.quantity_sold}
+                </td>
+                <td className="py-3 pr-3 text-right text-green-400 font-bold whitespace-nowrap align-top">
+                  {formatFullCurrency(group.revenue)}
+                </td>
+                <td className="py-3 text-right align-top">
+                  <PercentCell percent={percent} />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+        <tfoot>
+          <tr className="border-t border-white/[0.15]">
+            <td className="py-3 pr-3" />
+            <td className="py-3 pr-3 text-light font-bold">
+              Total ({groups.length} producto{groups.length !== 1 ? 's' : ''})
+            </td>
+            <td className="py-3 pr-3 text-right text-light font-bold">{totalQuantity}</td>
+            <td className="py-3 pr-3 text-right text-green-400 font-bold whitespace-nowrap">
+              {formatFullCurrency(totalRevenue)}
+            </td>
+            <td className="py-3 text-right text-gray text-xs">100%</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+};
+
+const ProductSalesTable = ({ data }) => {
+  const { handleSort, SortIcon, sortRows } = useSortable();
+
+  const sorted = sortRows(data);
+  const totalRevenue = data.reduce((sum, item) => sum + (item.revenue || 0), 0);
+  const totalQuantity = data.reduce((sum, item) => sum + (item.quantity_sold || 0), 0);
 
   return (
     <div className="overflow-x-auto -mx-4 md:mx-0 px-4 md:px-0">
@@ -169,17 +300,7 @@ const ProductSalesTable = ({ data }) => {
                   {formatFullCurrency(item.revenue)}
                 </td>
                 <td className="py-3 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <div className="hidden sm:block w-16 bg-dark rounded-full h-1.5 overflow-hidden">
-                      <div
-                        className="h-full bg-green-500"
-                        style={{ width: `${Math.min(percent, 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-gray text-xs w-10 text-right">
-                      {percent.toFixed(1)}%
-                    </span>
-                  </div>
+                  <PercentCell percent={percent} />
                 </td>
               </tr>
             );
@@ -210,6 +331,7 @@ const OrdersStatsPage = () => {
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
   const [useCustomRange, setUseCustomRange] = useState(false);
+  const [productView, setProductView] = useState('product');
 
   // Obtener estadísticas
   const { data: stats, isLoading } = useQuery({
@@ -466,15 +588,39 @@ const OrdersStatsPage = () => {
 
       {/* Ventas por Producto */}
       <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
-        <h2 className="text-lg font-bold text-light mb-1 flex items-center gap-2">
-          <Package className="w-5 h-5 text-blue-400" />
-          Ventas por Producto
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
+          <h2 className="text-lg font-bold text-light flex items-center gap-2">
+            <Package className="w-5 h-5 text-blue-400" />
+            Ventas por Producto
+          </h2>
+          <div className="flex gap-2">
+            {[
+              { key: 'product', label: 'Por producto' },
+              { key: 'variant', label: 'Por variante' },
+            ].map((option) => (
+              <button
+                key={option.key}
+                onClick={() => setProductView(option.key)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                  productView === option.key
+                    ? 'bg-secondary/20 text-secondary border-secondary/30'
+                    : 'bg-white/[0.09] text-gray hover:text-light hover:bg-white/[0.08] border-transparent'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <p className="text-xs text-gray mb-4">
           Items pagados en {getCurrentPeriodLabel().toLowerCase()}. Toca "Cantidad" o "Ingresos" para ordenar.
         </p>
         {productStats?.data && productStats.data.length > 0 ? (
-          <ProductSalesTable data={productStats.data} />
+          productView === 'product' ? (
+            <ProductGroupedTable data={productStats.data} />
+          ) : (
+            <ProductSalesTable data={productStats.data} />
+          )
         ) : (
           <div className="h-32 flex items-center justify-center text-gray">
             <p>No hay ventas de productos para este período</p>
