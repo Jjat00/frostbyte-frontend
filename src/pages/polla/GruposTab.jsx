@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { LayoutGrid, Table2, Home, Info, AlertTriangle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { LayoutGrid, Table2, Home, Info, AlertTriangle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
+import TeamSheet from "./TeamSheet";
 import { CONF_META } from "@/data/mundial2026";
 import { usePollaGroups, usePollaStandings } from "@/hooks/usePolla";
 
@@ -28,23 +29,32 @@ const ConfDot = ({ conf }) => {
   );
 };
 
-/* Vista de equipos: selecciones del grupo */
-const TeamsView = ({ group }) => (
+/* Vista de equipos: selecciones del grupo (tocar abre la ficha del equipo) */
+const TeamsView = ({ group, onTeam }) => (
   <ul className="divide-y divide-white/[0.05]">
     {group.teams.map((t) => (
-      <li key={t.code} className="flex items-center gap-3 py-2.5">
-        <Flag iso2={t.iso2} name={t.name} size={30} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-light">{t.name}</p>
-          <ConfDot conf={t.confederation} />
-        </div>
-        {t.is_host ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary">
-            <Home size={10} /> Sede
-          </span>
-        ) : (
-          <span className="text-xs font-black text-gray/60">{t.code}</span>
-        )}
+      <li key={t.code}>
+        <button
+          onClick={() => onTeam(t.code)}
+          className="group flex w-full items-center gap-3 py-2.5 text-left transition-colors hover:bg-white/[0.02]"
+        >
+          <Flag iso2={t.iso2} name={t.name} size={30} />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-bold text-light">{t.name}</p>
+            <ConfDot conf={t.confederation} />
+          </div>
+          {t.is_host ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary">
+              <Home size={10} /> Sede
+            </span>
+          ) : (
+            <span className="text-xs font-black text-gray/60">{t.code}</span>
+          )}
+          <ChevronRight
+            size={14}
+            className="shrink-0 text-gray/50 transition-transform group-hover:translate-x-0.5"
+          />
+        </button>
       </li>
     ))}
   </ul>
@@ -117,7 +127,7 @@ const TableView = ({ standingGroup }) => {
   );
 };
 
-const GroupCard = ({ group, index, view, standingGroup }) => (
+const GroupCard = ({ group, index, view, standingGroup, onTeam }) => (
   <motion.div
     layout
     initial={{ opacity: 0, y: 14 }}
@@ -136,7 +146,7 @@ const GroupCard = ({ group, index, view, standingGroup }) => (
       </h3>
     </div>
     {view === "teams" ? (
-      <TeamsView group={group} />
+      <TeamsView group={group} onTeam={onTeam} />
     ) : (
       <TableView standingGroup={standingGroup} />
     )}
@@ -164,6 +174,8 @@ const GroupCardSkeleton = () => (
 
 const GruposTab = () => {
   const [view, setView] = useState("teams");
+  // Selección abierta en la ficha (sheet) al tocarla en su grupo.
+  const [teamCode, setTeamCode] = useState(null);
 
   const {
     data: groups,
@@ -262,6 +274,7 @@ const GruposTab = () => {
               index={i}
               view={view}
               standingGroup={standingsByLetter[g.letter]}
+              onTeam={setTeamCode}
             />
           ))}
         </div>
@@ -273,6 +286,13 @@ const GruposTab = () => {
           Posiciones en tiempo real · se actualizan con cada partido del Mundial.
         </p>
       )}
+
+      {/* Ficha de la selección */}
+      <AnimatePresence>
+        {teamCode && (
+          <TeamSheet code={teamCode} onClose={() => setTeamCode(null)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

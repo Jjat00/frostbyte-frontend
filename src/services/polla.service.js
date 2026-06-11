@@ -33,6 +33,10 @@ export const pollaService = {
     // { scorers: [...], updated_at }
     return (await customerClient.get(ENDPOINTS.POLLA_TOPSCORERS)).data;
   },
+  async getTeam(code) {
+    // { team, standing, players, matches }
+    return (await customerClient.get(ENDPOINTS.POLLA_TEAM_DETAIL(code))).data;
+  },
   async getAwards() {
     return (await customerClient.get(ENDPOINTS.POLLA_AWARDS)).data;
   },
