@@ -1,7 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { Radio, Timer, X, ListOrdered, BarChart3, Users, Lock } from "lucide-react";
+import { Radio, Timer, X, ListOrdered, BarChart3, Users, Lock, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
 import { useMatchDetail, useMatchPulse } from "@/hooks/usePolla";
@@ -206,6 +206,77 @@ const PulseSection = ({ match }) => {
   );
 };
 
+/* ── Historial entre ambas selecciones (head-to-head) ── */
+const H2HSection = ({ match }) => {
+  const summary = match.h2h?.summary;
+  if (!summary) return null; // aun no se trae (lo hace el sync < 48 h antes)
+
+  const meetings = match.h2h.meetings || [];
+  const segments = [
+    { key: "home", label: match.home.code || "Local", color: "text-primary" },
+    { key: "draw", label: "Empates", color: "text-gray" },
+    { key: "away", label: match.away.code || "Visita", color: "text-secondary" },
+  ];
+
+  return (
+    <>
+      <SectionTitle icon={History}>Historial</SectionTitle>
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5">
+        {summary.total === 0 ? (
+          <p className="py-1 text-center text-xs text-gray">
+            Nunca se han enfrentado:{" "}
+            <b className="text-light">este será su primer duelo.</b>
+          </p>
+        ) : (
+          <>
+            <div className="flex h-2 gap-0.5 overflow-hidden rounded-full bg-white/[0.05]">
+              {segments.map((s) => (
+                <span
+                  key={s.key}
+                  className={cn("rounded-full", OUTCOME_COLORS[s.key])}
+                  style={{ width: `${(summary[s.key] / summary.total) * 100}%` }}
+                />
+              ))}
+            </div>
+            <div className="mt-2 flex justify-between text-[11px]">
+              {segments.map((s) => (
+                <span key={s.key} className={cn("font-bold", s.color)}>
+                  {s.label} {summary[s.key]}
+                </span>
+              ))}
+            </div>
+            {meetings.length > 0 && (
+              <ul className="mt-2 divide-y divide-white/[0.04]">
+                {meetings.map((g, i) => (
+                  <li key={i} className="flex items-center gap-2 py-2">
+                    <span className="w-9 shrink-0 text-[10px] tabular-nums text-gray/70">
+                      {(g.date || "").slice(0, 4)}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-xs text-light/90">
+                      {g.home_name}{" "}
+                      <b className="tabular-nums text-light">
+                        {g.home_goals}-{g.away_goals}
+                      </b>{" "}
+                      {g.away_name}
+                    </span>
+                    <span className="max-w-[100px] shrink-0 truncate text-right text-[10px] text-gray/60">
+                      {g.competition}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-1.5 text-center text-[10px] text-gray/60">
+              {summary.total}{" "}
+              {summary.total === 1 ? "enfrentamiento previo" : "enfrentamientos previos"}.
+            </p>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
+
 const UpcomingCountdown = ({ kickoff }) => {
   const cd = useCountdown(kickoff, { maxResolutionMs: 60_000 });
   return (
@@ -350,8 +421,13 @@ const MatchDetailSheet = ({ slug, onClose, children }) => {
               {isUpcoming && <UpcomingCountdown kickoff={match.kickoff} />}
             </div>
 
-            {/* Pulso: antes del partido es lo más interesante del sheet */}
-            {isUpcoming && <PulseSection match={match} />}
+            {/* Pulso e historial: antes del partido son el plato fuerte */}
+            {isUpcoming && (
+              <>
+                <PulseSection match={match} />
+                <H2HSection match={match} />
+              </>
+            )}
 
             {/* Minuto a minuto */}
             {events.length > 0 && (
@@ -384,8 +460,13 @@ const MatchDetailSheet = ({ slug, onClose, children }) => {
               </>
             )}
 
-            {/* En vivo / finalizado el pulso pasa al final */}
-            {!isUpcoming && <PulseSection match={match} />}
+            {/* En vivo / finalizado el pulso e historial pasan al final */}
+            {!isUpcoming && (
+              <>
+                <PulseSection match={match} />
+                <H2HSection match={match} />
+              </>
+            )}
 
             {isUpcoming && !events.length && (
               <p className="mt-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-5 text-center text-xs text-gray">
