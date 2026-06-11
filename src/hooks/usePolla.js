@@ -1,6 +1,8 @@
+import { useCallback, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { pollaService } from "@/services/polla.service";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import { useWebSocket } from "@/hooks/useWebSocket";
 
 /**
  * Hooks de React Query para la Polla Mundialista.
@@ -224,6 +226,66 @@ export function useClaimReferral() {
       qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
     },
   });
+}
+
+// ── Tiempo real ──────────────────────────────────────────────────────────────
+
+// Queries que muestran datos que cambian con cada gol / partido finalizado.
+const LIVE_QUERY_KEYS = [
+  ["polla", "matches"], // prefijo: cubre todas las variantes de params
+  pollaKeys.standings(),
+  pollaKeys.bracket(),
+  pollaKeys.ranking(),
+  pollaKeys.missions(),
+  pollaKeys.myStats(),
+  pollaKeys.awards(),
+];
+
+/**
+ * Mantiene frescos los datos de la Polla para todos los participantes.
+ * Montar UNA vez en el shell (PollaApp).
+ *
+ * Tres mecanismos, del más al menos inmediato:
+ *  1. WebSocket /ws/polla/: el backend emite `polla_changed` cuando el sync
+ *     detecta cambios; aquí invalidamos las queries vivas y React Query
+ *     refetchea solo las que están en pantalla.
+ *  2. Heartbeat: query ligera de partidos en vivo cada 60 s (cada 5 min si no
+ *     hay ninguno) para detectar transiciones aunque el WS esté caído.
+ *  3. Respaldo: si hay partidos en vivo y el WS no conecta (típico en móvil
+ *     tras bloquear la pantalla), invalida las queries vivas cada 60 s.
+ */
+export function usePollaLive() {
+  const qc = useQueryClient();
+
+  const invalidateLive = useCallback(() => {
+    LIVE_QUERY_KEYS.forEach((key) => qc.invalidateQueries({ queryKey: key }));
+  }, [qc]);
+
+  // Heartbeat: ¿hay partidos en vivo ahora mismo?
+  const { data: liveMatches } = useQuery({
+    queryKey: pollaKeys.matches({ status: "live" }),
+    queryFn: () => pollaService.getMatches({ status: "live" }),
+    select: selectMatches,
+    refetchInterval: (query) =>
+      query.state.data?.length ? 60 * 1000 : 5 * 60 * 1000,
+    staleTime: 30 * 1000,
+  });
+  const hasLive = (liveMatches?.length ?? 0) > 0;
+
+  const { isConnected } = useWebSocket("/ws/polla/", {
+    onMessage: (msg) => {
+      if (msg?.type === "polla_changed") invalidateLive();
+    },
+  });
+
+  // Respaldo por polling cuando el WS está caído durante partidos en vivo.
+  useEffect(() => {
+    if (isConnected || !hasLive) return undefined;
+    const id = setInterval(invalidateLive, 60 * 1000);
+    return () => clearInterval(id);
+  }, [isConnected, hasLive, invalidateLive]);
+
+  return { isConnected, hasLive, liveMatches };
 }
 
 // ── Administración (sesión de staff) ────────────────────────────────────────

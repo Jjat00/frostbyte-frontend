@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 import { ArrowLeft, Target, LayoutGrid, Trophy, Flag, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
-import { useMyStats } from "@/hooks/usePolla";
+import { useMyStats, usePollaLive } from "@/hooks/usePolla";
 import PartidosTab from "./PartidosTab";
 import GruposTab from "./GruposTab";
 import RankingTab from "./RankingTab";
@@ -26,6 +26,8 @@ const PollaApp = () => {
   const customer = useCustomerAuthStore((s) => s.customer);
   const logout = useCustomerAuthStore((s) => s.logout);
   const { data: stats } = useMyStats();
+  // Datos en vivo para todos: WS de invalidación + polling de respaldo.
+  usePollaLive();
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "crack";
 
