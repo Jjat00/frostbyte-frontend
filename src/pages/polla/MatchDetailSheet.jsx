@@ -1,10 +1,10 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { Radio, Timer, X, ListOrdered, BarChart3 } from "lucide-react";
+import { Radio, Timer, X, ListOrdered, BarChart3, Users, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
-import { useMatchDetail } from "@/hooks/usePolla";
+import { useMatchDetail, useMatchPulse } from "@/hooks/usePolla";
 import { useCountdown, formatCountdownLong } from "@/hooks/useCountdown";
 import { matchDayLabel, matchTime } from "@/data/mundial2026";
 
@@ -115,6 +115,96 @@ const SectionTitle = ({ icon: Icon, children }) => (
     {children}
   </h4>
 );
+
+/* ── Pulso de la comunidad: como pronostico la polla este partido ── */
+const OUTCOME_COLORS = {
+  home: "bg-linear-to-r from-primary to-primary/70",
+  draw: "bg-white/25",
+  away: "bg-linear-to-r from-secondary/70 to-secondary",
+};
+
+const PulseSection = ({ match }) => {
+  const { data } = useMatchPulse(match.slug);
+  if (!data) return null;
+
+  if (!data.visible) {
+    return (
+      <div className="mt-5 flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5">
+        <Lock size={16} className="shrink-0 text-gray/60" />
+        <p className="text-xs text-gray">
+          Guarda tu pronóstico para ver cómo va el{" "}
+          <b className="text-light">pulso de la polla</b> en este partido.
+        </p>
+      </div>
+    );
+  }
+
+  const segments = [
+    { key: "home", label: match.home.code || "Local" },
+    { key: "draw", label: "Empate" },
+    { key: "away", label: match.away.code || "Visita" },
+  ];
+
+  return (
+    <>
+      <SectionTitle icon={Users}>Pulso de la polla</SectionTitle>
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5">
+        {data.total === 0 ? (
+          <p className="py-2 text-center text-xs text-gray">
+            Nadie ha pronosticado este partido todavía.
+          </p>
+        ) : (
+          <>
+            <div className="flex h-2 gap-0.5 overflow-hidden rounded-full bg-white/[0.05]">
+              {segments.map((s) => {
+                const pct = data.outcomes?.[s.key]?.pct ?? 0;
+                return (
+                  <span
+                    key={s.key}
+                    className={cn("rounded-full", OUTCOME_COLORS[s.key])}
+                    style={{ width: `${pct}%` }}
+                  />
+                );
+              })}
+            </div>
+            <div className="mt-2 flex justify-between text-[11px]">
+              {segments.map((s, i) => (
+                <span
+                  key={s.key}
+                  className={cn(
+                    "font-bold",
+                    i === 0 ? "text-primary" : i === 2 ? "text-secondary" : "text-gray"
+                  )}
+                >
+                  {s.label} {data.outcomes?.[s.key]?.pct ?? 0}%
+                </span>
+              ))}
+            </div>
+            {data.top_scores?.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] uppercase tracking-widest text-gray/70">
+                  Marcador más jugado
+                </span>
+                {data.top_scores.map((t) => (
+                  <span
+                    key={t.score}
+                    className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-[11px] font-bold tabular-nums text-light"
+                  >
+                    {t.score} <span className="text-gray/70">· {t.pct}%</span>
+                  </span>
+                ))}
+              </div>
+            )}
+            <p className="mt-2.5 text-center text-[10px] text-gray/60">
+              Basado en {data.total}{" "}
+              {data.total === 1 ? "pronóstico" : "pronósticos"} de la polla.
+            </p>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
 
 const UpcomingCountdown = ({ kickoff }) => {
   const cd = useCountdown(kickoff, { maxResolutionMs: 60_000 });
@@ -260,6 +350,9 @@ const MatchDetailSheet = ({ slug, onClose, children }) => {
               {isUpcoming && <UpcomingCountdown kickoff={match.kickoff} />}
             </div>
 
+            {/* Pulso: antes del partido es lo más interesante del sheet */}
+            {isUpcoming && <PulseSection match={match} />}
+
             {/* Minuto a minuto */}
             {events.length > 0 && (
               <>
@@ -290,6 +383,9 @@ const MatchDetailSheet = ({ slug, onClose, children }) => {
                 </div>
               </>
             )}
+
+            {/* En vivo / finalizado el pulso pasa al final */}
+            {!isUpcoming && <PulseSection match={match} />}
 
             {isUpcoming && !events.length && (
               <p className="mt-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-5 text-center text-xs text-gray">

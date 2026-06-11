@@ -37,6 +37,10 @@ export const pollaService = {
     // { team, standing, players, matches }
     return (await customerClient.get(ENDPOINTS.POLLA_TEAM_DETAIL(code))).data;
   },
+  async getMatchPulse(slug) {
+    // { visible, total, outcomes, top_scores } | { visible: false, reason }
+    return (await customerClient.get(ENDPOINTS.POLLA_MATCH_PULSE(slug))).data;
+  },
   async getAwards() {
     return (await customerClient.get(ENDPOINTS.POLLA_AWARDS)).data;
   },

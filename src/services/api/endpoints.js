@@ -93,6 +93,7 @@ export const ENDPOINTS = {
   POLLA_MATCHES: '/polla/matches/',
   POLLA_MATCH_DETAIL: (slug) => `/polla/matches/${slug}/`,
   POLLA_MATCH_PREDICT: (slug) => `/polla/matches/${slug}/predict/`,
+  POLLA_MATCH_PULSE: (slug) => `/polla/matches/${slug}/pulse/`,
   POLLA_MY_PREDICTIONS: '/polla/predictions/me/',
   POLLA_AWARDS: '/polla/awards/',
   POLLA_AWARD_PICK: (code) => `/polla/awards/${code}/pick/`,

@@ -15,6 +15,7 @@ export const pollaKeys = {
   tournament: () => ["polla", "tournament"],
   matches: (params) => ["polla", "matches", params || {}],
   match: (slug) => ["polla", "match", slug],
+  matchPulse: (slug) => ["polla", "match", slug, "pulse"],
   groups: () => ["polla", "groups"],
   standings: () => ["polla", "standings"],
   topScorers: () => ["polla", "topscorers"],
@@ -106,6 +107,21 @@ export function useMatchDetail(slug, options = {}) {
   });
 }
 
+/**
+ * Pulso de la comunidad para un partido: % por resultado y marcadores más
+ * pronosticados. El backend lo oculta hasta que el usuario pronostique (o el
+ * partido cierre); cae bajo el prefijo ["polla","match"] que el WS invalida.
+ */
+export function useMatchPulse(slug, options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.matchPulse(slug),
+    queryFn: () => pollaService.getMatchPulse(slug),
+    enabled: !!slug,
+    staleTime: 60 * 1000,
+    ...options,
+  });
+}
+
 /** Ficha de una selección: { team, standing, players, matches }. */
 export function usePollaTeam(code, options = {}) {
   return useQuery({
@@ -185,6 +201,8 @@ export function useSavePrediction() {
       pollaService.savePrediction(slug, { home_score, away_score }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["polla", "matches"] });
+      // Detalle y pulso del partido: el pronostico propio los desbloquea/cambia.
+      qc.invalidateQueries({ queryKey: ["polla", "match"] });
       qc.invalidateQueries({ queryKey: pollaKeys.myStats() });
       qc.invalidateQueries({ queryKey: pollaKeys.missions() });
       qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
