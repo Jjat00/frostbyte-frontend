@@ -17,6 +17,7 @@ export const pollaKeys = {
   match: (slug) => ["polla", "match", slug],
   groups: () => ["polla", "groups"],
   standings: () => ["polla", "standings"],
+  topScorers: () => ["polla", "topscorers"],
   awards: () => ["polla", "awards"],
   bracket: () => ["polla", "bracket"],
   ranking: () => ["polla", "ranking"],
@@ -85,6 +86,16 @@ export function usePollaStandings(options = {}) {
   return useQuery({
     queryKey: pollaKeys.standings(),
     queryFn: () => pollaService.getStandings(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Tabla de goleadores del torneo: { scorers: [...], updated_at }. */
+export function usePollaTopScorers(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.topScorers(),
+    queryFn: () => pollaService.getTopScorers(),
     staleTime: LIVE_STALE,
     ...options,
   });
@@ -234,6 +245,7 @@ export function useClaimReferral() {
 const LIVE_QUERY_KEYS = [
   ["polla", "matches"], // prefijo: cubre todas las variantes de params
   pollaKeys.standings(),
+  pollaKeys.topScorers(),
   pollaKeys.bracket(),
   pollaKeys.ranking(),
   pollaKeys.missions(),

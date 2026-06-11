@@ -29,6 +29,10 @@ export const pollaService = {
   async getStandings() {
     return (await customerClient.get(ENDPOINTS.POLLA_STANDINGS)).data;
   },
+  async getTopScorers() {
+    // { scorers: [...], updated_at }
+    return (await customerClient.get(ENDPOINTS.POLLA_TOPSCORERS)).data;
+  },
   async getAwards() {
     return (await customerClient.get(ENDPOINTS.POLLA_AWARDS)).data;
   },

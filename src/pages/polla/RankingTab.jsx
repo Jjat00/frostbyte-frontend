@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Crown, TrendingUp, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { usePollaRanking, usePollaTournament } from "@/hooks/usePolla";
+import GoleadoresSection from "./GoleadoresSection";
+
+const VIEWS = [
+  { id: "ranking", label: "Jugadores", icon: Trophy },
+  { id: "scorers", label: "Goleadores", icon: Target },
+];
 
 const initials = (name) =>
   (name || "")
@@ -71,30 +77,66 @@ const PodiumCol = ({ row, place, name, src }) => {
   );
 };
 
-/* Encabezado: se reutiliza en todos los estados para conservar el diseno */
-const Header = ({ prize }) => (
-  <div className="mb-5 flex items-start gap-3">
-    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/20 to-secondary/20">
-      <Trophy className="text-primary" size={20} />
-    </div>
-    <div>
-      <h2 className="text-xl font-black text-light">Clasificación general</h2>
-      <p className="mt-0.5 text-sm leading-snug text-gray">
-        {prize ? (
-          <>
-            Compite por{" "}
-            <span className="font-bold text-secondary">{prize}</span>. Así va la
-            tabla de la Polla.
-          </>
-        ) : (
-          <>Así va la tabla de la Polla.</>
-        )}
-      </p>
-    </div>
-  </div>
-);
+/* Encabezado: se reutiliza en todos los estados para conservar el diseno.
+   Incluye el toggle Jugadores / Goleadores. */
+const Header = ({ prize, view, onView }) => {
+  const scorers = view === "scorers";
+  return (
+    <>
+      <div className="mb-5 flex items-start gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/20 to-secondary/20">
+          {scorers ? (
+            <Target className="text-primary" size={20} />
+          ) : (
+            <Trophy className="text-primary" size={20} />
+          )}
+        </div>
+        <div>
+          <h2 className="text-xl font-black text-light">
+            {scorers ? "Goleadores del Mundial" : "Clasificación general"}
+          </h2>
+          <p className="mt-0.5 text-sm leading-snug text-gray">
+            {scorers ? (
+              <>Así va la tabla de goleadores del torneo, gol a gol.</>
+            ) : prize ? (
+              <>
+                Compite por{" "}
+                <span className="font-bold text-secondary">{prize}</span>. Así va
+                la tabla de la Polla.
+              </>
+            ) : (
+              <>Así va la tabla de la Polla.</>
+            )}
+          </p>
+        </div>
+      </div>
+
+      <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+        {VIEWS.map((v) => {
+          const active = view === v.id;
+          return (
+            <button
+              key={v.id}
+              onClick={() => onView(v.id)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-bold transition-all",
+                active
+                  ? "bg-linear-to-r from-primary to-secondary text-dark"
+                  : "text-gray hover:text-light"
+              )}
+            >
+              <v.icon size={15} />
+              {v.label}
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+};
 
 const RankingTab = () => {
+  const [view, setView] = useState("ranking");
   const customer = useCustomerAuthStore((s) => s.customer);
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "Tú";
@@ -109,11 +151,21 @@ const RankingTab = () => {
   const prize = tournament?.prize;
   const prizeNote = tournament?.prize_note;
 
+  // Vista de goleadores: maneja sus propios estados de carga/errores.
+  if (view === "scorers") {
+    return (
+      <div>
+        <Header prize={prize} view={view} onView={setView} />
+        <GoleadoresSection />
+      </div>
+    );
+  }
+
   // Estado de carga: skeleton discreto acorde al tema cyberpunk
   if (rankingLoading) {
     return (
       <div>
-        <Header prize={prize} />
+        <Header prize={prize} view={view} onView={setView} />
         <div className="mb-6 h-[88px] animate-pulse rounded-2xl border border-white/[0.06] bg-white/[0.02]" />
         <div className="mb-4 h-44 animate-pulse rounded-2xl border border-white/[0.06] bg-white/[0.02]" />
         <div className="liquid-glass overflow-hidden rounded-2xl border border-white/[0.06]">
@@ -142,7 +194,7 @@ const RankingTab = () => {
   if (rankingError) {
     return (
       <div>
-        <Header prize={prize} />
+        <Header prize={prize} view={view} onView={setView} />
         <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-10 text-center">
           <p className="text-sm font-bold text-light">
             No pudimos cargar la clasificación.
@@ -170,7 +222,7 @@ const RankingTab = () => {
   if (rows.length === 0) {
     return (
       <div>
-        <Header prize={prize} />
+        <Header prize={prize} view={view} onView={setView} />
         <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-10 text-center">
           <Trophy className="mx-auto mb-3 text-gray/50" size={28} />
           <p className="text-sm font-bold text-light">
@@ -202,7 +254,7 @@ const RankingTab = () => {
   return (
     <div>
       {/* Encabezado */}
-      <Header prize={prize} />
+      <Header prize={prize} view={view} onView={setView} />
 
       {/* Tu posicion */}
       {me ? (
