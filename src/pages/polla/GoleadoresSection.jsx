@@ -6,7 +6,8 @@ import Flag from "@/components/polla/Flag";
 import { usePollaAwards, usePollaTopScorers } from "@/hooks/usePolla";
 
 /**
- * Tabla de goleadores del Mundial (vista "Goleadores" de la pestaña Ranking).
+ * Tabla de goleadores del Mundial (vista "Goleadores" de la pestaña Grupos,
+ * junto a Equipos y Tabla: todo lo del torneo vive en ese tab).
  * Resalta al jugador que el usuario eligió en la mención "Goleador" para que
  * pueda seguir su apuesta partido a partido.
  */

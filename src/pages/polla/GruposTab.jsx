@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutGrid, Table2, Home, Info, AlertTriangle, ChevronRight } from "lucide-react";
+import { LayoutGrid, Table2, Target, Home, Info, AlertTriangle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
 import TeamSheet from "./TeamSheet";
+import GoleadoresSection from "./GoleadoresSection";
 import { CONF_META } from "@/data/mundial2026";
 import { usePollaGroups, usePollaStandings } from "@/hooks/usePolla";
 
 const VIEWS = [
   { id: "teams", label: "Equipos", icon: LayoutGrid },
   { id: "table", label: "Tabla", icon: Table2 },
+  { id: "scorers", label: "Goleadores", icon: Target },
 ];
 
 const ConfDot = ({ conf }) => {
@@ -174,6 +176,7 @@ const GroupCardSkeleton = () => (
 
 const GruposTab = () => {
   const [view, setView] = useState("teams");
+  const scorers = view === "scorers";
   // Selección abierta en la ficha (sheet) al tocarla en su grupo.
   const [teamCode, setTeamCode] = useState(null);
 
@@ -204,16 +207,28 @@ const GruposTab = () => {
 
   return (
     <div>
-      {/* Encabezado */}
+      {/* Encabezado (cambia según la vista) */}
       <div className="mb-5 flex items-start gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/20 to-secondary/20">
-          <LayoutGrid className="text-primary" size={20} />
+          {scorers ? (
+            <Target className="text-primary" size={20} />
+          ) : (
+            <LayoutGrid className="text-primary" size={20} />
+          )}
         </div>
         <div>
-          <h2 className="text-xl font-black text-light">Grupos del Mundial</h2>
+          <h2 className="text-xl font-black text-light">
+            {scorers ? "Goleadores del Mundial" : "Grupos del Mundial"}
+          </h2>
           <p className="mt-0.5 text-sm leading-snug text-gray">
-            48 selecciones, 12 grupos. Los <span className="text-secondary">2 primeros</span> de
-            cada grupo avanzan (más los 8 mejores terceros).
+            {scorers ? (
+              <>Así va la tabla de goleadores del torneo, gol a gol.</>
+            ) : (
+              <>
+                48 selecciones, 12 grupos. Los <span className="text-secondary">2 primeros</span> de
+                cada grupo avanzan (más los 8 mejores terceros).
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -240,8 +255,11 @@ const GruposTab = () => {
         })}
       </div>
 
+      {/* Vista de goleadores: maneja sus propios estados de carga/error */}
+      {scorers && <GoleadoresSection />}
+
       {/* Estado de error */}
-      {error && (
+      {!scorers && error && (
         <div className="flex items-center gap-3 rounded-2xl border border-red-400/20 bg-red-400/[0.05] px-4 py-5 text-sm text-gray">
           <AlertTriangle className="shrink-0 text-red-400/80" size={18} />
           No pudimos cargar los grupos. Intenta de nuevo en un momento.
@@ -249,7 +267,7 @@ const GruposTab = () => {
       )}
 
       {/* Estado de carga: skeleton de 12 tarjetas */}
-      {!error && loading && (
+      {!scorers && !error && loading && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 12 }).map((_, i) => (
             <GroupCardSkeleton key={i} />
@@ -258,14 +276,14 @@ const GruposTab = () => {
       )}
 
       {/* Estado vacío */}
-      {!error && !loading && groupList.length === 0 && (
+      {!scorers && !error && !loading && groupList.length === 0 && (
         <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-8 text-center text-sm text-gray/70">
           Todavía no hay grupos disponibles.
         </p>
       )}
 
       {/* Grilla de grupos */}
-      {!error && !loading && groupList.length > 0 && (
+      {!scorers && !error && !loading && groupList.length > 0 && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {groupList.map((g, i) => (
             <GroupCard
