@@ -91,6 +91,20 @@ export function usePollaStandings(options = {}) {
   });
 }
 
+/**
+ * Detalle de un partido (incluye eventos y estadisticas en vivo).
+ * Se monta al abrir el sheet de detalle; el WS lo mantiene fresco.
+ */
+export function useMatchDetail(slug, options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.match(slug),
+    queryFn: () => pollaService.getMatch(slug),
+    enabled: !!slug,
+    staleTime: 30 * 1000,
+    ...options,
+  });
+}
+
 /** Tabla de goleadores del torneo: { scorers: [...], updated_at }. */
 export function usePollaTopScorers(options = {}) {
   return useQuery({
@@ -244,6 +258,7 @@ export function useClaimReferral() {
 // Queries que muestran datos que cambian con cada gol / partido finalizado.
 const LIVE_QUERY_KEYS = [
   ["polla", "matches"], // prefijo: cubre todas las variantes de params
+  ["polla", "match"], // prefijo: detalle abierto en el sheet (eventos en vivo)
   pollaKeys.standings(),
   pollaKeys.topScorers(),
   pollaKeys.bracket(),

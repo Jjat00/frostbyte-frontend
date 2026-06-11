@@ -19,6 +19,7 @@ import ColombiaBanner, {
   COLOMBIA_TRICOLOR_V,
   isColombiaMatch,
 } from "./ColombiaBanner";
+import MatchDetailSheet from "./MatchDetailSheet";
 import { usePollaMatches, useSavePrediction } from "@/hooks/usePolla";
 import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import {
@@ -205,7 +206,7 @@ const ResultInfo = ({ match }) => {
 };
 
 /* ── Tarjeta compacta de un partido ── */
-const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error }) => {
+const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error, onOpenDetail }) => {
   const isLive = match.status === "live";
   const isUpcoming = match.status === "upcoming";
   // Cuenta regresiva hasta el pitazo. Cuando llega a 0 bloqueamos en cliente al
@@ -233,8 +234,9 @@ const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error }) =
   return (
     <div
       id={`match-${match.slug}`}
+      onClick={() => onOpenDetail?.(match)}
       className={cn(
-        "relative px-2 py-4",
+        "relative cursor-pointer px-2 py-4 transition-colors hover:bg-white/[0.02]",
         match.featured && "bg-primary/[0.04]",
         colombia && "bg-[#FCD116]/[0.04]"
       )}
@@ -267,7 +269,12 @@ const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error }) =
       <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-2">
         <TeamColumn side={match.home} />
 
-        <div className="flex flex-col items-center gap-2 pt-1">
+        {/* Zona de pronostico: en partidos abiertos no debe abrir el detalle
+            (los inputs y el countdown viven aqui). */}
+        <div
+          onClick={(e) => isUpcoming && e.stopPropagation()}
+          className="flex flex-col items-center gap-2 pt-1"
+        >
           {isUpcoming ? (
             <>
               <div className="flex items-center gap-2">
@@ -321,7 +328,7 @@ const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error }) =
 };
 
 /* ── Grupo de partidos por fecha (plegable, con contador) ── */
-const DateGroup = ({ label, matches, preds, onChange, onSave, pendingSlug, errors }) => {
+const DateGroup = ({ label, matches, preds, onChange, onSave, pendingSlug, errors, onOpenDetail }) => {
   const [open, setOpen] = useState(true);
   const total = matches.length;
   const done = matches.filter((m) => isComplete(preds[m.slug])).length;
@@ -373,6 +380,7 @@ const DateGroup = ({ label, matches, preds, onChange, onSave, pendingSlug, error
                   onSave={onSave}
                   isPending={pendingSlug === m.slug}
                   error={errors[m.slug]}
+                  onOpenDetail={onOpenDetail}
                 />
               ))}
             </div>
@@ -417,6 +425,8 @@ const LoadingState = () => (
 const PartidosTab = () => {
   const [view, setView] = useState("grupos"); // grupos | eliminacion
   const [filter, setFilter] = useState("upcoming");
+  // Partido abierto en el sheet de detalle (minuto a minuto, estadisticas).
+  const [detailSlug, setDetailSlug] = useState(null);
 
   // Trae TODOS los partidos una sola vez; se filtra en cliente.
   const { data, isLoading, isError } = usePollaMatches({});
@@ -607,6 +617,7 @@ const PartidosTab = () => {
                   onSave={onSave}
                   pendingSlug={pendingSlug}
                   errors={errors}
+                  onOpenDetail={(m) => setDetailSlug(m.slug)}
                 />
               ))}
             </div>
@@ -617,6 +628,16 @@ const PartidosTab = () => {
           )}
         </>
       )}
+
+      {/* Sheet de detalle del partido */}
+      <AnimatePresence>
+        {detailSlug && (
+          <MatchDetailSheet
+            slug={detailSlug}
+            onClose={() => setDetailSlug(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
