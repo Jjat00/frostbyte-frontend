@@ -9,12 +9,14 @@ import {
   ChevronDown,
   Star,
   Trophy,
+  Timer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
 import MencionesSection from "./MencionesSection";
 import EliminacionBracket from "./EliminacionBracket";
 import { usePollaMatches, useSavePrediction } from "@/hooks/usePolla";
+import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import {
   FIXTURE_FILTERS,
   FORM_COLOR,
@@ -132,12 +134,35 @@ const ScoreBox = ({ value, onChange, onBlur, editable = false, disabled = false,
   );
 };
 
-/* Pildora de estadisticas (bloqueada, decorativa) */
-const StatsPill = () => (
+/* Pildora "Bloqueado" (cuando ya pasó el pitazo) */
+const LockedPill = () => (
   <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray/70">
-    Estadisticas <Lock size={10} />
+    Bloqueado <Lock size={10} />
   </span>
 );
+
+/* Cuenta regresiva hasta el pitazo (= cierre del pronostico). Cambia de tono
+   segun la urgencia: gris lejano, ambar < 1h, rojo pulsante < 5 min. */
+const LockCountdown = ({ cd }) => {
+  const urgent = cd.total <= 5 * 60 * 1000; // < 5 min
+  const soon = cd.total <= 60 * 60 * 1000; // < 1 h
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold tabular-nums",
+        urgent
+          ? "border-red-500/50 bg-red-500/15 text-red-300"
+          : soon
+          ? "border-amber-500/50 bg-amber-500/15 text-amber-300"
+          : "border-white/15 bg-white/[0.05] text-light/80"
+      )}
+    >
+      <Timer size={13} className={cn(urgent && "animate-pulse")} />
+      <span className="uppercase tracking-wider opacity-70">Cierra en</span>
+      <span className="text-[12px] font-black">{formatCountdown(cd)}</span>
+    </span>
+  );
+};
 
 /* Resultado para partidos en vivo / finalizados: pronostico + puntos */
 const ResultInfo = ({ match }) => {
@@ -179,7 +204,12 @@ const ResultInfo = ({ match }) => {
 const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error }) => {
   const isLive = match.status === "live";
   const isUpcoming = match.status === "upcoming";
-  const editable = isUpcoming && !match.is_locked;
+  // Cuenta regresiva hasta el pitazo. Cuando llega a 0 bloqueamos en cliente al
+  // instante (sin esperar el refetch del backend), evitando un guardado que el
+  // servidor rechazaria igual por is_locked.
+  const cd = useCountdown(match.kickoff);
+  const locked = match.is_locked || (isUpcoming && cd.done);
+  const editable = isUpcoming && !locked;
 
   // Guarda cuando ambos marcadores estan completos (onBlur tambien dispara).
   const trySave = (next) => {
@@ -240,13 +270,7 @@ const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error }) =
                   onBlur={() => trySave(pred)}
                 />
               </div>
-              {match.is_locked ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray/70">
-                  Bloqueado <Lock size={10} />
-                </span>
-              ) : (
-                <StatsPill />
-              )}
+              {locked ? <LockedPill /> : <LockCountdown cd={cd} />}
               {error && (
                 <span className="text-center text-[10px] text-red-400">{error}</span>
               )}

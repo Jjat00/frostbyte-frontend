@@ -16,6 +16,7 @@ import {
   Lock,
   Loader2,
   Trash2,
+  Timer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
@@ -24,6 +25,12 @@ import {
   useSaveAwardPick,
   useClearAwardPick,
 } from "@/hooks/usePolla";
+import {
+  useCountdown,
+  formatCountdown,
+  formatCountdownLong,
+} from "@/hooks/useCountdown";
+import { matchDayLabel, matchTime } from "@/data/mundial2026";
 
 const AWARD_ICONS = {
   champion: Trophy,
@@ -193,21 +200,23 @@ const PickerSheet = ({
 };
 
 /* ── Tarjeta de una mencion ── */
-const AwardCard = ({ award, onOpen }) => {
+const AwardCard = ({ award, locked, onOpen }) => {
   const Icon = AWARD_ICONS[award.code] || Star;
   const pick = award.my_pick;
   const chosen = Boolean(pick);
   return (
     <button
       onClick={onOpen}
+      disabled={locked}
       className={cn(
         "liquid-glass-interactive relative flex w-full flex-col items-center gap-2 rounded-2xl border p-2.5 sm:p-3 text-center transition-all",
         chosen
           ? "border-secondary/40 bg-secondary/[0.04]"
-          : "border-white/[0.07] hover:border-primary/40"
+          : "border-white/[0.07]",
+        locked ? "cursor-default opacity-80" : !chosen && "hover:border-primary/40"
       )}
     >
-      {award.resolved && (
+      {locked && (
         <span className="absolute right-1.5 top-1.5 text-gray/60">
           <Lock size={11} />
         </span>
@@ -236,6 +245,10 @@ const AwardCard = ({ award, onOpen }) => {
           <p className="truncate text-[11px] font-bold text-secondary">
             {pick.name}
           </p>
+        ) : locked ? (
+          <p className="text-[10px] font-bold uppercase tracking-wide text-gray/60">
+            Sin elegir
+          </p>
         ) : (
           <p className="inline-flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
             <Plus size={10} /> Elegir
@@ -261,6 +274,68 @@ const AwardCardSkeleton = () => (
   </div>
 );
 
+/* ── Banner destacado con el cierre de las menciones ── */
+const MencionesDeadlineBanner = ({ cd, locksAt, locked }) => {
+  if (!locksAt) return null;
+
+  if (locked) {
+    return (
+      <div className="mt-3 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+        <Lock size={20} className="shrink-0 text-gray" />
+        <div className="min-w-0">
+          <p className="text-sm font-black text-light">Menciones cerradas</p>
+          <p className="text-[11px] text-gray">
+            Cerraron el {matchDayLabel(locksAt)} · {matchTime(locksAt)}. Ya no se
+            pueden cambiar.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const urgent = cd.total <= 60 * 60 * 1000; // < 1 h
+
+  return (
+    <div
+      className={cn(
+        "mt-3 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3",
+        urgent
+          ? "border-red-500/40 bg-red-500/[0.08]"
+          : "border-amber-500/40 bg-amber-500/[0.08]"
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-3">
+        <Timer
+          size={26}
+          className={cn(
+            "shrink-0",
+            urgent ? "animate-pulse text-red-400" : "text-amber-400"
+          )}
+        />
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-gray/80">
+            Las menciones cierran en
+          </p>
+          <p
+            className={cn(
+              "text-xl font-black leading-tight tabular-nums sm:text-2xl",
+              urgent ? "text-red-400" : "text-amber-300"
+            )}
+          >
+            {formatCountdownLong(cd)}
+          </p>
+        </div>
+      </div>
+      <div className="shrink-0 text-right">
+        <p className="text-[11px] font-black text-light">
+          {matchDayLabel(locksAt)}
+        </p>
+        <p className="text-[11px] tabular-nums text-gray">{matchTime(locksAt)}</p>
+      </div>
+    </div>
+  );
+};
+
 const MencionesSection = () => {
   const [open, setOpen] = useState(true);
   const [active, setActive] = useState(null);
@@ -271,6 +346,13 @@ const MencionesSection = () => {
 
   const awards = data?.awards || [];
   const options = data?.options || { team: [], player: [], keeper: [] };
+
+  // Cierre global de menciones: el backend manda `locks_at` (ISO) y
+  // `picks_locked`. Contamos en cliente y bloqueamos al instante en que llega a
+  // cero, aunque el backend aun no haya refrescado.
+  const locksAt = data?.locks_at || null;
+  const cd = useCountdown(locksAt || 0, { maxResolutionMs: 60_000 });
+  const locked = Boolean(data?.picks_locked || (locksAt && cd.done));
 
   const chosen = awards.filter((a) => a.my_pick).length;
   const total = awards.length;
@@ -307,6 +389,24 @@ const MencionesSection = () => {
           <span className="font-black text-light">Menciones</span>
         </span>
         <span className="flex items-center gap-2">
+          {!isLoading && !isError && locksAt && (
+            locked ? (
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-bold text-gray/70">
+                <Lock size={11} /> Cerradas
+              </span>
+            ) : (
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold tabular-nums",
+                  cd.total <= 60 * 60 * 1000
+                    ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
+                    : "border-white/10 bg-white/[0.03] text-gray/70"
+                )}
+              >
+                <Timer size={11} /> {formatCountdown(cd)}
+              </span>
+            )
+          )}
           {!isLoading && !isError && (
             <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">
               {chosen}/{total} pronósticos
@@ -331,9 +431,15 @@ const MencionesSection = () => {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
+            {!isLoading && !isError && (
+              <MencionesDeadlineBanner cd={cd} locksAt={locksAt} locked={locked} />
+            )}
+
             <p className="px-1 pb-3 pt-3 text-xs leading-snug text-gray">
-              Pronósticos de todo el torneo. Se eligen una sola vez y valen más
-              puntos que un partido.
+              Pronósticos de todo el torneo: valen más puntos que un partido y
+              {locksAt && !locked
+                ? " puedes cambiarlos hasta el arranque de eliminatorias."
+                : " se eligen una sola vez."}
             </p>
 
             {isLoading ? (
@@ -360,23 +466,31 @@ const MencionesSection = () => {
             ) : (
               <div className="space-y-3">
                 <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
-                  {firstRow.map((a) => (
-                    <AwardCard
-                      key={a.code}
-                      award={a}
-                      onOpen={() => setActive(a)}
-                    />
-                  ))}
-                </div>
-                {secondRow.length > 0 && (
-                  <div className="mx-auto grid w-2/3 grid-cols-2 gap-2 sm:gap-2.5">
-                    {secondRow.map((a) => (
+                  {firstRow.map((a) => {
+                    const cardLocked = locked || a.resolved;
+                    return (
                       <AwardCard
                         key={a.code}
                         award={a}
-                        onOpen={() => setActive(a)}
+                        locked={cardLocked}
+                        onOpen={() => !cardLocked && setActive(a)}
                       />
-                    ))}
+                    );
+                  })}
+                </div>
+                {secondRow.length > 0 && (
+                  <div className="mx-auto grid w-2/3 grid-cols-2 gap-2 sm:gap-2.5">
+                    {secondRow.map((a) => {
+                      const cardLocked = locked || a.resolved;
+                      return (
+                        <AwardCard
+                          key={a.code}
+                          award={a}
+                          locked={cardLocked}
+                          onOpen={() => !cardLocked && setActive(a)}
+                        />
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -387,7 +501,7 @@ const MencionesSection = () => {
 
       {/* Selector */}
       <AnimatePresence>
-        {active && !active.resolved && (
+        {active && !active.resolved && !locked && (
           <PickerSheet
             award={active}
             options={options}
