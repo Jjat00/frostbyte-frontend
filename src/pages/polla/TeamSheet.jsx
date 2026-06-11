@@ -1,7 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { Home, Radio, Shield, Users, X, CalendarDays } from "lucide-react";
+import { Home, Radio, Shield, Users, X, CalendarDays, Hand, Zap, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
 import { usePollaTeam } from "@/hooks/usePolla";
@@ -12,6 +12,61 @@ import { CONF_META, FORM_COLOR, matchDayLabel, matchTime } from "@/data/mundial2
  * reciente, sus partidos y la plantilla completa. Se abre al tocar un equipo
  * en la pestaña de Grupos. Portal a <body> (mismo motivo que PickerSheet).
  */
+
+/* Plantilla agrupada por posición (la posición la trae polla_squads) */
+const POSITION_GROUPS = [
+  { id: "GK", label: "Arqueros", icon: Hand },
+  { id: "DF", label: "Defensas", icon: Shield },
+  { id: "MF", label: "Mediocampistas", icon: Zap },
+  { id: "FW", label: "Delanteros", icon: Target },
+];
+
+const initials = (name) =>
+  (name || "")
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase() || "?";
+
+const PlayerRow = ({ p }) => {
+  const meta = [
+    p.number != null ? `#${p.number}` : null,
+    p.age != null ? `${p.age} años` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    <li className="flex items-center gap-2.5 py-1.5">
+      {p.photo ? (
+        <img
+          loading="lazy"
+          decoding="async"
+          src={p.photo}
+          alt={p.name}
+          referrerPolicy="no-referrer"
+          className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-white/15"
+        />
+      ) : (
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/40 to-secondary/40 text-[11px] font-black text-light">
+          {initials(p.name)}
+        </span>
+      )}
+      <div className="min-w-0">
+        <p className="truncate text-xs font-bold text-light">{p.name}</p>
+        <p className="text-[10px] tabular-nums text-gray/70">
+          {meta || " "}
+          {p.goals > 0 && (
+            <span className="ml-1 font-black text-secondary">
+              · {p.goals} {p.goals === 1 ? "gol" : "goles"}
+            </span>
+          )}
+        </p>
+      </div>
+    </li>
+  );
+};
 
 const FormDots = ({ form }) => {
   const dots = Array.isArray(form) ? form : [];
@@ -106,8 +161,27 @@ const TeamSheet = ({ code, onClose }) => {
 
   const team = data?.team;
   const conf = team ? CONF_META[team.confederation] : null;
-  const keepers = (data?.players || []).filter((p) => p.is_keeper);
-  const field = (data?.players || []).filter((p) => !p.is_keeper);
+
+  // Agrupa la plantilla por posición; si la nómina aún no se enriqueció
+  // (sin polla_squads), cae al agrupado clásico arqueros / jugadores.
+  const players = data?.players || [];
+  const posOf = (p) => p.position || (p.is_keeper ? "GK" : "");
+  const byNumber = (a, b) =>
+    (a.number ?? 99) - (b.number ?? 99) || a.name.localeCompare(b.name);
+  const squadGroups = (
+    players.some((p) => p.position)
+      ? [
+          ...POSITION_GROUPS,
+          { id: "", label: "Más jugadores", icon: Users },
+        ].map((g) => ({
+          ...g,
+          players: players.filter((p) => posOf(p) === g.id),
+        }))
+      : [
+          { id: "GK", label: "Arqueros", icon: Hand, players: players.filter((p) => p.is_keeper) },
+          { id: "field", label: "Jugadores", icon: Users, players: players.filter((p) => !p.is_keeper) },
+        ]
+  ).filter((g) => g.players.length > 0);
 
   return createPortal(
     <motion.div
@@ -194,37 +268,19 @@ const TeamSheet = ({ code, onClose }) => {
                 </>
               )}
 
-              {/* Plantilla */}
-              {keepers.length > 0 && (
-                <>
-                  <SectionTitle icon={Shield}>Arqueros</SectionTitle>
-                  <div className="flex flex-wrap gap-1.5">
-                    {keepers.map((p) => (
-                      <span
-                        key={p.id}
-                        className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs font-bold text-light"
-                      >
-                        {p.name}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              )}
-              {field.length > 0 && (
-                <>
-                  <SectionTitle icon={Users}>Jugadores</SectionTitle>
-                  <div className="flex flex-wrap gap-1.5 pb-2">
-                    {field.map((p) => (
-                      <span
-                        key={p.id}
-                        className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-light/90"
-                      >
-                        {p.name}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              )}
+              {/* Plantilla: foto, dorsal y edad de cada jugador */}
+              <div className="pb-2">
+                {squadGroups.map((g) => (
+                  <React.Fragment key={g.id}>
+                    <SectionTitle icon={g.icon}>{g.label}</SectionTitle>
+                    <ul className="grid grid-cols-2 gap-x-3">
+                      {[...g.players].sort(byNumber).map((p) => (
+                        <PlayerRow key={p.id} p={p} />
+                      ))}
+                    </ul>
+                  </React.Fragment>
+                ))}
+              </div>
             </div>
           </>
         )}
