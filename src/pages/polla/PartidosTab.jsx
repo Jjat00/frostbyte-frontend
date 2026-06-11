@@ -15,6 +15,10 @@ import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
 import MencionesSection from "./MencionesSection";
 import EliminacionBracket from "./EliminacionBracket";
+import ColombiaBanner, {
+  COLOMBIA_TRICOLOR_V,
+  isColombiaMatch,
+} from "./ColombiaBanner";
 import { usePollaMatches, useSavePrediction } from "@/hooks/usePolla";
 import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import {
@@ -223,8 +227,25 @@ const CompactMatchCard = ({ match, pred, onChange, onSave, isPending, error }) =
     ? `Grupo ${match.group} · ${match.round_label}`
     : match.round_label;
 
+  // Partido de Colombia: franja tricolor + fondo amarillo sutil.
+  const colombia = isColombiaMatch(match);
+
   return (
-    <div className={cn("relative px-2 py-4", match.featured && "bg-primary/[0.04]")}>
+    <div
+      id={`match-${match.slug}`}
+      className={cn(
+        "relative px-2 py-4",
+        match.featured && "bg-primary/[0.04]",
+        colombia && "bg-[#FCD116]/[0.04]"
+      )}
+    >
+      {colombia && (
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 w-1"
+          style={{ background: COLOMBIA_TRICOLOR_V }}
+        />
+      )}
       {match.featured && (
         <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary">
           <Star size={9} /> Destacado
@@ -471,8 +492,22 @@ const PartidosTab = () => {
     ? savePrediction.variables?.slug
     : null;
 
+  // Lleva a la tarjeta del partido (cambia vista/filtro y hace scroll).
+  const goToMatch = (m) => {
+    setView("grupos");
+    setFilter(m.status);
+    setTimeout(() => {
+      document
+        .getElementById(`match-${m.slug}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 150);
+  };
+
   return (
     <div>
+      {/* Modo Colombia: proximo partido (o en vivo) de la seleccion */}
+      <ColombiaBanner matches={confirmed} onGoToMatch={goToMatch} />
+
       {/* Encabezado */}
       <div className="mb-5 flex items-start gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-secondary/20 border border-primary/30">
