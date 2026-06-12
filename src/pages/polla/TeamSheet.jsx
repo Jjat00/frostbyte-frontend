@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { motion } from "framer-motion";
-import { Home, Radio, Shield, Users, X, CalendarDays, Hand, Zap, Target } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Home, Radio, Shield, Users, X, CalendarDays, Hand, Zap, Target, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
+import PlayerSheet from "./PlayerSheet";
 import { usePollaTeam } from "@/hooks/usePolla";
 import { CONF_META, FORM_COLOR, matchDayLabel, matchTime } from "@/data/mundial2026";
 
@@ -30,7 +31,7 @@ const initials = (name) =>
     .join("")
     .toUpperCase() || "?";
 
-const PlayerRow = ({ p }) => {
+const PlayerRow = ({ p, onClick }) => {
   const meta = [
     p.number != null ? `#${p.number}` : null,
     p.age != null ? `${p.age} años` : null,
@@ -38,7 +39,11 @@ const PlayerRow = ({ p }) => {
     .filter(Boolean)
     .join(" · ");
   return (
-    <li className="flex items-center gap-2.5 py-1.5">
+    <li>
+      <button
+        onClick={() => onClick(p.id)}
+        className="group flex w-full items-center gap-2.5 rounded-lg py-1.5 pr-1 text-left transition-colors hover:bg-white/[0.03]"
+      >
       {p.photo ? (
         <img
           loading="lazy"
@@ -53,7 +58,7 @@ const PlayerRow = ({ p }) => {
           {initials(p.name)}
         </span>
       )}
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="truncate text-xs font-bold text-light">{p.name}</p>
         <p className="text-[10px] tabular-nums text-gray/70">
           {meta || " "}
@@ -64,6 +69,11 @@ const PlayerRow = ({ p }) => {
           )}
         </p>
       </div>
+        <ChevronRight
+          size={14}
+          className="shrink-0 text-gray/40 transition-colors group-hover:text-gray"
+        />
+      </button>
     </li>
   );
 };
@@ -158,6 +168,8 @@ const SheetSkeleton = () => (
 
 const TeamSheet = ({ code, onClose }) => {
   const { data, isLoading } = usePollaTeam(code);
+  // Jugador abierto en su propia ficha (sheet encima de este).
+  const [playerId, setPlayerId] = useState(null);
 
   const team = data?.team;
   const conf = team ? CONF_META[team.confederation] : null;
@@ -275,7 +287,7 @@ const TeamSheet = ({ code, onClose }) => {
                     <SectionTitle icon={g.icon}>{g.label}</SectionTitle>
                     <ul className="grid grid-cols-2 gap-x-3">
                       {[...g.players].sort(byNumber).map((p) => (
-                        <PlayerRow key={p.id} p={p} />
+                        <PlayerRow key={p.id} p={p} onClick={setPlayerId} />
                       ))}
                     </ul>
                   </React.Fragment>
@@ -285,6 +297,13 @@ const TeamSheet = ({ code, onClose }) => {
           </>
         )}
       </motion.div>
+
+      {/* Ficha del jugador, encima de la de selección */}
+      <AnimatePresence>
+        {playerId && (
+          <PlayerSheet playerId={playerId} onClose={() => setPlayerId(null)} />
+        )}
+      </AnimatePresence>
     </motion.div>,
     document.body
   );

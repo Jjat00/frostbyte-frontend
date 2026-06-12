@@ -90,6 +90,7 @@ export const ENDPOINTS = {
   POLLA_STANDINGS: '/polla/standings/',
   POLLA_TOPSCORERS: '/polla/topscorers/',
   POLLA_TEAM_DETAIL: (code) => `/polla/teams/${code}/`,
+  POLLA_PLAYER_DETAIL: (id) => `/polla/players/${id}/`,
   POLLA_MATCHES: '/polla/matches/',
   POLLA_MATCH_DETAIL: (slug) => `/polla/matches/${slug}/`,
   POLLA_MATCH_PREDICT: (slug) => `/polla/matches/${slug}/predict/`,

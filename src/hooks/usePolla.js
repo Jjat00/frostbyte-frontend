@@ -20,6 +20,7 @@ export const pollaKeys = {
   standings: () => ["polla", "standings"],
   topScorers: () => ["polla", "topscorers"],
   team: (code) => ["polla", "team", code],
+  player: (id) => ["polla", "player", String(id ?? "")],
   awards: () => ["polla", "awards"],
   bracket: () => ["polla", "bracket"],
   ranking: () => ["polla", "ranking"],
@@ -128,6 +129,17 @@ export function usePollaTeam(code, options = {}) {
     queryKey: pollaKeys.team(code),
     queryFn: () => pollaService.getTeam(code),
     enabled: !!code,
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Ficha de un jugador: { name, number, position, age, photo, team, profile, tournament }. */
+export function usePollaPlayer(id, options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.player(id),
+    queryFn: () => pollaService.getPlayer(id),
+    enabled: !!id,
     staleTime: LIVE_STALE,
     ...options,
   });
@@ -290,6 +302,7 @@ const LIVE_QUERY_KEYS = [
   ["polla", "matches"], // prefijo: cubre todas las variantes de params
   ["polla", "match"], // prefijo: detalle abierto en el sheet (eventos en vivo)
   ["polla", "team"], // prefijo: ficha de selección abierta (forma, posición)
+  ["polla", "player"], // prefijo: ficha de jugador abierta (goles en vivo)
   pollaKeys.standings(),
   pollaKeys.topScorers(),
   pollaKeys.bracket(),
