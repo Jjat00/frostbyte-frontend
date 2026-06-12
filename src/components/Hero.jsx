@@ -55,14 +55,10 @@ const getDateStrip = () => {
   return dates;
 };
 
-// Clave de fecha local (YYYY-MM-DD) para cachear la frase del día en el cliente.
+// Cache local de la frase: válida 30 min (alineado con el caché del backend,
+// que rota el dato del Mundial cada media hora).
 const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase_mundial";
-const localDateKey = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
-};
+const PHRASE_TTL_MS = 30 * 60 * 1000;
 
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
@@ -73,15 +69,13 @@ const Hero = () => {
   const dateStrip = getDateStrip();
 
   useEffect(() => {
-    const today = localDateKey();
-
-    // 1) Si ya tenemos la frase de hoy en cache local, la usamos al instante:
-    //    sin red ni parpadeo de carga (la frase es la misma todo el día).
+    // 1) Si la frase en cache local sigue fresca (< 30 min), la usamos al
+    //    instante: sin red ni parpadeo de carga.
     try {
       const raw = localStorage.getItem(PHRASE_STORAGE_KEY);
       if (raw) {
         const cached = JSON.parse(raw);
-        if (cached?.phrase && cached?.date === today) {
+        if (cached?.phrase && cached?.ts && Date.now() - cached.ts < PHRASE_TTL_MS) {
           setMotivationalPhrase(cached.phrase);
           setIsLoadingPhrase(false);
           return;
@@ -91,7 +85,7 @@ const Hero = () => {
       // localStorage no disponible o JSON inválido: continuamos al fetch.
     }
 
-    // 2) Sin cache válida: pedimos al backend (que también cachea la frase del día).
+    // 2) Sin cache fresca: pedimos al backend (que también cachea por franja de 30 min).
     const fetchMotivationalPhrase = async () => {
       try {
         const response = await fetch(
@@ -103,7 +97,7 @@ const Hero = () => {
           try {
             localStorage.setItem(
               PHRASE_STORAGE_KEY,
-              JSON.stringify({ phrase: data.phrase, date: data.date || today }),
+              JSON.stringify({ phrase: data.phrase, ts: Date.now() }),
             );
           } catch {
             // Si no se puede escribir en localStorage, no es crítico.
