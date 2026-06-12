@@ -56,7 +56,7 @@ const getDateStrip = () => {
 };
 
 // Clave de fecha local (YYYY-MM-DD) para cachear la frase del día en el cliente.
-const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase";
+const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase_mundial";
 const localDateKey = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
