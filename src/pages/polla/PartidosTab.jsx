@@ -422,6 +422,86 @@ const LoadingState = () => (
   </div>
 );
 
+/* ── Tarjeta de un partido EN VIVO (marcador + minuto, abre el detalle) ── */
+const LiveCard = ({ match, onClick }) => {
+  const mp = match.my_prediction;
+  const topLabel = match.group
+    ? `Grupo ${match.group} · ${match.round_label}`
+    : match.round_label;
+  return (
+    <button
+      onClick={() => onClick(match)}
+      className="relative w-full overflow-hidden rounded-2xl border border-red-500/30 bg-linear-to-br from-red-500/[0.10] via-red-500/[0.04] to-transparent p-3.5 text-left transition-all hover:border-red-500/50 hover:from-red-500/[0.16]"
+    >
+      <div className="mb-2.5 flex items-center justify-between">
+        <span className="truncate text-[10px] uppercase tracking-wider text-gray/80">
+          {topLabel}
+        </span>
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-black uppercase text-red-300">
+          <Radio size={9} className="animate-pulse" />
+          {match.minute != null ? `${match.minute}'` : "En vivo"}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <Flag iso2={match.home.iso2} name={match.home.name} size={30} rounded="rounded" />
+          <span className="truncate text-sm font-bold text-light">{match.home.name}</span>
+        </div>
+        <div className="flex items-center gap-2 text-2xl font-black tabular-nums text-light">
+          <span>{match.home_score ?? 0}</span>
+          <span className="text-base text-gray">-</span>
+          <span>{match.away_score ?? 0}</span>
+        </div>
+        <div className="flex min-w-0 items-center justify-end gap-2">
+          <span className="truncate text-right text-sm font-bold text-light">{match.away.name}</span>
+          <Flag iso2={match.away.iso2} name={match.away.name} size={30} rounded="rounded" />
+        </div>
+      </div>
+
+      <div className="mt-2.5 flex items-center justify-center gap-2 text-[10px] text-gray">
+        {mp && mp.home_score != null ? (
+          <span>
+            Tu pronóstico:{" "}
+            <b className="tabular-nums text-light">{mp.home_score}-{mp.away_score}</b>
+          </span>
+        ) : (
+          <span className="text-gray/60">No pronosticaste este partido</span>
+        )}
+        <span className="text-gray/40">·</span>
+        <span className="font-bold text-secondary/90">Ver minuto a minuto</span>
+      </div>
+    </button>
+  );
+};
+
+/* ── Tira destacada de partidos EN VIVO, fija arriba del todo ── */
+const LiveStrip = ({ matches, onOpenDetail }) => {
+  const live = matches.filter((m) => m.status === "live");
+  if (!live.length) return null;
+  return (
+    <div className="mb-5">
+      <div className="mb-2.5 flex items-center gap-2">
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500/70" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+        </span>
+        <h3 className="text-sm font-black uppercase tracking-widest text-red-400">
+          En vivo ahora
+        </h3>
+        <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-bold text-red-300">
+          {live.length}
+        </span>
+      </div>
+      <div className="space-y-2.5">
+        {live.map((m) => (
+          <LiveCard key={m.slug} match={m} onClick={onOpenDetail} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const PartidosTab = () => {
   const [view, setView] = useState("grupos"); // grupos | eliminacion
   const [filter, setFilter] = useState("upcoming");
@@ -515,6 +595,9 @@ const PartidosTab = () => {
 
   return (
     <div>
+      {/* EN VIVO: protagonismo arriba del todo, visible en cualquier filtro/vista */}
+      <LiveStrip matches={confirmed} onOpenDetail={(m) => setDetailSlug(m.slug)} />
+
       {/* Modo Colombia: proximo partido (o en vivo) de la seleccion */}
       <ColombiaBanner matches={confirmed} onGoToMatch={goToMatch} />
 
