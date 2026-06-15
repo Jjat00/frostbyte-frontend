@@ -20,6 +20,7 @@ import ColombiaBanner, {
   isColombiaMatch,
 } from "./ColombiaBanner";
 import MatchDetailSheet from "./MatchDetailSheet";
+import MissionsBanner from "./MissionsBanner";
 import { usePollaMatches, useSavePrediction } from "@/hooks/usePolla";
 import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import {
@@ -600,6 +601,9 @@ const PartidosTab = () => {
 
       {/* Modo Colombia: proximo partido (o en vivo) de la seleccion */}
       <ColombiaBanner matches={confirmed} onGoToMatch={goToMatch} />
+
+      {/* Recordatorio: gana puntos extra completando misiones e invitando */}
+      <MissionsBanner />
 
       {/* Encabezado */}
       <div className="mb-5 flex items-start gap-3">
