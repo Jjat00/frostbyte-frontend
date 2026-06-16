@@ -9,6 +9,7 @@ import {
   ClipboardList,
   ListChecks,
   CheckCircle2,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
@@ -138,6 +139,7 @@ const RankingPlayerSheet = ({ userId, fallbackName, fallbackAvatar, onClose }) =
   const user = data?.user;
   const score = data?.score;
   const missions = data?.missions || [];
+  const referral = data?.referral;
   const predictions = data?.predictions || [];
   const isYou = data?.is_you;
 
@@ -294,12 +296,60 @@ const RankingPlayerSheet = ({ userId, fallbackName, fallbackAvatar, onClose }) =
                   {doneMissions}/{missions.length} · {score.mission_points} pts
                 </span>
               </div>
-              {missions.length === 0 ? (
+              {missions.length === 0 && !referral ? (
                 <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-3 py-4 text-center text-[11px] text-gray/60">
                   Aún no tiene misiones registradas.
                 </p>
               ) : (
                 <div className="space-y-1.5">
+                  {/* Referidos: mismo conteo que la tarjeta "Invita a tu banda"
+                      de la pestaña Misiones (amigos que ya jugaron / tope). */}
+                  {referral && (
+                    <div className="rounded-xl border border-primary/20 bg-primary/[0.04] p-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="flex items-center gap-1.5 text-sm font-bold text-light">
+                            <Users size={15} className="shrink-0 text-primary" />
+                            <span className="truncate">Invita a tu banda</span>
+                          </span>
+                          <p className="mt-0.5 pl-[21px] text-[11px] leading-snug text-gray/70">
+                            Suma {referral.points_per} punto por cada amigo que entre
+                            y haga su primer pronóstico (máx {referral.cap}).
+                          </p>
+                        </div>
+                        <span
+                          className={cn(
+                            "shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-black tabular-nums",
+                            referral.points > 0
+                              ? "bg-secondary/15 text-secondary"
+                              : "bg-white/[0.05] text-gray/60"
+                          )}
+                        >
+                          +{referral.points}
+                        </span>
+                      </div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                        <div
+                          className="h-full rounded-full bg-linear-to-r from-primary/60 to-secondary/60"
+                          style={{
+                            width: `${
+                              referral.cap
+                                ? Math.min(
+                                    100,
+                                    Math.round((referral.qualified / referral.cap) * 100)
+                                  )
+                                : 0
+                            }%`,
+                          }}
+                        />
+                      </div>
+                      <p className="mt-1 text-[10px] font-bold tabular-nums text-gray/60">
+                        {referral.qualified}/{referral.cap} amigos
+                        {referral.invited > referral.qualified &&
+                          ` · ${referral.invited} invitados`}
+                      </p>
+                    </div>
+                  )}
                   {missions.map((m) => {
                     const pct = m.target
                       ? Math.min(100, Math.round((m.progress / m.target) * 100))
