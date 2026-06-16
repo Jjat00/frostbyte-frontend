@@ -54,6 +54,11 @@ export const pollaService = {
   async getRanking() {
     return (await customerClient.get(ENDPOINTS.POLLA_RANKING)).data;
   },
+  async getParticipant(userId) {
+    // Perfil público de un participante del ranking:
+    // { user, score, missions, predictions, is_you }
+    return (await customerClient.get(ENDPOINTS.POLLA_PARTICIPANT(userId))).data;
+  },
   async getMissions() {
     return (await customerClient.get(ENDPOINTS.POLLA_MISSIONS)).data;
   },

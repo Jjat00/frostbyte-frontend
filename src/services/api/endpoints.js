@@ -101,6 +101,7 @@ export const ENDPOINTS = {
   POLLA_BRACKET: '/polla/bracket/',
   POLLA_BRACKET_PICK: (slug) => `/polla/bracket/${slug}/pick/`,
   POLLA_RANKING: '/polla/ranking/',
+  POLLA_PARTICIPANT: (userId) => `/polla/participants/${userId}/`,
   POLLA_MISSIONS: '/polla/missions/',
   POLLA_MY_STATS: '/polla/me/stats/',
   POLLA_REFERRAL: '/polla/referral/',

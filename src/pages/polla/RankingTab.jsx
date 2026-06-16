@@ -1,9 +1,10 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Trophy, Crown, TrendingUp, Target } from "lucide-react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Trophy, Crown, TrendingUp, Target, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { usePollaRanking, usePollaTournament } from "@/hooks/usePolla";
+import RankingPlayerSheet from "./RankingPlayerSheet";
 
 const initials = (name) =>
   (name || "")
@@ -43,7 +44,7 @@ const Avatar = ({ name, src, size = 40, highlight }) => {
 };
 
 /* Columna del podio */
-const PodiumCol = ({ row, place, name, src }) => {
+const PodiumCol = ({ row, place, name, src, onSelect }) => {
   const config = {
     1: { h: "h-32", bar: "from-primary to-secondary", text: "text-dark", crown: true },
     2: { h: "h-24", bar: "from-gray/50 to-gray/20", text: "text-light" },
@@ -51,7 +52,11 @@ const PodiumCol = ({ row, place, name, src }) => {
   }[place];
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-end">
+    <button
+      type="button"
+      onClick={onSelect}
+      className="flex flex-1 flex-col items-center justify-end rounded-xl transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+    >
       {config.crown && <Crown className="mb-1 text-primary" size={22} />}
       <Avatar name={name} src={src} size={place === 1 ? 56 : 46} />
       <p className="mt-2 line-clamp-2 px-1 text-center text-xs font-bold leading-tight text-light">
@@ -67,7 +72,7 @@ const PodiumCol = ({ row, place, name, src }) => {
       >
         <span className={cn("text-2xl font-black", config.text)}>{place}</span>
       </div>
-    </div>
+    </button>
   );
 };
 
@@ -98,6 +103,11 @@ const RankingTab = () => {
   const customer = useCustomerAuthStore((s) => s.customer);
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "Tú";
+
+  // Participante seleccionado para ver su perfil (de dónde salieron sus puntos).
+  const [selected, setSelected] = useState(null);
+  const openProfile = (row) =>
+    row?.user_id && setSelected({ id: row.user_id, name: row.name, avatar: row.avatar });
 
   const {
     data: ranking,
@@ -206,8 +216,12 @@ const RankingTab = () => {
 
       {/* Tu posicion */}
       {me ? (
-        <div className="mb-6 flex items-center gap-4 rounded-2xl border border-primary/30 bg-linear-to-r from-primary/10 to-secondary/5 p-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary text-lg font-black text-primary">
+        <button
+          type="button"
+          onClick={() => openProfile(me)}
+          className="mb-6 flex w-full items-center gap-4 rounded-2xl border border-primary/30 bg-linear-to-r from-primary/10 to-secondary/5 p-4 text-left transition-colors hover:border-primary/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+        >
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-primary text-lg font-black text-primary">
             {me.pos}
           </div>
           <div className="min-w-0 flex-1">
@@ -216,7 +230,7 @@ const RankingTab = () => {
             </p>
             <p className="truncate font-black text-light">{me.name}</p>
             <p className="text-xs text-gray">
-              Vas en el puesto {me.pos} de {total}. ¡Sigue sumando!
+              Vas en el puesto {me.pos} de {total}. Toca para ver tu desglose.
             </p>
           </div>
           <div className="text-right">
@@ -225,7 +239,7 @@ const RankingTab = () => {
             </p>
             <p className="text-[10px] uppercase tracking-widest text-gray">pts</p>
           </div>
-        </div>
+        </button>
       ) : (
         <div className="mb-6 flex items-center gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white/15 text-lg font-black text-gray/60">
@@ -248,9 +262,9 @@ const RankingTab = () => {
       {/* Podio: solo si hay al menos 3 filas */}
       {hasPodium && (
         <div className="mb-4 flex items-end gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
-          <PodiumCol row={top3[1]} place={2} name={top3[1].name} src={top3[1].avatar} />
-          <PodiumCol row={top3[0]} place={1} name={top3[0].name} src={top3[0].avatar} />
-          <PodiumCol row={top3[2]} place={3} name={top3[2].name} src={top3[2].avatar} />
+          <PodiumCol row={top3[1]} place={2} name={top3[1].name} src={top3[1].avatar} onSelect={() => openProfile(top3[1])} />
+          <PodiumCol row={top3[0]} place={1} name={top3[0].name} src={top3[0].avatar} onSelect={() => openProfile(top3[0])} />
+          <PodiumCol row={top3[2]} place={3} name={top3[2].name} src={top3[2].avatar} onSelect={() => openProfile(top3[2])} />
         </div>
       )}
 
@@ -277,9 +291,18 @@ const RankingTab = () => {
         {rows.map((r) => (
           <motion.div
             key={r.pos}
+            role="button"
+            tabIndex={0}
+            onClick={() => openProfile(r)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openProfile(r);
+              }
+            }}
             className={cn(
-              "grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b border-white/[0.04] px-4 py-3 last:border-0",
-              r.is_you && "bg-primary/[0.07]"
+              "grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-3 border-b border-white/[0.04] px-4 py-3 transition-colors last:border-0 hover:bg-white/[0.03] focus:outline-none focus-visible:bg-white/[0.04]",
+              r.is_you && "bg-primary/[0.07] hover:bg-primary/[0.1]"
             )}
           >
             <div className="flex items-center gap-3">
@@ -311,9 +334,12 @@ const RankingTab = () => {
                 <Target size={11} /> {r.exact} exactos
               </p>
             </div>
-            <span className="text-lg font-black tabular-nums bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {r.points}
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-lg font-black tabular-nums bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+                {r.points}
+              </span>
+              <ChevronRight size={15} className="text-gray/40" />
+            </div>
           </motion.div>
         ))}
       </div>
@@ -322,6 +348,18 @@ const RankingTab = () => {
         <TrendingUp size={12} />
         Se actualiza en vivo con cada partido.
       </p>
+
+      {/* Perfil del participante seleccionado */}
+      <AnimatePresence>
+        {selected && (
+          <RankingPlayerSheet
+            userId={selected.id}
+            fallbackName={selected.name}
+            fallbackAvatar={selected.avatar}
+            onClose={() => setSelected(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

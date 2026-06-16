@@ -24,6 +24,7 @@ export const pollaKeys = {
   awards: () => ["polla", "awards"],
   bracket: () => ["polla", "bracket"],
   ranking: () => ["polla", "ranking"],
+  participant: (userId) => ["polla", "participant", String(userId ?? "")],
   missions: () => ["polla", "missions"],
   myStats: () => ["polla", "me", "stats"],
   myPredictions: () => ["polla", "predictions", "me"],
@@ -187,6 +188,21 @@ export function usePollaRanking(options = {}) {
   });
 }
 
+/**
+ * Perfil público de un participante del ranking: desglose de puntos, misiones
+ * y su historial de pronósticos en partidos terminados. Solo se monta al abrir
+ * el sheet desde la tabla.
+ */
+export function usePollaParticipant(userId, options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.participant(userId),
+    queryFn: () => pollaService.getParticipant(userId),
+    enabled: !!userId,
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
 export function usePollaMissions(options = {}) {
   return useQuery({
     queryKey: pollaKeys.missions(),
@@ -307,6 +323,7 @@ const LIVE_QUERY_KEYS = [
   pollaKeys.topScorers(),
   pollaKeys.bracket(),
   pollaKeys.ranking(),
+  ["polla", "participant"], // prefijo: perfil abierto en el sheet del ranking
   pollaKeys.missions(),
   pollaKeys.myStats(),
   pollaKeys.awards(),
