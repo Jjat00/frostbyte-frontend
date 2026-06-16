@@ -67,8 +67,10 @@ const StatCount = ({ icon: Icon, value, label, tone = "light" }) => (
   </div>
 );
 
-/* Una fila de pronóstico de un partido terminado, con lo que sumó */
+/* Una fila de pronóstico. Partido terminado: muestra lo que sumó. Partido EN
+   VIVO: marcador parcial destacado + minuto, sin puntos aún (no consolidados). */
 const PredictionRow = ({ p }) => {
+  const live = p.status === "live";
   const badge = p.is_exact
     ? { cls: "bg-emerald-400/15 text-emerald-300", label: `+${p.points_earned}` }
     : p.is_correct_outcome
@@ -76,7 +78,12 @@ const PredictionRow = ({ p }) => {
     : { cls: "bg-white/[0.05] text-gray", label: "0" };
 
   return (
-    <li className="flex items-center gap-2 py-2.5">
+    <li
+      className={cn(
+        "flex items-center gap-2 py-2.5",
+        live && "-mx-3 rounded-xl bg-red-500/[0.06] px-3"
+      )}
+    >
       <span className="w-7 shrink-0 text-[10px] tabular-nums text-gray/60">
         #{p.match_number}
       </span>
@@ -87,14 +94,21 @@ const PredictionRow = ({ p }) => {
         </span>
         <Flag iso2={p.home?.iso2} name={p.home?.name || ""} size={18} />
       </div>
-      {/* Marcadores: pronóstico arriba, real abajo */}
+      {/* Marcadores: pronóstico arriba; abajo el real (parcial si está en vivo) */}
       <div className="flex shrink-0 flex-col items-center leading-none">
         <span className="rounded-md bg-white/[0.07] px-1.5 py-0.5 text-xs font-black tabular-nums text-light">
           {p.pred_home}-{p.pred_away}
         </span>
-        <span className="mt-1 text-[10px] tabular-nums text-gray/70">
-          real {p.real_home}-{p.real_away}
-        </span>
+        {live ? (
+          <span className="mt-1 flex items-center gap-1 text-[11px] font-black tabular-nums text-light">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
+            {p.real_home ?? 0}-{p.real_away ?? 0}
+          </span>
+        ) : (
+          <span className="mt-1 text-[10px] tabular-nums text-gray/70">
+            real {p.real_home}-{p.real_away}
+          </span>
+        )}
       </div>
       {/* Visitante */}
       <div className="flex min-w-0 flex-1 items-center gap-1.5">
@@ -103,14 +117,21 @@ const PredictionRow = ({ p }) => {
           {p.away?.code || p.away?.name}
         </span>
       </div>
-      <span
-        className={cn(
-          "w-9 shrink-0 rounded-md py-0.5 text-center text-xs font-black",
-          badge.cls
-        )}
-      >
-        {badge.label}
-      </span>
+      {/* En vivo: minuto en curso (aún sin puntos). Terminado: lo que sumó. */}
+      {live ? (
+        <span className="flex w-9 shrink-0 items-center justify-center rounded-md bg-red-500/15 py-0.5 text-[9px] font-black uppercase tabular-nums text-red-300">
+          {p.minute ? `${p.minute}'` : "live"}
+        </span>
+      ) : (
+        <span
+          className={cn(
+            "w-9 shrink-0 rounded-md py-0.5 text-center text-xs font-black",
+            badge.cls
+          )}
+        >
+          {badge.label}
+        </span>
+      )}
     </li>
   );
 };
@@ -414,7 +435,7 @@ const RankingPlayerSheet = ({ userId, fallbackName, fallbackAvatar, onClose }) =
                 </div>
               )}
 
-              {/* Historial de pronósticos (partidos terminados) */}
+              {/* Historial de pronósticos (partidos en vivo + terminados) */}
               <div className="mb-1 mt-6 flex items-center justify-between">
                 <h4 className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gray">
                   <ClipboardList size={13} className="text-secondary" /> Pronósticos
@@ -426,7 +447,7 @@ const RankingPlayerSheet = ({ userId, fallbackName, fallbackAvatar, onClose }) =
               </div>
               {predictions.length === 0 ? (
                 <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-3 py-5 text-center text-[11px] text-gray/60">
-                  Todavía no hay partidos terminados que haya pronosticado.
+                  Todavía no hay partidos jugados que haya pronosticado.
                 </p>
               ) : (
                 <ul className="divide-y divide-white/[0.05] rounded-2xl border border-white/[0.06] bg-white/[0.02] px-3">
