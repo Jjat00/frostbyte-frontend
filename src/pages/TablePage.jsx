@@ -18,6 +18,8 @@ import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
+import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
+import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
 import OrderMiniBar from "@/components/order-tracker/OrderMiniBar";
@@ -128,16 +130,25 @@ function TablePage() {
             />
           )}
 
+          {/* Promo del partido de Colombia (granizado gratis por marcador
+              exacto). Solo aparece si hay partido en vivo o próximo. */}
+          <PartidoColombiaBanner />
+
           <QuickNav />
+          {/* Anuncio de la Polla Mundialista — igual que en la carta pública,
+              presente varias veces con distintas variantes. */}
+          <PollaMundialBanner variant="feature" />
           <CartaList />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
           <WaterSection />
+          <PollaMundialBanner variant="strip" />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
           <SolicitarMusica />
+          <PollaMundialBanner variant="prize" />
           <FeedbackSection />
           <FrostbytePlay />
           <Features />

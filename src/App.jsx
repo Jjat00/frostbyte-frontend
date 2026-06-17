@@ -17,6 +17,7 @@ import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
+import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import { env } from "@/config/env";
 
@@ -41,6 +42,10 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
+          {/* Promo del partido de Colombia: solo aparece cuando la selección
+              tiene un partido en vivo o próximo (granizado gratis por acertar
+              el marcador exacto). Encabeza la carta. */}
+          <PartidoColombiaBanner />
           {/* Anuncio de la Polla Mundialista — aparece varias veces a lo largo
               de la carta con distintas variantes para mantener el premio
               ($500.000) visible sin saturar. */}
