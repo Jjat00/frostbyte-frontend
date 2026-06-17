@@ -104,6 +104,8 @@ export const ENDPOINTS = {
   POLLA_PARTICIPANT: (userId) => `/polla/participants/${userId}/`,
   POLLA_MISSIONS: '/polla/missions/',
   POLLA_MY_STATS: '/polla/me/stats/',
+  POLLA_GRANIZADO: '/polla/granizado/',
+  POLLA_GRANIZADO_REDEEM: (id) => `/polla/granizado/${id}/redeem/`,
   POLLA_REFERRAL: '/polla/referral/',
   POLLA_REFERRAL_CLAIM: '/polla/referral/claim/',
 

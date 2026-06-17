@@ -21,6 +21,7 @@ import ColombiaBanner, {
 } from "./ColombiaBanner";
 import MatchDetailSheet from "./MatchDetailSheet";
 import MissionsBanner from "./MissionsBanner";
+import GranizadoBanner from "./GranizadoBanner";
 import { usePollaMatches, useSavePrediction } from "@/hooks/usePolla";
 import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import {
@@ -598,6 +599,9 @@ const PartidosTab = () => {
     <div>
       {/* EN VIVO: protagonismo arriba del todo, visible en cualquier filtro/vista */}
       <LiveStrip matches={confirmed} onOpenDetail={(m) => setDetailSlug(m.slug)} />
+
+      {/* Granizado ganado (acierto exacto de Colombia): premio con 24 h, va arriba */}
+      <GranizadoBanner />
 
       {/* Modo Colombia: proximo partido (o en vivo) de la seleccion */}
       <ColombiaBanner matches={confirmed} onGoToMatch={goToMatch} />

@@ -28,6 +28,7 @@ export const pollaKeys = {
   missions: () => ["polla", "missions"],
   myStats: () => ["polla", "me", "stats"],
   myPredictions: () => ["polla", "predictions", "me"],
+  granizado: () => ["polla", "granizado"],
   referral: () => ["polla", "referral"],
   adminOverview: () => ["polla", "admin", "overview"],
   adminPlayers: (q) => ["polla", "admin", "players", q || ""],
@@ -311,6 +312,33 @@ export function useClaimReferral() {
   });
 }
 
+/**
+ * Granizados ganados por el cliente (acertar el marcador exacto de Colombia).
+ * { rewards: [{ id, code, status, match, expires_at, redeemed_at, ... }] }.
+ * Requiere sesión (endpoint IsAuthenticated).
+ */
+export function useGranizado(options = {}) {
+  const isAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
+  return useQuery({
+    queryKey: pollaKeys.granizado(),
+    queryFn: () => pollaService.getGranizado(),
+    enabled: isAuthenticated,
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Marca un granizado como entregado (el personal lo toca en el mostrador). */
+export function useRedeemGranizado() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => pollaService.redeemGranizado(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: pollaKeys.granizado() });
+    },
+  });
+}
+
 // ── Tiempo real ──────────────────────────────────────────────────────────────
 
 // Queries que muestran datos que cambian con cada gol / partido finalizado.
@@ -327,6 +355,7 @@ const LIVE_QUERY_KEYS = [
   pollaKeys.missions(),
   pollaKeys.myStats(),
   pollaKeys.awards(),
+  pollaKeys.granizado(), // un partido de Colombia finalizado puede emitir premio
 ];
 
 /**

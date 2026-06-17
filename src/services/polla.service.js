@@ -69,6 +69,14 @@ export const pollaService = {
     // { code, invited, qualified, points, cap, points_per }
     return (await customerClient.get(ENDPOINTS.POLLA_REFERRAL)).data;
   },
+  async getGranizado() {
+    // { rewards: [{ id, code, status, match, match_number, issued_at, expires_at, redeemed_at }] }
+    return (await customerClient.get(ENDPOINTS.POLLA_GRANIZADO)).data;
+  },
+  async redeemGranizado(id) {
+    // { reward } en exito; { detail, reward? } en error (ya entregado / vencido)
+    return (await customerClient.post(ENDPOINTS.POLLA_GRANIZADO_REDEEM(id))).data;
+  },
   async claimReferral(code) {
     return (
       await customerClient.post(ENDPOINTS.POLLA_REFERRAL_CLAIM, { code })
