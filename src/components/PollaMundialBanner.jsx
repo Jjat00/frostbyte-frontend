@@ -42,8 +42,6 @@ const StripBanner = () => (
         to="/polla-mundial"
         className="group relative flex items-center gap-3 sm:gap-4 overflow-hidden rounded-2xl border border-gold/40 bg-linear-to-r from-grass/15 via-dark-secondary/60 to-gold/15 px-4 py-3.5 sm:px-6 sm:py-4 hover:border-gold/70 transition-colors duration-300"
       >
-        {/* Patrón modular "26" sutil — ligero en GPU (sin blur) */}
-        <span className="t26-pattern absolute inset-0 opacity-20 pointer-events-none" />
         <Big26 className="absolute -right-2 -bottom-6 text-7xl leading-none text-white/[0.05]" />
 
         <span className="relative shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-grass to-gold shadow-lg shadow-grass/30">

@@ -112,9 +112,6 @@ export const MundialColorField = ({
     {/* módulo cuadrado pequeño (ritmo) */}
     <div className="absolute right-[33%] bottom-[8%] h-[11vh] w-[11vh] rounded-2xl bg-red-600" />
 
-    {/* Patrón modular sobre los bloques */}
-    <div className="t26-pattern absolute inset-0 opacity-50" />
-
     {/* Numerazo "26" gigante de fondo (firma del Mundial) */}
     {watermark && (
       <Big26 className="absolute right-[1%] top-1/2 -translate-y-1/2 text-[clamp(20rem,62vh,55rem)] leading-none text-white/12" />
@@ -156,7 +153,6 @@ export const Mundial26Backdrop = ({ className = "", watermark = true }) => (
     <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-tl-full bg-blue-700/20" />
     <div className="absolute right-[16%] top-[14%] h-12 w-12 rounded-xl bg-gold/40" />
     <div className="absolute left-[12%] bottom-[24%] h-10 w-10 rounded-lg bg-red-500/35" />
-    <div className="t26-pattern absolute inset-0" />
     {watermark && (
       <Big26 className="absolute -bottom-[14vh] -left-[1vw] text-[clamp(16rem,42vh,40rem)] leading-none text-white/[0.035]" />
     )}

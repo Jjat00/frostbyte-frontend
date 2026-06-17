@@ -86,9 +86,8 @@ const Footer = () => {
 
   return (
     <footer ref={footerRef} className="relative overflow-hidden py-12 border-t border-white/[0.06]" style={{ background: "linear-gradient(to bottom, rgba(10,11,20,0.98), rgba(7,8,14,1))" }}>
-      {/* Capa decorativa Sistema 26: patron modular muy sutil + "26" tenue de marca de agua */}
+      {/* Capa decorativa Sistema 26: "26" tenue de marca de agua */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="t26-pattern absolute inset-0 opacity-40" />
         <Big26 className="absolute -bottom-[10vh] -right-[2vw] text-[clamp(12rem,34vh,30rem)] leading-none text-white/[0.03]" />
       </div>
 
