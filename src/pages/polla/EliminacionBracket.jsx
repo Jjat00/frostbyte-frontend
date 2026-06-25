@@ -17,15 +17,17 @@ import {
   Minus,
   Maximize2,
   Crosshair,
+  Timer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
 import { usePollaBracket, useSavePrediction } from "@/hooks/usePolla";
+import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import { matchDayLabel } from "@/data/mundial2026";
 
 /* ── Geometria del arbol ───────────────────────────────────────────────── */
 const CARD_W = 158;
-const CARD_H = 96;
+const CARD_H = 108;
 const COL_GAP = 46;
 const ROW_GAP = 22;
 const COL = CARD_W + COL_GAP; // paso horizontal entre rondas
@@ -141,18 +143,22 @@ function buildLayout(rounds) {
 }
 
 /* ── Caja de marcador (editable o solo lectura) ───────────────────────────── */
-const ScoreBox = ({ value, editable, disabled, onChange, onCommit, tone }) => {
+const ScoreBox = ({ value, editable, disabled, onChange, onCommit, tone, compact, highlight }) => {
   const filled = value !== "" && value != null;
+  const sz = compact ? "h-6 w-6 text-xs" : "h-7 w-7 text-sm";
   if (!editable) {
     return (
       <span
         className={cn(
-          "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-sm font-black tabular-nums",
-          filled
-            ? tone === "live"
+          "flex shrink-0 items-center justify-center rounded-md font-black tabular-nums",
+          sz,
+          !filled
+            ? "border border-dashed border-white/15 text-gray/30"
+            : tone === "live"
               ? "bg-white/[0.06] text-light ring-1 ring-red-500/30"
-              : "bg-white/[0.07] text-light"
-            : "border border-dashed border-white/15 text-gray/30"
+              : highlight
+                ? "bg-secondary/20 text-secondary ring-1 ring-secondary/40"
+                : "bg-white/[0.07] text-light"
         )}
       >
         {filled ? value : "·"}
@@ -201,7 +207,7 @@ const TeamRow = ({ team, source, score, editable, disabled, onChange, onCommit, 
         {defined ? label : <span className="italic font-bold">{source || "?"}</span>}
       </span>
       {finished ? (
-        <ScoreBox value={realScore} tone="final" />
+        <ScoreBox value={realScore} tone="final" compact highlight={won} />
       ) : editable ? (
         <ScoreBox value={score} editable disabled={disabled} onChange={onChange} onCommit={onCommit} />
       ) : (
@@ -217,7 +223,13 @@ const CrossCard = ({ node, scores, setScore, onSave, pending }) => {
   const isLive = m.status === "live";
   const finished = m.status === "finished";
   const both = Boolean(m.home?.code && m.away?.code);
-  const editable = !m.is_locked && !finished && both;
+  // Cuenta regresiva hasta el pitazo (= cierre del pronostico). Al llegar a 0
+  // bloqueamos en cliente; el server rechazaria igual por is_locked.
+  const cd = useCountdown(m.kickoff);
+  const locked = both && !finished && (m.is_locked || cd.done);
+  const editable = both && !finished && !locked;
+  const cdUrgent = cd.total <= 5 * 60 * 1000;
+  const cdSoon = cd.total <= 60 * 60 * 1000;
   const sc = scores[m.slug] || { h: "", a: "" };
   const mp = m.my_prediction;
   const pts = m.points || { outcome: 0, exact: 0 };
@@ -236,10 +248,28 @@ const CrossCard = ({ node, scores, setScore, onSave, pending }) => {
     awayWon = m.away_score > m.home_score;
   }
 
+  // resultado de mi apuesta una vez terminado el cruce
+  const predicted = mp && mp.home_score != null && mp.away_score != null;
+  const myScore = predicted ? `${mp.home_score}-${mp.away_score}` : null;
+  const earned = mp?.points_earned ?? 0;
+  const outcome = !predicted
+    ? "none"
+    : mp.is_exact
+      ? "exact"
+      : earned > 0
+        ? "hit"
+        : "miss";
+  const RESULT = {
+    exact: { label: "Exacto", cls: "bg-linear-to-r from-primary to-secondary text-dark" },
+    hit: { label: "Acertaste", cls: "bg-primary/20 text-primary" },
+    miss: { label: "Fallaste", cls: "bg-red-500/15 text-red-400" },
+    none: { label: "No marcaste", cls: "bg-white/[0.06] text-gray" },
+  }[outcome];
+
   return (
     <div
       className={cn(
-        "absolute rounded-xl border bg-dark-secondary/70 p-2 backdrop-blur-sm transition-colors",
+        "absolute flex flex-col rounded-xl border bg-dark-secondary/70 p-2 backdrop-blur-sm transition-colors",
         finished ? "border-white/15" : both ? "border-primary/25" : "border-white/[0.06]",
         isLive && "border-red-500/40"
       )}
@@ -254,20 +284,11 @@ const CrossCard = ({ node, scores, setScore, onSave, pending }) => {
             <Radio size={7} className="animate-pulse" />
             {m.minute}&apos;
           </span>
-        ) : finished && mp ? (
-          <span
-            className={cn(
-              "inline-flex items-center gap-0.5 rounded-full px-1 text-[8px] font-black",
-              mp.points_earned > 0
-                ? mp.is_exact
-                  ? "bg-linear-to-r from-primary to-secondary text-dark"
-                  : "bg-secondary/20 text-secondary"
-                : "bg-white/[0.06] text-gray"
-            )}
-          >
-            {mp.is_exact && <Flame size={8} />}+{mp.points_earned}
+        ) : finished ? (
+          <span className="text-[8px] font-bold uppercase tracking-wide text-gray/40">
+            Final
           </span>
-        ) : both && !finished ? (
+        ) : both ? (
           <span
             className="flex items-center gap-1"
             title={`Aciertas el ganador: +${pts.outcome} · Marcador exacto: +${pts.exact}`}
@@ -314,6 +335,50 @@ const CrossCard = ({ node, scores, setScore, onSave, pending }) => {
           realScore={m.away_score != null ? String(m.away_score) : ""}
           won={awayWon}
         />
+      </div>
+      {/* Pie: si ya jugo, tu marcador vs resultado; si no, cuenta regresiva
+          hasta el cierre del pronostico (o "bloqueado" / "esperando"). */}
+      <div className="mt-auto flex items-center justify-between gap-1 pt-1">
+        {finished ? (
+          <>
+            <span className="truncate text-[8px] font-semibold text-gray/70">
+              Tú <b className="font-black text-light">{myScore ?? "—"}</b>
+            </span>
+            <span
+              className={cn(
+                "inline-flex shrink-0 items-center gap-0.5 rounded-full px-1.5 py-px text-[8px] font-black leading-none",
+                RESULT.cls
+              )}
+            >
+              {outcome === "exact" && <Flame size={8} />}
+              {RESULT.label}
+              {earned > 0 && ` +${earned}`}
+            </span>
+          </>
+        ) : isLive ? (
+          <span className="inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-wide text-red-400">
+            <Radio size={8} className="animate-pulse" /> En juego
+          </span>
+        ) : editable ? (
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 text-[8px] font-bold tabular-nums",
+              cdUrgent ? "text-red-400" : cdSoon ? "text-amber-400" : "text-gray/70"
+            )}
+          >
+            <Timer size={9} className={cn(cdUrgent && "animate-pulse")} />
+            <span className="uppercase tracking-wide opacity-70">Cierra en</span>
+            <b className="font-black">{formatCountdown(cd)}</b>
+          </span>
+        ) : locked ? (
+          <span className="inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-wide text-gray/50">
+            Bloqueado <Lock size={8} />
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 text-[8px] font-medium text-gray/40">
+            <Timer size={8} /> Esperando clasificados
+          </span>
+        )}
       </div>
     </div>
   );
