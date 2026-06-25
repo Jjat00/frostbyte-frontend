@@ -510,15 +510,16 @@ const PartidosTab = () => {
   // Partido abierto en el sheet de detalle (minuto a minuto, estadisticas).
   const [detailSlug, setDetailSlug] = useState(null);
 
-  // Cuando la eliminacion ya abrio (todos los grupos jugados), la vista entra
-  // por defecto en "Eliminacion". El boton "Fase de grupos" sigue disponible;
-  // si el usuario elige una vista a mano, respetamos su eleccion.
+  // Cuando TERMINAN todos los grupos, la vista entra por defecto en
+  // "Eliminacion". Durante la fase de grupos la llave ya es visible (se va
+  // llenando con los clasificados reales), pero el default sigue siendo "Fase
+  // de grupos". Si el usuario elige una vista a mano, respetamos su eleccion.
   const { data: bracket } = usePollaBracket();
-  const elimOpen = Boolean(bracket?.open);
+  const elimDefault = Boolean(bracket?.groups_finished);
   const userPickedView = useRef(false);
   useEffect(() => {
-    if (elimOpen && !userPickedView.current) setView("eliminacion");
-  }, [elimOpen]);
+    if (elimDefault && !userPickedView.current) setView("eliminacion");
+  }, [elimDefault]);
 
   // Trae TODOS los partidos una sola vez; se filtra en cliente.
   const { data, isLoading, isError } = usePollaMatches({});

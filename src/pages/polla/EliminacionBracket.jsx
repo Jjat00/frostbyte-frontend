@@ -541,9 +541,10 @@ const EliminacionBracket = ({ onGoToGroups }) => {
   return (
     <div>
       <p className="mb-2 text-[11px] leading-snug text-gray">
-        Marca el resultado de cada cruce ya definido (arrastra y haz zoom para
-        recorrer la llave). Aciertas más puntos en cada fase, y el marcador
-        exacto da el máximo.
+        La llave se va llenando con los clasificados reales a medida que avanza
+        el Mundial. Marca el resultado de cada cruce ya definido (arrastra y haz
+        zoom para recorrer la llave): aciertas más puntos en cada fase y el
+        marcador exacto da el máximo.
       </p>
 
       <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[radial-gradient(circle_at_50%_0%,rgba(30,158,90,0.10),transparent_60%)]">
