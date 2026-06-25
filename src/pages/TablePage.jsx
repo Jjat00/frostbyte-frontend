@@ -13,6 +13,7 @@ import MenuSections from "@/components/MenuSections";
 import Desguayabator from "@/components/Desguayabator";
 import WaterSection from "@/components/WaterSection";
 import ScrollToCarta from "@/components/ScrollToMenu";
+import CartLayer from "@/components/cart/CartLayer";
 import SolicitarMusica from "@/components/SolicitarMusica";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
@@ -155,6 +156,7 @@ function TablePage() {
         </main>
         <Footer />
         <ScrollToCarta />
+        <CartLayer />
         <Toaster />
 
         {/* Order Tracker Panel */}

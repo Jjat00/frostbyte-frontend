@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Receipt } from "lucide-react";
+import { X, Receipt, MapPin } from "lucide-react";
 import OrderStatusBadge from "./OrderStatusBadge";
 import OrderItemsList from "./OrderItemsList";
 import RecommendedProducts from "./RecommendedProducts";
@@ -45,6 +45,29 @@ const OrderTracker = ({ order, show, onClose }) => {
 
       {/* Items */}
       <OrderItemsList items={order.items} />
+
+      {/* Domicilio */}
+      {order.order_type === "delivery" && (
+        <div className="px-3 py-2 backdrop-blur-sm bg-white/[0.06] rounded-lg border border-white/[0.1] space-y-1">
+          <div className="flex items-center gap-1.5 text-xs text-gray">
+            <MapPin className="w-3.5 h-3.5" /> Entrega a domicilio
+          </div>
+          {order.delivery_address && (
+            <p className="text-sm text-light">{order.delivery_address}</p>
+          )}
+          {order.delivery_reference && (
+            <p className="text-xs text-gray">{order.delivery_reference}</p>
+          )}
+        </div>
+      )}
+
+      {/* Desglose */}
+      {Number(order.delivery_fee) > 0 && (
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray">Envío</span>
+          <span className="text-light">{formatCurrency(order.delivery_fee)}</span>
+        </div>
+      )}
 
       {/* Total */}
       <div className="flex items-center justify-between pt-3 border-t border-white/[0.1]">

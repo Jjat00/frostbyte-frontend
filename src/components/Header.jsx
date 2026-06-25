@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, LogIn } from "lucide-react";
+import { Menu, X, ChevronDown, LogIn, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -67,6 +68,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { data: categoriesData } = useActiveCategories();
+  const isCustomerAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
 
   // Detectar si estamos en una ruta de mesa
   const isTableRoute = location.pathname.startsWith('/mesa/');
@@ -238,6 +240,19 @@ const Header = () => {
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
+                {isCustomerAuthenticated && (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                    >
+                      <Link to="/mis-pedidos" className="flex items-center gap-2">
+                        <ClipboardList className="w-4 h-4" />
+                        Mis pedidos
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )}
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     asChild
@@ -353,6 +368,16 @@ const Header = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   🎮 Frostbyte Play
+                </Link>
+              )}
+              {isCustomerAuthenticated && (
+                <Link
+                  to="/mis-pedidos"
+                  className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <ClipboardList className="w-4 h-4" />
+                  Mis pedidos
                 </Link>
               )}
               <Link

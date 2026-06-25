@@ -18,6 +18,10 @@ export const env = {
   // Google Sign-In (login de clientes). OAuth 2.0 Client ID (Web application).
   GOOGLE_CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
 
+  // Mapbox (mapa de domicilio en el checkout). Token público (pk.*).
+  // Sin token, el checkout usa solo geolocalización (sin mapa visual).
+  MAPBOX_TOKEN: import.meta.env.VITE_MAPBOX_TOKEN || "",
+
   // Feature flags
   ENABLE_MOCK_DATA: import.meta.env.VITE_ENABLE_MOCK_DATA === "true",
 

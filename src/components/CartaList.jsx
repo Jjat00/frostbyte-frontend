@@ -9,9 +9,15 @@ import {
   MessageSquare,
   Sparkles,
   Gamepad2,
+  Plus,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import { useActiveCategories, useProductsByCategory } from "@/hooks";
+import {
+  useActiveCategories,
+  useProductsByCategory,
+  useStoreConfig,
+  useAddToCart,
+} from "@/hooks";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 const formatPrice = (price) => {
@@ -98,8 +104,25 @@ const scrollTo = (id) => {
   if (el) el.scrollIntoView({ behavior: "smooth" });
 };
 
-const CategoryGroup = ({ category }) => {
+/** Botón compacto para agregar una variante al carrito. */
+const AddButton = ({ variant, product }) => {
+  const add = useAddToCart();
+  if (!variant?.id) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => add(variant, product)}
+      aria-label={`Agregar ${product?.name || ""} ${variant?.name || ""}`.trim()}
+      className="flex-shrink-0 grid place-items-center w-8 h-8 rounded-full bg-gold/15 hover:bg-gold/30 active:scale-90 border border-gold/30 text-gold transition-all duration-150"
+    >
+      <Plus className="w-4 h-4" strokeWidth={3} />
+    </button>
+  );
+};
+
+const CategoryGroup = ({ category, orderingEnabled = false }) => {
   const { data, isLoading } = useProductsByCategory(category.slug);
+  const add = useAddToCart();
   const products = data?.results || [];
   const sectionId = SECTION_IDS[category.slug];
 
@@ -148,6 +171,8 @@ const CategoryGroup = ({ category }) => {
             variants.find((v) => v.is_default) || variants[0];
           const hasMultipleVariants = variants.length > 1;
 
+          const canOrder = orderingEnabled && !product.is_coming_soon;
+
           return (
             <li key={product.id} className="py-1.5">
               <div className="flex items-baseline gap-1.5">
@@ -177,7 +202,26 @@ const CategoryGroup = ({ category }) => {
                     ))}
                   </div>
                 )}
+                {canOrder && !hasMultipleVariants && (
+                  <AddButton variant={defaultVariant} product={product} />
+                )}
               </div>
+              {/* Multi-variante: un botón "Agregar" por variante, en su propia fila */}
+              {canOrder && hasMultipleVariants && (
+                <div className="flex flex-wrap items-center justify-end gap-2 mt-1.5">
+                  {variants.map((variant) => (
+                    <button
+                      key={`add-${variant.id || variant.name}`}
+                      type="button"
+                      onClick={() => add(variant, product)}
+                      className="flex items-center gap-1 rounded-full bg-gold/12 hover:bg-gold/25 active:scale-95 border border-gold/25 text-gold text-[10px] sm:text-xs font-semibold px-2.5 py-1 transition-all duration-150"
+                    >
+                      <Plus className="w-3 h-3" strokeWidth={3} />
+                      {variant.name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </li>
           );
         })}
@@ -241,6 +285,9 @@ const CartaList = () => {
   const location = useLocation();
   const isTableRoute = location.pathname.startsWith("/mesa/");
 
+  const { data: storeConfig } = useStoreConfig();
+  const orderingEnabled = !!storeConfig?.customer_ordering_enabled;
+
   const { data: categoriesData, isLoading: categoriesLoading } =
     useActiveCategories();
 
@@ -300,7 +347,11 @@ const CartaList = () => {
         <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl sm:rounded-2xl px-4 py-5 sm:p-6 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)]">
           {/* Categorias de productos (desde la API) */}
           {activeCategories.map((category) => (
-            <CategoryGroup key={category.slug} category={category} />
+            <CategoryGroup
+              key={category.slug}
+              category={category}
+              orderingEnabled={orderingEnabled}
+            />
           ))}
 
           {/* Separador */}

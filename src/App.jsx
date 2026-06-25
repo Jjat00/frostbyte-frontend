@@ -12,6 +12,7 @@ import MenuSections from "@/components/MenuSections";
 import Desguayabator from "@/components/Desguayabator";
 import WaterSection from "@/components/WaterSection";
 import ScrollToCarta from "@/components/ScrollToMenu";
+import CartLayer from "@/components/cart/CartLayer";
 import SolicitarMusica from "@/components/SolicitarMusica";
 import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
@@ -68,6 +69,7 @@ function App() {
         </main>
         <Footer />
         <ScrollToCarta />
+        <CartLayer />
         <Toaster />
       </div>
     </>
