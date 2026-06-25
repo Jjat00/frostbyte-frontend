@@ -11,6 +11,7 @@ import {
   Loader2,
   Radio,
   Flame,
+  Check,
   ChevronRight,
   Plus,
   Minus,
@@ -113,6 +114,8 @@ function buildLayout(rounds) {
   // Aristas tipo "llave" (codo) de cada hijo a su padre.
   const edges = [];
   nodes.forEach((n) => {
+    const homeSrc = winnerSource(n.match.home_source);
+    const awaySrc = winnerSource(n.match.away_source);
     n.children.forEach((cn_) => {
       const c = placed[cn_];
       if (!c) return;
@@ -120,8 +123,14 @@ function buildLayout(rounds) {
       const x1 = childLeft ? c.x + CARD_W : c.x;
       const x2 = childLeft ? n.x : n.x + CARD_W;
       const midX = (x1 + x2) / 2;
+      // "won": el ganador del cruce hijo ya avanzo, es decir, su lugar en el
+      // cruce padre ya tiene equipo definido. Esa linea se ilumina.
+      let won = false;
+      if (homeSrc === cn_) won = Boolean(n.match.home?.code);
+      else if (awaySrc === cn_) won = Boolean(n.match.away?.code);
       edges.push({
         d: `M ${x1} ${c.y + CARD_H / 2} H ${midX} V ${n.y + CARD_H / 2} H ${x2}`,
+        won,
       });
     });
   });
@@ -230,7 +239,7 @@ const CrossCard = ({ node, scores, setScore, onSave, pending }) => {
   return (
     <div
       className={cn(
-        "absolute rounded-xl border bg-dark-secondary/70 p-2 shadow-lg backdrop-blur-sm transition-colors",
+        "absolute rounded-xl border bg-dark-secondary/70 p-2 backdrop-blur-sm transition-colors",
         finished ? "border-white/15" : both ? "border-primary/25" : "border-white/[0.06]",
         isLive && "border-red-500/40"
       )}
@@ -259,8 +268,18 @@ const CrossCard = ({ node, scores, setScore, onSave, pending }) => {
             {mp.is_exact && <Flame size={8} />}+{mp.points_earned}
           </span>
         ) : both && !finished ? (
-          <span className="text-[8px] font-bold text-primary/70">
-            {pts.outcome}/{pts.exact}
+          <span
+            className="flex items-center gap-1"
+            title={`Aciertas el ganador: +${pts.outcome} · Marcador exacto: +${pts.exact}`}
+          >
+            <span className="inline-flex items-center gap-0.5 text-[8px] font-black text-primary">
+              <Check size={8} strokeWidth={3} />
+              {pts.outcome}
+            </span>
+            <span className="inline-flex items-center gap-0.5 text-[8px] font-black text-secondary">
+              <Flame size={8} />
+              {pts.exact}
+            </span>
           </span>
         ) : (
           <span className="text-[8px] font-semibold text-gray/40">{matchDayLabel(m.kickoff)}</span>
@@ -493,13 +512,24 @@ const EliminacionBracket = ({ onGoToGroups }) => {
               width={layout.width}
               height={layout.height}
             >
-              {layout.edges.map((e, i) => (
+              <defs>
+                <linearGradient id="wonEdge" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#1e9e5a" />
+                  <stop offset="100%" stopColor="#f2c53d" />
+                </linearGradient>
+              </defs>
+              {/* Primero las lineas tenues; luego las del ganador, encima */}
+              {layout.edges.filter((e) => !e.won).map((e, i) => (
+                <path key={`d${i}`} d={e.d} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth={2} />
+              ))}
+              {layout.edges.filter((e) => e.won).map((e, i) => (
                 <path
-                  key={i}
+                  key={`w${i}`}
                   d={e.d}
                   fill="none"
-                  stroke="rgba(255,255,255,0.16)"
-                  strokeWidth={2}
+                  stroke="url(#wonEdge)"
+                  strokeWidth={3.5}
+                  strokeLinecap="round"
                 />
               ))}
             </svg>
@@ -560,17 +590,15 @@ const EliminacionBracket = ({ onGoToGroups }) => {
           </ZoomBtn>
         </div>
 
-        {/* Leyenda de puntos por ronda */}
-        <div className="pointer-events-none absolute bottom-2 left-3 flex flex-wrap gap-1.5">
-          {rounds.map((r) => (
-            <span
-              key={r.stage}
-              className="rounded-full border border-white/10 bg-dark/70 px-2 py-0.5 text-[9px] font-bold text-gray backdrop-blur"
-            >
-              {r.label}: <span className="text-primary">{r.points.outcome}</span>/
-              <span className="text-secondary">{r.points.exact}</span>
-            </span>
-          ))}
+        {/* Clave: que significan el verde y el oro de los puntos */}
+        <div className="pointer-events-none absolute bottom-2 left-3 flex items-center gap-3 rounded-full border border-white/10 bg-dark/80 px-3 py-1 text-[10px] font-bold backdrop-blur">
+          <span className="inline-flex items-center gap-1 text-primary">
+            <Check size={11} strokeWidth={3} /> aciertas el ganador
+          </span>
+          <span className="inline-flex items-center gap-1 text-secondary">
+            <Flame size={11} /> marcador exacto
+          </span>
+          <span className="hidden text-gray sm:inline">· vale más cada fase</span>
         </div>
       </div>
     </div>
