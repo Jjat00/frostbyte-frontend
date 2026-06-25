@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock,
@@ -22,7 +22,7 @@ import ColombiaBanner, {
 import MatchDetailSheet from "./MatchDetailSheet";
 import MissionsBanner from "./MissionsBanner";
 import GranizadoBanner from "./GranizadoBanner";
-import { usePollaMatches, useSavePrediction } from "@/hooks/usePolla";
+import { usePollaMatches, useSavePrediction, usePollaBracket } from "@/hooks/usePolla";
 import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import {
   FIXTURE_FILTERS,
@@ -510,6 +510,16 @@ const PartidosTab = () => {
   // Partido abierto en el sheet de detalle (minuto a minuto, estadisticas).
   const [detailSlug, setDetailSlug] = useState(null);
 
+  // Cuando la eliminacion ya abrio (todos los grupos jugados), la vista entra
+  // por defecto en "Eliminacion". El boton "Fase de grupos" sigue disponible;
+  // si el usuario elige una vista a mano, respetamos su eleccion.
+  const { data: bracket } = usePollaBracket();
+  const elimOpen = Boolean(bracket?.open);
+  const userPickedView = useRef(false);
+  useEffect(() => {
+    if (elimOpen && !userPickedView.current) setView("eliminacion");
+  }, [elimOpen]);
+
   // Trae TODOS los partidos una sola vez; se filtra en cliente.
   const { data, isLoading, isError } = usePollaMatches({});
   const matches = data ?? EMPTY_MATCHES;
@@ -617,8 +627,18 @@ const PartidosTab = () => {
         <div>
           <h2 className="text-xl font-black text-light">Tus pronósticos</h2>
           <p className="mt-0.5 text-sm leading-snug text-gray">
-            Escribe tu marcador antes de que empiece el partido. Marcador exacto
-            = 3 pts, resultado correcto = 1 pt.
+            {view === "eliminacion" ? (
+              <>
+                Marca el resultado de cada cruce ya definido. En la eliminación
+                los puntos <b className="text-light">suben por fase</b> (de
+                dieciseisavos a la final) y el marcador exacto siempre vale más.
+              </>
+            ) : (
+              <>
+                Escribe tu marcador antes de que empiece el partido. Marcador
+                exacto = 3 pts, resultado correcto = 1 pt.
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -636,7 +656,7 @@ const PartidosTab = () => {
           return (
             <button
               key={v.id}
-              onClick={() => setView(v.id)}
+              onClick={() => { userPickedView.current = true; setView(v.id); }}
               className={cn(
                 "flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-bold transition-all",
                 active

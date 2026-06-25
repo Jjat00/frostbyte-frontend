@@ -35,7 +35,6 @@ const fmtDate = (iso) => {
 const BREAKDOWN = [
   { key: "match_points", label: "Partidos", accent: "text-secondary" },
   { key: "mission_points", label: "Misiones", accent: "text-primary" },
-  { key: "bracket_points", label: "Bracket", accent: "text-purple-300" },
   { key: "award_points", label: "Menciones", accent: "text-amber-300" },
   { key: "referral_points", label: "Referidos", accent: "text-emerald-300" },
 ];
