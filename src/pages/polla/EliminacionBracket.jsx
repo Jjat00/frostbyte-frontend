@@ -1,34 +1,148 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Lock,
   Trophy,
-  Check,
   Loader2,
   Radio,
   Flame,
   ChevronRight,
-  Info,
+  Plus,
+  Minus,
+  Maximize2,
+  Crosshair,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
-import { usePollaBracket, useSaveBracketPick, useSavePrediction } from "@/hooks/usePolla";
-import { matchDayLabel, matchTime } from "@/data/mundial2026";
+import { usePollaBracket, useSavePrediction } from "@/hooks/usePolla";
+import { matchDayLabel } from "@/data/mundial2026";
 
-/* Pronostico de marcador completo = ambos marcadores presentes */
-const bothFilled = (s) => s && s.h !== "" && s.h != null && s.a !== "" && s.a != null;
+/* ── Geometria del arbol ───────────────────────────────────────────────── */
+const CARD_W = 158;
+const CARD_H = 96;
+const COL_GAP = 46;
+const ROW_GAP = 22;
+const COL = CARD_W + COL_GAP; // paso horizontal entre rondas
+const LEAF = CARD_H + ROW_GAP; // paso vertical entre cruces de 16avos
+const PAD = 28; // margen interno del lienzo (que las tarjetas no toquen el borde)
+const CENTER_COL = 4; // 16avos(0) 8vos(1) 4tos(2) semi(3) final(4)
+const DEPTH = { r32: 4, r16: 3, qf: 2, sf: 1, third: 0, final: 0 };
 
-/* ── Caja de marcador compacta (editable o solo lectura) ── */
-const MiniScore = ({ value, editable, disabled, onChange, onBlur, tone = "idle" }) => {
+const winnerSource = (src) => {
+  const m = /Ganador\s+(\d+)/i.exec(src || "");
+  return m ? parseInt(m[1], 10) : null;
+};
+
+/* Posiciona cada cruce en (x,y) armando el arbol desde la final hacia las
+   hojas (16avos). Devuelve {nodes, edges, width, height, finalNode}. */
+function buildLayout(rounds) {
+  const byNum = {};
+  rounds.forEach((r) => r.matches.forEach((m) => (byNum[m.number] = { ...m })));
+
+  const finalRound = rounds.find((r) => r.stage === "final");
+  const thirdRound = rounds.find((r) => r.stage === "third");
+  const finalM = finalRound?.matches?.[0];
+  if (!finalM) return null;
+
+  const nodes = [];
+  const placed = {};
+  const leafIdx = { L: 0, R: 0 };
+
+  const place = (num, side) => {
+    const m = byNum[num];
+    if (!m) return 0;
+    const depth = DEPTH[m.stage] ?? 0;
+    const kids = [winnerSource(m.home_source), winnerSource(m.away_source)];
+    let y;
+    if (kids[0] == null || kids[1] == null) {
+      const i = leafIdx[side]++;
+      y = i * LEAF + CARD_H / 2;
+    } else {
+      const y1 = place(kids[0], side);
+      const y2 = place(kids[1], side);
+      y = (y1 + y2) / 2;
+    }
+    const x = side === "L" ? (CENTER_COL - depth) * COL : (CENTER_COL + depth) * COL;
+    const node = { match: m, x, y, side, children: kids.filter((k) => k != null) };
+    nodes.push(node);
+    placed[num] = node;
+    return y;
+  };
+
+  // Hijos de la final: subarbol izquierdo y derecho.
+  const [lRoot, rRoot] = [
+    winnerSource(finalM.home_source),
+    winnerSource(finalM.away_source),
+  ];
+  const lY = lRoot != null ? place(lRoot, "L") : LEAF * 4;
+  const rY = rRoot != null ? place(rRoot, "R") : LEAF * 4;
+  const finalY = (lY + rY) / 2;
+  const finalNode = {
+    match: finalM,
+    x: CENTER_COL * COL,
+    y: finalY,
+    side: "C",
+    children: [lRoot, rRoot].filter((k) => k != null),
+  };
+  nodes.push(finalNode);
+  placed[finalM.number] = finalNode;
+
+  // Tercer puesto: tarjeta suelta, centrada bajo la final.
+  let thirdNode = null;
+  const maxLeafY = Math.max(leafIdx.L, leafIdx.R, 1) * LEAF;
+  const thirdM = thirdRound?.matches?.[0];
+  if (thirdM) {
+    thirdNode = {
+      match: thirdM,
+      x: CENTER_COL * COL,
+      y: maxLeafY + CARD_H,
+      side: "C",
+      children: [],
+    };
+    nodes.push(thirdNode);
+  }
+
+  // Desplaza todo el arbol para dejar un margen interno (PAD) en los bordes.
+  nodes.forEach((n) => { n.x += PAD; n.y += PAD; });
+
+  // Aristas tipo "llave" (codo) de cada hijo a su padre.
+  const edges = [];
+  nodes.forEach((n) => {
+    n.children.forEach((cn_) => {
+      const c = placed[cn_];
+      if (!c) return;
+      const childLeft = c.x < n.x;
+      const x1 = childLeft ? c.x + CARD_W : c.x;
+      const x2 = childLeft ? n.x : n.x + CARD_W;
+      const midX = (x1 + x2) / 2;
+      edges.push({
+        d: `M ${x1} ${c.y + CARD_H / 2} H ${midX} V ${n.y + CARD_H / 2} H ${x2}`,
+      });
+    });
+  });
+
+  const width = Math.max(...nodes.map((n) => n.x + CARD_W)) + PAD;
+  const height = Math.max(...nodes.map((n) => n.y + CARD_H)) + PAD;
+  return { nodes, edges, width, height, finalNode };
+}
+
+/* ── Caja de marcador (editable o solo lectura) ───────────────────────────── */
+const ScoreBox = ({ value, editable, disabled, onChange, onCommit, tone }) => {
   const filled = value !== "" && value != null;
   if (!editable) {
     return (
       <span
         className={cn(
-          "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base font-black tabular-nums",
+          "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-sm font-black tabular-nums",
           filled
             ? tone === "live"
               ? "bg-white/[0.06] text-light ring-1 ring-red-500/30"
-              : "bg-white/[0.06] text-light"
+              : "bg-white/[0.07] text-light"
             : "border border-dashed border-white/15 text-gray/30"
         )}
       >
@@ -44,229 +158,215 @@ const MiniScore = ({ value, editable, disabled, onChange, onBlur, tone = "idle" 
       maxLength={2}
       value={value ?? ""}
       disabled={disabled}
-      onBlur={onBlur}
+      data-no-pan
+      onPointerDown={(e) => e.stopPropagation()}
+      onBlur={onCommit}
       onChange={(e) => {
         const d = e.target.value.replace(/\D/g, "").slice(0, 2);
-        if (d === "") return onChange("");
-        onChange(String(Math.min(20, parseInt(d, 10))));
+        onChange(d === "" ? "" : String(Math.min(20, parseInt(d, 10))));
       }}
       aria-label="Marcador"
       className={cn(
-        "h-9 w-9 shrink-0 appearance-none rounded-lg text-center text-base font-black tabular-nums transition-all focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50",
+        "h-7 w-7 shrink-0 appearance-none rounded-md text-center text-sm font-black tabular-nums transition-all focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50",
         filled
           ? "bg-linear-to-br from-primary to-secondary text-dark"
-          : "border border-dashed border-primary/40 bg-primary/[0.05] text-light"
+          : "border border-dashed border-primary/40 bg-primary/[0.06] text-light"
       )}
     />
   );
 };
 
-/* ── Una fila de equipo dentro de un cruce ── */
-const TeamRow = ({
-  side,
-  source,
-  selected,
-  canPick,
-  onPick,
-  scoreValue,
-  scoreEditable,
-  scoreDisabled,
-  onScoreChange,
-  onScoreBlur,
-  finished,
-  realScore,
-  pickedWrong,
-}) => {
-  const defined = Boolean(side?.code);
-  const label = defined ? side.name : source || "Por definir";
+const TeamRow = ({ team, source, score, editable, disabled, onChange, onCommit, finished, realScore, won }) => {
+  const defined = Boolean(team?.code);
+  const label = defined ? team.code : "—";
   return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={() => canPick && defined && onPick(side.code)}
-        disabled={!canPick || !defined}
+    <div className="flex items-center gap-1.5">
+      <Flag iso2={team?.iso2} name={defined ? team.name : source} size={20} rounded="rounded-[3px]" />
+      <span
         className={cn(
-          "flex min-w-0 flex-1 items-center gap-2 rounded-xl border px-2 py-1.5 text-left transition-all",
-          selected
-            ? "border-secondary/60 bg-secondary/10"
-            : "border-white/[0.08]",
-          canPick && defined && !selected && "hover:border-primary/40",
-          finished && selected && pickedWrong && "border-red-500/40 bg-red-500/[0.06]"
+          "min-w-0 flex-1 truncate text-xs font-extrabold",
+          defined ? (won ? "text-secondary" : "text-light") : "text-gray/50"
         )}
+        title={defined ? team.name : source || "Por definir"}
       >
-        <span
-          className={cn(
-            "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border",
-            selected
-              ? finished && pickedWrong
-                ? "border-red-400 bg-red-400/20 text-red-300"
-                : "border-secondary bg-secondary text-dark"
-              : "border-white/25"
-          )}
-        >
-          {selected && <Check size={11} strokeWidth={3} />}
-        </span>
-        <Flag iso2={side?.iso2} name={label} size={24} rounded="rounded" />
-        <span
-          className={cn(
-            "min-w-0 flex-1 truncate text-sm font-bold",
-            defined ? "text-light" : "text-gray/60"
-          )}
-        >
-          {defined ? label : <span className="italic">{label}</span>}
-        </span>
-      </button>
+        {defined ? label : <span className="italic font-bold">{source || "?"}</span>}
+      </span>
       {finished ? (
-        <MiniScore value={realScore} tone="final" />
-      ) : scoreEditable ? (
-        <MiniScore
-          value={scoreValue}
-          editable
-          disabled={scoreDisabled}
-          onChange={onScoreChange}
-          onBlur={onScoreBlur}
-        />
+        <ScoreBox value={realScore} tone="final" />
+      ) : editable ? (
+        <ScoreBox value={score} editable disabled={disabled} onChange={onChange} onCommit={onCommit} />
       ) : (
-        <span className="h-9 w-9 shrink-0" />
+        <span className="h-7 w-7 shrink-0" />
       )}
     </div>
   );
 };
 
-/* ── Tarjeta de un cruce ── */
-const CrossCard = ({ match, scores, setScore, onSavePred, onPick, pendingPick, predError }) => {
-  const isLive = match.status === "live";
-  const finished = match.status === "finished";
-  const bothTeams = Boolean(match.home?.code && match.away?.code);
-  const canPick = !match.is_locked && !finished && bothTeams && pendingPick !== match.slug;
-  const scoreEditable = !match.is_locked && !finished && bothTeams;
-  const sc = scores[match.slug] || { h: "", a: "" };
+/* ── Tarjeta de un cruce posicionada en el arbol ──────────────────────────── */
+const CrossCard = ({ node, scores, setScore, onSave, pending }) => {
+  const m = node.match;
+  const isLive = m.status === "live";
+  const finished = m.status === "finished";
+  const both = Boolean(m.home?.code && m.away?.code);
+  const editable = !m.is_locked && !finished && both;
+  const sc = scores[m.slug] || { h: "", a: "" };
+  const mp = m.my_prediction;
+  const pts = m.points || { outcome: 0, exact: 0 };
 
-  const trySave = (next) => {
-    if (bothFilled(next)) onSavePred(match.slug, next);
+  const commit = () => {
+    const cur = scores[m.slug];
+    if (cur && cur.h !== "" && cur.h != null && cur.a !== "" && cur.a != null) {
+      onSave(m.slug, cur);
+    }
   };
 
-  // El backend ya calcula el resultado del avance (compara el pick con el
-  // ganador real del cruce, incluidos penales). El frontend no lo deriva.
-  const myPick = match.my_pick;
-  const mp = match.my_prediction;
-  const pickPts = match.pick_points || 0;
-  const pickRight = finished && match.pick_scored && pickPts > 0;
-  const pickWrong = finished && match.pick_scored && pickPts === 0 && Boolean(myPick);
+  // ganador real (para resaltar) cuando el cruce ya termino
+  let homeWon = false, awayWon = false;
+  if (finished && m.home_score != null && m.away_score != null) {
+    homeWon = m.home_score > m.away_score;
+    awayWon = m.away_score > m.home_score;
+  }
 
   return (
     <div
       className={cn(
-        "rounded-2xl border bg-dark-secondary/40 p-3 transition-colors",
-        pickRight ? "border-secondary/40" : "border-white/[0.08]"
+        "absolute rounded-xl border bg-dark-secondary/70 p-2 shadow-lg backdrop-blur-sm transition-colors",
+        finished ? "border-white/15" : both ? "border-primary/25" : "border-white/[0.06]",
+        isLive && "border-red-500/40"
       )}
+      style={{ left: node.x, top: node.y, width: CARD_W, height: CARD_H }}
     >
-      {/* Cabecera del cruce */}
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="truncate text-[10px] font-bold uppercase tracking-wide text-gray">
-          {match.venue_stadium || match.round_label}
-        </p>
-        {isLive && match.minute != null ? (
-          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[9px] font-bold text-red-400">
-            <Radio size={8} className="animate-pulse" />
-            {match.minute}&apos;
+      <div className="mb-1 flex items-center justify-between">
+        <span className="truncate text-[8px] font-bold uppercase tracking-wide text-gray/70">
+          {m.round_label}
+        </span>
+        {isLive && m.minute != null ? (
+          <span className="inline-flex items-center gap-0.5 rounded-full bg-red-500/15 px-1 text-[8px] font-bold text-red-400">
+            <Radio size={7} className="animate-pulse" />
+            {m.minute}&apos;
+          </span>
+        ) : finished && mp ? (
+          <span
+            className={cn(
+              "inline-flex items-center gap-0.5 rounded-full px-1 text-[8px] font-black",
+              mp.points_earned > 0
+                ? mp.is_exact
+                  ? "bg-linear-to-r from-primary to-secondary text-dark"
+                  : "bg-secondary/20 text-secondary"
+                : "bg-white/[0.06] text-gray"
+            )}
+          >
+            {mp.is_exact && <Flame size={8} />}+{mp.points_earned}
+          </span>
+        ) : both && !finished ? (
+          <span className="text-[8px] font-bold text-primary/70">
+            {pts.outcome}/{pts.exact}
           </span>
         ) : (
-          <span className="shrink-0 text-[10px] font-semibold text-primary/80">
-            {matchDayLabel(match.kickoff)}
-          </span>
+          <span className="text-[8px] font-semibold text-gray/40">{matchDayLabel(m.kickoff)}</span>
         )}
       </div>
-
-      <div className="space-y-1.5">
+      <div className="space-y-0.5">
         <TeamRow
-          side={match.home}
-          source={match.home_source}
-          selected={myPick === match.home?.code}
-          canPick={canPick}
-          onPick={(code) => onPick(match.slug, code)}
-          scoreValue={sc.h}
-          scoreEditable={scoreEditable}
-          scoreDisabled={pendingPick === match.slug}
-          onScoreChange={(h) => setScore(match.slug, { ...sc, h })}
-          onScoreBlur={() => trySave(sc)}
+          team={m.home}
+          source={m.home_source}
+          score={sc.h}
+          editable={editable}
+          disabled={pending === m.slug}
+          onChange={(h) => setScore(m.slug, { ...sc, h })}
+          onCommit={commit}
           finished={finished}
-          realScore={mp ? String(mp.home_score) : ""}
-          pickedWrong={pickWrong}
+          realScore={m.home_score != null ? String(m.home_score) : ""}
+          won={homeWon}
         />
         <TeamRow
-          side={match.away}
-          source={match.away_source}
-          selected={myPick === match.away?.code}
-          canPick={canPick}
-          onPick={(code) => onPick(match.slug, code)}
-          scoreValue={sc.a}
-          scoreEditable={scoreEditable}
-          scoreDisabled={pendingPick === match.slug}
-          onScoreChange={(a) => {
+          team={m.away}
+          source={m.away_source}
+          score={sc.a}
+          editable={editable}
+          disabled={pending === m.slug}
+          onChange={(a) => {
             const next = { ...sc, a };
-            setScore(match.slug, next);
-            trySave(next);
+            setScore(m.slug, next);
+            if (next.h !== "" && next.h != null && a !== "" && a != null) onSave(m.slug, next);
           }}
-          onScoreBlur={() => trySave(sc)}
+          onCommit={commit}
           finished={finished}
-          realScore={mp ? String(mp.away_score) : ""}
-          pickedWrong={pickWrong}
+          realScore={m.away_score != null ? String(m.away_score) : ""}
+          won={awayWon}
         />
-      </div>
-
-      {/* Pie: estado / puntos / error */}
-      <div className="mt-2 flex min-h-[18px] items-center justify-between gap-2">
-        {predError ? (
-          <span className="text-[10px] text-red-400">{predError}</span>
-        ) : finished ? (
-          <div className="flex flex-wrap items-center gap-1.5">
-            {mp && (
-              <span
-                className={cn(
-                  "inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-bold",
-                  mp.points_earned > 0
-                    ? mp.is_exact
-                      ? "bg-linear-to-r from-primary to-secondary text-dark"
-                      : "bg-secondary/15 text-secondary"
-                    : "bg-white/[0.06] text-gray"
-                )}
-              >
-                {mp.is_exact && <Flame size={10} />}Marcador +{mp.points_earned}
-              </span>
-            )}
-            {pickRight ? (
-              <span className="rounded-full bg-linear-to-r from-primary to-secondary px-2 py-0.5 text-[10px] font-black text-dark">
-                Avance +{pickPts}
-              </span>
-            ) : myPick ? (
-              <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] font-bold text-gray">
-                Avance +0
-              </span>
-            ) : (
-              <span className="text-[10px] text-gray/50">Sin pick</span>
-            )}
-          </div>
-        ) : pendingPick === match.slug ? (
-          <span className="inline-flex items-center gap-1 text-[10px] text-primary">
-            <Loader2 size={10} className="animate-spin" /> Guardando…
-          </span>
-        ) : (
-          <span className="text-[10px] text-gray/50">
-            {bothTeams ? "Toca quién avanza" : "Por definir"}
-          </span>
-        )}
-        {!finished && (
-          <span className="shrink-0 text-[10px] font-bold text-gray/40">
-            +{match._roundPoints} pts
-          </span>
-        )}
       </div>
     </div>
   );
 };
 
-/* ── Estado de espera: la llave se abre al terminar los grupos ── */
+/* ── Pan / zoom del lienzo ─────────────────────────────────────────────────── */
+function useBracketView(contentW, contentH) {
+  const ref = useRef(null);
+  const [scale, setScale] = useState(0.5);
+  const didFit = useRef(false);
+
+  const fit = useCallback(() => {
+    const el = ref.current;
+    if (!el || contentW <= 1) return false;
+    const cw = el.clientWidth, ch = el.clientHeight;
+    if (!cw || !ch) return false;
+    setScale(Math.min(cw / contentW, ch / contentH) * 0.96);
+    return true;
+  }, [contentW, contentH]);
+
+  // Permite un re-ajuste automatico cuando cambia el contenido (carga del arbol).
+  useEffect(() => { didFit.current = false; }, [contentW, contentH]);
+
+  // Auto-fit en cuanto el contenedor Y el contenido tengan dimensiones reales.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let raf;
+    const tryFit = () => {
+      if (didFit.current) return;
+      if (fit()) didFit.current = true;
+      else raf = requestAnimationFrame(tryFit);
+    };
+    tryFit();
+    const ro = new ResizeObserver(() => { if (!didFit.current) tryFit(); });
+    ro.observe(el);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, [fit]);
+
+  const zoom = (f) => setScale((s) => Math.max(0.2, Math.min(2.2, s * f)));
+
+  const focusFinal = (nx, ny) => {
+    const el = ref.current;
+    if (!el) return;
+    el.scrollTo({
+      left: nx * scale - el.clientWidth / 2,
+      top: ny * scale - el.clientHeight / 2,
+      behavior: "smooth",
+    });
+  };
+
+  // Arrastrar con el mouse mueve el scroll (en tactil el desplazamiento es nativo).
+  const drag = useRef(null);
+  const onPointerDown = (e) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== "mouse" || e.button !== 0) return;
+    if (e.target.closest("input,button")) return;
+    drag.current = { x: e.clientX, y: e.clientY, sl: el.scrollLeft, st: el.scrollTop };
+    el.setPointerCapture?.(e.pointerId);
+  };
+  const onPointerMove = (e) => {
+    const el = ref.current;
+    if (!el || !drag.current) return;
+    el.scrollLeft = drag.current.sl - (e.clientX - drag.current.x);
+    el.scrollTop = drag.current.st - (e.clientY - drag.current.y);
+  };
+  const onPointerUp = () => { drag.current = null; };
+
+  return { ref, scale, fit, zoom, focusFinal, onPointerDown, onPointerMove, onPointerUp };
+}
+
+/* ── Estados auxiliares ─────────────────────────────────────────────────────── */
 const WaitingState = ({ onGoToGroups }) => (
   <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 text-center">
     <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/15 to-secondary/15 text-primary">
@@ -274,12 +374,10 @@ const WaitingState = ({ onGoToGroups }) => (
     </div>
     <h3 className="text-lg font-black text-light">La eliminación aún no abre</h3>
     <p className="mx-auto mt-1 max-w-sm text-sm leading-snug text-gray">
-      La llave se arma con los <b className="text-light">clasificados reales</b>:
-      se habilita cuando termine la fase de grupos del Mundial. Cuando abra,
-      predices quién avanza ronda a ronda hasta el campeón. Mientras tanto,
-      asegura tus marcadores de grupos.
+      La llave se arma con los <b className="text-light">clasificados reales</b>: cada
+      cruce aparece cuando el Mundial define a sus equipos. Ahí marcas el resultado,
+      igual que en grupos. Mientras tanto, asegura tus marcadores de grupos.
     </p>
-
     <button
       onClick={onGoToGroups}
       className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-primary to-secondary px-5 py-2.5 text-sm font-black text-dark shadow-lg shadow-primary/30"
@@ -290,43 +388,29 @@ const WaitingState = ({ onGoToGroups }) => (
   </div>
 );
 
-/* ── Banner del campeón ── */
-const ChampionBanner = ({ champion }) => (
-  <div className="relative mt-4 overflow-hidden rounded-2xl border border-primary/30 bg-linear-to-br from-primary/[0.08] to-secondary/[0.08] p-5 text-center">
-    <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-secondary text-dark">
-      <Trophy size={24} />
-    </div>
-    <p className="text-[11px] font-bold uppercase tracking-widest text-gray">
-      Tu campeón del Mundial 2026
-    </p>
-    {champion ? (
-      <div className="mt-2 flex flex-col items-center gap-1.5">
-        <Flag iso2={champion.iso2} name={champion.name} size={56} className="ring-2 ring-primary/50" />
-        <p className="text-lg font-black text-light">{champion.name}</p>
-      </div>
-    ) : (
-      <p className="mt-2 text-sm font-semibold text-gray/70">
-        Por definir — avanza tu llave hasta la final.
-      </p>
-    )}
-  </div>
+const ZoomBtn = ({ onClick, children, label }) => (
+  <button
+    onClick={onClick}
+    aria-label={label}
+    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-dark/80 text-light backdrop-blur transition-colors hover:border-primary/50 hover:text-primary"
+  >
+    {children}
+  </button>
 );
 
-// Referencia estable para "sin datos" (mismo motivo que en PartidosTab): evita
-// que el efecto que siembra marcadores entre en bucle durante la carga.
 const EMPTY_ROUNDS = [];
 
 const EliminacionBracket = ({ onGoToGroups }) => {
   const { data, isLoading, isError } = usePollaBracket();
-  const savePick = useSaveBracketPick();
   const savePred = useSavePrediction();
-
   const [scores, setScores] = useState({});
-  const [errors, setErrors] = useState({});
 
   const rounds = data?.rounds ?? EMPTY_ROUNDS;
+  const layout = useMemo(() => (rounds.length ? buildLayout(rounds) : null), [rounds]);
 
-  // Siembra el estado local de marcadores desde my_prediction.
+  const bv = useBracketView(layout?.width || 1, layout?.height || 1);
+
+  // Siembra marcadores locales desde my_prediction.
   useEffect(() => {
     setScores((prev) => {
       const next = { ...prev };
@@ -345,51 +429,10 @@ const EliminacionBracket = ({ onGoToGroups }) => {
     });
   }, [rounds]);
 
-  const colRefs = useRef({});
-  const scrollToRound = (stage) => {
-    const el = colRefs.current[stage];
-    if (el) el.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-  };
-
   const setScore = (slug, val) => setScores((p) => ({ ...p, [slug]: val }));
-
-  const onSavePred = (slug, val) => {
-    setErrors((e) => {
-      if (!e[slug]) return e;
-      const { [slug]: _omit, ...rest } = e;
-      return rest;
-    });
-    savePred.mutate(
-      { slug, home_score: Number(val.h), away_score: Number(val.a) },
-      {
-        onError: (err) =>
-          setErrors((e) => ({
-            ...e,
-            [slug]: err?.response?.data?.detail || "No se pudo guardar.",
-          })),
-      }
-    );
-  };
-
-  const onPick = (slug, winner_code) => {
-    setErrors((e) => {
-      if (!e[slug]) return e;
-      const { [slug]: _omit, ...rest } = e;
-      return rest;
-    });
-    savePick.mutate(
-      { slug, winner_code },
-      {
-        onError: (err) =>
-          setErrors((e) => ({
-            ...e,
-            [slug]: err?.response?.data?.detail || "No se pudo guardar el pick.",
-          })),
-      }
-    );
-  };
-
-  const pendingPick = savePick.isPending ? savePick.variables?.slug : null;
+  const onSave = (slug, val) =>
+    savePred.mutate({ slug, home_score: Number(val.h), away_score: Number(val.a) });
+  const pending = savePred.isPending ? savePred.variables?.slug : null;
 
   if (isLoading) {
     return (
@@ -405,68 +448,131 @@ const EliminacionBracket = ({ onGoToGroups }) => {
       </p>
     );
   }
-
-  if (!data?.open) {
+  if (!data?.open || !layout) {
     return <WaitingState onGoToGroups={onGoToGroups} />;
   }
 
+  const champ = data.champion;
+
   return (
     <div>
-      {/* Ayuda */}
-      <p className="mb-3 flex items-start gap-1.5 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-[11px] leading-snug text-gray">
-        <Info size={13} className="mt-0.5 shrink-0 text-primary" />
-        Toca el equipo que crees que avanza; tu pick pasa a la siguiente ronda.
-        El marcador es opcional y suma igual que en grupos.
+      <p className="mb-2 text-[11px] leading-snug text-gray">
+        Marca el resultado de cada cruce ya definido (arrastra y haz zoom para
+        recorrer la llave). Aciertas más puntos en cada fase, y el marcador
+        exacto da el máximo.
       </p>
 
-      {/* Navegacion de rondas */}
-      <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {rounds.map((r) => (
-          <button
-            key={r.stage}
-            onClick={() => scrollToRound(r.stage)}
-            className="shrink-0 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-bold text-gray transition-colors hover:border-primary/40 hover:text-light"
+      <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[radial-gradient(circle_at_50%_0%,rgba(30,158,90,0.10),transparent_60%)]">
+        {/* Lienzo: arrastrar para mover (mouse) o deslizar (tactil) + zoom; barras ocultas */}
+        <div
+          ref={bv.ref}
+          onPointerDown={bv.onPointerDown}
+          onPointerMove={bv.onPointerMove}
+          onPointerUp={bv.onPointerUp}
+          onPointerLeave={bv.onPointerUp}
+          className="h-[clamp(420px,70vh,640px)] w-full cursor-grab overflow-auto overscroll-contain rounded-2xl [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+        >
+          <div
+            style={{
+              width: layout.width * bv.scale,
+              height: (layout.height + 60) * bv.scale,
+              position: "relative",
+            }}
           >
-            {r.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Bracket: columnas con scroll horizontal (snap por ronda) */}
-      <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 [scrollbar-width:thin]">
-        {rounds.map((r) => (
-          <section
-            key={r.stage}
-            ref={(el) => (colRefs.current[r.stage] = el)}
-            className="w-[300px] shrink-0 snap-start sm:w-[270px]"
+          <div
+            className="absolute left-0 top-0 origin-top-left"
+            style={{
+              width: layout.width,
+              height: layout.height + 60,
+              transform: `scale(${bv.scale})`,
+            }}
           >
-            <div className="sticky top-0 z-10 mb-2 flex items-center justify-between rounded-xl border border-white/[0.08] bg-dark/80 px-3 py-2 backdrop-blur">
-              <span className="text-xs font-black uppercase tracking-wider text-light">
-                {r.label}
-              </span>
-              <span className="rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                +{r.points} pts
-              </span>
-            </div>
-            <div className="space-y-3">
-              {r.matches.map((m) => (
-                <CrossCard
-                  key={m.slug}
-                  match={{ ...m, _roundPoints: r.points }}
-                  scores={scores}
-                  setScore={setScore}
-                  onSavePred={onSavePred}
-                  onPick={onPick}
-                  pendingPick={pendingPick}
-                  predError={errors[m.slug]}
+            {/* Lineas de la llave */}
+            <svg
+              className="pointer-events-none absolute left-0 top-0"
+              width={layout.width}
+              height={layout.height}
+            >
+              {layout.edges.map((e, i) => (
+                <path
+                  key={i}
+                  d={e.d}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.16)"
+                  strokeWidth={2}
                 />
               ))}
-            </div>
-          </section>
-        ))}
-      </div>
+            </svg>
 
-      <ChampionBanner champion={data?.champion} />
+            {/* Trofeo + campeón al centro, bajo la final */}
+            <div
+              className="absolute flex flex-col items-center"
+              style={{
+                left: layout.finalNode.x,
+                top: layout.finalNode.y + CARD_H + 14,
+                width: CARD_W,
+              }}
+            >
+              <Trophy size={30} className="text-secondary drop-shadow-[0_0_10px_rgba(242,197,61,0.5)]" />
+              {champ ? (
+                <div className="mt-1 flex flex-col items-center">
+                  <Flag iso2={champ.iso2} name={champ.name} size={34} className="ring-2 ring-secondary/60" />
+                  <span className="mt-0.5 text-[10px] font-black text-secondary">{champ.name}</span>
+                </div>
+              ) : (
+                <span className="mt-1 text-center text-[9px] font-bold uppercase tracking-wider text-gray/60">
+                  Campeón<br />por definir
+                </span>
+              )}
+            </div>
+
+            {/* Tarjetas de cruces */}
+            {layout.nodes.map((n) => (
+              <CrossCard
+                key={n.match.slug}
+                node={n}
+                scores={scores}
+                setScore={setScore}
+                onSave={onSave}
+                pending={pending}
+              />
+            ))}
+          </div>
+          </div>
+        </div>
+
+        {/* Controles */}
+        <div className="absolute right-3 top-3 flex flex-col gap-2">
+          <ZoomBtn onClick={() => bv.zoom(1.25)} label="Acercar">
+            <Plus size={16} />
+          </ZoomBtn>
+          <ZoomBtn onClick={() => bv.zoom(0.8)} label="Alejar">
+            <Minus size={16} />
+          </ZoomBtn>
+          <ZoomBtn onClick={bv.fit} label="Ver toda la llave">
+            <Maximize2 size={15} />
+          </ZoomBtn>
+          <ZoomBtn
+            onClick={() => bv.focusFinal(layout.finalNode.x + CARD_W / 2, layout.finalNode.y + CARD_H / 2)}
+            label="Ir a la final"
+          >
+            <Crosshair size={15} />
+          </ZoomBtn>
+        </div>
+
+        {/* Leyenda de puntos por ronda */}
+        <div className="pointer-events-none absolute bottom-2 left-3 flex flex-wrap gap-1.5">
+          {rounds.map((r) => (
+            <span
+              key={r.stage}
+              className="rounded-full border border-white/10 bg-dark/70 px-2 py-0.5 text-[9px] font-bold text-gray backdrop-blur"
+            >
+              {r.label}: <span className="text-primary">{r.points.outcome}</span>/
+              <span className="text-secondary">{r.points.exact}</span>
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
