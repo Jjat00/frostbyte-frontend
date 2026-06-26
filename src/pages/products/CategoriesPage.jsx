@@ -272,7 +272,7 @@ const CategoriesPage = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {!editingCategory && businesses.length > 1 && (
+                  {!editingCategory && !selectedBusinessSlug && businesses.length > 1 && (
                     <div>
                       <label className="block text-sm font-medium text-gray mb-2">
                         Negocio *

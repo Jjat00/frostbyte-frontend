@@ -38,7 +38,7 @@ import {
 import { analyticsService } from '@/services/analytics.service';
 import { ordersService } from '@/services/orders.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
-import BusinessSelector from '@/components/BusinessSelector';
+import BusinessContextBadge from '@/components/BusinessContextBadge';
 import BusinessComparison from '@/components/analytics/BusinessComparison';
 
 // Cyberpunk color palette for charts
@@ -384,16 +384,18 @@ const FinancialDashboard = () => {
           </p>
         </div>
         <div className="w-44 md:w-56">
-          <BusinessSelector label={null} />
+          <BusinessContextBadge label={null} />
         </div>
       </motion.div>
 
-      {/* ── Comparativa por negocio ── */}
-      <BusinessComparison
-        data={byBusiness}
-        formatCurrency={formatCurrency}
-        formatCurrencyFull={formatCurrencyFull}
-      />
+      {/* ── Comparativa por negocio (solo en Consolidado) ── */}
+      {!selectedBusinessSlug && (
+        <BusinessComparison
+          data={byBusiness}
+          formatCurrency={formatCurrency}
+          formatCurrencyFull={formatCurrencyFull}
+        />
+      )}
 
       {/* ── Executive Insight Banner ── */}
       {!isLoadingSummary && summary && (

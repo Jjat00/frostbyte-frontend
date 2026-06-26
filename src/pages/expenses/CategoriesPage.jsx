@@ -18,6 +18,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { expensesService } from "@/services/expenses.service";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 import toast from "react-hot-toast";
 
 const ICON_MAP = {
@@ -80,9 +81,12 @@ const CategoriesPage = () => {
     is_recurring_default: false,
   });
 
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
+
   const { data: categories, isLoading } = useQuery({
-    queryKey: ["expense-categories"],
-    queryFn: () => expensesService.getCategories(),
+    queryKey: ["expense-categories", selectedBusinessSlug],
+    queryFn: () => expensesService.getCategories({ business: biz }),
   });
 
   const createMutation = useMutation({

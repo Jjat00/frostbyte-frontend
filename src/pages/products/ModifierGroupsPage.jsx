@@ -97,20 +97,22 @@ export default function ModifierGroupsPage() {
               className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
             />
           </label>
-          <label className="text-sm text-gray">
-            Negocio
-            <select
-              value={form.business}
-              onChange={(e) => setForm({ ...form, business: e.target.value })}
-              className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
-            >
-              {businesses.map((b) => (
-                <option key={b.id} value={b.id} className="bg-dark">
-                  {b.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          {!selectedBusinessSlug && (
+            <label className="text-sm text-gray">
+              Negocio
+              <select
+                value={form.business}
+                onChange={(e) => setForm({ ...form, business: e.target.value })}
+                className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+              >
+                {businesses.map((b) => (
+                  <option key={b.id} value={b.id} className="bg-dark">
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label className="text-sm text-gray">
             Mínimo a elegir
             <input

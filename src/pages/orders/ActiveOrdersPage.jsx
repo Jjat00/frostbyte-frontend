@@ -22,6 +22,8 @@ import {
   Banknote,
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
+import { businessService } from "@/services/business.service";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 import { useWebSocket } from "@/hooks";
 
 const statusConfig = {
@@ -57,6 +59,46 @@ const statusConfig = {
     textClass: "text-emerald-400",
     badgeClass: "bg-emerald-500/20 text-emerald-400",
   },
+};
+
+// Punto de color por negocio (alineado con BusinessSelector)
+const businessDot = (color) => {
+  const map = {
+    blue: "bg-secondary",
+    orange: "bg-orange-400",
+  };
+  return map[color] || "bg-primary";
+};
+
+// Semáforo por negocio: cuánto de cada cocina ya está listo. Solo tiene sentido
+// cuando un pedido cruza negocios (ej: bebida de Frostbyte + plato de Food).
+const BusinessBreakdown = ({ breakdown }) => {
+  if (!Array.isArray(breakdown) || breakdown.length < 2) return null;
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {breakdown.map((b) => {
+        const done = b.ready_items >= b.total_items;
+        return (
+          <span
+            key={b.slug}
+            className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+              done
+                ? "bg-green-500/15 text-green-300 border-green-500/30"
+                : "bg-white/[0.06] text-gray border-white/[0.1]"
+            }`}
+            title={`${b.name}: ${b.ready_items}/${b.total_items} listos`}
+          >
+            <span className={`w-2 h-2 rounded-full ${businessDot(b.color)}`} />
+            {b.name}
+            <span className="font-bold">
+              {b.ready_items}/{b.total_items}
+            </span>
+            {done && <CheckCircle className="w-3 h-3" />}
+          </span>
+        );
+      })}
+    </div>
+  );
 };
 
 const OrderCard = ({ order, onUpdateStatus }) => {
@@ -198,6 +240,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
             📝 {order.customer_notes}
           </p>
         )}
+        <BusinessBreakdown breakdown={order.business_breakdown} />
       </div>
 
       {/* Items */}
@@ -241,10 +284,31 @@ const OrderCard = ({ order, onUpdateStatus }) => {
                     >
                       <div className="flex-1 min-w-0">
                         <span className="text-gray break-words block">
+                          {item.business_color && (
+                            <span
+                              className={`inline-block w-2 h-2 rounded-full mr-1.5 align-middle ${businessDot(
+                                item.business_color
+                              )}`}
+                              title={item.business_name}
+                            />
+                          )}
                           <span className="text-light font-medium">{item.quantity}x</span>{" "}
                           <span className="text-light">{item.product_name}</span>
                           <span className="text-gray/70"> ({item.variant_name})</span>
                         </span>
+                        {item.prep_status_display && (
+                          <span
+                            className={`text-[10px] ${
+                              item.prep_status === "ready"
+                                ? "text-green-400"
+                                : item.prep_status === "preparing"
+                                ? "text-blue-400"
+                                : "text-gray/70"
+                            }`}
+                          >
+                            {item.prep_status_display}
+                          </span>
+                        )}
                       </div>
                       <span className="text-light flex-shrink-0">
                         {formatCurrency(item.subtotal)}
@@ -290,6 +354,23 @@ const ActiveOrdersPage = () => {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Negocio activo: si estás dentro de un negocio, solo ves sus pedidos.
+  // En consolidado ('') ves la vista combinada de los dos negocios.
+  const { selectedBusinessSlug } = useBusinessStore();
+  const businessParam = selectedBusinessSlug || undefined;
+  const { data: businessesData } = useQuery({
+    queryKey: ["businesses"],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businessesList = Array.isArray(businessesData)
+    ? businessesData
+    : businessesData?.results || [];
+  const activeBusiness = businessesList.find((b) => b.slug === selectedBusinessSlug);
+  const contextName = selectedBusinessSlug
+    ? activeBusiness?.name || "Negocio"
+    : "Todos los negocios";
+
   const filter = searchParams.get("filter") || "all";
   const deliveredTab = searchParams.get("tab") || "unpaid";
   const deliveredDate = searchParams.get("date") || "today";
@@ -326,8 +407,8 @@ const ActiveOrdersPage = () => {
     isLoading: loadingActive,
     refetch: refetchActive,
   } = useQuery({
-    queryKey: ["active-orders"],
-    queryFn: () => ordersService.getActiveOrders(),
+    queryKey: ["active-orders", selectedBusinessSlug],
+    queryFn: () => ordersService.getActiveOrders({ business: businessParam }),
     refetchInterval: 60000, // Fallback: refrescar cada 60s (WebSocket es la fuente primaria)
     staleTime: 2000,
   });
@@ -338,9 +419,9 @@ const ActiveOrdersPage = () => {
     isLoading: loadingDelivered,
     refetch: refetchDelivered,
   } = useQuery({
-    queryKey: ["delivered-orders", deliveredDate],
+    queryKey: ["delivered-orders", deliveredDate, selectedBusinessSlug],
     queryFn: () =>
-      ordersService.getOrders({ status: "delivered", date: deliveredDate }),
+      ordersService.getOrders({ status: "delivered", date: deliveredDate, business: businessParam }),
     refetchInterval: 60000,
     staleTime: 5000,
   });
@@ -351,8 +432,8 @@ const ActiveOrdersPage = () => {
     isLoading: loadingPendingPayments,
     refetch: refetchPendingPayments,
   } = useQuery({
-    queryKey: ["pending-payments"],
-    queryFn: () => ordersService.getPendingPayments(),
+    queryKey: ["pending-payments", selectedBusinessSlug],
+    queryFn: () => ordersService.getPendingPayments({ business: businessParam }),
     refetchInterval: 60000,
     staleTime: 5000,
   });
@@ -448,7 +529,9 @@ const ActiveOrdersPage = () => {
           <h1 className="text-xl md:text-2xl font-bold text-light">
             Pedidos Activos
           </h1>
-          <p className="text-sm text-gray">{counts.all} pedidos en curso</p>
+          <p className="text-sm text-gray">
+            {counts.all} pedidos en curso · <span className="text-light/80">{contextName}</span>
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button

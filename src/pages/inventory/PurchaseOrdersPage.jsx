@@ -21,8 +21,17 @@ import {
   Pencil,
   RotateCcw,
   Calendar,
+  Store,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
+import { businessService } from '@/services/business.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
+
+// Punto de color por negocio (alineado con BusinessSelector)
+const businessDot = (color) => {
+  const map = { blue: 'bg-secondary', orange: 'bg-orange-400' };
+  return map[color] || 'bg-primary';
+};
 
 // Componente de selector con búsqueda
 const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar..." }) => {
@@ -131,6 +140,7 @@ const PurchaseOrdersPage = () => {
   });
   const [newOrderItems, setNewOrderItems] = useState([]);
   const [newOrderNotes, setNewOrderNotes] = useState('');
+  const [newOrderBusinessId, setNewOrderBusinessId] = useState('');
   const [addItemModal, setAddItemModal] = useState(null);
   const [newItem, setNewItem] = useState({ raw_material: '', quantity_needed: '', estimated_unit_price: '' });
   const [editItemModal, setEditItemModal] = useState(null);
@@ -146,19 +156,36 @@ const PurchaseOrdersPage = () => {
     return { month: now.getMonth() + 1, year: now.getFullYear() };
   });
 
-  // Obtener órdenes filtradas por mes
+  // Negocio activo (contexto global elegido tras el login)
+  const { selectedBusinessSlug } = useBusinessStore();
+  const { data: businessesData } = useQuery({
+    queryKey: ['businesses'],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businesses = Array.isArray(businessesData)
+    ? businessesData
+    : businessesData?.results || [];
+  const multiBusiness = businesses.length > 1;
+  const activeBusiness = businesses.find((b) => b.slug === selectedBusinessSlug);
+
+  // Obtener órdenes filtradas por mes y negocio activo
   const { data, isLoading } = useQuery({
-    queryKey: ['purchase-orders', selectedMonth.month, selectedMonth.year],
-    queryFn: () => inventoryService.getPurchaseOrders({ 
-      month: selectedMonth.month, 
-      year: selectedMonth.year 
+    queryKey: ['purchase-orders', selectedMonth.month, selectedMonth.year, selectedBusinessSlug],
+    queryFn: () => inventoryService.getPurchaseOrders({
+      month: selectedMonth.month,
+      year: selectedMonth.year,
+      ...(selectedBusinessSlug ? { business: selectedBusinessSlug } : {}),
     }),
   });
 
-  // Obtener materiales para crear orden
+  // Obtener materiales para crear orden (solo del negocio activo)
   const { data: materialsData } = useQuery({
-    queryKey: ['materials'],
-    queryFn: () => inventoryService.getMaterials(),
+    queryKey: ['materials', selectedBusinessSlug],
+    queryFn: () =>
+      inventoryService.getMaterials(
+        selectedBusinessSlug ? { business: selectedBusinessSlug } : {}
+      ),
   });
 
   const materials = materialsData?.results || materialsData || [];
@@ -341,12 +368,22 @@ const PurchaseOrdersPage = () => {
     setNewOrderItems(newOrderItems.filter((_, i) => i !== index));
   };
 
+  const openCreateModal = () => {
+    setNewOrderItems([{ raw_material: '', quantity_needed: '', estimated_unit_price: '' }]);
+    setNewOrderBusinessId(activeBusiness?.id ? String(activeBusiness.id) : '');
+    setCreateModal(true);
+  };
+
   const handleCreateOrder = () => {
     const validItems = newOrderItems.filter(item => item.raw_material && item.quantity_needed);
     if (validItems.length === 0) return;
+    // El negocio es obligatorio: el activo, o el elegido en modo consolidado.
+    const businessId = activeBusiness?.id || (newOrderBusinessId ? parseInt(newOrderBusinessId) : null);
+    if (!businessId) return;
 
     createOrderMutation.mutate({
       notes: newOrderNotes,
+      business: businessId,
       items: validItems.map(item => ({
         raw_material: parseInt(item.raw_material),
         quantity_needed: parseFloat(item.quantity_needed),
@@ -587,10 +624,7 @@ const PurchaseOrdersPage = () => {
             <p className="text-sm text-gray">Compras de materia prima</p>
           </div>
           <button
-            onClick={() => {
-              setNewOrderItems([{ raw_material: '', quantity_needed: '', estimated_unit_price: '' }]);
-              setCreateModal(true);
-            }}
+            onClick={openCreateModal}
             className="flex items-center gap-1 px-3 py-2 bg-linear-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm"
           >
             <Plus className="w-4 h-4" />
@@ -701,6 +735,12 @@ const PurchaseOrdersPage = () => {
                     <div className="min-w-0">
                       <p className="font-bold text-light text-sm md:text-base truncate">{order.order_number}</p>
                       <p className="text-xs md:text-sm text-gray">{formatDate(order.created_at)} • {order.items_count} items</p>
+                      {multiBusiness && order.business_name && (
+                        <span className="inline-flex items-center gap-1.5 mt-1 px-2 py-0.5 rounded-full text-[11px] bg-white/[0.06] text-gray border border-white/[0.1]">
+                          <span className={`w-2 h-2 rounded-full ${businessDot(businesses.find((b) => b.id === order.business)?.color)}`} />
+                          {order.business_name}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -976,6 +1016,31 @@ const PurchaseOrdersPage = () => {
               </div>
 
               <div className="space-y-4">
+                {/* Negocio destino de la orden */}
+                {multiBusiness && (
+                  <div>
+                    <label className="text-sm text-gray mb-1.5 block">Negocio</label>
+                    {activeBusiness ? (
+                      <div className="flex items-center gap-2 px-4 py-3 backdrop-blur-sm bg-white/[0.03] border border-white/[0.08] rounded-lg">
+                        <span className={`w-2.5 h-2.5 rounded-full ${businessDot(activeBusiness.color)}`} />
+                        <span className="text-light text-sm font-medium">{activeBusiness.name}</span>
+                        <span className="text-xs text-gray ml-auto">La orden se registra aquí</span>
+                      </div>
+                    ) : (
+                      <select
+                        value={newOrderBusinessId}
+                        onChange={(e) => setNewOrderBusinessId(e.target.value)}
+                        className="w-full bg-dark border border-white/[0.12] rounded-lg px-4 py-3 text-sm text-light focus:outline-none focus:border-primary"
+                      >
+                        <option value="">Selecciona el negocio…</option>
+                        {businesses.map((b) => (
+                          <option key={b.id} value={b.id}>{b.name}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                )}
+
                 <div>
                   <label className="text-sm text-gray mb-1.5 block">Notas (opcional)</label>
                   <input
@@ -1077,7 +1142,11 @@ const PurchaseOrdersPage = () => {
                 </button>
                 <button
                   onClick={handleCreateOrder}
-                  disabled={createOrderMutation.isPending || !newOrderItems.some(i => i.raw_material && i.quantity_needed)}
+                  disabled={
+                    createOrderMutation.isPending ||
+                    !newOrderItems.some(i => i.raw_material && i.quantity_needed) ||
+                    (multiBusiness && !activeBusiness && !newOrderBusinessId)
+                  }
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {createOrderMutation.isPending ? (

@@ -231,8 +231,8 @@ const ExpenseFormPage = () => {
         onSubmit={handleSubmit}
         className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-6"
       >
-        {/* Negocio (solo al crear, si hay mas de uno) */}
-        {!isEditing && businesses.length > 1 && (
+        {/* Negocio: solo en Consolidado. Dentro de un negocio se asigna solo. */}
+        {!isEditing && !selectedBusinessSlug && businesses.length > 1 && (
           <div>
             <label className="block text-sm font-medium text-gray mb-2">Negocio *</label>
             <select

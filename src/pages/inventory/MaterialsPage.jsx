@@ -500,7 +500,7 @@ const MaterialsPage = () => {
               </div>
 
               <div className="space-y-4">
-                {businesses.length > 1 && (
+                {!selectedBusinessSlug && businesses.length > 1 && (
                   <div>
                     <label className="text-sm text-gray mb-1.5 block">Negocio *</label>
                     <select

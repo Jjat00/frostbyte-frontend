@@ -14,6 +14,7 @@ import {
   Store,
   Music,
   Gamepad2,
+  Utensils,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -50,6 +51,12 @@ const OrdersLayout = () => {
       path: '/pedidos',
       icon: Clock,
       end: true,
+    },
+    {
+      name: 'Cocina',
+      shortName: 'Cocina',
+      path: '/pedidos/cocina',
+      icon: Utensils,
     },
     {
       name: 'Nuevo Pedido',

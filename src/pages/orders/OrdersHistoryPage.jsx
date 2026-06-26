@@ -17,6 +17,7 @@ import {
   DollarSign,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const statusConfig = {
   pending: { label: 'Pendiente', color: 'yellow', icon: Clock },
@@ -167,13 +168,18 @@ const OrdersHistoryPage = () => {
   const [dateFilter, setDateFilter] = useState('today');
   const [statusFilter, setStatusFilter] = useState('');
 
+  // Negocio activo: el historial muestra solo los pedidos de este negocio.
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
+
   // Obtener pedidos
   const { data, isLoading } = useQuery({
-    queryKey: ['orders-history', dateFilter, statusFilter],
+    queryKey: ['orders-history', dateFilter, statusFilter, selectedBusinessSlug],
     queryFn: () =>
       ordersService.getOrders({
         date: dateFilter,
         status: statusFilter || undefined,
+        business: biz,
       }),
   });
 

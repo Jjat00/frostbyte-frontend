@@ -5,8 +5,8 @@ const BASE_URL = '/expenses';
 export const expensesService = {
   // ============= CATEGORIES =============
 
-  async getCategories() {
-    const response = await apiClient.get(`${BASE_URL}/categories/`);
+  async getCategories(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/categories/`, { params });
     return response.data;
   },
 
@@ -74,8 +74,8 @@ export const expensesService = {
     return response.data;
   },
 
-  async getPendingExpenses() {
-    const response = await apiClient.get(`${BASE_URL}/pending/`);
+  async getPendingExpenses(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/pending/`, { params });
     return response.data;
   },
 

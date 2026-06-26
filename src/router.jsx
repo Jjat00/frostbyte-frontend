@@ -22,6 +22,7 @@ const lazyLoad = (importFn) =>
 const TablePage = lazyLoad(() => import("./pages/TablePage"));
 const LoginPage = lazyLoad(() => import("./pages/auth/LoginPage"));
 const HomePage = lazyLoad(() => import("./pages/HomePage"));
+const BusinessChooserPage = lazyLoad(() => import("./pages/BusinessChooserPage"));
 
 // Inventario
 const InventoryLayout = lazyLoad(() => import("./pages/inventory/InventoryLayout"));
@@ -33,6 +34,7 @@ const PurchaseOrdersPage = lazyLoad(() => import("./pages/inventory/PurchaseOrde
 // Pedidos
 const OrdersLayout = lazyLoad(() => import("./pages/orders/OrdersLayout"));
 const ActiveOrdersPage = lazyLoad(() => import("./pages/orders/ActiveOrdersPage"));
+const KitchenPage = lazyLoad(() => import("./pages/orders/KitchenPage"));
 const NewOrderPage = lazyLoad(() => import("./pages/orders/NewOrderPage"));
 const OrderDetailPage = lazyLoad(() => import("./pages/orders/OrderDetailPage"));
 const OrdersHistoryPage = lazyLoad(() => import("./pages/orders/OrdersHistoryPage"));
@@ -216,6 +218,17 @@ export const router = createBrowserRouter([
       </Lazy>
     ),
   },
+  // Selección de negocio (tras login: Frostbyte / Frostbyte Food / Consolidado)
+  {
+    path: "/seleccionar-negocio",
+    element: (
+      <Lazy>
+        <ProtectedRoute>
+          <BusinessChooserPage />
+        </ProtectedRoute>
+      </Lazy>
+    ),
+  },
   // Home - Selección de módulos
   {
     path: "/home",
@@ -290,6 +303,14 @@ export const router = createBrowserRouter([
         element: (
           <Lazy>
             <ActiveOrdersPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: "cocina",
+        element: (
+          <Lazy>
+            <KitchenPage />
           </Lazy>
         ),
       },

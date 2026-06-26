@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
-import BusinessSelector from '@/components/BusinessSelector';
+import BusinessContextBadge from '@/components/BusinessContextBadge';
 
 const ProductsLayout = () => {
   const navigate = useNavigate();
@@ -162,7 +162,7 @@ const ProductsLayout = () => {
               {/* Selector de negocio */}
               {isAdmin() && (
                 <div className="p-4 border-b border-white/[0.1]">
-                  <BusinessSelector />
+                  <BusinessContextBadge />
                 </div>
               )}
 
@@ -251,7 +251,7 @@ const ProductsLayout = () => {
         {/* Selector de negocio */}
         {isAdmin() && (
           <div className="p-3 border-b border-white/[0.1]">
-            <BusinessSelector />
+            <BusinessContextBadge />
           </div>
         )}
 

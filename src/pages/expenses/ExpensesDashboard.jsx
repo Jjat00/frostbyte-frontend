@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { expensesService } from "@/services/expenses.service";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 
 const ICON_MAP = {
   Users: Users,
@@ -83,14 +84,18 @@ const ExpensesDashboard = () => {
     setSearchParams(newParams);
   };
 
+  // Negocio activo: el dashboard de gastos muestra solo lo de este negocio.
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
+
   const { data: stats, isLoading: loadingStats } = useQuery({
-    queryKey: ["expense-stats", startDate, endDate],
-    queryFn: () => expensesService.getExpenseStats({ start_date: startDate, end_date: endDate }),
+    queryKey: ["expense-stats", startDate, endDate, selectedBusinessSlug],
+    queryFn: () => expensesService.getExpenseStats({ start_date: startDate, end_date: endDate, business: biz }),
   });
 
   const { data: pendingData, isLoading: loadingPending } = useQuery({
-    queryKey: ["pending-expenses"],
-    queryFn: () => expensesService.getPendingExpenses(),
+    queryKey: ["pending-expenses", selectedBusinessSlug],
+    queryFn: () => expensesService.getPendingExpenses({ business: biz }),
   });
 
   const formatCurrency = (value) => {

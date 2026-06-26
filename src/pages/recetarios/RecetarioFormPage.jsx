@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { recetariosService } from "@/services/recetarios.service";
 import { apiClient } from "@/services/api/client";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 import { uploadService } from "@/services/upload.service";
 import toast from "react-hot-toast";
 
@@ -270,16 +271,20 @@ const RecetarioFormPage = () => {
     enabled: isEditing,
   });
 
+  // Negocio activo: el formulario solo ofrece productos/categorías de este negocio.
+  const { selectedBusinessSlug } = useBusinessStore();
+  const bizQs = selectedBusinessSlug ? `&business=${selectedBusinessSlug}` : "";
+
   // Load product categories
   const { data: categoriesData } = useQuery({
-    queryKey: ["product-categories"],
-    queryFn: () => apiClient.get("/categories/?active_only=true").then((r) => r.data),
+    queryKey: ["product-categories", selectedBusinessSlug],
+    queryFn: () => apiClient.get(`/categories/?active_only=true${bizQs}`).then((r) => r.data),
   });
 
   // Load products
   const { data: productsData } = useQuery({
-    queryKey: ["products-for-recipe"],
-    queryFn: () => apiClient.get("/products/?active_only=true").then((r) => r.data),
+    queryKey: ["products-for-recipe", selectedBusinessSlug],
+    queryFn: () => apiClient.get(`/products/?active_only=true${bizQs}`).then((r) => r.data),
   });
 
   // Load variants when product is selected
