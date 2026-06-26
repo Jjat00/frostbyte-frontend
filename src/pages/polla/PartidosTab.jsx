@@ -611,6 +611,9 @@ const PartidosTab = () => {
       {/* EN VIVO: protagonismo arriba del todo, visible en cualquier filtro/vista */}
       <LiveStrip matches={confirmed} onOpenDetail={(m) => setDetailSlug(m.slug)} />
 
+      {/* Menciones primero: cierre el dom 28 jun, van arriba para que nadie las pase por alto */}
+      <MencionesSection />
+
       {/* Granizado ganado (acierto exacto de Colombia): premio con 24 h, va arriba */}
       <GranizadoBanner />
 
@@ -643,9 +646,6 @@ const PartidosTab = () => {
           </p>
         </div>
       </div>
-
-      {/* Menciones / pronósticos del torneo */}
-      <MencionesSection />
 
       {/* Toggle: Fase de grupos (marcadores) / Eliminación (bracket) */}
       <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">

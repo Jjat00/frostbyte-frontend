@@ -275,7 +275,7 @@ const AwardCardSkeleton = () => (
 );
 
 /* ── Banner destacado con el cierre de las menciones ── */
-const MencionesDeadlineBanner = ({ cd, locksAt, locked }) => {
+const MencionesDeadlineBanner = ({ cd, locksAt, locked, missing }) => {
   if (!locksAt) return null;
 
   if (locked) {
@@ -298,40 +298,52 @@ const MencionesDeadlineBanner = ({ cd, locksAt, locked }) => {
   return (
     <div
       className={cn(
-        "mt-3 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3",
+        "mt-3 rounded-2xl border px-4 py-3",
         urgent
           ? "border-red-500/40 bg-red-500/[0.08]"
           : "border-amber-500/40 bg-amber-500/[0.08]"
       )}
     >
-      <div className="flex min-w-0 items-center gap-3">
-        <Timer
-          size={26}
-          className={cn(
-            "shrink-0",
-            urgent ? "animate-pulse text-red-400" : "text-amber-400"
-          )}
-        />
-        <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-gray/80">
-            Las menciones cierran en
-          </p>
-          <p
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Timer
+            size={26}
             className={cn(
-              "text-xl font-black leading-tight tabular-nums sm:text-2xl",
-              urgent ? "text-red-400" : "text-amber-300"
+              "shrink-0",
+              urgent ? "animate-pulse text-red-400" : "text-amber-400"
             )}
-          >
-            {formatCountdownLong(cd)}
+          />
+          <div className="min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-gray/80">
+              Las menciones cierran en
+            </p>
+            <p
+              className={cn(
+                "text-xl font-black leading-tight tabular-nums sm:text-2xl",
+                urgent ? "text-red-400" : "text-amber-300"
+              )}
+            >
+              {formatCountdownLong(cd)}
+            </p>
+          </div>
+        </div>
+        <div className="shrink-0 text-right">
+          <p className="text-[11px] font-black text-light">
+            {matchDayLabel(locksAt)}
           </p>
+          <p className="text-[11px] tabular-nums text-gray">{matchTime(locksAt)}</p>
         </div>
       </div>
-      <div className="shrink-0 text-right">
-        <p className="text-[11px] font-black text-light">
-          {matchDayLabel(locksAt)}
+      {missing > 0 && (
+        <p className={cn(
+          "mt-2 text-[11px] font-bold leading-snug",
+          urgent ? "text-red-300" : "text-amber-300/90"
+        )}>
+          {missing === 1
+            ? "Te falta 1 mención por elegir — es la que más puntos da del torneo."
+            : `Te faltan ${missing} menciones por elegir — son los pronósticos que más puntos valen.`}
         </p>
-        <p className="text-[11px] tabular-nums text-gray">{matchTime(locksAt)}</p>
-      </div>
+      )}
     </div>
   );
 };
@@ -432,7 +444,7 @@ const MencionesSection = () => {
             className="overflow-hidden"
           >
             {!isLoading && !isError && (
-              <MencionesDeadlineBanner cd={cd} locksAt={locksAt} locked={locked} />
+              <MencionesDeadlineBanner cd={cd} locksAt={locksAt} locked={locked} missing={total - chosen} />
             )}
 
             <p className="px-1 pb-3 pt-3 text-xs leading-snug text-gray">
