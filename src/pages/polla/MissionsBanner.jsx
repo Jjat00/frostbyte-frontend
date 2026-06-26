@@ -18,12 +18,13 @@ const MissionsBanner = () => {
   const pending = missions.filter((m) => !m.done).length;
   const allDone = missions.length > 0 && pending === 0;
 
-  const title = allDone ? "¡Misiones completas!" : "Suma puntos extra";
-  const subtitle = allDone
-    ? "Invita a tu parche y suma aún más puntos."
-    : pending > 0
-    ? `Completa ${pending} ${pending === 1 ? "misión" : "misiones"} e invita a tu parche para ganar puntos.`
-    : "Completa misiones e invita a tu parche para ganar puntos.";
+  if (allDone) return null;
+
+  const title = "Suma puntos extra";
+  const subtitle =
+    pending > 0
+      ? `Completa ${pending} ${pending === 1 ? "misión" : "misiones"} e invita a tu parche para ganar puntos.`
+      : "Completa misiones e invita a tu parche para ganar puntos.";
 
   return (
     <Link
