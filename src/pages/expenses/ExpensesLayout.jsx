@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSongRequestsNotification } from "@/hooks";
+import BusinessSelector from "@/components/BusinessSelector";
 
 const ExpensesLayout = () => {
   const navigate = useNavigate();
@@ -163,6 +164,11 @@ const ExpensesLayout = () => {
                 </div>
               </div>
 
+              {/* Selector de negocio */}
+              <div className="p-4 border-b border-white/[0.1]">
+                <BusinessSelector />
+              </div>
+
               {/* Navigation */}
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navItems.map((item) => {
@@ -250,6 +256,11 @@ const ExpensesLayout = () => {
               <p className="text-xs text-gray">Gastos</p>
             </div>
           </NavLink>
+        </div>
+
+        {/* Selector de negocio */}
+        <div className="p-3 border-b border-white/[0.1]">
+          <BusinessSelector />
         </div>
 
         {/* Navigation */}

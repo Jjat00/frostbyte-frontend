@@ -48,8 +48,8 @@ export const inventoryService = {
   /**
    * Obtener materiales con stock bajo
    */
-  async getLowStock() {
-    const response = await apiClient.get(`${BASE_URL}/raw-materials/low_stock/`);
+  async getLowStock(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/raw-materials/low_stock/`, { params });
     return response.data;
   },
 
@@ -76,8 +76,8 @@ export const inventoryService = {
   /**
    * Obtener estadísticas del inventario
    */
-  async getStats() {
-    const response = await apiClient.get(`${BASE_URL}/raw-materials/stats/`);
+  async getStats(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/raw-materials/stats/`, { params });
     return response.data;
   },
 
@@ -110,8 +110,11 @@ export const inventoryService = {
   /**
    * Generar orden desde stock bajo
    */
-  async generateFromLowStock() {
-    const response = await apiClient.post(`${BASE_URL}/purchase-orders/generate_from_low_stock/`);
+  async generateFromLowStock(business) {
+    const response = await apiClient.post(
+      `${BASE_URL}/purchase-orders/generate_from_low_stock/`,
+      business ? { business } : {}
+    );
     return response.data;
   },
 

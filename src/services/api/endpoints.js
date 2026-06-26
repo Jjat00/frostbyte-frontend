@@ -2,16 +2,28 @@
  * Endpoints de la API centralizados
  */
 export const ENDPOINTS = {
+  // Businesses (Frostbyte / Frostbyte Food)
+  BUSINESSES: '/businesses/',
+  BUSINESS_DETAIL: (slug) => `/businesses/${slug}/`,
+
+  // Modificadores (productos configurables)
+  MODIFIER_GROUPS: '/modifier-groups/',
+  MODIFIER_GROUP_DETAIL: (id) => `/modifier-groups/${id}/`,
+  MODIFIER_OPTIONS: '/modifier-options/',
+  MODIFIER_OPTION_DETAIL: (id) => `/modifier-options/${id}/`,
+  PRODUCT_MODIFIERS: '/product-modifiers/',
+  PRODUCT_MODIFIER_DETAIL: (id) => `/product-modifiers/${id}/`,
+
   // Categories
   CATEGORIES: '/categories/',
   CATEGORY_DETAIL: (slug) => `/categories/${slug}/`,
-  
+
   // Products
   PRODUCTS: '/products/',
   PRODUCT_DETAIL: (slug) => `/products/${slug}/`,
   PRODUCTS_BY_CATEGORY: (categorySlug) => `/products/?category=${categorySlug}`,
   PRODUCT_VARIANTS: (slug) => `/products/${slug}/variants/`,
-  
+
   // Variants
   VARIANTS: '/variants/',
   VARIANT_DETAIL: (id) => `/variants/${id}/`,

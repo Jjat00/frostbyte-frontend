@@ -44,6 +44,7 @@ const ProductsListPage = lazyLoad(() => import("./pages/products/ProductsListPag
 const ProductFormPage = lazyLoad(() => import("./pages/products/ProductFormPage"));
 const CategoriesPage = lazyLoad(() => import("./pages/products/CategoriesPage"));
 const AIImageGeneratorPage = lazyLoad(() => import("./pages/products/AIImageGeneratorPage"));
+const ModifierGroupsPage = lazyLoad(() => import("./pages/products/ModifierGroupsPage"));
 
 // Música
 const MusicLayout = lazyLoad(() => import("./pages/music/MusicLayout"));
@@ -383,6 +384,16 @@ export const router = createBrowserRouter([
           <Lazy>
             <AdminRoute>
               <AIImageGeneratorPage />
+            </AdminRoute>
+          </Lazy>
+        ),
+      },
+      {
+        path: "modificadores",
+        element: (
+          <Lazy>
+            <AdminRoute>
+              <ModifierGroupsPage />
             </AdminRoute>
           </Lazy>
         ),
