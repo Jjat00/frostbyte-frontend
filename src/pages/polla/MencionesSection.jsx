@@ -204,16 +204,18 @@ const AwardCard = ({ award, locked, onOpen }) => {
   const Icon = AWARD_ICONS[award.code] || Star;
   const pick = award.my_pick;
   const chosen = Boolean(pick);
+  const pending = !chosen && !locked;
   return (
     <button
       onClick={onOpen}
       disabled={locked}
       className={cn(
-        "liquid-glass-interactive relative flex w-full flex-col items-center gap-2 rounded-2xl border p-2.5 sm:p-3 text-center transition-all",
+        "liquid-glass-interactive relative flex w-full flex-col items-center gap-2 rounded-2xl border p-2.5 sm:p-3 text-center transition-all duration-150",
         chosen
           ? "border-secondary/40 bg-secondary/[0.04]"
-          : "border-white/[0.07]",
-        locked ? "cursor-default opacity-80" : !chosen && "hover:border-primary/40"
+          : pending
+          ? "border-primary/40 bg-primary/[0.04] hover:border-primary/70 hover:bg-primary/[0.08] active:scale-[0.96]"
+          : "border-white/[0.07] cursor-default opacity-70"
       )}
     >
       {locked && (
@@ -235,7 +237,12 @@ const AwardCard = ({ award, locked, onOpen }) => {
           </span>
         </div>
       ) : (
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/30 bg-linear-to-br from-primary/15 to-secondary/15 text-primary">
+        <div className={cn(
+          "flex h-12 w-12 items-center justify-center rounded-2xl text-primary transition-colors",
+          pending
+            ? "border border-primary/50 bg-linear-to-br from-primary/20 to-secondary/20"
+            : "border border-primary/30 bg-linear-to-br from-primary/15 to-secondary/15"
+        )}>
           <Icon size={22} />
         </div>
       )}
@@ -250,11 +257,11 @@ const AwardCard = ({ award, locked, onOpen }) => {
             Sin elegir
           </p>
         ) : (
-          <p className="inline-flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
-            <Plus size={10} /> Elegir
-          </p>
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-primary">
+            <Plus size={10} strokeWidth={3} /> Toca para elegir
+          </span>
         )}
-        <p className="mt-0.5 text-xs font-black leading-tight text-light">
+        <p className="mt-1 text-xs font-black leading-tight text-light">
           {award.title}
         </p>
         <p className="bg-linear-to-r from-primary to-secondary bg-clip-text text-sm font-black tabular-nums text-transparent">

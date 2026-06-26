@@ -608,11 +608,11 @@ const PartidosTab = () => {
 
   return (
     <div>
-      {/* EN VIVO: protagonismo arriba del todo, visible en cualquier filtro/vista */}
-      <LiveStrip matches={confirmed} onOpenDetail={(m) => setDetailSlug(m.slug)} />
-
       {/* Menciones primero: cierre el dom 28 jun, van arriba para que nadie las pase por alto */}
       <MencionesSection />
+
+      {/* EN VIVO: protagonismo arriba del todo, visible en cualquier filtro/vista */}
+      <LiveStrip matches={confirmed} onOpenDetail={(m) => setDetailSlug(m.slug)} />
 
       {/* Granizado ganado (acierto exacto de Colombia): premio con 24 h, va arriba */}
       <GranizadoBanner />
