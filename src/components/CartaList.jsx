@@ -13,6 +13,7 @@ import {
 import { useLocation } from "react-router-dom";
 import { useActiveCategories, useProductsByCategory } from "@/hooks";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
+import SalchipapasPromoBanner from "@/components/SalchipapasPromoBanner";
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -295,6 +296,9 @@ const CartaList = () => {
             seccion para ver imagenes y mas info.
           </p>
         </div>
+
+        {/* Hero promocional: salchipapas (Frostbyte Food) */}
+        <SalchipapasPromoBanner />
 
         {/* Carta border container */}
         <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl sm:rounded-2xl px-4 py-5 sm:p-6 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.06)]">
