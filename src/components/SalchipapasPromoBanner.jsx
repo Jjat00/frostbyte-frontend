@@ -56,9 +56,19 @@ const SalchipapasPromoBanner = () => {
               Crujientes, cargadas y con el sello de la casa.
             </p>
 
-            <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-orange-400/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80">
-              <Flame size={16} className="text-orange-400" />
-              Pídelas a tu mesero
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+              {/* Precio: por ahora solo tamaño Personal */}
+              <div className="inline-flex items-baseline gap-2 rounded-xl border border-orange-400/30 bg-orange-500/10 px-4 py-2">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-white/60">
+                  Personal
+                </span>
+                <span className="text-xl font-black text-orange-300">$18.000</span>
+              </div>
+
+              <div className="inline-flex items-center gap-2 rounded-xl border border-orange-400/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80">
+                <Flame size={16} className="text-orange-400" />
+                Pídelas a tu mesero
+              </div>
             </div>
           </div>
         </div>
