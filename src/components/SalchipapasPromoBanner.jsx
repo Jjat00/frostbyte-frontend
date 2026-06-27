@@ -58,7 +58,7 @@ const SalchipapasPromoBanner = () => {
 
             <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-orange-400/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80">
               <Flame size={16} className="text-orange-400" />
-              Pídelas a tu mesero en la mesa
+              Pídelas a tu mesero
             </div>
           </div>
         </div>
