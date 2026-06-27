@@ -165,38 +165,36 @@ const BusinessChooserPage = () => {
               );
             })}
 
-            {/* Vista consolidada (solo dueño/admin) */}
-            {isAdmin() && (
-              <motion.button
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: businesses.length * 0.08 }}
-                whileHover={{ y: -6 }}
-                onClick={() => enter("")}
-                className={cn(
-                  "liquid-glass-interactive group relative text-left rounded-2xl p-6 border border-white/[0.12] bg-gradient-to-br from-primary/[0.06] to-secondary/[0.06] transition-all overflow-hidden hover:border-primary/40 group-hover:shadow-[0_0_40px_rgba(255,0,212,0.2)]",
-                  selectedBusinessSlug === "" && "ring-2 ring-primary/40"
-                )}
-              >
-                <div className="relative z-10">
-                  <div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-primary to-secondary mb-4 group-hover:scale-110 transition-transform">
-                    <Layers className="w-7 h-7 text-dark" />
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-xl font-bold text-light">Consolidado</h3>
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/[0.08] text-gray border border-white/[0.1]">
-                      Dueño
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray line-clamp-2 min-h-[2.5rem]">
-                    Todo junto: ingresos, inventario y gastos de todos los negocios.
-                  </p>
-                  <div className="flex items-center gap-1.5 mt-4 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                    Ver todo <ArrowRight className="w-4 h-4" />
-                  </div>
+            {/* "Todos los negocios": el mesero la usa para atender ambos;
+                el dueño la ve como consolidado. Disponible para todos los roles. */}
+            <motion.button
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: businesses.length * 0.08 }}
+              whileHover={{ y: -6 }}
+              onClick={() => enter("")}
+              className={cn(
+                "liquid-glass-interactive group relative text-left rounded-2xl p-6 border border-white/[0.12] bg-gradient-to-br from-primary/[0.06] to-secondary/[0.06] transition-all overflow-hidden hover:border-primary/40 group-hover:shadow-[0_0_40px_rgba(255,0,212,0.2)]",
+                selectedBusinessSlug === "" && "ring-2 ring-primary/40"
+              )}
+            >
+              <div className="relative z-10">
+                <div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-primary to-secondary mb-4 group-hover:scale-110 transition-transform">
+                  <Layers className="w-7 h-7 text-dark" />
                 </div>
-              </motion.button>
-            )}
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-xl font-bold text-light">Todos los negocios</h3>
+                </div>
+                <p className="text-sm text-gray line-clamp-2 min-h-[2.5rem]">
+                  {isAdmin()
+                    ? "Vista consolidada: ingresos, inventario y gastos de los dos negocios."
+                    : "Atiende los dos negocios a la vez (ideal para meseros)."}
+                </p>
+                <div className="flex items-center gap-1.5 mt-4 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  Entrar <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+            </motion.button>
           </div>
         )}
 
