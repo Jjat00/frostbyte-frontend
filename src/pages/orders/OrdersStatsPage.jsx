@@ -41,6 +41,7 @@ import {
   ArrowUp,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 // Configuración de métodos de pago
 const paymentMethodConfig = {
@@ -326,6 +327,8 @@ const ProductSalesTable = ({ data }) => {
 };
 
 const OrdersStatsPage = () => {
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
   const [period, setPeriod] = useState('today');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [customStartDate, setCustomStartDate] = useState('');
@@ -335,35 +338,35 @@ const OrdersStatsPage = () => {
 
   // Obtener estadísticas
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['orders-stats', period, customStartDate, customEndDate],
+    queryKey: ['orders-stats', period, customStartDate, customEndDate, selectedBusinessSlug],
     queryFn: () => {
       if (useCustomRange && customStartDate && customEndDate) {
-        return ordersService.getStats('custom', customStartDate, customEndDate);
+        return ordersService.getStats('custom', customStartDate, customEndDate, biz);
       }
-      return ordersService.getStats(period);
+      return ordersService.getStats(period, null, null, biz);
     },
   });
 
   // Obtener ingresos por día
   const { data: revenueByDay, isLoading: isLoadingRevenue } = useQuery({
-    queryKey: ['revenue-by-day', period, customStartDate, customEndDate, useCustomRange],
+    queryKey: ['revenue-by-day', period, customStartDate, customEndDate, useCustomRange, selectedBusinessSlug],
     queryFn: () => {
       if (useCustomRange && customStartDate && customEndDate) {
-        return ordersService.getRevenueByDay('custom', customStartDate, customEndDate);
+        return ordersService.getRevenueByDay('custom', customStartDate, customEndDate, biz);
       }
-      return ordersService.getRevenueByDay(period);
+      return ordersService.getRevenueByDay(period, null, null, biz);
     },
     enabled: !isLoading, // Esperar a que las stats principales carguen
   });
 
   // Obtener estadísticas por producto
   const { data: productStats, isLoading: isLoadingProducts } = useQuery({
-    queryKey: ['product-stats', period, customStartDate, customEndDate, useCustomRange],
+    queryKey: ['product-stats', period, customStartDate, customEndDate, useCustomRange, selectedBusinessSlug],
     queryFn: () => {
       if (useCustomRange && customStartDate && customEndDate) {
-        return ordersService.getProductStats('custom', customStartDate, customEndDate);
+        return ordersService.getProductStats('custom', customStartDate, customEndDate, biz);
       }
-      return ordersService.getProductStats(period);
+      return ordersService.getProductStats(period, null, null, biz);
     },
     enabled: !isLoading, // Esperar a que las stats principales carguen
   });

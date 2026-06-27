@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -13,9 +13,13 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
+import { businessService } from '@/services/business.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const MaterialsPage = () => {
   const queryClient = useQueryClient();
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditModal, setShowEditModal] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -28,12 +32,25 @@ const MaterialsPage = () => {
     minimum_stock: 0,
     cost_per_unit: 0,
     supplier: '',
+    business: '',
   });
 
-  // Obtener materiales
+  // Negocios (para asignar el material a un negocio)
+  const { data: businessesData } = useQuery({
+    queryKey: ['businesses'],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businesses = Array.isArray(businessesData) ? businessesData : businessesData?.results || [];
+  const defaultBusinessId = useMemo(() => {
+    const match = businesses.find((b) => b.slug === selectedBusinessSlug);
+    return (match || businesses[0])?.id || '';
+  }, [businesses, selectedBusinessSlug]);
+
+  // Obtener materiales (del negocio seleccionado)
   const { data, isLoading } = useQuery({
-    queryKey: ['materials', searchTerm],
-    queryFn: () => inventoryService.getMaterials({ search: searchTerm }),
+    queryKey: ['materials', searchTerm, selectedBusinessSlug],
+    queryFn: () => inventoryService.getMaterials({ search: searchTerm, business: biz }),
   });
 
   // Obtener unidades de medida
@@ -86,7 +103,13 @@ const MaterialsPage = () => {
       minimum_stock: 0,
       cost_per_unit: 0,
       supplier: '',
+      business: defaultBusinessId,
     });
+  };
+
+  const openCreateModal = () => {
+    setCreateData((d) => ({ ...d, business: defaultBusinessId }));
+    setShowCreateModal(true);
   };
 
   const handleEdit = (material) => {
@@ -108,7 +131,7 @@ const MaterialsPage = () => {
 
   const handleCreate = () => {
     if (!createData.name || !createData.unit_id) return;
-    createMutation.mutate(createData);
+    createMutation.mutate({ ...createData, business: createData.business || defaultBusinessId });
   };
 
   const handleDelete = (id) => {
@@ -208,7 +231,7 @@ const MaterialsPage = () => {
             <p className="text-sm text-gray">{materials.length} materiales</p>
           </div>
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={openCreateModal}
             className="flex items-center gap-2 px-3 md:px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm md:text-base"
           >
             <Plus className="w-5 h-5" />
@@ -477,6 +500,23 @@ const MaterialsPage = () => {
               </div>
 
               <div className="space-y-4">
+                {!selectedBusinessSlug && businesses.length > 1 && (
+                  <div>
+                    <label className="text-sm text-gray mb-1.5 block">Negocio *</label>
+                    <select
+                      value={createData.business}
+                      onChange={(e) => setCreateData({ ...createData, business: Number(e.target.value) })}
+                      className="w-full backdrop-blur-sm bg-dark-secondary border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    >
+                      {businesses.map((b) => (
+                        <option key={b.id} value={b.id} className="bg-dark-secondary text-light">
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div>
                   <label className="text-sm text-gray mb-1.5 block">Nombre *</label>
                   <input

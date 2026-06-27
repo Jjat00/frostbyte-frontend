@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { expensesService } from "@/services/expenses.service";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 import toast from "react-hot-toast";
 
 const ICON_MAP = {
@@ -55,6 +56,8 @@ const STATUS_STYLES = {
 
 const ExpensesListPage = () => {
   const queryClient = useQueryClient();
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -105,7 +108,7 @@ const ExpensesListPage = () => {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["expenses", { status: statusFilter, category: categoryFilter, startDate, endDate, search }],
+    queryKey: ["expenses", { status: statusFilter, category: categoryFilter, startDate, endDate, search, business: selectedBusinessSlug }],
     queryFn: () =>
       expensesService.getExpenses({
         status: statusFilter || undefined,
@@ -113,6 +116,7 @@ const ExpensesListPage = () => {
         start_date: startDate,
         end_date: endDate,
         search: search || undefined,
+        business: biz,
       }),
   });
 

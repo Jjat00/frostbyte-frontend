@@ -37,6 +37,9 @@ import {
 } from 'lucide-react';
 import { analyticsService } from '@/services/analytics.service';
 import { ordersService } from '@/services/orders.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
+import BusinessContextBadge from '@/components/BusinessContextBadge';
+import BusinessComparison from '@/components/analytics/BusinessComparison';
 
 // Cyberpunk color palette for charts
 const CYBERPUNK_COLORS = ['#00e0ff', '#ff00d4', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899'];
@@ -207,31 +210,39 @@ const generateInsight = (summary) => {
 const FinancialDashboard = () => {
   const [viewMode, setViewMode] = useState('daily');
   const [trendMonths, setTrendMonths] = useState(12);
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
 
   const { data: summary, isLoading: isLoadingSummary } = useQuery({
-    queryKey: ['financial-summary'],
-    queryFn: () => analyticsService.getSummary(),
+    queryKey: ['financial-summary', selectedBusinessSlug],
+    queryFn: () => analyticsService.getSummary(biz),
+  });
+
+  // Comparativa por negocio (consolidado vs cada negocio) — independiente del filtro
+  const { data: byBusiness } = useQuery({
+    queryKey: ['analytics-by-business'],
+    queryFn: () => analyticsService.getByBusiness(0),
   });
 
   const { data: dailyTrend, isLoading: isLoadingDaily } = useQuery({
-    queryKey: ['daily-trend'],
-    queryFn: () => analyticsService.getDailyTrend(),
+    queryKey: ['daily-trend', selectedBusinessSlug],
+    queryFn: () => analyticsService.getDailyTrend(biz),
   });
 
   const { data: monthlyTrend, isLoading: isLoadingTrend } = useQuery({
-    queryKey: ['monthly-trend', trendMonths],
-    queryFn: () => analyticsService.getMonthlyTrend(trendMonths),
+    queryKey: ['monthly-trend', trendMonths, selectedBusinessSlug],
+    queryFn: () => analyticsService.getMonthlyTrend(trendMonths, biz),
     enabled: viewMode === 'monthly',
   });
 
   const { data: expensesBreakdown, isLoading: isLoadingBreakdown } = useQuery({
-    queryKey: ['expenses-breakdown'],
-    queryFn: () => analyticsService.getExpensesBreakdown(),
+    queryKey: ['expenses-breakdown', selectedBusinessSlug],
+    queryFn: () => analyticsService.getExpensesBreakdown(biz),
   });
 
   const { data: comparison, isLoading: isLoadingComparison } = useQuery({
-    queryKey: ['monthly-comparison'],
-    queryFn: () => analyticsService.getComparison(),
+    queryKey: ['monthly-comparison', selectedBusinessSlug],
+    queryFn: () => analyticsService.getComparison(biz),
   });
 
   const { data: salesByHour, isLoading: isLoadingHourly } = useQuery({
@@ -372,7 +383,19 @@ const FinancialDashboard = () => {
             {summary?.period?.current_month || 'Cargando periodo...'}
           </p>
         </div>
+        <div className="w-44 md:w-56">
+          <BusinessContextBadge label={null} />
+        </div>
       </motion.div>
+
+      {/* ── Comparativa por negocio (solo en Consolidado) ── */}
+      {!selectedBusinessSlug && (
+        <BusinessComparison
+          data={byBusiness}
+          formatCurrency={formatCurrency}
+          formatCurrencyFull={formatCurrencyFull}
+        />
+      )}
 
       {/* ── Executive Insight Banner ── */}
       {!isLoadingSummary && summary && (
@@ -459,7 +482,7 @@ const FinancialDashboard = () => {
         <SectionHeader
           icon={Clock}
           title="Patrones Operativos"
-          subtitle="Horarios y dias de mayor actividad"
+          subtitle={biz ? "Horarios y dias de mayor actividad (todos los negocios)" : "Horarios y dias de mayor actividad"}
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* Peak Hours */}

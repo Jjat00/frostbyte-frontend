@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSongRequestsNotification } from "@/hooks";
+import BusinessContextBadge from "@/components/BusinessContextBadge";
 
 const InventoryLayout = () => {
   const navigate = useNavigate();
@@ -155,6 +156,11 @@ const InventoryLayout = () => {
                 </div>
               </div>
 
+              {/* Selector de negocio */}
+              <div className="p-4 border-b border-white/[0.1]">
+                <BusinessContextBadge />
+              </div>
+
               {/* Navigation */}
               <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {navItems.map((item) => {
@@ -242,6 +248,11 @@ const InventoryLayout = () => {
               <p className="text-xs text-gray">Inventario</p>
             </div>
           </NavLink>
+        </div>
+
+        {/* Selector de negocio */}
+        <div className="p-3 border-b border-white/[0.1]">
+          <BusinessContextBadge />
         </div>
 
         {/* Navigation */}

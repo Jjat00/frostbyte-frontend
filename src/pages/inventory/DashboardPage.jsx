@@ -15,6 +15,7 @@ import {
   ClipboardList,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const StatCard = ({ title, value, icon: Icon, color, subtitle, link }) => {
   const colorClasses = {
@@ -58,17 +59,21 @@ const StatCard = ({ title, value, icon: Icon, color, subtitle, link }) => {
 };
 
 const DashboardPage = () => {
+  // Negocio activo: el dashboard de inventario muestra solo lo de este negocio.
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
+
   // Obtener estadísticas
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['inventory-stats'],
-    queryFn: () => inventoryService.getStats(),
+    queryKey: ['inventory-stats', selectedBusinessSlug],
+    queryFn: () => inventoryService.getStats({ business: biz }),
     staleTime: 30000,
   });
 
   // Obtener items con stock bajo
   const { data: lowStock, isLoading: lowStockLoading } = useQuery({
-    queryKey: ['low-stock'],
-    queryFn: () => inventoryService.getLowStock(),
+    queryKey: ['low-stock', selectedBusinessSlug],
+    queryFn: () => inventoryService.getLowStock({ business: biz }),
     staleTime: 30000,
   });
 

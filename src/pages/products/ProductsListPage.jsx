@@ -19,35 +19,39 @@ import {
 import { productsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const ProductsListPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { isAdmin } = useAuthStore();
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showInactive, setShowInactive] = useState(false);
   const [imageErrors, setImageErrors] = useState({});
 
-  // Obtener categorías
+  // Obtener categorías (del negocio seleccionado)
   const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => categoriesService.getAll({ active_only: false }),
+    queryKey: ['categories', selectedBusinessSlug],
+    queryFn: () => categoriesService.getAll({ active_only: false, business: biz }),
   });
 
   // Obtener productos filtrados
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ['products', selectedCategory, showInactive],
+    queryKey: ['products', selectedCategory, showInactive, selectedBusinessSlug],
     queryFn: () => productsService.getAll({
       active_only: !showInactive,
       category: selectedCategory !== 'all' ? selectedCategory : undefined,
+      business: biz,
     }),
   });
 
   // Obtener todos los productos para estadísticas
   const { data: allProductsData } = useQuery({
-    queryKey: ['products', 'all'],
-    queryFn: () => productsService.getAll({ active_only: false }),
+    queryKey: ['products', 'all', selectedBusinessSlug],
+    queryFn: () => productsService.getAll({ active_only: false, business: biz }),
   });
 
   // Mutación para eliminar producto

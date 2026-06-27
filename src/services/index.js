@@ -1,5 +1,8 @@
 export { productsService, variantsService } from './products.service';
 export { categoriesService } from './categories.service';
+export { businessService } from './business.service';
+export { modifiersService } from './modifiers.service';
+export { analyticsService } from './analytics.service';
 export { authService } from './auth.service';
 export { inventoryService } from './inventory.service';
 export { ordersService } from './orders.service';

@@ -18,12 +18,15 @@ import { productsService, variantsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { AIGalleryPickerModal } from '@/components/ai-generator/AIGalleryPickerModal';
+import ProductModifiersSection from '@/components/products/ProductModifiersSection';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const ProductFormPage = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
   const queryClient = useQueryClient();
   const isEditing = !!slug;
+  const { selectedBusinessSlug } = useBusinessStore();
 
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -45,17 +48,20 @@ const ProductFormPage = () => {
   const [isGeneratingHistory, setIsGeneratingHistory] = useState(false);
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
 
-  // Obtener categorías
-  const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => categoriesService.getAll({ active_only: false }),
-  });
-
   // Obtener producto si está editando
   const { data: productData, isLoading: loadingProduct } = useQuery({
     queryKey: ['product', slug],
     queryFn: () => productsService.getBySlug(slug),
     enabled: isEditing,
+  });
+
+  // Categorías SOLO del negocio correcto: al editar, el del producto (no permitir
+  // moverlo a otro negocio por error); al crear, el negocio activo del sidebar.
+  const catBiz = isEditing ? productData?.business_slug : (selectedBusinessSlug || undefined);
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories', 'form', catBiz],
+    queryFn: () => categoriesService.getAll({ active_only: false, business: catBiz }),
+    enabled: !isEditing || !!productData,
   });
 
   // Cargar datos del producto si está editando
@@ -637,6 +643,22 @@ const ProductFormPage = () => {
             ))}
           </div>
         </div>
+
+        {/* Grupos de opciones (modificadores) — requiere producto guardado */}
+        {isEditing && productData ? (
+          <ProductModifiersSection product={productData} />
+        ) : (
+          <div className="backdrop-blur-xl bg-white/[0.05] border border-white/[0.1] rounded-xl p-6">
+            <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-2">
+              <Package className="w-5 h-5 text-secondary" />
+              Grupos de opciones
+            </h2>
+            <p className="text-sm text-gray">
+              Guarda el producto primero para configurar sus grupos de opciones
+              (carnes, salsas, tamaños, bebida, etc.).
+            </p>
+          </div>
+        )}
 
         {/* Botones de acción */}
         <div className="flex items-center justify-end gap-4">

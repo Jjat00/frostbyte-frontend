@@ -17,7 +17,7 @@ const LoginPage = () => {
   useEffect(() => {
     // Si ya está autenticado, redirigir al home
     if (isAuthenticated) {
-      navigate('/home');
+      navigate('/seleccionar-negocio');
     }
   }, [isAuthenticated, navigate]);
 
@@ -35,7 +35,7 @@ const LoginPage = () => {
     e.preventDefault();
     const result = await login(formData.username, formData.password);
     if (result.success) {
-      navigate('/home');
+      navigate('/seleccionar-negocio');
     }
   };
 

@@ -14,14 +14,22 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { recetariosService } from "@/services/recetarios.service";
+import { businessService } from "@/services/business.service";
 import { apiClient } from "@/services/api/client";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 import toast from "react-hot-toast";
 
 const DIFFICULTY_STYLES = {
   easy: { bg: "bg-green-500/20", text: "text-green-400", label: "Facil" },
   medium: { bg: "bg-yellow-500/20", text: "text-yellow-400", label: "Media" },
   hard: { bg: "bg-red-500/20", text: "text-red-400", label: "Dificil" },
+};
+
+// Punto de color por negocio (alineado con BusinessSelector)
+const businessDot = (color) => {
+  const map = { blue: "bg-secondary", orange: "bg-orange-400" };
+  return map[color] || "bg-primary";
 };
 
 const RecetariosListPage = () => {
@@ -32,18 +40,35 @@ const RecetariosListPage = () => {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("");
 
+  // Negocio activo (contexto global) para filtrar las recetas
+  const { selectedBusinessSlug } = useBusinessStore();
+  const { data: businessesData } = useQuery({
+    queryKey: ["businesses"],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businesses = Array.isArray(businessesData)
+    ? businessesData
+    : businessesData?.results || [];
+  const multiBusiness = businesses.length > 1;
+  const colorBySlug = useMemo(
+    () => Object.fromEntries(businesses.map((b) => [b.slug, b.color])),
+    [businesses]
+  );
+
   const { data: categoriesData } = useQuery({
     queryKey: ["product-categories"],
     queryFn: () => apiClient.get("/categories/?active_only=true").then((r) => r.data),
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["recetarios", { category: categoryFilter, difficulty: difficultyFilter, search }],
+    queryKey: ["recetarios", { category: categoryFilter, difficulty: difficultyFilter, search, business: selectedBusinessSlug }],
     queryFn: () =>
       recetariosService.getRecipes({
         category: categoryFilter || undefined,
         difficulty: difficultyFilter || undefined,
         search: search || undefined,
+        business: selectedBusinessSlug || undefined,
         active_only: "true",
       }),
   });
@@ -197,6 +222,12 @@ const RecetariosListPage = () => {
                     {recipe.category_name && (
                       <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-secondary/20 text-secondary">
                         {recipe.category_name}
+                      </span>
+                    )}
+                    {multiBusiness && recipe.business_name && (
+                      <span className="flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full bg-white/[0.06] text-gray border border-white/[0.1]">
+                        <span className={`w-2 h-2 rounded-full ${businessDot(colorBySlug[recipe.business_slug])}`} />
+                        {recipe.business_name}
                       </span>
                     )}
                   </div>

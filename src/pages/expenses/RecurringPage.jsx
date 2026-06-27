@@ -21,6 +21,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { expensesService } from "@/services/expenses.service";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 import toast from "react-hot-toast";
 
 const ICON_MAP = {
@@ -70,9 +71,12 @@ const RecurringPage = () => {
     is_active: true,
   });
 
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
+
   const { data: templates, isLoading } = useQuery({
-    queryKey: ["recurring-templates"],
-    queryFn: () => expensesService.getRecurringTemplates(),
+    queryKey: ["recurring-templates", selectedBusinessSlug],
+    queryFn: () => expensesService.getRecurringTemplates({ business: biz }),
   });
 
   const { data: categories } = useQuery({

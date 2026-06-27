@@ -20,6 +20,13 @@ import {
 } from 'lucide-react';
 import { productsService, categoriesService } from '@/services';
 import { ordersService } from '@/services/orders.service';
+import { businessService } from '@/services/business.service';
+
+// Punto de color por negocio (alineado con BusinessSelector)
+const businessDot = (color) => {
+  const map = { blue: 'bg-secondary', orange: 'bg-orange-400' };
+  return map[color] || 'bg-primary';
+};
 
 const NewOrderPage = () => {
   const navigate = useNavigate();
@@ -45,6 +52,21 @@ const NewOrderPage = () => {
     queryKey: ['categories'],
     queryFn: () => categoriesService.getAll(),
   });
+
+  // Negocios (para etiquetar cada producto cuando hay más de uno)
+  const { data: businessesData } = useQuery({
+    queryKey: ['businesses'],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businesses = Array.isArray(businessesData)
+    ? businessesData
+    : businessesData?.results || [];
+  const multiBusiness = businesses.length > 1;
+  const colorBySlug = useMemo(
+    () => Object.fromEntries(businesses.map((b) => [b.slug, b.color])),
+    [businesses]
+  );
 
   // Obtener productos
   const { data: productsData, isLoading: productsLoading } = useQuery({
@@ -257,6 +279,19 @@ const NewOrderPage = () => {
                       <h3 className="font-bold text-light">{product.name}</h3>
                       <p className="text-xs text-gray">{product.category?.name}</p>
                     </div>
+                    {multiBusiness && product.business_name && (
+                      <span
+                        className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[11px] font-medium bg-white/[0.06] text-gray border border-white/[0.1] shrink-0"
+                        title={`Negocio: ${product.business_name}`}
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${businessDot(
+                            colorBySlug[product.business_slug]
+                          )}`}
+                        />
+                        {product.business_name}
+                      </span>
+                    )}
                   </div>
 
                   {/* Variantes */}

@@ -17,9 +17,13 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { categoriesService } from '@/services/categories.service';
+import { businessService } from '@/services/business.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const CategoriesPage = () => {
   const queryClient = useQueryClient();
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
   const [searchQuery, setSearchQuery] = useState('');
   const [showInactive, setShowInactive] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -29,12 +33,25 @@ const CategoriesPage = () => {
     description: '',
     display_order: 0,
     is_active: true,
+    business: '',
   });
 
-  // Obtener categorías
+  // Negocios (para asignar la categoría a un negocio)
+  const { data: businessesData } = useQuery({
+    queryKey: ['businesses'],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businesses = Array.isArray(businessesData) ? businessesData : businessesData?.results || [];
+  const defaultBusinessId = useMemo(() => {
+    const match = businesses.find((b) => b.slug === selectedBusinessSlug);
+    return (match || businesses[0])?.id || '';
+  }, [businesses, selectedBusinessSlug]);
+
+  // Obtener categorías (del negocio seleccionado)
   const { data: categoriesData, isLoading } = useQuery({
-    queryKey: ['categories', showInactive],
-    queryFn: () => categoriesService.getAll({ active_only: !showInactive }),
+    queryKey: ['categories', showInactive, selectedBusinessSlug],
+    queryFn: () => categoriesService.getAll({ active_only: !showInactive, business: biz }),
   });
 
   // Mutación para crear categoría
@@ -102,6 +119,7 @@ const CategoriesPage = () => {
       description: '',
       display_order: 0,
       is_active: true,
+      business: defaultBusinessId,
     });
   };
 
@@ -112,6 +130,7 @@ const CategoriesPage = () => {
       description: category.description || '',
       display_order: category.display_order || 0,
       is_active: category.is_active !== false,
+      business: category.business || defaultBusinessId,
     });
     setShowForm(true);
   };
@@ -130,7 +149,7 @@ const CategoriesPage = () => {
         data: formData,
       });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate({ ...formData, business: formData.business || defaultBusinessId });
     }
   };
 
@@ -253,6 +272,27 @@ const CategoriesPage = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {!editingCategory && !selectedBusinessSlug && businesses.length > 1 && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray mb-2">
+                        Negocio *
+                      </label>
+                      <select
+                        value={formData.business}
+                        onChange={(e) =>
+                          setFormData({ ...formData, business: Number(e.target.value) })
+                        }
+                        className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+                      >
+                        {businesses.map((b) => (
+                          <option key={b.id} value={b.id} className="bg-dark">
+                            {b.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-sm font-medium text-gray mb-2">
                       Nombre *

@@ -31,10 +31,20 @@ import {
   CircleDollarSign,
   Trophy,
   Users,
+  Layers,
+  ChevronRight,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
 import { ordersService } from '@/services/orders.service';
+import { businessService } from '@/services/business.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
+
+// Punto de color por negocio (alineado con BusinessSelector)
+const businessDot = (color) => {
+  const map = { blue: 'bg-secondary', orange: 'bg-orange-400' };
+  return map[color] || 'bg-gradient-to-br from-primary to-secondary';
+};
 
 const formatCurrency = (value) => {
   const num = parseFloat(value || 0);
@@ -148,22 +158,37 @@ const HomePage = () => {
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
   const isAdminUser = isAdmin();
 
+  // Negocio activo (contexto global elegido tras el login)
+  const { selectedBusinessSlug } = useBusinessStore();
+  const { data: businessesData } = useQuery({
+    queryKey: ['businesses'],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businesses = Array.isArray(businessesData)
+    ? businessesData
+    : businessesData?.results || [];
+  const activeBusiness = businesses.find((b) => b.slug === selectedBusinessSlug);
+  const contextName = selectedBusinessSlug
+    ? activeBusiness?.name || 'Negocio'
+    : 'Todos los negocios';
+
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
 
   const { data: todayStats, isLoading: isLoadingToday } = useQuery({
-    queryKey: ['home-today-stats'],
-    queryFn: () => ordersService.getStats('today'),
+    queryKey: ['home-today-stats', selectedBusinessSlug],
+    queryFn: () => ordersService.getStats('today', null, null, selectedBusinessSlug || undefined),
     enabled: isAdminUser,
     refetchInterval: 60_000,
     staleTime: 30_000,
   });
 
   const { data: topProductsToday, isLoading: isLoadingTopProducts } = useQuery({
-    queryKey: ['home-top-products-today'],
-    queryFn: () => ordersService.getProductStats('today'),
+    queryKey: ['home-top-products-today', selectedBusinessSlug],
+    queryFn: () => ordersService.getProductStats('today', null, null, selectedBusinessSlug || undefined),
     enabled: isAdminUser,
     staleTime: 60_000,
   });
@@ -382,6 +407,23 @@ const HomePage = () => {
 
             {/* Right side actions */}
             <div className="flex items-center gap-3">
+              {/* Negocio activo - clic para cambiar */}
+              <button
+                onClick={() => navigate('/seleccionar-negocio')}
+                className="flex items-center gap-2 px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg hover:bg-white/[0.1] transition-colors"
+                title="Cambiar de negocio"
+              >
+                {selectedBusinessSlug ? (
+                  <span className={`w-2.5 h-2.5 rounded-full ${businessDot(activeBusiness?.color)}`} />
+                ) : (
+                  <Layers className="w-4 h-4 text-primary" />
+                )}
+                <span className="hidden sm:inline text-sm font-semibold text-light max-w-[140px] truncate">
+                  {contextName}
+                </span>
+                <ChevronRight className="w-4 h-4 text-gray" />
+              </button>
+
               {/* View Menu Button */}
               <Link
                 to="/"
@@ -486,10 +528,10 @@ const HomePage = () => {
                     <Activity className="w-4 h-4 text-secondary" />
                   </div>
                   <h3 className="text-sm md:text-base font-bold text-light tracking-wide">
-                    Hoy en Frostbyte
+                    Hoy · {contextName}
                   </h3>
                   <span className="text-[10px] uppercase tracking-widest text-gray ml-1">
-                    Actualizado automáticamente
+                    {selectedBusinessSlug ? 'Datos de este negocio' : 'Consolidado · ver desglose en Estadísticas'}
                   </span>
                 </div>
                 <button

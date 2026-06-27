@@ -91,9 +91,33 @@ export const ordersService = {
 
   /**
    * Obtener pedidos activos (pendientes, preparando, listos)
+   * @param {Object} params - Parámetros opcionales (ej: { business: 'frostbyte-food' })
    */
-  async getActiveOrders() {
-    const response = await apiClient.get(`${BASE_URL}/active/`);
+  async getActiveOrders(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/active/`, { params });
+    return response.data;
+  },
+
+  /**
+   * Vista de cocina (KDS) filtrada por negocio. Devuelve los pedidos activos
+   * con SOLO los items del negocio indicado (sin entregar).
+   * @param {string} businessSlug - Slug del negocio (cocina) a mostrar
+   */
+  async getKitchenOrders(businessSlug) {
+    const params = businessSlug ? { business: businessSlug } : {};
+    const response = await apiClient.get(`${BASE_URL}/kitchen/`, { params });
+    return response.data;
+  },
+
+  /**
+   * Cambiar el estado de preparación de un item (lo usa el KDS).
+   * @param {number} itemId - ID del item
+   * @param {string} prepStatus - pending | preparing | ready
+   */
+  async setItemPrepStatus(itemId, prepStatus) {
+    const response = await apiClient.post(`/order-items/${itemId}/prep-status/`, {
+      prep_status: prepStatus,
+    });
     return response.data;
   },
 
@@ -101,8 +125,8 @@ export const ordersService = {
    * Obtener pedidos con pagos pendientes (sin importar la fecha)
    * @returns {Promise<{orders: Array, total_orders: number, total_pending: string}>}
    */
-  async getPendingPayments() {
-    const response = await apiClient.get(`${BASE_URL}/pending_payments/`);
+  async getPendingPayments(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/pending_payments/`, { params });
     return response.data;
   },
 
@@ -112,10 +136,11 @@ export const ordersService = {
    * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
    * @param {string} end_date - Fecha fin (YYYY-MM-DD) para rango personalizado
    */
-  async getStats(date = 'today', start_date = null, end_date = null) {
+  async getStats(date = 'today', start_date = null, end_date = null, business = null) {
     const params = { date };
     if (start_date) params.start_date = start_date;
     if (end_date) params.end_date = end_date;
+    if (business) params.business = business;
     const response = await apiClient.get(`${BASE_URL}/stats/`, { params });
     return response.data;
   },
@@ -126,10 +151,11 @@ export const ordersService = {
    * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
    * @param {string} end_date - Fecha fin (YYYY-MM-DD) para rango personalizado
    */
-  async getRevenueByDay(date = 'today', start_date = null, end_date = null) {
+  async getRevenueByDay(date = 'today', start_date = null, end_date = null, business = null) {
     const params = { date };
     if (start_date) params.start_date = start_date;
     if (end_date) params.end_date = end_date;
+    if (business) params.business = business;
     const response = await apiClient.get(`${BASE_URL}/revenue_by_day/`, { params });
     return response.data;
   },
@@ -140,10 +166,11 @@ export const ordersService = {
    * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
    * @param {string} end_date - Fecha fin (YYYY-MM-DD) para rango personalizado
    */
-  async getProductStats(date = 'today', start_date = null, end_date = null) {
+  async getProductStats(date = 'today', start_date = null, end_date = null, business = null) {
     const params = { date };
     if (start_date) params.start_date = start_date;
     if (end_date) params.end_date = end_date;
+    if (business) params.business = business;
     const response = await apiClient.get(`${BASE_URL}/product_stats/`, { params });
     return response.data;
   },

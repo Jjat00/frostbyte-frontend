@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { businessService } from "@/services/business.service";
+import { useBusinessStore } from "@/stores/useBusinessStore";
 import {
   ArrowLeft,
   Loader2,
@@ -56,9 +58,30 @@ const ExpenseFormPage = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
   const isEditing = Boolean(id);
+  const { selectedBusinessSlug } = useBusinessStore();
+
+  // Negocio al que se asigna el gasto (el seleccionado en el sidebar)
+  const { data: businessesData } = useQuery({
+    queryKey: ["businesses"],
+    queryFn: () => businessService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
+  const businesses = Array.isArray(businessesData) ? businessesData : businessesData?.results || [];
+  const activeBusinessId = useMemo(() => {
+    const match = businesses.find((b) => b.slug === selectedBusinessSlug);
+    return (match || businesses[0])?.id;
+  }, [businesses, selectedBusinessSlug]);
+
+  // Al crear, el negocio del form sigue al selector global del sidebar
+  useEffect(() => {
+    if (!isEditing && activeBusinessId) {
+      setFormData((f) => ({ ...f, business: activeBusinessId }));
+    }
+  }, [activeBusinessId, isEditing]);
 
   const [formData, setFormData] = useState({
     category_id: "",
+    business: "",
     description: "",
     amount: "",
     expense_date: new Date().toISOString().split("T")[0],
@@ -144,6 +167,11 @@ const ExpenseFormPage = () => {
       return;
     }
 
+    if (!isEditing && !formData.business) {
+      toast.error("Selecciona el negocio");
+      return;
+    }
+
     const data = {
       ...formData,
       amount: parseFloat(formData.amount),
@@ -203,6 +231,25 @@ const ExpenseFormPage = () => {
         onSubmit={handleSubmit}
         className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-6"
       >
+        {/* Negocio: solo en Consolidado. Dentro de un negocio se asigna solo. */}
+        {!isEditing && !selectedBusinessSlug && businesses.length > 1 && (
+          <div>
+            <label className="block text-sm font-medium text-gray mb-2">Negocio *</label>
+            <select
+              name="business"
+              value={formData.business}
+              onChange={(e) => setFormData((f) => ({ ...f, business: Number(e.target.value) }))}
+              className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+            >
+              {businesses.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {/* Category selection */}
         <div>
           <label className="block text-sm font-medium text-light mb-3">

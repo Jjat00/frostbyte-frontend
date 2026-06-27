@@ -12,6 +12,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { inventoryService } from '@/services/inventory.service';
+import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const LowStockPage = () => {
   const navigate = useNavigate();
@@ -19,10 +20,14 @@ const LowStockPage = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [customQuantities, setCustomQuantities] = useState({});
 
+  // Negocio activo: solo el stock bajo de este negocio.
+  const { selectedBusinessSlug } = useBusinessStore();
+  const biz = selectedBusinessSlug || undefined;
+
   // Obtener items con stock bajo
   const { data, isLoading } = useQuery({
-    queryKey: ['low-stock'],
-    queryFn: () => inventoryService.getLowStock(),
+    queryKey: ['low-stock', selectedBusinessSlug],
+    queryFn: () => inventoryService.getLowStock({ business: biz }),
   });
 
   const materials = data?.results || [];
