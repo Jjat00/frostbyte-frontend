@@ -68,10 +68,16 @@ const NewOrderPage = () => {
     [businesses]
   );
 
-  // Obtener productos
+  // Obtener productos: cargamos TODOS los activos (de los dos negocios) en una
+  // sola página, para que la vista "Todos" y el buscador incluyan también lo de
+  // Frostbyte Food sin importar el negocio activo. Un pedido cruza negocios.
   const { data: productsData, isLoading: productsLoading } = useQuery({
-    queryKey: ['products', selectedCategory],
-    queryFn: () => productsService.getAll(selectedCategory ? { category: selectedCategory } : {}),
+    queryKey: ['products', 'order-taking', selectedCategory],
+    queryFn: () => productsService.getAll({
+      ...(selectedCategory ? { category: selectedCategory } : {}),
+      active_only: true,
+      page_size: 1000,
+    }),
   });
 
   const categories = categoriesData?.results || [];
