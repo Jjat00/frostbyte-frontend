@@ -505,21 +505,9 @@ const LiveStrip = ({ matches, onOpenDetail }) => {
 };
 
 const PartidosTab = () => {
-  const [view, setView] = useState("grupos"); // grupos | eliminacion
   const [filter, setFilter] = useState("upcoming");
   // Partido abierto en el sheet de detalle (minuto a minuto, estadisticas).
   const [detailSlug, setDetailSlug] = useState(null);
-
-  // Cuando TERMINAN todos los grupos, la vista entra por defecto en
-  // "Eliminacion". Durante la fase de grupos la llave ya es visible (se va
-  // llenando con los clasificados reales), pero el default sigue siendo "Fase
-  // de grupos". Si el usuario elige una vista a mano, respetamos su eleccion.
-  const { data: bracket } = usePollaBracket();
-  const elimDefault = Boolean(bracket?.groups_finished);
-  const userPickedView = useRef(false);
-  useEffect(() => {
-    if (elimDefault && !userPickedView.current) setView("eliminacion");
-  }, [elimDefault]);
 
   // Trae TODOS los partidos una sola vez; se filtra en cliente.
   const { data, isLoading, isError } = usePollaMatches({});
@@ -623,123 +611,99 @@ const PartidosTab = () => {
       {/* Recordatorio: gana puntos extra completando misiones e invitando */}
       <MissionsBanner />
 
-      {/* Encabezado */}
+      {/* Encabezado: Fase de grupos */}
       <div className="mb-5 flex items-start gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-secondary/20 border border-primary/30">
           <Pencil className="text-primary" size={20} />
         </div>
         <div>
-          <h2 className="text-xl font-black text-light">Tus pronósticos</h2>
+          <h2 className="text-xl font-black text-light">Fase de grupos</h2>
           <p className="mt-0.5 text-sm leading-snug text-gray">
-            {view === "eliminacion" ? (
-              <>
-                Marca el resultado de cada cruce ya definido. En la eliminación
-                los puntos <b className="text-light">suben por fase</b> (de
-                dieciseisavos a la final) y el marcador exacto siempre vale más.
-              </>
-            ) : (
-              <>
-                Escribe tu marcador antes de que empiece el partido. Marcador
-                exacto = 3 pts, resultado correcto = 1 pt.
-              </>
-            )}
+            Escribe tu marcador antes de que empiece el partido. Marcador
+            exacto = 3 pts, resultado correcto = 1 pt.
           </p>
         </div>
       </div>
 
-      {/* Toggle: Fase de grupos (marcadores) / Eliminación (bracket) */}
-      <div className="mb-5 inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
-        {[
-          { id: "grupos", label: "Fase de grupos", icon: Calendar },
-          { id: "eliminacion", label: "Eliminación", icon: Trophy },
-        ].map((v) => {
-          const active = view === v.id;
+      {/* Filtros para fase de grupos */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        {FIXTURE_FILTERS.map((f) => {
+          const active = filter === f.id;
           return (
             <button
-              key={v.id}
-              onClick={() => { userPickedView.current = true; setView(v.id); }}
+              key={f.id}
+              onClick={() => setFilter(f.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-bold transition-all",
+                "flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-bold transition-all",
                 active
-                  ? "bg-linear-to-r from-primary to-secondary text-dark"
-                  : "text-gray hover:text-light"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-white/10 text-gray hover:border-white/20 hover:text-light"
               )}
             >
-              <v.icon size={15} />
-              {v.label}
+              {f.id === "live" && (
+                <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
+              )}
+              {f.label}
+              {counts[f.id] ? (
+                <span
+                  className={cn(
+                    "ml-0.5 rounded-full px-1.5 text-[10px]",
+                    active ? "bg-primary/20" : "bg-white/[0.06]"
+                  )}
+                >
+                  {counts[f.id]}
+                </span>
+              ) : null}
             </button>
           );
         })}
       </div>
 
-      {view === "eliminacion" ? (
-        <EliminacionBracket onGoToGroups={() => setView("grupos")} />
+      {/* Lista de partidos fase de grupos agrupada por fecha */}
+      {isLoading ? (
+        <LoadingState />
+      ) : isError ? (
+        <p className="rounded-2xl border border-red-500/20 bg-red-500/[0.04] py-10 text-center text-sm text-red-400">
+          No pudimos cargar los partidos. Intenta de nuevo en un momento.
+        </p>
+      ) : groups.length ? (
+        <div className="space-y-2 mb-12">
+          {groups.map((g) => (
+            <DateGroup
+              key={g.key}
+              label={g.label}
+              matches={g.matches}
+              preds={preds}
+              onChange={setPred}
+              onSave={onSave}
+              pendingSlug={pendingSlug}
+              errors={errors}
+              onOpenDetail={(m) => setDetailSlug(m.slug)}
+            />
+          ))}
+        </div>
       ) : (
-        <>
-          {/* Filtros */}
-          <div className="mb-4 flex flex-wrap gap-2">
-            {FIXTURE_FILTERS.map((f) => {
-              const active = filter === f.id;
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => setFilter(f.id)}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-bold transition-all",
-                    active
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-white/10 text-gray hover:border-white/20 hover:text-light"
-                  )}
-                >
-                  {f.id === "live" && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
-                  )}
-                  {f.label}
-                  {counts[f.id] ? (
-                    <span
-                      className={cn(
-                        "ml-0.5 rounded-full px-1.5 text-[10px]",
-                        active ? "bg-primary/20" : "bg-white/[0.06]"
-                      )}
-                    >
-                      {counts[f.id]}
-                    </span>
-                  ) : null}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Lista agrupada por fecha */}
-          {isLoading ? (
-            <LoadingState />
-          ) : isError ? (
-            <p className="rounded-2xl border border-red-500/20 bg-red-500/[0.04] py-10 text-center text-sm text-red-400">
-              No pudimos cargar los partidos. Intenta de nuevo en un momento.
-            </p>
-          ) : groups.length ? (
-            <div className="space-y-2">
-              {groups.map((g) => (
-                <DateGroup
-                  key={g.key}
-                  label={g.label}
-                  matches={g.matches}
-                  preds={preds}
-                  onChange={setPred}
-                  onSave={onSave}
-                  pendingSlug={pendingSlug}
-                  errors={errors}
-                  onOpenDetail={(m) => setDetailSlug(m.slug)}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray">
-              No hay partidos en esta categoría por ahora.
-            </p>
-          )}
-        </>
+        <p className="rounded-2xl border border-white/[0.06] bg-white/[0.02] py-10 text-center text-sm text-gray mb-12">
+          No hay partidos en esta categoría por ahora.
+        </p>
       )}
+
+      {/* Eliminatorias: separador y bracket */}
+      <div className="mb-8 flex items-start gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-secondary/20 border border-primary/30">
+          <Trophy className="text-primary" size={20} />
+        </div>
+        <div>
+          <h2 className="text-xl font-black text-light">Eliminatorias</h2>
+          <p className="mt-0.5 text-sm leading-snug text-gray">
+            Marca el resultado de cada cruce ya definido. En la eliminación
+            los puntos <b className="text-light">suben por fase</b> (de
+            dieciseisavos a la final) y el marcador exacto siempre vale más.
+          </p>
+        </div>
+      </div>
+
+      <EliminacionBracket onGoToGroups={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
 
       {/* Sheet de detalle del partido */}
       <AnimatePresence>
