@@ -97,6 +97,32 @@ const BOX = "h-13 w-13 rounded-2xl text-2xl font-black tabular-nums sm:h-14 sm:w
 // array nuevo en cada render y dispare en bucle el efecto que siembra preds.
 const EMPTY_MATCHES = [];
 
+// Titulo de cada fase para el encabezado de la seccion (el stage_display del
+// backend abrevia: "Dieciseisavos"; aqui lo mostramos completo).
+const STAGE_TITLE = {
+  group: "Fase de grupos",
+  r32: "Dieciseisavos de final",
+  r16: "Octavos de final",
+  qf: "Cuartos de final",
+  sf: "Semifinales",
+  third: "Tercer puesto",
+  final: "Final",
+};
+
+// Partido que representa la fase que se esta jugando ahora: el proximo en vivo
+// o por jugar (el de kickoff mas cercano) y, si ya no quedan, el ultimo jugado.
+// De el leemos la fase y sus puntos (points_exact / points_outcome del backend)
+// para que el encabezado nunca quede desfasado al avanzar el torneo.
+const currentStageMatch = (confirmed) => {
+  const byKickoff = (a, b) => a.kickoff - b.kickoff;
+  const live = confirmed.filter((m) => m.status === "live").sort(byKickoff);
+  if (live.length) return live[0];
+  const upcoming = confirmed.filter((m) => m.status === "upcoming").sort(byKickoff);
+  if (upcoming.length) return upcoming[0];
+  const finished = confirmed.filter((m) => m.status === "finished").sort(byKickoff);
+  return finished.length ? finished[finished.length - 1] : null;
+};
+
 /* ── Caja de marcador: input numerico (editable) o display (solo lectura) ── */
 const ScoreBox = ({ value, onChange, onBlur, editable = false, disabled = false, tone = "final" }) => {
   const filled = value !== "" && value != null;
@@ -579,6 +605,14 @@ const PartidosTab = () => {
   );
   const groups = useMemo(() => groupByDate(list), [list]);
 
+  // Fase que se juega ahora (con sus puntos), para el encabezado de la seccion.
+  const stageMatch = useMemo(() => currentStageMatch(confirmed), [confirmed]);
+  const stageTitle = stageMatch
+    ? STAGE_TITLE[stageMatch.stage] || stageMatch.stage_display
+    : "Tus pronosticos";
+  const ptsExact = stageMatch?.points_exact ?? 3;
+  const ptsOutcome = stageMatch?.points_outcome ?? 1;
+
   const pendingSlug = savePrediction.isPending
     ? savePrediction.variables?.slug
     : null;
@@ -611,21 +645,25 @@ const PartidosTab = () => {
       {/* Recordatorio: gana puntos extra completando misiones e invitando */}
       <MissionsBanner />
 
-      {/* Encabezado: Fase de grupos */}
+      {/* Encabezado: fase en juego (titulo y puntos segun la fase vigente) */}
       <div className="mb-5 flex items-start gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-secondary/20 border border-primary/30">
           <Pencil className="text-primary" size={20} />
         </div>
         <div>
-          <h2 className="text-xl font-black text-light">Fase de grupos</h2>
+          <h2 className="text-xl font-black text-light">{stageTitle}</h2>
           <p className="mt-0.5 text-sm leading-snug text-gray">
-            Escribe tu marcador antes de que empiece el partido. Marcador
-            exacto = 3 pts, resultado correcto = 1 pt.
+            Escribe tu marcador antes del pitazo. Marcador exacto ={" "}
+            <b className="text-light">{ptsExact} pts</b>, resultado correcto ={" "}
+            <b className="text-light">
+              {ptsOutcome} {ptsOutcome === 1 ? "pt" : "pts"}
+            </b>
+            .
           </p>
         </div>
       </div>
 
-      {/* Filtros para fase de grupos */}
+      {/* Filtros por estado del partido (proximos, en vivo, jugados) */}
       <div className="mb-4 flex flex-wrap gap-2">
         {FIXTURE_FILTERS.map((f) => {
           const active = filter === f.id;
@@ -659,7 +697,7 @@ const PartidosTab = () => {
         })}
       </div>
 
-      {/* Lista de partidos fase de grupos agrupada por fecha */}
+      {/* Lista de partidos (segun el filtro de estado) agrupada por fecha */}
       {isLoading ? (
         <LoadingState />
       ) : isError ? (
