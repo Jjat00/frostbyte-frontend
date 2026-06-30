@@ -92,6 +92,9 @@ const OrderHistoryCard = ({ order, getStatusBadge, formatDateTime }) => {
                   <span className="w-5 h-5 flex items-center justify-center bg-secondary/20 text-secondary rounded text-xs font-bold">
                     {order.table_number === 0 ? 'B' : order.table_number}
                   </span>
+                  {order.table_floor != null && (
+                    <span className="text-xs text-gray">Piso {order.table_floor}</span>
+                  )}
                 </div>
               )}
             </div>

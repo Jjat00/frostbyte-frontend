@@ -15,6 +15,7 @@ import {
   Music,
   Gamepad2,
   Utensils,
+  LayoutGrid,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -76,6 +77,14 @@ const OrdersLayout = () => {
       path: '/pedidos/estadisticas',
       icon: BarChart3,
       adminOnly: true,
+    },
+    {
+      name: 'Mesas',
+      shortName: 'Mesas',
+      path: '/pedidos/mesas',
+      icon: LayoutGrid,
+      adminOnly: true,
+      hideOnMobileNav: true,
     },
     {
       name: 'Música',
@@ -328,7 +337,7 @@ const OrdersLayout = () => {
       <nav className="liquid-glass-pill md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.03] border-t border-white/[0.1] z-30 safe-area-pb">
         <div className="flex items-center justify-around py-2">
           {navItems
-            .filter(item => item.path !== '/home' && item.path !== '/')
+            .filter(item => item.path !== '/home' && item.path !== '/' && !item.hideOnMobileNav)
             .map((item) => {
               const active = !item.external && isActive(item.path, item.end);
               const baseClasses = `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg min-w-[60px] transition-colors ${

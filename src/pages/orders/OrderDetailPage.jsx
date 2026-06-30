@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
 import { productsService } from "@/services/products.service";
+import TableSelect from "@/components/orders/TableSelect";
 
 const statusConfig = {
   pending: {
@@ -100,7 +101,7 @@ const OrderDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [isEditingCustomer, setIsEditingCustomer] = useState(false);
   const [editedCustomerName, setEditedCustomerName] = useState("");
-  const [editedTableNumber, setEditedTableNumber] = useState("");
+  const [editedTableId, setEditedTableId] = useState("");
   const [discountPercent, setDiscountPercent] = useState("");
   const [cashAmount, setCashAmount] = useState("");
   const [showCashChangeForItem, setShowCashChangeForItem] = useState(false);
@@ -121,7 +122,7 @@ const OrderDetailPage = () => {
   useEffect(() => {
     if (order && !isEditingCustomer) {
       setEditedCustomerName(order.customer_name || "");
-      setEditedTableNumber(order.table_number != null ? order.table_number.toString() : "");
+      setEditedTableId(order.table != null ? order.table.toString() : "");
     }
   }, [order, isEditingCustomer]);
 
@@ -413,7 +414,7 @@ const OrderDetailPage = () => {
                 onClick={() => {
                   setIsEditingCustomer(false);
                   setEditedCustomerName(order.customer_name || "");
-                  setEditedTableNumber(order.table_number?.toString() || "");
+                  setEditedTableId(order.table?.toString() || "");
                 }}
                 className="p-2 text-gray hover:text-red-400 hover:bg-white/[0.06] rounded-lg transition-colors"
                 title="Cancelar"
@@ -424,10 +425,10 @@ const OrderDetailPage = () => {
                 onClick={() => {
                   updateOrderMutation.mutate({
                     customer_name: editedCustomerName,
-                    table_number: parseInt(editedTableNumber),
+                    table_id: parseInt(editedTableId),
                   });
                 }}
-                disabled={updateOrderMutation.isPending || !editedCustomerName.trim() || !editedTableNumber}
+                disabled={updateOrderMutation.isPending || !editedCustomerName.trim() || !editedTableId}
                 className="p-2 text-gray hover:text-secondary hover:bg-gray/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Guardar cambios"
               >
@@ -455,18 +456,12 @@ const OrderDetailPage = () => {
               </div>
               <div>
                 <label className="block text-xs text-gray mb-1">Mesa/Barra</label>
-                <select
-                  value={editedTableNumber}
-                  onChange={(e) => setEditedTableNumber(e.target.value)}
+                <TableSelect
+                  tables={tablesData}
+                  value={editedTableId}
+                  onChange={(e) => setEditedTableId(e.target.value)}
                   className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
-                >
-                  <option value="">Selecciona una mesa o barra</option>
-                  {(tablesData || []).map((table) => (
-                    <option key={table.table_number} value={table.table_number}>
-                      {table.table_name}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
             </>
           ) : (
@@ -483,9 +478,14 @@ const OrderDetailPage = () => {
               {order.table_number != null && order.table_number !== undefined && (
                 <div className="mt-3">
                   <p className="text-xs text-gray mb-2">{order.table_number === 0 ? 'Barra' : 'Mesa'}:</p>
-                  <span className="w-10 h-10 flex items-center justify-center bg-secondary/20 text-secondary rounded-lg text-base font-bold border-2 border-secondary/30">
-                    {order.table_number === 0 ? 'B' : order.table_number}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-10 h-10 flex items-center justify-center bg-secondary/20 text-secondary rounded-lg text-base font-bold border-2 border-secondary/30">
+                      {order.table_number === 0 ? 'B' : order.table_number}
+                    </span>
+                    {order.table_floor != null && (
+                      <span className="text-xs text-gray">Piso {order.table_floor}</span>
+                    )}
+                  </div>
                 </div>
               )}
             </>

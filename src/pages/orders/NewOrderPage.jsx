@@ -21,6 +21,7 @@ import {
 import { productsService, categoriesService } from '@/services';
 import { ordersService } from '@/services/orders.service';
 import { businessService } from '@/services/business.service';
+import TableSelect from '@/components/orders/TableSelect';
 
 // Punto de color por negocio (alineado con BusinessSelector)
 const businessDot = (color) => {
@@ -181,7 +182,7 @@ const NewOrderPage = () => {
       customer_name: customerName || 'Cliente',
       customer_phone: customerPhone,
       customer_notes: customerNotes,
-      table_number: parseInt(selectedTable),
+      table_id: parseInt(selectedTable),
       items: cart.map((item) => ({
         product_variant_id: item.variantId,
         quantity: item.quantity,
@@ -433,18 +434,12 @@ const NewOrderPage = () => {
               <label className="block text-sm font-medium text-light mb-2">
                 Mesa/Barra <span className="text-red-400">*</span>
               </label>
-              <select
+              <TableSelect
+                tables={tablesData}
                 value={selectedTable}
                 onChange={(e) => setSelectedTable(e.target.value)}
                 className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
-              >
-                <option value="">Selecciona una mesa o barra</option>
-                {(tablesData || []).map((table) => (
-                  <option key={table.table_number} value={table.table_number}>
-                    {table.table_name}
-                  </option>
-                ))}
-              </select>
+              />
               {!selectedTable && (
                 <p className="text-xs text-red-400 mt-2">
                   Debes seleccionar una mesa o barra
@@ -636,18 +631,12 @@ const NewOrderPage = () => {
                       <label className="block text-sm font-medium text-light mb-2">
                         Mesa/Barra <span className="text-red-400">*</span>
                       </label>
-                      <select
+                      <TableSelect
+                        tables={tablesData}
                         value={selectedTable}
                         onChange={(e) => setSelectedTable(e.target.value)}
                         className="w-full px-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
-                      >
-                        <option value="">Selecciona una mesa o barra</option>
-                        {(tablesData || []).map((table) => (
-                          <option key={table.table_number} value={table.table_number}>
-                            {table.table_name}
-                          </option>
-                        ))}
-                      </select>
+                      />
                       {!selectedTable && (
                         <p className="text-xs text-red-400 mt-2">
                           Debes seleccionar una mesa o barra

@@ -72,11 +72,12 @@ const KitchenOrderCard = ({ order, onSetPrep, onAllReady, pendingItemId, busyOrd
 
   const allReady = order.items.every((i) => i.prep_status === "ready");
   const tableLabel =
-    order.table_number === 0
+    order.table_label ??
+    (order.table_number === 0
       ? "Barra"
       : order.table_number != null
       ? `Mesa ${order.table_number}`
-      : "Sin mesa";
+      : "Sin mesa");
 
   return (
     <motion.div

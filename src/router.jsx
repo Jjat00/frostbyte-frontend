@@ -39,6 +39,7 @@ const NewOrderPage = lazyLoad(() => import("./pages/orders/NewOrderPage"));
 const OrderDetailPage = lazyLoad(() => import("./pages/orders/OrderDetailPage"));
 const OrdersHistoryPage = lazyLoad(() => import("./pages/orders/OrdersHistoryPage"));
 const OrdersStatsPage = lazyLoad(() => import("./pages/orders/OrdersStatsPage"));
+const TablesManagementPage = lazyLoad(() => import("./pages/orders/TablesManagementPage"));
 
 // Productos
 const ProductsLayout = lazyLoad(() => import("./pages/products/ProductsLayout"));
@@ -319,6 +320,16 @@ export const router = createBrowserRouter([
         element: (
           <Lazy>
             <NewOrderPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: "mesas",
+        element: (
+          <Lazy>
+            <AdminRoute>
+              <TablesManagementPage />
+            </AdminRoute>
           </Lazy>
         ),
       },

@@ -176,10 +176,37 @@ export const ordersService = {
   },
 
   /**
-   * Obtener lista de mesas activas
+   * Obtener lista de mesas.
+   * @param {Object} params - { includeInactive: true } para traer también las inactivas (gestión).
    */
-  async getTables() {
-    const response = await apiClient.get('/tables/');
+  async getTables(params = {}) {
+    const query = params.includeInactive ? { include_inactive: 'true' } : {};
+    const response = await apiClient.get('/tables/', { params: query });
+    return response.data;
+  },
+
+  /**
+   * Crear una mesa o barra (solo admin).
+   * @param {Object} data - { table_number, floor, table_name, is_active }
+   */
+  async createTable(data) {
+    const response = await apiClient.post('/tables/', data);
+    return response.data;
+  },
+
+  /**
+   * Actualizar una mesa o barra (solo admin).
+   */
+  async updateTable(id, data) {
+    const response = await apiClient.patch(`/tables/${id}/`, data);
+    return response.data;
+  },
+
+  /**
+   * Desactivar una mesa o barra (baja lógica, solo admin).
+   */
+  async deleteTable(id) {
+    const response = await apiClient.delete(`/tables/${id}/`);
     return response.data;
   },
 
