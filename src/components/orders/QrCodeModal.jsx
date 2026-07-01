@@ -1,71 +1,59 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { QRCodeCanvas } from 'qrcode.react';
-import { X, Download, Copy, Check, QrCode as QrCodeIcon } from 'lucide-react';
+import { X, Download, Copy, Check, QrCode as QrCodeIcon, Loader2 } from 'lucide-react';
+import QRCodeStyling from 'qr-code-styling';
+import {
+  DOT_TYPES,
+  CORNER_TYPES,
+  SIZE_PRESETS,
+  loadQrPrefs,
+  saveQrPrefs,
+  buildQrOptions,
+  buildTableUrl,
+  buildLabeledQrBlob,
+  downloadBlob,
+  qrFileName,
+} from '@/lib/qrStyling';
 
-const PREFS_KEY = 'frostbyte_qr_prefs';
+const PREVIEW = 220;
 
-const DEFAULT_PREFS = {
-  baseUrl: 'https://frostbyte.com.co',
-  fgColor: '#000000',
-  bgColor: '#ffffff',
-  withLogo: true,
-  withCaption: true,
-  downloadSize: 1024,
-};
-
-const SIZE_PRESETS = [512, 1024, 2048];
-
-const loadPrefs = () => {
-  try {
-    const raw = localStorage.getItem(PREFS_KEY);
-    return raw ? { ...DEFAULT_PREFS, ...JSON.parse(raw) } : { ...DEFAULT_PREFS };
-  } catch {
-    return { ...DEFAULT_PREFS };
-  }
-};
+const selectClass =
+  'w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none';
 
 /**
- * Generador de QR por mesa. Arma la URL con piso incluido
- * (/mesa/:floor/:tableNumber) desde la fuente de verdad (la mesa) y deja
- * personalizar colores, logo, etiqueta y tamaño antes de descargar el PNG.
+ * Generador de QR por mesa con degradados, formas y logo. Arma la URL con piso
+ * incluido (/mesa/:floor/:tableNumber) desde la mesa real y guarda las
+ * preferencias en localStorage para reusarlas (incl. impresión masiva).
  */
 const QrCodeModal = ({ table, onClose }) => {
-  const [prefs, setPrefs] = useState(loadPrefs);
-  const [caption, setCaption] = useState('');
+  const [prefs, setPrefs] = useState(loadQrPrefs);
   const [copied, setCopied] = useState(false);
-  const fullRef = useRef(null);
+  const [downloading, setDownloading] = useState(false);
+  const holderRef = useRef(null);
+  const qrRef = useRef(null);
 
   const set = (patch) => setPrefs((p) => ({ ...p, ...patch }));
+  const url = useMemo(() => buildTableUrl(prefs, table), [prefs, table]);
 
+  useEffect(() => saveQrPrefs(prefs), [prefs]);
+
+  // Crear la instancia de preview una vez.
   useEffect(() => {
-    try {
-      localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
-    } catch {
-      /* ignore */
-    }
-  }, [prefs]);
+    if (!holderRef.current) return undefined;
+    const qr = new QRCodeStyling(buildQrOptions(prefs, url, PREVIEW));
+    holderRef.current.innerHTML = '';
+    qr.append(holderRef.current);
+    qrRef.current = qr;
+    return () => {
+      if (holderRef.current) holderRef.current.innerHTML = '';
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const isBarra = table.table_number === 0;
-  const slug = isBarra ? 'barra' : table.table_number;
-
-  const url = useMemo(
-    () => `${prefs.baseUrl.replace(/\/+$/, '')}/mesa/${table.floor}/${slug}`,
-    [prefs.baseUrl, table.floor, slug],
-  );
-
-  const defaultCaption = `${
-    table.table_name || (isBarra ? 'Barra' : `Mesa ${table.table_number}`)
-  } · Piso ${table.floor}`;
-  const effectiveCaption = caption.trim() || defaultCaption;
-
-  // Con logo encima hace falta el nivel de corrección alto para que siga escaneando.
-  const level = prefs.withLogo ? 'H' : 'M';
-
-  const logoSettings = (size) =>
-    prefs.withLogo
-      ? { src: '/logo.png', height: Math.round(size * 0.2), width: Math.round(size * 0.2), excavate: true }
-      : undefined;
+  // Refrescar el preview con cada cambio.
+  useEffect(() => {
+    qrRef.current?.update(buildQrOptions(prefs, url, PREVIEW));
+  }, [prefs, url]);
 
   const copyUrl = async () => {
     try {
@@ -77,38 +65,17 @@ const QrCodeModal = ({ table, onClose }) => {
     }
   };
 
-  const download = () => {
-    const qrCanvas = fullRef.current?.querySelector('canvas');
-    if (!qrCanvas) return;
-    const s = prefs.downloadSize;
-    const pad = Math.round(s * 0.08);
-    const captionH = prefs.withCaption ? Math.round(s * 0.16) : 0;
-
-    const out = document.createElement('canvas');
-    out.width = s + pad * 2;
-    out.height = s + pad * 2 + captionH;
-    const ctx = out.getContext('2d');
-    ctx.fillStyle = prefs.bgColor;
-    ctx.fillRect(0, 0, out.width, out.height);
-    ctx.drawImage(qrCanvas, pad, pad, s, s);
-
-    if (prefs.withCaption) {
-      ctx.fillStyle = prefs.fgColor;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = `bold ${Math.round(s * 0.075)}px "Segoe UI", system-ui, sans-serif`;
-      ctx.fillText(effectiveCaption, out.width / 2, s + pad + captionH / 2 + pad * 0.15);
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      const blob = await buildLabeledQrBlob(prefs, table);
+      if (blob) downloadBlob(blob, qrFileName(table));
+    } finally {
+      setDownloading(false);
     }
-
-    out.toBlob((blob) => {
-      if (!blob) return;
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `qr-piso${table.floor}-${isBarra ? 'barra' : 'mesa' + table.table_number}.png`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }, 'image/png');
   };
+
+  const isGradient = prefs.fillMode === 'gradient';
 
   return (
     <>
@@ -133,27 +100,15 @@ const QrCodeModal = ({ table, onClose }) => {
                 QR · {table.table_name} · Piso {table.floor}
               </h3>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-2 text-gray hover:text-light rounded-lg"
-            >
+            <button type="button" onClick={onClose} className="p-2 text-gray hover:text-light rounded-lg">
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Vista previa */}
+          {/* Vista previa en vivo */}
           <div className="flex justify-center">
-            <div className="p-3 rounded-xl" style={{ backgroundColor: prefs.bgColor }}>
-              <QRCodeCanvas
-                value={url}
-                size={200}
-                bgColor={prefs.bgColor}
-                fgColor={prefs.fgColor}
-                level={level}
-                marginSize={2}
-                imageSettings={logoSettings(200)}
-              />
+            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.08]">
+              <div ref={holderRef} style={{ width: PREVIEW, height: PREVIEW }} />
             </div>
           </div>
 
@@ -172,11 +127,34 @@ const QrCodeModal = ({ table, onClose }) => {
             </button>
           </div>
 
-          {/* Personalización */}
+          {/* Relleno: solido / degradado */}
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-gray mb-1">Relleno</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { v: 'solid', l: 'Sólido' },
+                  { v: 'gradient', l: 'Degradado' },
+                ].map(({ v, l }) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => set({ fillMode: v })}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      prefs.fillMode === v
+                        ? 'bg-secondary/20 text-secondary border border-secondary/40'
+                        : 'bg-white/[0.04] text-gray border border-white/[0.1] hover:text-light'
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {!isGradient ? (
               <label className="flex items-center justify-between gap-2 text-sm text-light bg-white/[0.04] border border-white/[0.1] rounded-lg px-3 py-2">
-                <span>Puntos</span>
+                <span>Color de puntos</span>
                 <input
                   type="color"
                   value={prefs.fgColor}
@@ -184,14 +162,122 @@ const QrCodeModal = ({ table, onClose }) => {
                   className="w-8 h-8 bg-transparent cursor-pointer"
                 />
               </label>
-              <label className="flex items-center justify-between gap-2 text-sm text-light bg-white/[0.04] border border-white/[0.1] rounded-lg px-3 py-2">
+            ) : (
+              <div className="space-y-3 bg-white/[0.03] border border-white/[0.08] rounded-lg p-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { v: 'linear', l: 'Lineal' },
+                    { v: 'radial', l: 'Radial' },
+                  ].map(({ v, l }) => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => set({ gradientType: v })}
+                      className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                        prefs.gradientType === v
+                          ? 'bg-secondary/20 text-secondary border border-secondary/40'
+                          : 'bg-white/[0.04] text-gray border border-white/[0.1] hover:text-light'
+                      }`}
+                    >
+                      {l}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="flex items-center justify-between gap-2 text-sm text-light bg-white/[0.04] border border-white/[0.1] rounded-lg px-3 py-2">
+                    <span>Color 1</span>
+                    <input
+                      type="color"
+                      value={prefs.gradientColor1}
+                      onChange={(e) => set({ gradientColor1: e.target.value })}
+                      className="w-8 h-8 bg-transparent cursor-pointer"
+                    />
+                  </label>
+                  <label className="flex items-center justify-between gap-2 text-sm text-light bg-white/[0.04] border border-white/[0.1] rounded-lg px-3 py-2">
+                    <span>Color 2</span>
+                    <input
+                      type="color"
+                      value={prefs.gradientColor2}
+                      onChange={(e) => set({ gradientColor2: e.target.value })}
+                      className="w-8 h-8 bg-transparent cursor-pointer"
+                    />
+                  </label>
+                </div>
+                {prefs.gradientType === 'linear' && (
+                  <div>
+                    <label className="block text-xs text-gray mb-1">
+                      Rotación: {prefs.gradientRotation}°
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="360"
+                      step="5"
+                      value={prefs.gradientRotation}
+                      onChange={(e) => set({ gradientRotation: Number(e.target.value) })}
+                      className="w-full accent-secondary"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Formas */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs text-gray mb-1">Forma de puntos</label>
+                <select
+                  value={prefs.dotsType}
+                  onChange={(e) => set({ dotsType: e.target.value })}
+                  className={selectClass}
+                >
+                  {DOT_TYPES.map((o) => (
+                    <option key={o.value} value={o.value} className="bg-dark">
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray mb-1">Esquinas</label>
+                <select
+                  value={prefs.cornersType}
+                  onChange={(e) => set({ cornersType: e.target.value })}
+                  className={selectClass}
+                >
+                  {CORNER_TYPES.map((o) => (
+                    <option key={o.value} value={o.value} className="bg-dark">
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Fondo */}
+            <div className="grid grid-cols-2 gap-3">
+              <label
+                className={`flex items-center justify-between gap-2 text-sm text-light bg-white/[0.04] border border-white/[0.1] rounded-lg px-3 py-2 ${
+                  prefs.bgTransparent ? 'opacity-40' : ''
+                }`}
+              >
                 <span>Fondo</span>
                 <input
                   type="color"
                   value={prefs.bgColor}
+                  disabled={prefs.bgTransparent}
                   onChange={(e) => set({ bgColor: e.target.value })}
                   className="w-8 h-8 bg-transparent cursor-pointer"
                 />
+              </label>
+              <label className="flex items-center gap-2 text-sm text-light bg-white/[0.04] border border-white/[0.1] rounded-lg px-3 py-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={prefs.bgTransparent}
+                  onChange={(e) => set({ bgTransparent: e.target.checked })}
+                  className="w-4 h-4 accent-secondary"
+                />
+                Transparente
               </label>
             </div>
 
@@ -202,7 +288,7 @@ const QrCodeModal = ({ table, onClose }) => {
                 onChange={(e) => set({ withLogo: e.target.checked })}
                 className="w-4 h-4 accent-secondary"
               />
-              Incluir logo en el centro
+              Logo en el centro
             </label>
 
             <label className="flex items-center gap-2 text-sm text-light cursor-pointer">
@@ -212,18 +298,8 @@ const QrCodeModal = ({ table, onClose }) => {
                 onChange={(e) => set({ withCaption: e.target.checked })}
                 className="w-4 h-4 accent-secondary"
               />
-              Incluir etiqueta debajo
+              Etiqueta debajo (Mesa · Piso)
             </label>
-
-            {prefs.withCaption && (
-              <input
-                type="text"
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
-                placeholder={defaultCaption}
-                className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none"
-              />
-            )}
 
             <div>
               <label className="block text-xs text-gray mb-1">Tamaño de descarga</label>
@@ -246,51 +322,33 @@ const QrCodeModal = ({ table, onClose }) => {
             </div>
 
             <div>
-              <label className="block text-xs text-gray mb-1">
-                Dominio base (para todos los QR)
-              </label>
+              <label className="block text-xs text-gray mb-1">Dominio base (para todos los QR)</label>
               <input
                 type="text"
                 value={prefs.baseUrl}
                 onChange={(e) => set({ baseUrl: e.target.value })}
                 placeholder="https://frostbyte.com.co"
-                className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none"
+                className={selectClass}
               />
             </div>
           </div>
 
           <p className="text-xs text-gray/70">
-            Usa buen contraste (puntos oscuros sobre fondo claro) para que escanee bien. La
-            preferencia se guarda para el resto de mesas.
+            Usa buen contraste (puntos oscuros sobre fondo claro) para que escanee bien. Los ajustes
+            se guardan y se usan también al imprimir todos.
           </p>
 
           <button
             type="button"
-            onClick={download}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity active:scale-95"
+            onClick={handleDownload}
+            disabled={downloading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity active:scale-95 disabled:opacity-50"
           >
-            <Download className="w-4 h-4" />
+            {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             Descargar PNG
           </button>
         </div>
       </motion.div>
-
-      {/* QR a resolución completa (oculto) que se usa para la descarga */}
-      <div
-        ref={fullRef}
-        aria-hidden
-        style={{ position: 'fixed', left: -99999, top: 0, pointerEvents: 'none' }}
-      >
-        <QRCodeCanvas
-          value={url}
-          size={prefs.downloadSize}
-          bgColor={prefs.bgColor}
-          fgColor={prefs.fgColor}
-          level={level}
-          marginSize={2}
-          imageSettings={logoSettings(prefs.downloadSize)}
-        />
-      </div>
     </>
   );
 };

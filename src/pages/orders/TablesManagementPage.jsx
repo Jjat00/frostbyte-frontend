@@ -12,9 +12,11 @@ import {
   LayoutGrid,
   AlertCircle,
   QrCode,
+  Printer,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 import QrCodeModal from '@/components/orders/QrCodeModal';
+import QrPrintDialog from '@/components/orders/QrPrintDialog';
 
 const emptyForm = { id: null, floor: 2, table_number: '', table_name: '', is_active: true };
 
@@ -29,6 +31,7 @@ const TablesManagementPage = () => {
   const [form, setForm] = useState(emptyForm);
   const [formError, setFormError] = useState('');
   const [qrTable, setQrTable] = useState(null);
+  const [showPrint, setShowPrint] = useState(false);
 
   const { data: tables, isLoading } = useQuery({
     queryKey: ['tables', 'manage'],
@@ -82,6 +85,15 @@ const TablesManagementPage = () => {
         tables: [...list].sort((a, b) => a.table_number - b.table_number),
       }));
   }, [tables]);
+
+  // Para imprimir: solo mesas activas, ordenadas por piso y número.
+  const activeTables = useMemo(
+    () =>
+      (tables || [])
+        .filter((t) => t.is_active)
+        .sort((a, b) => a.floor - b.floor || a.table_number - b.table_number),
+    [tables],
+  );
 
   const openCreate = () => {
     setForm({ ...emptyForm });
@@ -151,13 +163,24 @@ const TablesManagementPage = () => {
             <p className="text-xs text-gray">Gestiona los puntos de atención por piso</p>
           </div>
         </div>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity active:scale-95"
-        >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Nueva mesa</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowPrint(true)}
+            disabled={!activeTables.length}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.06] border border-white/[0.12] text-light font-semibold rounded-lg hover:bg-white/[0.1] transition-colors active:scale-95 disabled:opacity-40"
+            title="Imprimir todos los QR"
+          >
+            <Printer className="w-4 h-4" />
+            <span className="hidden sm:inline">Imprimir QRs</span>
+          </button>
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Nueva mesa</span>
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -356,6 +379,13 @@ const TablesManagementPage = () => {
       {/* Modal de QR por mesa */}
       <AnimatePresence>
         {qrTable && <QrCodeModal table={qrTable} onClose={() => setQrTable(null)} />}
+      </AnimatePresence>
+
+      {/* Impresión masiva de QR */}
+      <AnimatePresence>
+        {showPrint && (
+          <QrPrintDialog tables={activeTables} onClose={() => setShowPrint(false)} />
+        )}
       </AnimatePresence>
     </div>
   );
