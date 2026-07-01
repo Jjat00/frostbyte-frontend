@@ -11,8 +11,10 @@ import {
   Loader2,
   LayoutGrid,
   AlertCircle,
+  QrCode,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
+import QrCodeModal from '@/components/orders/QrCodeModal';
 
 const emptyForm = { id: null, floor: 2, table_number: '', table_name: '', is_active: true };
 
@@ -26,6 +28,7 @@ const TablesManagementPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [formError, setFormError] = useState('');
+  const [qrTable, setQrTable] = useState(null);
 
   const { data: tables, isLoading } = useQuery({
     queryKey: ['tables', 'manage'],
@@ -199,6 +202,13 @@ const TablesManagementPage = () => {
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <button
+                        onClick={() => setQrTable(table)}
+                        className="p-2 text-gray hover:text-secondary hover:bg-white/[0.06] rounded-lg transition-colors"
+                        title="Ver / descargar QR"
+                      >
+                        <QrCode className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => openEdit(table)}
                         className="p-2 text-gray hover:text-secondary hover:bg-white/[0.06] rounded-lg transition-colors"
                         title="Editar"
@@ -341,6 +351,11 @@ const TablesManagementPage = () => {
             </motion.div>
           </>
         )}
+      </AnimatePresence>
+
+      {/* Modal de QR por mesa */}
+      <AnimatePresence>
+        {qrTable && <QrCodeModal table={qrTable} onClose={() => setQrTable(null)} />}
       </AnimatePresence>
     </div>
   );
