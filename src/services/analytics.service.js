@@ -3,17 +3,28 @@ import { apiClient } from './api/client';
 const BASE_URL = '/analytics/financial';
 
 /**
+ * Construye los params de negocio + mes ancla.
+ * @param {string} [business] - Slug de negocio; vacio = consolidado
+ * @param {{year:number, month:number}} [period] - Mes a consultar; vacio = mes actual
+ */
+const buildParams = (business, period) => ({
+  ...(business ? { business } : {}),
+  ...(period?.year && period?.month ? { year: period.year, month: period.month } : {}),
+});
+
+/**
  * Servicio para estadisticas financieras del dashboard ejecutivo
  */
 export const analyticsService = {
   /**
    * Obtener KPIs principales: ingresos, gastos, ganancia neta, margen
    * @param {string} [business] - Slug de negocio; vacio = consolidado
-   * @returns {Promise<Object>} Resumen financiero del mes actual vs anterior
+   * @param {{year:number, month:number}} [period] - Mes a consultar; vacio = mes actual
+   * @returns {Promise<Object>} Resumen financiero del mes ancla vs anterior vs ano pasado
    */
-  async getSummary(business) {
+  async getSummary(business, period) {
     const response = await apiClient.get(`${BASE_URL}/summary/`, {
-      params: business ? { business } : {},
+      params: buildParams(business, period),
     });
     return response.data;
   },
@@ -34,47 +45,50 @@ export const analyticsService = {
   /**
    * Obtener desglose de gastos por categoria para pie chart
    * @param {string} [business] - Slug de negocio; vacio = consolidado
+   * @param {{year:number, month:number}} [period] - Mes a consultar; vacio = mes actual
    * @returns {Promise<Object>} Gastos agrupados por categoria
    */
-  async getExpensesBreakdown(business) {
+  async getExpensesBreakdown(business, period) {
     const response = await apiClient.get(`${BASE_URL}/expenses_breakdown/`, {
-      params: business ? { business } : {},
+      params: buildParams(business, period),
     });
     return response.data;
   },
 
   /**
-   * Obtener datos diarios del mes actual
+   * Obtener datos diarios del mes ancla
    * @param {string} [business] - Slug de negocio; vacio = consolidado
+   * @param {{year:number, month:number}} [period] - Mes a consultar; vacio = mes actual
    * @returns {Promise<Object>} Datos dia a dia
    */
-  async getDailyTrend(business) {
+  async getDailyTrend(business, period) {
     const response = await apiClient.get(`${BASE_URL}/daily_trend/`, {
-      params: business ? { business } : {},
+      params: buildParams(business, period),
     });
     return response.data;
   },
 
   /**
-   * Obtener comparacion entre este mes y el anterior
+   * Obtener comparacion del mes ancla vs el anterior y vs el ano pasado
    * @param {string} [business] - Slug de negocio; vacio = consolidado
+   * @param {{year:number, month:number}} [period] - Mes a consultar; vacio = mes actual
    * @returns {Promise<Object>} Datos comparativos para bar chart
    */
-  async getComparison(business) {
+  async getComparison(business, period) {
     const response = await apiClient.get(`${BASE_URL}/comparison/`, {
-      params: business ? { business } : {},
+      params: buildParams(business, period),
     });
     return response.data;
   },
 
   /**
    * Desglose por negocio (Frostbyte vs Frostbyte Food) + consolidado.
-   * @param {number} [monthsOffset] - 0 = mes actual, 1 = mes anterior, ...
+   * @param {{year:number, month:number}} [period] - Mes a consultar; vacio = mes actual
    * @returns {Promise<Object>}
    */
-  async getByBusiness(monthsOffset = 0) {
+  async getByBusiness(period) {
     const response = await apiClient.get(`${BASE_URL}/by_business/`, {
-      params: monthsOffset ? { months_offset: monthsOffset } : {},
+      params: buildParams(undefined, period),
     });
     return response.data;
   },

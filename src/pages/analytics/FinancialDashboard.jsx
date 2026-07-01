@@ -34,6 +34,12 @@ import {
   Clock,
   CalendarDays,
   Zap,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  RotateCcw,
+  ShoppingCart,
+  Receipt,
 } from 'lucide-react';
 import { analyticsService } from '@/services/analytics.service';
 import { ordersService } from '@/services/orders.service';
@@ -118,7 +124,7 @@ const CustomChartTooltip = ({ active, payload, label, formatter }) => {
 
 // ─── KPI Stat Card ──────────────────────────────────────────────
 
-const StatCard = ({ title, value, subtitle, change, icon: Icon, color, isNegativeGood = false, isPrimary = false, delay = 0 }) => {
+const StatCard = ({ title, value, subtitle, change, changeYoy, icon: Icon, color, isNegativeGood = false, isPrimary = false, delay = 0 }) => {
   const colorMap = {
     green: { border: 'border-green-500/30', text: 'text-green-400', bg: 'from-green-500/15 to-green-500/5', glow: 'hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]', icon: 'text-green-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]' },
     blue: { border: 'border-blue-500/30', text: 'text-blue-400', bg: 'from-blue-500/15 to-blue-500/5', glow: 'hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]', icon: 'text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]' },
@@ -130,6 +136,7 @@ const StatCard = ({ title, value, subtitle, change, icon: Icon, color, isNegativ
   const c = colorMap[color] || colorMap.secondary;
   const isPositive = isNegativeGood ? change < 0 : change > 0;
   const isNeutral = change === 0 || change === undefined;
+  const yoyPositive = isNegativeGood ? changeYoy < 0 : changeYoy > 0;
 
   return (
     <motion.div
@@ -176,6 +183,21 @@ const StatCard = ({ title, value, subtitle, change, icon: Icon, color, isNegativ
             <span>Sin cambio</span>
           </div>
         )}
+        {changeYoy !== undefined && changeYoy !== null && (
+          <div className="flex items-center gap-1 mt-1.5 text-[10px] sm:text-xs text-gray">
+            {changeYoy === 0 ? (
+              <Minus className="w-3 h-3" />
+            ) : yoyPositive ? (
+              <ArrowUpRight className="w-3 h-3 text-green-400" />
+            ) : (
+              <ArrowDownRight className="w-3 h-3 text-red-400" />
+            )}
+            <span className={changeYoy === 0 ? '' : yoyPositive ? 'text-green-400' : 'text-red-400'}>
+              {changeYoy > 0 ? '+' : ''}{changeYoy}%
+            </span>
+            <span className="text-gray/70">vs año pasado</span>
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -205,30 +227,158 @@ const generateInsight = (summary) => {
   return parts.join(' ');
 };
 
+// ─── Month helpers ──────────────────────────────────────────────
+
+const MONTHS_ES = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+];
+
+const formatMonthLabel = ({ year, month }) => `${MONTHS_ES[month - 1]} ${year}`;
+const formatMonthShort = ({ year, month }) => `${MONTHS_ES[month - 1].slice(0, 3)} ${year}`;
+
+// Desplaza un mes {year, month} en `delta` meses (positivo o negativo)
+const shiftMonth = ({ year, month }, delta) => {
+  const d = new Date(year, month - 1 + delta, 1);
+  return { year: d.getFullYear(), month: d.getMonth() + 1 };
+};
+
+// Ultimos `count` meses (incluyendo el actual), del mas reciente al mas antiguo
+const buildRecentMonths = (count = 18) => {
+  const now = new Date();
+  let cursor = { year: now.getFullYear(), month: now.getMonth() + 1 };
+  const list = [];
+  for (let i = 0; i < count; i += 1) {
+    list.push(cursor);
+    cursor = shiftMonth(cursor, -1);
+  }
+  return list;
+};
+
+// Primer y ultimo dia del mes ancla en formato YYYY-MM-DD (ultimo = hoy si es el mes en curso)
+const monthDateRange = ({ year, month }) => {
+  const pad = (n) => String(n).padStart(2, '0');
+  const start = `${year}-${pad(month)}-01`;
+  const now = new Date();
+  const isCurrent = year === now.getFullYear() && month === now.getMonth() + 1;
+  const endDate = isCurrent ? now : new Date(year, month, 0); // dia 0 del mes siguiente = ultimo del mes
+  const end = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}`;
+  return { start, end };
+};
+
+// ─── Month Selector ─────────────────────────────────────────────
+
+const MonthSelector = ({ anchor, onChange, isCurrentMonth }) => {
+  const [open, setOpen] = useState(false);
+  const recentMonths = buildRecentMonths(18);
+  const now = new Date();
+  const currentMonth = { year: now.getFullYear(), month: now.getMonth() + 1 };
+
+  return (
+    <div className="relative flex items-center gap-1.5">
+      <button
+        type="button"
+        onClick={() => onChange(shiftMonth(anchor, -1))}
+        aria-label="Mes anterior"
+        className="p-2 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.08] text-gray hover:text-secondary hover:border-secondary/30 transition-all"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1.5 px-3 py-2 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.08] text-light hover:border-secondary/30 transition-all min-w-[8.5rem] justify-center"
+      >
+        <Calendar className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+        <span className="text-xs md:text-sm font-semibold whitespace-nowrap">{formatMonthLabel(anchor)}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-gray transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => onChange(shiftMonth(anchor, 1))}
+        disabled={isCurrentMonth}
+        aria-label="Mes siguiente"
+        className="p-2 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.08] text-gray hover:text-secondary hover:border-secondary/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray disabled:hover:border-white/[0.08]"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
+
+      {!isCurrentMonth && (
+        <button
+          type="button"
+          onClick={() => onChange(currentMonth)}
+          aria-label="Volver al mes actual"
+          className="p-2 rounded-xl backdrop-blur-xl bg-secondary/10 border border-secondary/25 text-secondary hover:bg-secondary/20 transition-all"
+          title="Mes actual"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
+      )}
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute top-full right-0 mt-2 z-50 w-52 max-h-72 overflow-y-auto backdrop-blur-xl bg-dark/95 border border-white/[0.1] rounded-2xl p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+            {recentMonths.map((m) => {
+              const active = m.year === anchor.year && m.month === anchor.month;
+              return (
+                <button
+                  key={`${m.year}-${m.month}`}
+                  type="button"
+                  onClick={() => { onChange(m); setOpen(false); }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs md:text-sm transition-all ${
+                    active
+                      ? 'bg-secondary/15 border border-secondary/30 text-secondary font-semibold'
+                      : 'text-gray hover:text-light hover:bg-white/[0.05] border border-transparent'
+                  }`}
+                >
+                  {formatMonthLabel(m)}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 // ─── Main Dashboard ─────────────────────────────────────────────
 
 const FinancialDashboard = () => {
   const [viewMode, setViewMode] = useState('daily');
   const [trendMonths, setTrendMonths] = useState(12);
+
+  // Mes ancla seleccionado (default: mes en curso)
+  const now = new Date();
+  const [anchor, setAnchor] = useState({ year: now.getFullYear(), month: now.getMonth() + 1 });
+  const isCurrentMonth = anchor.year === now.getFullYear() && anchor.month === now.getMonth() + 1;
+  const period = { year: anchor.year, month: anchor.month };
+  const monthKey = `${anchor.year}-${String(anchor.month).padStart(2, '0')}`;
+  const { start: monthStart, end: monthEnd } = monthDateRange(anchor);
+
   const { selectedBusinessSlug } = useBusinessStore();
   const biz = selectedBusinessSlug || undefined;
 
   const { data: summary, isLoading: isLoadingSummary } = useQuery({
-    queryKey: ['financial-summary', selectedBusinessSlug],
-    queryFn: () => analyticsService.getSummary(biz),
+    queryKey: ['financial-summary', selectedBusinessSlug, monthKey],
+    queryFn: () => analyticsService.getSummary(biz, period),
   });
 
-  // Comparativa por negocio (consolidado vs cada negocio) — independiente del filtro
+  // Comparativa por negocio (consolidado vs cada negocio) — sigue el mes ancla
   const { data: byBusiness } = useQuery({
-    queryKey: ['analytics-by-business'],
-    queryFn: () => analyticsService.getByBusiness(0),
+    queryKey: ['analytics-by-business', monthKey],
+    queryFn: () => analyticsService.getByBusiness(period),
   });
 
   const { data: dailyTrend, isLoading: isLoadingDaily } = useQuery({
-    queryKey: ['daily-trend', selectedBusinessSlug],
-    queryFn: () => analyticsService.getDailyTrend(biz),
+    queryKey: ['daily-trend', selectedBusinessSlug, monthKey],
+    queryFn: () => analyticsService.getDailyTrend(biz, period),
   });
 
+  // Tendencia: serie historica de N meses hasta hoy (independiente del mes ancla)
   const { data: monthlyTrend, isLoading: isLoadingTrend } = useQuery({
     queryKey: ['monthly-trend', trendMonths, selectedBusinessSlug],
     queryFn: () => analyticsService.getMonthlyTrend(trendMonths, biz),
@@ -236,23 +386,24 @@ const FinancialDashboard = () => {
   });
 
   const { data: expensesBreakdown, isLoading: isLoadingBreakdown } = useQuery({
-    queryKey: ['expenses-breakdown', selectedBusinessSlug],
-    queryFn: () => analyticsService.getExpensesBreakdown(biz),
+    queryKey: ['expenses-breakdown', selectedBusinessSlug, monthKey],
+    queryFn: () => analyticsService.getExpensesBreakdown(biz, period),
   });
 
   const { data: comparison, isLoading: isLoadingComparison } = useQuery({
-    queryKey: ['monthly-comparison', selectedBusinessSlug],
-    queryFn: () => analyticsService.getComparison(biz),
+    queryKey: ['monthly-comparison', selectedBusinessSlug, monthKey],
+    queryFn: () => analyticsService.getComparison(biz, period),
   });
 
+  // Patrones operativos (horas/dias): rango del mes ancla via start/end explicitos
   const { data: salesByHour, isLoading: isLoadingHourly } = useQuery({
-    queryKey: ['sales-by-hour-analytics'],
-    queryFn: () => ordersService.getSalesByHour('month'),
+    queryKey: ['sales-by-hour-analytics', monthKey],
+    queryFn: () => ordersService.getSalesByHour('custom', monthStart, monthEnd),
   });
 
   const { data: salesByWeekday, isLoading: isLoadingWeekday } = useQuery({
-    queryKey: ['sales-by-weekday-analytics'],
-    queryFn: () => ordersService.getSalesByWeekday('month'),
+    queryKey: ['sales-by-weekday-analytics', monthKey],
+    queryFn: () => ordersService.getSalesByWeekday('custom', monthStart, monthEnd),
   });
 
   // ── Formatters ──
@@ -272,9 +423,9 @@ const FinancialDashboard = () => {
   // ── Derived data ──
 
   const comparisonData = comparison ? [
-    { name: 'Ingresos', 'Mes Anterior': comparison.previous_month.revenue, 'Este Mes': comparison.current_month.revenue },
-    { name: 'Gastos', 'Mes Anterior': comparison.previous_month.expenses, 'Este Mes': comparison.current_month.expenses },
-    { name: 'Ganancia', 'Mes Anterior': comparison.previous_month.profit, 'Este Mes': comparison.current_month.profit },
+    { name: 'Ingresos', 'Año Pasado': comparison.year_ago_month?.revenue ?? 0, 'Mes Anterior': comparison.previous_month.revenue, 'Este Mes': comparison.current_month.revenue },
+    { name: 'Gastos', 'Año Pasado': comparison.year_ago_month?.expenses ?? 0, 'Mes Anterior': comparison.previous_month.expenses, 'Este Mes': comparison.current_month.expenses },
+    { name: 'Ganancia', 'Año Pasado': comparison.year_ago_month?.profit ?? 0, 'Mes Anterior': comparison.previous_month.profit, 'Este Mes': comparison.current_month.profit },
   ] : [];
 
   const chartData = viewMode === 'daily' ? dailyTrend?.data : monthlyTrend?.data;
@@ -370,7 +521,7 @@ const FinancialDashboard = () => {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between gap-3"
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-3"
       >
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-light flex items-center gap-2.5">
@@ -380,11 +531,14 @@ const FinancialDashboard = () => {
             Dashboard Financiero
           </h1>
           <p className="text-xs md:text-sm text-gray mt-1 ml-12">
-            {summary?.period?.current_month || 'Cargando periodo...'}
+            {formatMonthLabel(anchor)}{isCurrentMonth ? ' · en curso' : ''}
           </p>
         </div>
-        <div className="w-44 md:w-56">
-          <BusinessContextBadge label={null} />
+        <div className="flex flex-wrap items-center gap-2">
+          <MonthSelector anchor={anchor} onChange={setAnchor} isCurrentMonth={isCurrentMonth} />
+          <div className="w-44 md:w-56">
+            <BusinessContextBadge label={null} />
+          </div>
         </div>
       </motion.div>
 
@@ -431,15 +585,16 @@ const FinancialDashboard = () => {
           SECTION 1: KPI Cards
          ══════════════════════════════════════════════════════════ */}
       {isLoadingSummary ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-          {[...Array(4)].map((_, i) => <KPICardSkeleton key={i} />)}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+          {[...Array(6)].map((_, i) => <KPICardSkeleton key={i} />)}
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           <StatCard
             title="Ingresos Totales"
             value={formatCurrency(summary?.revenue?.value)}
             change={summary?.revenue?.change}
+            changeYoy={summary?.revenue?.change_yoy}
             icon={DollarSign}
             color="green"
             delay={0}
@@ -448,6 +603,7 @@ const FinancialDashboard = () => {
             title="Gastos Totales"
             value={formatCurrency(summary?.total_expenses?.value)}
             change={summary?.total_expenses?.change}
+            changeYoy={summary?.total_expenses?.change_yoy}
             icon={Wallet}
             color="red"
             isNegativeGood
@@ -458,19 +614,39 @@ const FinancialDashboard = () => {
             value={formatCurrency(summary?.net_profit?.value)}
             subtitle={`Margen: ${summary?.profit_margin?.value || 0}%`}
             change={summary?.net_profit?.change}
+            changeYoy={summary?.net_profit?.change_yoy}
             icon={TrendingUp}
             color={summary?.net_profit?.value >= 0 ? 'secondary' : 'red'}
             isPrimary
             delay={0.1}
           />
           <StatCard
+            title="Ticket Promedio"
+            value={formatCurrency(summary?.avg_ticket?.value)}
+            change={summary?.avg_ticket?.change}
+            changeYoy={summary?.avg_ticket?.change_yoy}
+            icon={Receipt}
+            color="secondary"
+            delay={0.15}
+          />
+          <StatCard
+            title="Pedidos"
+            value={String(summary?.orders_count?.value ?? 0)}
+            change={summary?.orders_count?.change}
+            changeYoy={summary?.orders_count?.change_yoy}
+            icon={ShoppingCart}
+            color="primary"
+            delay={0.2}
+          />
+          <StatCard
             title="Gastos Inventario"
             value={formatCurrency(summary?.inventory_expenses?.value)}
             change={summary?.inventory_expenses?.change}
+            changeYoy={summary?.inventory_expenses?.change_yoy}
             icon={Package}
             color="blue"
             isNegativeGood
-            delay={0.15}
+            delay={0.25}
           />
         </div>
       )}
@@ -741,6 +917,52 @@ const FinancialDashboard = () => {
             )}
           </motion.div>
         )}
+
+        {/* Bar chart Ingresos vs Gastos mes a mes (solo en Tendencia) */}
+        {viewMode === 'monthly' && (
+          isChartLoading ? <ChartSkeleton height="h-96" /> : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className={`${chartContainerClass} mt-4 md:mt-6`}
+            >
+              <h3 className="text-base font-bold text-light mb-4 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-secondary" />
+                Ingresos vs Gastos por Mes
+              </h3>
+
+              {chartData?.length > 0 ? (
+                <div className="h-72 md:h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
+                      <XAxis
+                        dataKey={xAxisKey}
+                        stroke="#9CA3AF"
+                        style={{ fontSize: '11px' }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                        interval={0}
+                      />
+                      <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '11px' }} />
+                      <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+                      <Legend />
+                      <Bar dataKey="revenue" name="Ingresos" fill="#00e0ff" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="total_expenses" name="Gastos" fill="#EF4444" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="profit" name="Ganancia" fill="#10B981" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-72 md:h-80 flex items-center justify-center text-gray text-sm">
+                  No hay datos disponibles para este periodo
+                </div>
+              )}
+            </motion.div>
+          )
+        )}
       </section>
 
       {/* ══════════════════════════════════════════════════════════
@@ -837,7 +1059,7 @@ const FinancialDashboard = () => {
             >
               <h3 className="text-base font-bold text-light mb-4 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-purple-400" />
-                Comparacion Mensual
+                Comparación Mensual
               </h3>
 
               {comparison ? (
@@ -850,6 +1072,7 @@ const FinancialDashboard = () => {
                         <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '11px' }} />
                         <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
                         <Legend />
+                        <Bar dataKey="Año Pasado" fill="#8B5CF6" radius={[6, 6, 0, 0]} opacity={0.35} />
                         <Bar dataKey="Mes Anterior" fill="#374151" radius={[6, 6, 0, 0]} opacity={0.6} />
                         <Bar dataKey="Este Mes" radius={[6, 6, 0, 0]}>
                           {comparisonData.map((entry, index) => {
@@ -866,14 +1089,17 @@ const FinancialDashboard = () => {
                   {/* Change badges */}
                   <div className="mt-4 grid grid-cols-3 gap-2">
                     {[
-                      { label: 'Ingresos', val: comparison.changes.revenue, good: comparison.changes.revenue >= 0 },
-                      { label: 'Gastos', val: comparison.changes.expenses, good: comparison.changes.expenses <= 0 },
-                      { label: 'Ganancia', val: comparison.changes.profit, good: comparison.changes.profit >= 0 },
-                    ].map(({ label, val, good }) => (
+                      { label: 'Ingresos', val: comparison.changes.revenue, yoy: comparison.changes.revenue_yoy, good: comparison.changes.revenue >= 0 },
+                      { label: 'Gastos', val: comparison.changes.expenses, yoy: comparison.changes.expenses_yoy, good: comparison.changes.expenses <= 0 },
+                      { label: 'Ganancia', val: comparison.changes.profit, yoy: comparison.changes.profit_yoy, good: comparison.changes.profit >= 0 },
+                    ].map(({ label, val, yoy, good }) => (
                       <div key={label} className="text-center p-2.5 bg-dark/50 rounded-xl border border-gray/10">
                         <p className="text-xs text-gray mb-1">{label}</p>
                         <p className={`text-sm font-bold ${good ? 'text-green-400' : 'text-red-400'}`}>
                           {val >= 0 ? '+' : ''}{val}%
+                        </p>
+                        <p className="text-[10px] text-gray/70 mt-0.5">
+                          {yoy >= 0 ? '+' : ''}{yoy}% <span className="hidden sm:inline">año pasado</span>
                         </p>
                       </div>
                     ))}
