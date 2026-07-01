@@ -3,11 +3,13 @@ import { motion } from 'framer-motion';
 import { X, Printer, Loader2 } from 'lucide-react';
 import {
   loadQrPrefs,
+  saveQrPrefs,
   buildTableUrl,
   renderQrBlob,
   blobToDataUrl,
   tableCaption,
 } from '@/lib/qrStyling';
+import QrStyleControls from '@/components/orders/QrStyleControls';
 
 const escapeHtml = (s) =>
   String(s)
@@ -23,19 +25,26 @@ const COLUMN_OPTIONS = [
 ];
 
 /**
- * Genera los QR de todas las mesas indicadas con el estilo guardado y arma una
- * hoja imprimible (1/2/3 por fila) lista para recortar y pegar en la mesa.
+ * Genera los QR de todas las mesas indicadas con el estilo elegido (mismo panel
+ * de personalización que el generador por mesa) y arma una hoja imprimible
+ * (1/2/3 por fila) lista para recortar y pegar en la mesa.
  */
 const QrPrintDialog = ({ tables, onClose }) => {
+  const [prefs, setPrefs] = useState(loadQrPrefs);
   const [columns, setColumns] = useState(2);
   const [cards, setCards] = useState([]);
   const [generating, setGenerating] = useState(true);
 
+  const set = (patch) => setPrefs((p) => ({ ...p, ...patch }));
+
+  useEffect(() => saveQrPrefs(prefs), [prefs]);
+
+  // Regenerar los QR cuando cambian las mesas o el estilo (con un pequeño
+  // respiro para no rehacerlos en cada tecla/arrastre).
   useEffect(() => {
     let alive = true;
-    (async () => {
+    const timer = setTimeout(async () => {
       setGenerating(true);
-      const prefs = loadQrPrefs();
       const result = [];
       for (const t of tables) {
         try {
@@ -51,11 +60,12 @@ const QrPrintDialog = ({ tables, onClose }) => {
         setCards(result);
         setGenerating(false);
       }
-    })();
+    }, 350);
     return () => {
       alive = false;
+      clearTimeout(timer);
     };
-  }, [tables]);
+  }, [tables, prefs]);
 
   const handlePrint = () => {
     if (!cards.length) return;
@@ -67,7 +77,7 @@ const QrPrintDialog = ({ tables, onClose }) => {
         (c) => `
       <div class="card">
         <img src="${c.dataUrl}" alt="" />
-        <div class="label">${escapeHtml(c.caption)}</div>
+        ${prefs.withCaption ? `<div class="label">${escapeHtml(c.caption)}</div>` : ''}
         <div class="hint">Escanéame para ver la carta y pedir</div>
       </div>`,
       )
@@ -137,6 +147,41 @@ const QrPrintDialog = ({ tables, onClose }) => {
             </button>
           </div>
 
+          {/* Vista previa de la hoja */}
+          <div className="bg-white rounded-xl p-3 max-h-[40vh] overflow-y-auto">
+            {generating ? (
+              <div className="flex items-center justify-center py-10 text-gray-500 gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Generando {tables.length} QR…
+              </div>
+            ) : cards.length === 0 ? (
+              <div className="text-center py-10 text-gray-500 text-sm">No hay mesas para imprimir.</div>
+            ) : (
+              <div
+                className="grid gap-3"
+                style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+              >
+                {cards.map((c) => (
+                  <div
+                    key={c.id}
+                    className="text-center border border-dashed border-gray-300 rounded-lg p-2"
+                  >
+                    <img src={c.dataUrl} alt="" className="w-full h-auto" />
+                    {prefs.withCaption && (
+                      <div className="text-gray-900 font-bold text-xs mt-1 leading-tight">
+                        {c.caption}
+                      </div>
+                    )}
+                    <div className="text-gray-500 text-[10px] leading-tight">
+                      Escanéame para ver la carta
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Cuántos por fila */}
           <div>
             <label className="block text-xs text-gray mb-1">Cuántos por fila</label>
             <div className="grid grid-cols-3 gap-2">
@@ -158,41 +203,12 @@ const QrPrintDialog = ({ tables, onClose }) => {
             </div>
           </div>
 
-          {/* Vista previa de la hoja */}
-          <div className="bg-white rounded-xl p-3 max-h-[45vh] overflow-y-auto">
-            {generating ? (
-              <div className="flex items-center justify-center py-10 text-gray-500 gap-2">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Generando {tables.length} QR…
-              </div>
-            ) : cards.length === 0 ? (
-              <div className="text-center py-10 text-gray-500 text-sm">No hay mesas para imprimir.</div>
-            ) : (
-              <div
-                className="grid gap-3"
-                style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
-              >
-                {cards.map((c) => (
-                  <div
-                    key={c.id}
-                    className="text-center border border-dashed border-gray-300 rounded-lg p-2"
-                  >
-                    <img src={c.dataUrl} alt="" className="w-full h-auto" />
-                    <div className="text-gray-900 font-bold text-xs mt-1 leading-tight">
-                      {c.caption}
-                    </div>
-                    <div className="text-gray-500 text-[10px] leading-tight">
-                      Escanéame para ver la carta
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Personalización del estilo (compartida con el generador por mesa) */}
+          <QrStyleControls prefs={prefs} set={set} showSize={false} />
 
           <p className="text-xs text-gray/70">
-            Usa el diseño guardado en el generador (colores, forma, logo). Se imprime en A4; recorta
-            por la línea punteada y pega en cada mesa.
+            Se imprime en A4; recorta por la línea punteada y pega en cada mesa. El estilo se
+            comparte con el generador por mesa.
           </p>
 
           <button
