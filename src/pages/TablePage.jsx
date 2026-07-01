@@ -29,10 +29,14 @@ import { publicOrdersService } from "@/services/publicOrders.service";
 import { env } from "@/config/env";
 
 function TablePage() {
-  const { tableNumber } = useParams();
+  const { tableNumber, floor: floorParam } = useParams();
   const [showTracker, setShowTracker] = useState(false);
   const [showReadyAlert, setShowReadyAlert] = useState(false);
   const prevStatusRef = useRef(null);
+
+  // El QR nuevo trae el piso en la ruta (/mesa/:floor/:tableNumber). El QR
+  // legacy (/mesa/:tableNumber) no lo trae → asumimos piso 2 (stickers actuales).
+  const floor = Number.isNaN(parseInt(floorParam, 10)) ? 2 : parseInt(floorParam, 10);
 
   // Parse table number
   const tableNum =
@@ -92,15 +96,17 @@ function TablePage() {
         },
         body: JSON.stringify({
           table_number: tableNum,
+          floor,
         }),
       }).catch((error) => {
         console.error("Error al registrar visita:", error);
       });
     }
-  }, [tableNumber]);
+  }, [tableNumber, floor]);
 
-  const displayName =
+  const tableLabel =
     tableNumber?.toLowerCase() === "barra" ? "Barra" : `Mesa ${tableNumber}`;
+  const displayName = `${tableLabel} · Piso ${floor}`;
 
   return (
     <>

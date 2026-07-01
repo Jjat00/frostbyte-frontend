@@ -199,7 +199,16 @@ export const router = createBrowserRouter([
       </Lazy>
     ),
   },
-  // Mesa con tracking
+  // Mesa con tracking. La ruta con piso es la nueva (QR reimpresos); la de solo
+  // número se conserva como legacy y asume piso 2 (stickers actuales).
+  {
+    path: "/mesa/:floor/:tableNumber",
+    element: (
+      <Lazy>
+        <TablePage />
+      </Lazy>
+    ),
+  },
   {
     path: "/mesa/:tableNumber",
     element: (
