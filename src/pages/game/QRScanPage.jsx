@@ -1,41 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { QrCode, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Loader2, AlertCircle, ArrowLeft, Gamepad2, KeyRound, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { gamesService } from '@/services';
-import { useQuery } from '@tanstack/react-query';
 
 const QRScanPage = () => {
   const navigate = useNavigate();
-  const [selectedTableNumber, setSelectedTableNumber] = useState('');
   const [playerName, setPlayerName] = useState('');
+  const [roomCode, setRoomCode] = useState('');
+  const [mode, setMode] = useState('create'); // 'create' | 'join'
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Obtener mesas desde la API
-  const { data: tablesData, isLoading: isLoadingTables } = useQuery({
-    queryKey: ['tables'],
-    queryFn: async () => {
-      const data = await gamesService.getTables();
-      return Array.isArray(data) ? data : data.results || [];
-    },
-  });
-
-  // Filtrar mesas activas (excluir barra que es 0) y ordenar
-  const availableTables = useMemo(() => {
-    if (!tablesData) return [];
-    return tablesData
-      .filter(table => table.table_number > 0 && table.is_active)
-      .sort((a, b) => a.table_number - b.table_number);
-  }, [tablesData]);
-
-  // Obtener el qr_code de la mesa seleccionada
-  const selectedQrCode = useMemo(() => {
-    if (!selectedTableNumber) return '';
-    const table = availableTables.find(t => t.table_number === parseInt(selectedTableNumber));
-    return table?.qr_code || '';
-  }, [selectedTableNumber, availableTables]);
 
   // Generar ID único del dispositivo (almacenar en localStorage)
   const getDeviceId = () => {
@@ -49,19 +25,14 @@ const QRScanPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!selectedTableNumber) {
-      setError('Por favor selecciona tu mesa');
-      return;
-    }
-
-    if (!selectedQrCode) {
-      setError('Error al obtener el código de la mesa seleccionada');
-      return;
-    }
 
     if (!playerName.trim()) {
       setError('Por favor ingresa tu nombre');
+      return;
+    }
+
+    if (mode === 'join' && !roomCode.trim()) {
+      setError('Ingresa el código de la sala');
       return;
     }
 
@@ -70,16 +41,28 @@ const QRScanPage = () => {
 
     try {
       const deviceId = getDeviceId();
-      const roomData = await gamesService.createRoomFromQR({
-        qr_code: selectedQrCode,
-        player_name: playerName.trim(),
-        player_device_id: deviceId,
-      });
+      let roomData;
+
+      if (mode === 'join') {
+        roomData = await gamesService.joinRoom({
+          room_code: roomCode.trim().toUpperCase(),
+          player_name: playerName.trim(),
+          player_device_id: deviceId,
+        });
+      } else {
+        roomData = await gamesService.createRoom({
+          player_name: playerName.trim(),
+          player_device_id: deviceId,
+        });
+      }
 
       // Navegar a la sala
       navigate(`/game/room/${roomData.id}`, { state: { room: roomData } });
     } catch (err) {
-      const errorMessage = err.response?.data?.error || err.message || 'Error al crear la sala';
+      const errorMessage =
+        err.response?.data?.error ||
+        err.message ||
+        (mode === 'join' ? 'Error al unirse a la sala' : 'Error al crear la sala');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -129,11 +112,39 @@ const QRScanPage = () => {
           <h1 className="text-3xl font-bold text-light tracking-wider mb-2">
             Duelo Frostbyte
           </h1>
-          <p className="text-gray">Selecciona tu mesa para jugar</p>
+          <p className="text-gray">Crea una sala o únete con un código</p>
         </div>
 
         {/* Form Card */}
         <div className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-8 shadow-2xl shadow-primary/10">
+          {/* Mode toggle */}
+          <div className="grid grid-cols-2 gap-2 mb-6 p-1 bg-dark rounded-xl border border-gray/20">
+            <button
+              type="button"
+              onClick={() => { setMode('create'); setError(''); }}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                mode === 'create'
+                  ? 'bg-gradient-to-r from-primary to-secondary text-dark shadow-lg'
+                  : 'text-gray hover:text-light'
+              }`}
+            >
+              <Gamepad2 className="w-4 h-4" />
+              Crear sala
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMode('join'); setError(''); }}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                mode === 'join'
+                  ? 'bg-gradient-to-r from-primary to-secondary text-dark shadow-lg'
+                  : 'text-gray hover:text-light'
+              }`}
+            >
+              <KeyRound className="w-4 h-4" />
+              Unirme
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error message */}
             {error && (
@@ -147,40 +158,10 @@ const QRScanPage = () => {
               </motion.div>
             )}
 
-            {/* Table Selection */}
-            <div className="space-y-2">
-              <label htmlFor="table_number" className="text-sm text-gray font-medium flex items-center gap-2">
-                <QrCode className="w-4 h-4" />
-                Selecciona tu mesa
-              </label>
-              {isLoadingTables ? (
-                <div className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg flex items-center justify-center">
-                  <Loader2 className="w-5 h-5 animate-spin text-gray" />
-                </div>
-              ) : (
-                <select
-                  id="table_number"
-                  value={selectedTableNumber}
-                  onChange={(e) => setSelectedTableNumber(e.target.value)}
-                  className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all appearance-none cursor-pointer"
-                  disabled={isLoading || isLoadingTables}
-                >
-                  <option value="">Selecciona una mesa</option>
-                  {availableTables.map((table) => (
-                    <option key={table.id} value={table.table_number}>
-                      Mesa {table.table_number}
-                    </option>
-                  ))}
-                </select>
-              )}
-              <p className="text-xs text-gray/70">
-                Selecciona tu mesa del menú desplegable
-              </p>
-            </div>
-
             {/* Player Name Input */}
             <div className="space-y-2">
-              <label htmlFor="player_name" className="text-sm text-gray font-medium">
+              <label htmlFor="player_name" className="text-sm text-gray font-medium flex items-center gap-2">
+                <Users className="w-4 h-4" />
                 Tu nombre
               </label>
               <input
@@ -192,11 +173,40 @@ const QRScanPage = () => {
                 maxLength={50}
                 className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light placeholder-gray/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 disabled={isLoading}
+                autoFocus
               />
               <p className="text-xs text-gray/70">
                 El nombre con el que aparecerás en el juego
               </p>
             </div>
+
+            {/* Room Code Input (solo al unirse) */}
+            {mode === 'join' && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-2"
+              >
+                <label htmlFor="room_code" className="text-sm text-gray font-medium flex items-center gap-2">
+                  <KeyRound className="w-4 h-4" />
+                  Código de la sala
+                </label>
+                <input
+                  id="room_code"
+                  type="text"
+                  value={roomCode}
+                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                  placeholder="Ej: A6GCJ22O"
+                  maxLength={8}
+                  autoCapitalize="characters"
+                  className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light placeholder-gray/50 font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  disabled={isLoading}
+                />
+                <p className="text-xs text-gray/70">
+                  Pídele el código a quien creó la sala
+                </p>
+              </motion.div>
+            )}
 
             {/* Submit Button */}
             <Button
@@ -208,12 +218,17 @@ const QRScanPage = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Conectando...
+                  {mode === 'join' ? 'Uniéndose...' : 'Creando sala...'}
+                </>
+              ) : mode === 'join' ? (
+                <>
+                  <KeyRound className="w-5 h-5 mr-2" />
+                  Entrar a la sala
                 </>
               ) : (
                 <>
-                  <QrCode className="w-5 h-5 mr-2" />
-                  Entrar a la sala
+                  <Gamepad2 className="w-5 h-5 mr-2" />
+                  Crear sala
                 </>
               )}
             </Button>
@@ -222,7 +237,7 @@ const QRScanPage = () => {
           {/* Info Box */}
           <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-lg">
             <p className="text-sm text-gray/80 text-center">
-              💡 <strong>Tip:</strong> Comparte el link de la sala con tus amigos para que se unan
+              💡 <strong>Tip:</strong> Al crear la sala obtienes un código y un link para que tus amigos se unan
             </p>
           </div>
         </div>
@@ -232,4 +247,3 @@ const QRScanPage = () => {
 };
 
 export default QRScanPage;
-

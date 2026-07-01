@@ -364,7 +364,9 @@ const GameRoomPage = () => {
             )}
           </div>
           <p className="text-gray">Sala: {room.room_code}</p>
-          <p className="text-sm text-gray/70">Mesa {room.table_number}</p>
+          {room.table_number != null && (
+            <p className="text-sm text-gray/70">Mesa {room.table_number}</p>
+          )}
         </div>
 
         {/* Room Info Card */}

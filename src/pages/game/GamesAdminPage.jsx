@@ -123,8 +123,10 @@ export default function GamesAdminPage() {
   });
 
   const handleTerminateRoom = (room) => {
-    const mesaLabel = room.table_number === 0 ? 'Barra' : `Mesa ${room.table_number}`;
-    if (confirm(`¿Terminar sala ${room.room_code} de ${mesaLabel}?`)) {
+    const mesaLabel = room.table_number == null
+      ? ''
+      : ` de ${room.table_number === 0 ? 'Barra' : `Mesa ${room.table_number}`}`;
+    if (confirm(`¿Terminar sala ${room.room_code}${mesaLabel}?`)) {
       terminateRoomMutation.mutate(room.id);
     }
   };
@@ -473,7 +475,10 @@ function StatCard({ icon: Icon, label, value, color }) {
 // Componente de tarjeta de sala
 function RoomCard({ room, onTerminate, onCleanTable, getTimeSince }) {
   const statusConfig = STATUS_LABELS[room.status] || STATUS_LABELS.waiting;
-  const mesaLabel = room.table_number === 0 ? 'Barra' : `Mesa ${room.table_number}`;
+  const hasTable = room.table_number != null;
+  const mesaLabel = !hasTable
+    ? 'Sala libre'
+    : (room.table_number === 0 ? 'Barra' : `Mesa ${room.table_number}`);
 
   return (
     <motion.div
@@ -537,14 +542,16 @@ function RoomCard({ room, onTerminate, onCleanTable, getTimeSince }) {
             Terminar
           </Button>
 
-          <Button
-            onClick={() => onCleanTable(room.table_number)}
-            variant="outline"
-            size="sm"
-          >
-            <X className="w-4 h-4 mr-2" />
-            Limpiar Mesa
-          </Button>
+          {hasTable && (
+            <Button
+              onClick={() => onCleanTable(room.table_number)}
+              variant="outline"
+              size="sm"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Limpiar Mesa
+            </Button>
+          )}
         </div>
       </div>
     </motion.div>

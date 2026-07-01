@@ -10,7 +10,19 @@ export const gamesService = {
   // ============= SALAS =============
 
   /**
-   * Crear sala desde QR de mesa
+   * Crear una sala libre (sin mesa ni pedido). Flujo por defecto: solo requiere
+   * el nombre del jugador y devuelve el código/link para compartir.
+   * @param {Object} data - Datos para crear sala
+   * @param {string} data.player_name - Nombre del jugador
+   * @param {string} data.player_device_id - ID único del dispositivo
+   */
+  async createRoom(data) {
+    const response = await apiClient.post(`${BASE_URL}/create-room/`, data);
+    return response.data;
+  },
+
+  /**
+   * Crear sala desde QR de mesa (legado; requiere pedido activo en la mesa)
    * @param {Object} data - Datos para crear sala
    * @param {string} data.qr_code - Código QR de la mesa
    * @param {string} data.player_name - Nombre del jugador
