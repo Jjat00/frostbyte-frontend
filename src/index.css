@@ -266,6 +266,20 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* Los reflejos (::before/::after) usan position:absolute; inset:0, así que la
+   card debe ser su bloque contenedor. Va en @layer components para que las
+   utilidades de posición (fixed/sticky/absolute de sidebars y drawers) sigan
+   ganando; las cards y modales sin utilidad de posición quedan relative y el
+   brillo deja de escaparse a toda la pantalla. */
+@layer components {
+  .liquid-glass,
+  .liquid-glass-light,
+  .liquid-glass-interactive,
+  .liquid-glass-pill {
+    position: relative;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    Optimización de rendimiento en móvil
    ───────────────────────────────────────────────────────────────
