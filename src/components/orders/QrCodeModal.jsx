@@ -85,7 +85,13 @@ const QrCodeModal = ({ table, onClose }) => {
         exit={{ opacity: 0, y: 40 }}
         className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-md z-50 p-4"
       >
-        <div className="liquid-glass bg-dark border border-white/[0.12] rounded-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+        {/* relative: contiene el reflejo (::before/::after) dentro de la card.
+            backgroundColor inline: opaco real; el fondo translúcido de
+            .liquid-glass gana la cascada al bg-dark de utilidad y transparentaba. */}
+        <div
+          className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto"
+          style={{ backgroundColor: 'rgba(18, 20, 31, 0.96)' }}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <QrCodeIcon className="w-5 h-5 text-secondary" />

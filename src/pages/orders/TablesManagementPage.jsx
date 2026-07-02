@@ -281,9 +281,13 @@ const TablesManagementPage = () => {
               exit={{ opacity: 0, y: 40 }}
               className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-md z-50 p-4"
             >
+              {/* relative: contiene el reflejo (::before/::after) dentro de la card.
+                  backgroundColor inline: opaco real; el fondo translúcido de
+                  .liquid-glass gana la cascada al bg-dark de utilidad y transparentaba. */}
               <form
                 onSubmit={handleSubmit}
-                className="liquid-glass bg-dark border border-white/[0.12] rounded-2xl p-5 space-y-4"
+                className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4"
+                style={{ backgroundColor: 'rgba(18, 20, 31, 0.96)' }}
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-light">
