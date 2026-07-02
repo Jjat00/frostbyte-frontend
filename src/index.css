@@ -373,6 +373,15 @@ html {
   background: linear-gradient(180deg, #1e9e5a 0%, #f2c53d 100%);
 }
 
+/* Scroll sin barra visible (ej: nav inferior móvil desplazable horizontalmente) */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Edge/IE legacy */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
 /* ═══════════════════════════════════════════════════════════════
    Sistema 26 · capa visual estilo Mundial 2026 (legal-safe)
    ───────────────────────────────────────────────────────────────

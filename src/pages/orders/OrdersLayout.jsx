@@ -84,7 +84,6 @@ const OrdersLayout = () => {
       path: '/pedidos/mesas',
       icon: LayoutGrid,
       adminOnly: true,
-      hideOnMobileNav: true,
     },
     {
       name: 'Música',
@@ -333,14 +332,15 @@ const OrdersLayout = () => {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="liquid-glass-pill md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.03] border-t border-white/[0.1] z-30 safe-area-pb">
-        <div className="flex items-center justify-around py-2">
+      {/* Mobile Bottom Navigation — desplazable en horizontal para que quepan
+          todos los ítems (incluida Mesas) sin que se corten en pantallas angostas. */}
+      <nav className="liquid-glass-pill md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.03] border-t border-white/[0.1] z-30 safe-area-pb overflow-x-auto no-scrollbar">
+        <div className="flex items-center justify-around py-2 w-max min-w-full">
           {navItems
-            .filter(item => item.path !== '/home' && item.path !== '/' && !item.hideOnMobileNav)
+            .filter(item => item.path !== '/home' && item.path !== '/')
             .map((item) => {
               const active = !item.external && isActive(item.path, item.end);
-              const baseClasses = `flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg min-w-[60px] transition-colors ${
+              const baseClasses = `flex flex-col items-center gap-0.5 shrink-0 px-3 py-1.5 rounded-lg min-w-[60px] transition-colors ${
                 active ? 'text-secondary' : 'text-gray'
               }`;
               
