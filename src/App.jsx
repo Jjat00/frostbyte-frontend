@@ -17,6 +17,7 @@ import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
+import DomiciliosBanner from "@/components/DomiciliosBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
 import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
@@ -56,6 +57,10 @@ function App() {
           <MenuSections />
           <Desguayabator />
           <WaterSection />
+          {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
+              que reciben pedidos. Va al cierre de la carta ("¿se te antojó?
+              pídelo a tu casa"). */}
+          <DomiciliosBanner />
           <PollaMundialBanner variant="strip" />
           <DrinkRecommender />
           <SocialDiscountBanner />

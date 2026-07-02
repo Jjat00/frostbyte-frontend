@@ -19,6 +19,7 @@ import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
+import DomiciliosBanner from "@/components/DomiciliosBanner";
 import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
@@ -150,6 +151,9 @@ function TablePage() {
           <MenuSections />
           <Desguayabator />
           <WaterSection />
+          {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
+              que reciben pedidos (para el próximo antojo desde la casa). */}
+          <DomiciliosBanner />
           <PollaMundialBanner variant="strip" />
           <DrinkRecommender />
           <SocialDiscountBanner />
