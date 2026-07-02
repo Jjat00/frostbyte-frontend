@@ -13,14 +13,58 @@ const WA_TEXT = encodeURIComponent(
   "Hola, quiero hacer un pedido a domicilio"
 );
 
+const waLink = (number) => `https://wa.me/${number}?text=${WA_TEXT}`;
+
 /**
  * Banner de domicilios.
  *
  * Anuncia que Frostbyte ahora hace domicilios y muestra las dos líneas de
  * WhatsApp que reciben pedidos, cada una como botón directo a wa.me con
  * mensaje prellenado. Mobile-first, mismo lenguaje visual de la carta.
+ *
+ * Variantes (mismo patrón que PollaMundialBanner para repetir sin saturar):
+ * - "feature": tarjeta completa, encabeza la carta (lleva el id #domicilios)
+ * - "strip": barra compacta de recordatorio al cierre de la carta
  */
-const DomiciliosBanner = () => {
+const DomiciliosBanner = ({ variant = "feature" }) => {
+  if (variant === "strip") {
+    return (
+      <section className="py-6 bg-dark relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="max-w-xl mx-auto flex flex-col items-center gap-3 rounded-xl border border-emerald-400/25 bg-linear-to-r from-emerald-500/10 via-dark-secondary to-emerald-500/10 p-4 sm:flex-row sm:justify-between"
+          >
+            <div className="flex items-center gap-2.5">
+              <Bike size={20} className="text-emerald-400 flex-shrink-0" />
+              <p className="text-white/75 text-sm font-semibold">
+                ¿Antojado? Te lo llevamos{" "}
+                <span className="text-emerald-300">a tu casa</span>
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-2">
+              {WHATSAPP_LINES.map((line) => (
+                <a
+                  key={line.number}
+                  href={waLink(line.number)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                >
+                  <MessageCircle size={13} />
+                  {line.display}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="domicilios" className="py-8 bg-dark relative overflow-hidden">
       {/* Sistema 26: capa decorativa tipo afiche (sutil, ligera en GPU) */}
@@ -71,7 +115,7 @@ const DomiciliosBanner = () => {
               {WHATSAPP_LINES.map((line) => (
                 <a
                   key={line.number}
-                  href={`https://wa.me/${line.number}?text=${WA_TEXT}`}
+                  href={waLink(line.number)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"

@@ -11,6 +11,7 @@ import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
  */
 const SECTION_CONFIG = {
   carta:         { name: "Carta",         href: "#carta",         categorySlug: null },
+  domicilios:    { name: "Domicilios",    href: "#domicilios",    categorySlug: null },
   desguayabator: { name: "Desguayabator", href: "#desguayabator", categorySlug: null },
   agua:          { name: "Agua",          href: "#agua",          categorySlug: null },
   granizados:    { name: "Granizados",    href: "#granizados",    categorySlug: "granizados" },
@@ -34,6 +35,7 @@ const SECTION_CONFIG = {
 // Orden por defecto de las secciones en el QuickNav
 const DEFAULT_SECTION_ORDER = [
   "carta",
+  "domicilios",
   "desguayabator",
   "agua",
   "granizados",

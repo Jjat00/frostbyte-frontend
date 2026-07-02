@@ -44,6 +44,10 @@ function App() {
         <main>
           <Hero />
           <QuickNav />
+          {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
+              que reciben pedidos. Encabeza la carta para máxima visibilidad;
+              abajo se repite como strip compacto. */}
+          <DomiciliosBanner />
           {/* Promo del partido de Colombia: solo aparece cuando la selección
               tiene un partido en vivo o próximo (granizado gratis por acertar
               el marcador exacto). Encabeza la carta. */}
@@ -57,10 +61,8 @@ function App() {
           <MenuSections />
           <Desguayabator />
           <WaterSection />
-          {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
-              que reciben pedidos. Va al cierre de la carta ("¿se te antojó?
-              pídelo a tu casa"). */}
-          <DomiciliosBanner />
+          {/* Recordatorio compacto de domicilios al cierre de la carta */}
+          <DomiciliosBanner variant="strip" />
           <PollaMundialBanner variant="strip" />
           <DrinkRecommender />
           <SocialDiscountBanner />

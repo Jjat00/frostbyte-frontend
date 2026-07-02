@@ -143,6 +143,10 @@ function TablePage() {
           <PartidoColombiaBanner />
 
           <QuickNav />
+          {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
+              que reciben pedidos. Encabeza la carta para máxima visibilidad;
+              abajo se repite como strip compacto. */}
+          <DomiciliosBanner />
           {/* Anuncio de la Polla Mundialista — igual que en la carta pública,
               presente varias veces con distintas variantes. */}
           <PollaMundialBanner variant="feature" />
@@ -151,9 +155,8 @@ function TablePage() {
           <MenuSections />
           <Desguayabator />
           <WaterSection />
-          {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
-              que reciben pedidos (para el próximo antojo desde la casa). */}
-          <DomiciliosBanner />
+          {/* Recordatorio compacto de domicilios al cierre de la carta */}
+          <DomiciliosBanner variant="strip" />
           <PollaMundialBanner variant="strip" />
           <DrinkRecommender />
           <SocialDiscountBanner />
