@@ -16,6 +16,7 @@ import SolicitarMusica from "@/components/SolicitarMusica";
 import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
+import SalaVipBanner from "@/components/SalaVipBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
 import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
@@ -59,6 +60,9 @@ function App() {
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
+          {/* Sala VIP (piso 3): promoción sin precios, el interesado pide
+              información al personal o por WhatsApp */}
+          <SalaVipBanner />
           <SolicitarMusica />
           <PollaMundialBanner variant="prize" />
           <FeedbackSection />

@@ -18,6 +18,7 @@ import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
+import SalaVipBanner from "@/components/SalaVipBanner";
 import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
@@ -153,6 +154,9 @@ function TablePage() {
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
+          {/* Sala VIP (piso 3): promoción sin precios, el interesado pide
+              información al personal o por WhatsApp */}
+          <SalaVipBanner />
           <SolicitarMusica />
           <PollaMundialBanner variant="prize" />
           <FeedbackSection />
