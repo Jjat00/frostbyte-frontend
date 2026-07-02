@@ -53,7 +53,10 @@ const SalchipapasPromoBanner = () => {
             <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/70 sm:mx-0 md:text-base">
               ¡Ahora en Frostbyte también ofrecemos{" "}
               <span className="font-bold text-orange-300">salchipapas</span>!
-              Crujientes, cargadas y con el sello de la casa.
+              Cargadas con <span className="font-bold text-orange-300">salchicha</span>,{" "}
+              <span className="font-bold text-orange-300">chorizo</span>,{" "}
+              <span className="font-bold text-orange-300">pollo</span> y{" "}
+              <span className="font-bold text-orange-300">queso derretido</span>.
             </p>
 
             <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
