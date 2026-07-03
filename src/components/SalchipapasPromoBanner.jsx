@@ -65,7 +65,7 @@ const SalchipapasPromoBanner = () => {
               {/* Tamaños sin precio: los precios viven en la carta */}
               <div className="inline-flex items-baseline gap-2 rounded-xl border border-orange-400/30 bg-orange-500/10 px-4 py-2">
                 <span className="text-[11px] font-semibold uppercase tracking-widest text-white/60">
-                  Personal · Para 2
+                  Para 2 · Para 3
                 </span>
               </div>
 
