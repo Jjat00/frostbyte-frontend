@@ -48,10 +48,12 @@ const NewOrderPage = () => {
     queryFn: () => ordersService.getTables(),
   });
 
-  // Obtener categorías
+  // Obtener categorías. Solo activas: el endpoint por defecto devuelve TODAS
+  // (incluidas inactivas), y una categoría inactiva duplicada (ej. "Mango
+  // Biche" vacía) aparece como chip sin productos al tomar pedidos.
   const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => categoriesService.getAll(),
+    queryKey: ['categories', 'active'],
+    queryFn: () => categoriesService.getAll({ active_only: true }),
   });
 
   // Negocios (para etiquetar cada producto cuando hay más de uno)
