@@ -132,10 +132,12 @@ const OrderDetailPage = () => {
     queryFn: () => ordersService.getTables(),
   });
 
-  // Obtener productos para añadir
+  // Obtener productos para añadir. page_size alto: con la paginación por
+  // defecto (50) los productos de Frostbyte Food quedan fuera de la primera
+  // página y no se pueden agregar al pedido (un pedido cruza negocios).
   const { data: productsData } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => productsService.getAll(),
+    queryKey: ["products", "order-detail-add"],
+    queryFn: () => productsService.getAll({ active_only: true, page_size: 1000 }),
     enabled: showAddProductModal,
   });
 
