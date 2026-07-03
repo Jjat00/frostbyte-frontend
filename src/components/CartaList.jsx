@@ -247,9 +247,13 @@ const CartaList = () => {
 
   const activeCategories = useMemo(() => {
     if (!categoriesData?.results) return [];
+    // La comida (Frostbyte Food) va de primera en la carta
+    const isFood = (cat) => cat.business_name === "Frostbyte Food";
     return categoriesData.results
       .filter((cat) => cat.is_active)
-      .sort((a, b) => a.display_order - b.display_order);
+      .sort(
+        (a, b) => isFood(b) - isFood(a) || a.display_order - b.display_order,
+      );
   }, [categoriesData]);
 
   if (categoriesLoading) {
