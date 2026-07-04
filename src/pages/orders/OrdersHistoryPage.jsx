@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const statusConfig = {
   pending: { label: 'Pendiente', color: 'yellow', icon: Clock },
@@ -170,6 +171,7 @@ const OrdersHistoryPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('today');
   const [statusFilter, setStatusFilter] = useState('');
+  const { isAdmin } = useAuthStore();
 
   // Negocio activo: el historial muestra solo los pedidos de este negocio.
   const { selectedBusinessSlug } = useBusinessStore();
@@ -255,8 +257,13 @@ const OrdersHistoryPage = () => {
             className="px-4 py-3 backdrop-blur-xl bg-[#1a1a2e] border border-white/[0.1] rounded-xl text-light focus:border-secondary/50 focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-light"
           >
             <option value="today">Hoy</option>
-            <option value="week">Última semana</option>
-            <option value="month">Último mes</option>
+            <option value="yesterday">Ayer</option>
+            {isAdmin() && (
+              <>
+                <option value="week">Última semana</option>
+                <option value="month">Último mes</option>
+              </>
+            )}
           </select>
 
           {/* Filtro por estado */}
