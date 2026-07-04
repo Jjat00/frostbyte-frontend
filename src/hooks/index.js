@@ -10,6 +10,19 @@ export { useSongRequestsNotification } from './useSongRequestsNotification';
 // WebSocket hook
 export { useWebSocket } from './useWebSocket';
 
+// Carrito: agregar con compuerta de login (Google obligatorio para pedir)
+export { useAddToCart } from './useAddToCart';
+
+// Customer orders hooks (pedidos en línea del cliente)
+export {
+  useStoreConfig,
+  useMyOrders,
+  useMyOrder,
+  useCreateOrder,
+  useMyOrdersLive,
+  myOrderKeys,
+} from './useCustomerOrders';
+
 // AI Image Generation hooks
 export { useImageGeneration, useGenerationHistory, useImageValidation } from './useImageGeneration';
 export { useImageUpload } from './useImageUpload';

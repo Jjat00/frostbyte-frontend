@@ -105,6 +105,9 @@ const PrivacyPolicyPage = lazyLoad(() => import("./pages/legal/PrivacyPolicyPage
 const TermsOfServicePage = lazyLoad(() => import("./pages/legal/TermsOfServicePage"));
 const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
 
+// Pedidos en línea del cliente
+const MyOrdersPage = lazyLoad(() => import("./pages/customer/MyOrdersPage"));
+
 // Fallback de carga mínimo
 const PageLoader = () => (
   <div className="min-h-screen bg-dark flex items-center justify-center">
@@ -144,6 +147,15 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  // Mis pedidos (cliente autenticado con Google)
+  {
+    path: "/mis-pedidos",
+    element: (
+      <Lazy>
+        <MyOrdersPage />
+      </Lazy>
+    ),
   },
   // Landing page pública (SaaS)
   {

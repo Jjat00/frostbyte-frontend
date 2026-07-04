@@ -33,6 +33,7 @@ import {
 import { ordersService } from "@/services/orders.service";
 import { productsService } from "@/services/products.service";
 import TableSelect from "@/components/orders/TableSelect";
+import { DeliveryBadge, DeliveryInfo } from "@/components/orders/DeliveryInfo";
 
 const statusConfig = {
   pending: {
@@ -490,6 +491,10 @@ const OrderDetailPage = () => {
                   </div>
                 </div>
               )}
+              <div className="mt-3 space-y-1">
+                <DeliveryBadge order={order} />
+                <DeliveryInfo order={order} />
+              </div>
             </>
           )}
           {order.customer_notes && (

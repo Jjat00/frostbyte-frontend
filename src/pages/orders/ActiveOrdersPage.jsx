@@ -25,6 +25,7 @@ import { ordersService } from "@/services/orders.service";
 import { businessService } from "@/services/business.service";
 import { useBusinessStore } from "@/stores/useBusinessStore";
 import { useWebSocket } from "@/hooks";
+import { DeliveryBadge, DeliveryInfo } from "@/components/orders/DeliveryInfo";
 
 const statusConfig = {
   pending: {
@@ -181,6 +182,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
                 {order.access_code}
               </span>
             )}
+            <DeliveryBadge order={order} />
           </div>
           <div className="flex items-center gap-3 mt-1 text-sm text-gray">
             <span className="flex items-center gap-1">
@@ -238,6 +240,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
             )}
           </div>
         )}
+        <DeliveryInfo order={order} />
         {order.customer_notes && (
           <p className="text-xs text-secondary mt-1 bg-secondary/10 px-2 py-1 rounded">
             📝 {order.customer_notes}

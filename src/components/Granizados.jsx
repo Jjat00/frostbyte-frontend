@@ -17,6 +17,7 @@ import {
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
+import CardOrderButtons from "@/components/cart/CardOrderButtons";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -155,6 +156,9 @@ const ProductCard = ({ product, index, styles }) => {
               </div>
             ))}
           </div>
+
+          {/* Pedir desde la tarjeta */}
+          <CardOrderButtons product={product} />
         </div>
       </div>
     </div>
