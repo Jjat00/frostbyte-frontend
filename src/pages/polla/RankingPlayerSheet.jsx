@@ -10,6 +10,10 @@ import {
   ListChecks,
   CheckCircle2,
   Users,
+  Sparkles,
+  Medal,
+  Star,
+  Hand,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Flag from "@/components/polla/Flag";
@@ -18,9 +22,10 @@ import { usePollaParticipant } from "@/hooks/usePolla";
 /**
  * Bottom sheet con el perfil público de un participante del ranking. Se abre al
  * tocar a una persona en la tabla y muestra de dónde salieron sus puntos:
- * desglose por fuente, sus misiones y el historial de pronósticos en partidos
- * YA TERMINADOS con lo que sumó en cada uno. Portal a <body> (mismo motivo que
- * PlayerSheet: escapar del stacking context de <main>).
+ * desglose por fuente, sus misiones, sus menciones (solo cuando ya están
+ * cerradas) y el historial de pronósticos en partidos YA TERMINADOS con lo que
+ * sumó en cada uno. Portal a <body> (mismo motivo que PlayerSheet: escapar del
+ * stacking context de <main>).
  */
 
 const initials = (name) =>
@@ -31,6 +36,63 @@ const initials = (name) =>
     .slice(0, 2)
     .join("")
     .toUpperCase() || "?";
+
+// Mismos iconos por mención que en MencionesSection, para que se reconozcan.
+const AWARD_ICONS = {
+  champion: Trophy,
+  runnerup: Medal,
+  scorer: Target,
+  mvp: Star,
+  glove: Hand,
+};
+
+/* Una mención del participante. El backend solo manda menciones que ya no se
+   pueden cambiar (cierre global o resueltas), así que aquí nunca hay spoiler:
+   se muestra el pick, lo que vale y —si ya se resolvió— cómo le fue y cuál
+   era la respuesta correcta. */
+const AwardRow = ({ a }) => {
+  const Icon = AWARD_ICONS[a.code] || Star;
+  const badge = !a.resolved
+    ? { cls: "bg-amber-400/10 text-amber-300", label: "en juego" }
+    : a.won
+    ? { cls: "bg-emerald-400/15 text-emerald-300", label: `+${a.points_earned}` }
+    : { cls: "bg-white/[0.05] text-gray", label: "0" };
+  return (
+    <li className="flex items-center gap-2.5 py-2.5">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-linear-to-br from-primary/15 to-secondary/15 text-primary">
+        <Icon size={15} />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] uppercase tracking-wider text-gray/70">
+          {a.title} · vale {a.points} pts
+        </p>
+        {a.pick ? (
+          <p className="mt-0.5 flex items-center gap-1.5 text-xs font-bold text-light">
+            <Flag iso2={a.pick.iso2} name={a.pick.name} size={16} />
+            <span className="truncate">{a.pick.name}</span>
+          </p>
+        ) : (
+          <p className="mt-0.5 text-xs font-bold text-gray/50">Sin elegir</p>
+        )}
+        {a.resolved && a.result && (
+          <p className="mt-0.5 flex items-center gap-1 text-[10px] text-gray/60">
+            <span>ganó:</span>
+            <Flag iso2={a.result.iso2} name={a.result.name} size={12} />
+            <span className="truncate">{a.result.name}</span>
+          </p>
+        )}
+      </div>
+      <span
+        className={cn(
+          "shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-black tabular-nums",
+          badge.cls
+        )}
+      >
+        {badge.label}
+      </span>
+    </li>
+  );
+};
 
 // Desglose de puntos. Solo se muestran las fuentes con puntos > 0 para no
 // llenar de ceros el perfil de quien solo juega los partidos.
@@ -160,6 +222,9 @@ const RankingPlayerSheet = ({ userId, fallbackName, fallbackAvatar, onClose }) =
   const score = data?.score;
   const missions = data?.missions || [];
   const referral = data?.referral;
+  // Menciones: el backend solo las manda cuando ya están cerradas/resueltas,
+  // así que con lista vacía la sección simplemente no se pinta.
+  const awards = data?.awards || [];
   const predictions = data?.predictions || [];
   const isYou = data?.is_you;
 
@@ -432,6 +497,26 @@ const RankingPlayerSheet = ({ userId, fallbackName, fallbackAvatar, onClose }) =
                     );
                   })}
                 </div>
+              )}
+
+              {/* Menciones (solo cuando ya están cerradas: no hay riesgo de copia) */}
+              {awards.length > 0 && (
+                <>
+                  <div className="mb-1 mt-6 flex items-center justify-between">
+                    <h4 className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gray">
+                      <Sparkles size={13} className="text-amber-300" /> Menciones
+                    </h4>
+                    <span className="text-[11px] font-bold text-gray/70">
+                      {awards.filter((a) => a.pick).length}/{awards.length} ·{" "}
+                      {score.award_points} pts
+                    </span>
+                  </div>
+                  <ul className="divide-y divide-white/[0.05] rounded-2xl border border-white/[0.06] bg-white/[0.02] px-3">
+                    {awards.map((a) => (
+                      <AwardRow key={a.code} a={a} />
+                    ))}
+                  </ul>
+                </>
               )}
 
               {/* Historial de pronósticos (partidos en vivo + terminados) */}
