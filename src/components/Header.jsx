@@ -14,7 +14,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { useActiveCategories } from "@/hooks";
+import { useActiveCategories, useStoreConfig } from "@/hooks";
 import { EmblemaMundial } from "@/components/mundial/Sistema26";
 
 const ListItem = React.forwardRef(
@@ -69,6 +69,10 @@ const Header = () => {
   const location = useLocation();
   const { data: categoriesData } = useActiveCategories();
   const isCustomerAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
+  const { data: storeConfig } = useStoreConfig();
+  // Sin domicilios en linea activos no hay pedidos de cliente que mostrar
+  const showMyOrders =
+    isCustomerAuthenticated && !!storeConfig?.customer_ordering_enabled;
 
   // Detectar si estamos en una ruta de mesa
   const isTableRoute = location.pathname.startsWith('/mesa/');
@@ -240,7 +244,7 @@ const Header = () => {
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
-                {isCustomerAuthenticated && (
+                {showMyOrders && (
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
@@ -370,7 +374,7 @@ const Header = () => {
                   🎮 Frostbyte Play
                 </Link>
               )}
-              {isCustomerAuthenticated && (
+              {showMyOrders && (
                 <Link
                   to="/mis-pedidos"
                   className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
