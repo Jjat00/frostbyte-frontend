@@ -1,7 +1,19 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Bike, MessageCircle, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  Bike,
+  MessageCircle,
+  Clock,
+  MapPin,
+  ClipboardList,
+  UtensilsCrossed,
+} from "lucide-react";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
+import { useStoreConfig } from "@/hooks";
+import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
+import { useToast } from "@/components/ui/use-toast";
 
 // Números de WhatsApp que reciben pedidos a domicilio
 const WHATSAPP_LINES = [
@@ -15,18 +27,37 @@ const WA_TEXT = encodeURIComponent(
 
 const waLink = (number) => `https://wa.me/${number}?text=${WA_TEXT}`;
 
+const scrollToCarta = () => {
+  document
+    .getElementById("carta")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
 /**
  * Banner de domicilios.
  *
- * Anuncia que Frostbyte ahora hace domicilios y muestra las dos líneas de
- * WhatsApp que reciben pedidos, cada una como botón directo a wa.me con
- * mensaje prellenado. Mobile-first, mismo lenguaje visual de la carta.
+ * Tiene dos modos según `StoreSettings.customer_ordering_enabled`:
+ * - Apagado: anuncia el servicio con las líneas de WhatsApp (modo actual de prod).
+ * - Encendido: invita a pedir DENTRO de la app. Sin sesión de cliente pide
+ *   iniciar sesión con Google (requisito para pedir); con sesión lleva a la
+ *   carta y al estado del pedido (/mis-pedidos). WhatsApp queda de respaldo.
  *
  * Variantes (mismo patrón que PollaMundialBanner para repetir sin saturar):
  * - "feature": tarjeta completa, encabeza la carta (lleva el id #domicilios)
  * - "strip": barra compacta de recordatorio al cierre de la carta
  */
 const DomiciliosBanner = ({ variant = "feature" }) => {
+  const { data: storeConfig } = useStoreConfig();
+  const inAppOrdering = !!storeConfig?.customer_ordering_enabled;
+  const isCustomerAuthenticated = useCustomerAuthStore(
+    (s) => s.isAuthenticated
+  );
+  const customer = useCustomerAuthStore((s) => s.customer);
+  const { toast } = useToast();
+
+  const firstName =
+    customer?.first_name || customer?.full_name?.split(" ")[0] || "";
+
   if (variant === "strip") {
     return (
       <section className="py-6 bg-dark relative overflow-hidden">
@@ -41,24 +72,55 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
             <div className="flex items-center gap-2.5">
               <Bike size={20} className="text-emerald-400 flex-shrink-0" />
               <p className="text-white/75 text-sm font-semibold">
-                ¿Antojado? Te lo llevamos{" "}
-                <span className="text-emerald-300">a tu casa</span>
+                {inAppOrdering ? (
+                  <>
+                    ¿Antojado? Pide tu domicilio{" "}
+                    <span className="text-emerald-300">aquí en la app</span>
+                  </>
+                ) : (
+                  <>
+                    ¿Antojado? Te lo llevamos{" "}
+                    <span className="text-emerald-300">a tu casa</span>
+                  </>
+                )}
               </p>
             </div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {WHATSAPP_LINES.map((line) => (
-                <a
-                  key={line.number}
-                  href={waLink(line.number)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+            {inAppOrdering ? (
+              <div className="flex flex-wrap justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={scrollToCarta}
                   className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
                 >
-                  <MessageCircle size={13} />
-                  {line.display}
-                </a>
-              ))}
-            </div>
+                  <UtensilsCrossed size={13} />
+                  Pedir ahora
+                </button>
+                {isCustomerAuthenticated && (
+                  <Link
+                    to="/mis-pedidos"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                  >
+                    <ClipboardList size={13} />
+                    Estado de mi pedido
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-2">
+                {WHATSAPP_LINES.map((line) => (
+                  <a
+                    key={line.number}
+                    href={waLink(line.number)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                  >
+                    <MessageCircle size={13} />
+                    {line.display}
+                  </a>
+                ))}
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
@@ -97,38 +159,140 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
               </div>
             </div>
 
-            {/* Descripción */}
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-              <Clock size={20} className="text-emerald-300 flex-shrink-0 mt-0.5" />
-              <p className="text-white/70 text-sm leading-relaxed">
-                ¡Ahora llevamos Frostbyte hasta tu casa! Escoge de la carta lo
-                que se te antoje y{" "}
-                <span className="text-emerald-300 font-bold">
-                  ordena por WhatsApp
-                </span>{" "}
-                a cualquiera de nuestras líneas.
-              </p>
-            </div>
+            {inAppOrdering ? (
+              <>
+                {/* Descripción del pedido en la app */}
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
+                  <MapPin
+                    size={20}
+                    className="text-emerald-300 flex-shrink-0 mt-0.5"
+                  />
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    ¡Pide tu domicilio{" "}
+                    <span className="text-emerald-300 font-bold">
+                      directo en la app
+                    </span>
+                    ! Escoge de la carta, marca tu ubicación en el mapa y sigue
+                    tu pedido en vivo hasta tu puerta.
+                  </p>
+                </div>
 
-            {/* Líneas de WhatsApp */}
-            <div className="space-y-2">
-              {WHATSAPP_LINES.map((line) => (
-                <a
-                  key={line.number}
-                  href={waLink(line.number)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-                >
-                  <MessageCircle size={18} />
-                  Pedir al {line.display}
-                </a>
-              ))}
-            </div>
+                {isCustomerAuthenticated ? (
+                  <>
+                    {/* Sesión lista: a pedir y a seguir el pedido */}
+                    <p className="text-center text-emerald-300/90 text-sm font-semibold mb-3">
+                      {firstName ? `¡Listo, ${firstName}!` : "¡Listo!"} Tu
+                      cuenta está conectada, solo falta escoger.
+                    </p>
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        onClick={scrollToCarta}
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+                      >
+                        <UtensilsCrossed size={18} />
+                        Escoger de la carta
+                      </button>
+                      <Link
+                        to="/mis-pedidos"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
+                      >
+                        <ClipboardList size={18} />
+                        Ver el estado de mi pedido
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Login primero: requisito para pedir y seguir el pedido */}
+                    <div className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 p-4 mb-3">
+                      <p className="text-center text-light text-sm font-bold mb-1">
+                        Inicia sesión con Google para pedir tu domicilio
+                      </p>
+                      <p className="text-center text-white/50 text-xs mb-3">
+                        Con tu cuenta también puedes ver el estado de tu pedido
+                        en tiempo real.
+                      </p>
+                      <div className="flex justify-center">
+                        <GoogleSignInButton
+                          onError={(message) =>
+                            toast({
+                              variant: "destructive",
+                              title: "No pudimos iniciar tu sesión",
+                              description: message,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={scrollToCarta}
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
+                    >
+                      <UtensilsCrossed size={18} />
+                      Ver la carta
+                    </button>
+                  </>
+                )}
 
-            <p className="text-center text-white/30 text-[10px] mt-3">
-              Toca el número para abrir el chat y hacer tu pedido
-            </p>
+                {/* WhatsApp queda de respaldo para quien no quiera usar la app */}
+                <p className="text-center text-white/30 text-[10px] mt-3">
+                  ¿Prefieres WhatsApp? Pide al{" "}
+                  {WHATSAPP_LINES.map((line, i) => (
+                    <React.Fragment key={line.number}>
+                      {i > 0 && " o al "}
+                      <a
+                        href={waLink(line.number)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-300/70 underline underline-offset-2"
+                      >
+                        {line.display}
+                      </a>
+                    </React.Fragment>
+                  ))}
+                </p>
+              </>
+            ) : (
+              <>
+                {/* Descripción */}
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
+                  <Clock
+                    size={20}
+                    className="text-emerald-300 flex-shrink-0 mt-0.5"
+                  />
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    ¡Ahora llevamos Frostbyte hasta tu casa! Escoge de la carta
+                    lo que se te antoje y{" "}
+                    <span className="text-emerald-300 font-bold">
+                      ordena por WhatsApp
+                    </span>{" "}
+                    a cualquiera de nuestras líneas.
+                  </p>
+                </div>
+
+                {/* Líneas de WhatsApp */}
+                <div className="space-y-2">
+                  {WHATSAPP_LINES.map((line) => (
+                    <a
+                      key={line.number}
+                      href={waLink(line.number)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+                    >
+                      <MessageCircle size={18} />
+                      Pedir al {line.display}
+                    </a>
+                  ))}
+                </div>
+
+                <p className="text-center text-white/30 text-[10px] mt-3">
+                  Toca el número para abrir el chat y hacer tu pedido
+                </p>
+              </>
+            )}
           </div>
         </motion.div>
       </div>
