@@ -90,10 +90,10 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                 <button
                   type="button"
                   onClick={scrollToCarta}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 text-dark px-3.5 py-1.5 text-xs font-bold hover:opacity-90 transition-opacity"
                 >
                   <UtensilsCrossed size={13} />
-                  Pedir ahora
+                  Pedir en la app
                 </button>
                 {isCustomerAuthenticated && (
                   <Link
@@ -104,6 +104,18 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                     Estado de mi pedido
                   </Link>
                 )}
+                {WHATSAPP_LINES.map((line) => (
+                  <a
+                    key={line.number}
+                    href={waLink(line.number)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                  >
+                    <MessageCircle size={13} />
+                    {line.display}
+                  </a>
+                ))}
               </div>
             ) : (
               <div className="flex flex-wrap justify-center gap-2">
@@ -236,23 +248,26 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                   </>
                 )}
 
-                {/* WhatsApp queda de respaldo para quien no quiera usar la app */}
-                <p className="text-center text-white/30 text-[10px] mt-3">
-                  ¿Prefieres WhatsApp? Pide al{" "}
-                  {WHATSAPP_LINES.map((line, i) => (
-                    <React.Fragment key={line.number}>
-                      {i > 0 && " o al "}
+                {/* WhatsApp sigue siendo un canal de pedidos de primera, no letra pequeña */}
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <p className="text-center text-white/60 text-xs font-bold uppercase tracking-wider mb-2.5">
+                    ¿Prefieres pedir por WhatsApp?
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {WHATSAPP_LINES.map((line) => (
                       <a
+                        key={line.number}
                         href={waLink(line.number)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-emerald-300/70 underline underline-offset-2"
+                        className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-bold text-sm hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
                       >
+                        <MessageCircle size={17} className="flex-shrink-0" />
                         {line.display}
                       </a>
-                    </React.Fragment>
-                  ))}
-                </p>
+                    ))}
+                  </div>
+                </div>
               </>
             ) : (
               <>
