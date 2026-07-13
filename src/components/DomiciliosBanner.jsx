@@ -14,24 +14,7 @@ import { useStoreConfig } from "@/hooks";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 import { useToast } from "@/components/ui/use-toast";
-
-// Números de WhatsApp que reciben pedidos a domicilio
-const WHATSAPP_LINES = [
-  { display: "320 528 8348", number: "573205288348" },
-  { display: "311 781 4338", number: "573117814338" },
-];
-
-const WA_TEXT = encodeURIComponent(
-  "Hola, quiero hacer un pedido a domicilio"
-);
-
-const waLink = (number) => `https://wa.me/${number}?text=${WA_TEXT}`;
-
-const scrollToCarta = () => {
-  document
-    .getElementById("carta")
-    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-};
+import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
 
 /**
  * Banner de domicilios.
@@ -87,14 +70,13 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
             </div>
             {inAppOrdering ? (
               <div className="flex flex-wrap justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={scrollToCarta}
+                <Link
+                  to="/domicilios"
                   className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 text-dark px-3.5 py-1.5 text-xs font-bold hover:opacity-90 transition-opacity"
                 >
-                  <UtensilsCrossed size={13} />
+                  <Bike size={13} />
                   Pedir en la app
-                </button>
+                </Link>
                 {isCustomerAuthenticated && (
                   <Link
                     to="/mis-pedidos"
@@ -184,8 +166,9 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                     <span className="text-emerald-300 font-bold">
                       directo en la app
                     </span>
-                    ! Escoge de la carta, marca tu ubicación en el mapa y sigue
-                    tu pedido en vivo hasta tu puerta.
+                    ! Escoge tus productos con fotos y precios, marca tu
+                    ubicación en el mapa y sigue tu pedido en vivo hasta tu
+                    puerta.
                   </p>
                 </div>
 
@@ -197,14 +180,13 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                       cuenta está conectada, solo falta escoger.
                     </p>
                     <div className="space-y-2">
-                      <button
-                        type="button"
-                        onClick={scrollToCarta}
+                      <Link
+                        to="/domicilios"
                         className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
                       >
-                        <UtensilsCrossed size={18} />
-                        Escoger de la carta
-                      </button>
+                        <Bike size={18} />
+                        Pedir a domicilio
+                      </Link>
                       <Link
                         to="/mis-pedidos"
                         className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
@@ -237,14 +219,13 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                         />
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={scrollToCarta}
+                    <Link
+                      to="/domicilios"
                       className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
                     >
                       <UtensilsCrossed size={18} />
-                      Ver la carta
-                    </button>
+                      Ver productos y pedir
+                    </Link>
                   </>
                 )}
 

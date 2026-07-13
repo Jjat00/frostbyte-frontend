@@ -107,6 +107,7 @@ const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
 
 // Pedidos en línea del cliente
 const MyOrdersPage = lazyLoad(() => import("./pages/customer/MyOrdersPage"));
+const DeliveryPage = lazyLoad(() => import("./pages/customer/DeliveryPage"));
 
 // Fallback de carga mínimo
 const PageLoader = () => (
@@ -154,6 +155,15 @@ export const router = createBrowserRouter([
     element: (
       <Lazy>
         <MyOrdersPage />
+      </Lazy>
+    ),
+  },
+  // Tienda de domicilios (pública; el login de Google salta al pedir)
+  {
+    path: "/domicilios",
+    element: (
+      <Lazy>
+        <DeliveryPage />
       </Lazy>
     ),
   },

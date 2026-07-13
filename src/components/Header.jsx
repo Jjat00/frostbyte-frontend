@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, LogIn, ClipboardList } from "lucide-react";
+import { Menu, X, ChevronDown, LogIn, ClipboardList, Bike } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import {
@@ -72,8 +72,8 @@ const Header = () => {
   const isCustomerAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
   const { data: storeConfig } = useStoreConfig();
   // Sin domicilios en linea activos no hay pedidos de cliente que mostrar
-  const showMyOrders =
-    isCustomerAuthenticated && !!storeConfig?.customer_ordering_enabled;
+  const inAppOrdering = !!storeConfig?.customer_ordering_enabled;
+  const showMyOrders = isCustomerAuthenticated && inAppOrdering;
 
   // Detectar si estamos en una ruta de mesa
   const isTableRoute = location.pathname.startsWith('/mesa/');
@@ -201,6 +201,21 @@ const Header = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
+                {/* Domicilios: entrada directa a la tienda de pedidos */}
+                {inAppOrdering && (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/domicilios"
+                        className={`${navigationMenuTriggerStyle()} bg-transparent text-emerald-400 hover:text-emerald-300 focus:text-emerald-300 font-bold tracking-wide flex items-center gap-1.5`}
+                      >
+                        <Bike className="w-4 h-4" />
+                        Domicilios
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )}
+
                 {/* Frostbyte Play - Solo mostrar en rutas de mesa */}
                 {isTableRoute && (
                   <NavigationMenuItem>
@@ -309,6 +324,16 @@ const Header = () => {
             >
               🏆 Polla Mundialista · Gana $500.000
             </Link>
+            {inAppOrdering && (
+              <Link
+                to="/domicilios"
+                className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-center shadow-[0_0_20px_rgba(52,211,153,0.25)]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Bike className="w-5 h-5" />
+                Pedir a Domicilio
+              </Link>
+            )}
             <a
               href="#carta"
               className="block text-primary hover:text-primary/80 transition-colors duration-300 font-bold"
