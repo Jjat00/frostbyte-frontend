@@ -72,7 +72,12 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
   const [showAuth, setShowAuth] = useState(false);
   const pendingSubmit = useRef(false);
 
-  const orderingDisabled = config?.customer_ordering_enabled === false;
+  // No se puede pedir si el local está cerrado o si los domicilios están pausados.
+  const storeClosed = config?.is_open === false;
+  const orderingDisabled = config?.can_order === false;
+  const orderingDisabledMsg = storeClosed
+    ? "El local está cerrado en este momento."
+    : "Los domicilios están pausados por el momento.";
   const deliveryFee = Number(config?.delivery_fee || 0);
   const total = subtotal + deliveryFee;
 
@@ -120,8 +125,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
   }, [isAuthenticated]);
 
   const handleConfirm = () => {
-    if (orderingDisabled)
-      return setError("Los domicilios están pausados por el momento.");
+    if (orderingDisabled) return setError(orderingDisabledMsg);
     if (!delivery.address.trim())
       return setError("Ingresa la dirección de entrega.");
     if (delivery.lat == null || delivery.lng == null)
@@ -184,8 +188,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
               <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
                 {orderingDisabled && (
                   <p className="text-sm text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2">
-                    Los domicilios están pausados por el momento. Intenta más
-                    tarde.
+                    {orderingDisabledMsg} Intenta más tarde.
                   </p>
                 )}
 

@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useActiveCategories, useStoreConfig } from "@/hooks";
 import { EmblemaMundial } from "@/components/mundial/Sistema26";
+import StoreStatusBadge from "@/components/StoreStatusBadge";
 
 const ListItem = React.forwardRef(
   ({ className, title, children, ...props }, ref) => {
@@ -174,6 +175,9 @@ const Header = () => {
               alt="Mundial 2026"
             />
           </motion.a>
+
+          {/* Estado del local: visible en la carta (/) y en la vista de mesa (/mesa/*) */}
+          <StoreStatusBadge isOpen={storeConfig?.is_open} className="mr-auto ml-3" />
 
           <div className="hidden md:flex items-center">
             <NavigationMenu>

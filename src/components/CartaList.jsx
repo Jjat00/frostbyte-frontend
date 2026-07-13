@@ -287,7 +287,8 @@ const CartaList = () => {
   const isTableRoute = location.pathname.startsWith("/mesa/");
 
   const { data: storeConfig } = useStoreConfig();
-  const orderingEnabled = !!storeConfig?.customer_ordering_enabled;
+  // can_order = local abierto Y domicilios activos (fuente única del backend)
+  const orderingEnabled = !!storeConfig?.can_order;
 
   const { data: categoriesData, isLoading: categoriesLoading } =
     useActiveCategories();

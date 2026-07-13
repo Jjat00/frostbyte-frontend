@@ -6,6 +6,9 @@ export const ENDPOINTS = {
   BUSINESSES: '/businesses/',
   BUSINESS_DETAIL: (slug) => `/businesses/${slug}/`,
 
+  // Configuración operativa del local (staff): abierto/cerrado, domicilios
+  STORE_SETTINGS: '/orders/store-settings/',
+
   // Modificadores (productos configurables)
   MODIFIER_GROUPS: '/modifier-groups/',
   MODIFIER_GROUP_DETAIL: (id) => `/modifier-groups/${id}/`,

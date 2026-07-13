@@ -6,9 +6,9 @@ import { useStoreConfig, useAddToCart } from "@/hooks";
 /**
  * Botones de "pedir a domicilio" para las tarjetas de producto (MenuSections).
  *
- * - Si los domicilios están desactivados, el producto es "próximamente" o se
- *   está viendo la carta desde una mesa (QR /mesa/...), no renderiza nada:
- *   el pedido en línea del cliente es solo a domicilio.
+ * - Si el local está cerrado o los domicilios están desactivados, el producto
+ *   es "próximamente", o se está viendo la carta desde una mesa (QR /mesa/...),
+ *   no renderiza nada: el pedido en línea del cliente es solo a domicilio.
  * - 1 variante  → un botón "Agregar al pedido".
  * - N variantes → un botón por variante (con su nombre), para que el cliente
  *   elija el tamaño directamente desde la tarjeta.
@@ -19,7 +19,7 @@ const CardOrderButtons = ({ product }) => {
   const location = useLocation();
 
   if (location.pathname.startsWith("/mesa/")) return null;
-  if (!config?.customer_ordering_enabled || product?.is_coming_soon) return null;
+  if (!config?.can_order || product?.is_coming_soon) return null;
 
   const variants = product?.variants || [];
   if (!variants.length) return null;

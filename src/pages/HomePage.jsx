@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
+import StoreControls from '@/components/home/StoreControls';
 import { ordersService } from '@/services/orders.service';
 import { businessService } from '@/services/business.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
@@ -490,6 +491,8 @@ const HomePage = () => {
 
               {/* Status chips */}
               <div className="flex gap-2.5 flex-wrap">
+                {/* Controles del local (abierto/cerrado + domicilios) para el staff */}
+                <StoreControls />
                 <div className="px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg backdrop-blur-sm flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                   <span className="text-xs text-gray">Sistema</span>

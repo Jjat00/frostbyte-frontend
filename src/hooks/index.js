@@ -23,6 +23,13 @@ export {
   myOrderKeys,
 } from './useCustomerOrders';
 
+// Configuración operativa del local (staff): abierto/cerrado, domicilios
+export {
+  useStoreSettings,
+  useUpdateStoreSettings,
+  storeSettingsKeys,
+} from './useStoreSettings';
+
 // AI Image Generation hooks
 export { useImageGeneration, useGenerationHistory, useImageValidation } from './useImageGeneration';
 export { useImageUpload } from './useImageUpload';
