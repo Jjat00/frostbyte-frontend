@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import Map, { Marker, GeolocateControl, NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { MapPin, LocateFixed, Loader2, Check } from "lucide-react";
+import { MapPin, LocateFixed, Loader2, Check, Layers } from "lucide-react";
 import { env } from "@/config";
 
 // Centro por defecto: Frostbyte, Cumbal (Nariño)
 const CUMBAL = { lat: 0.9069, lng: -77.7906 };
+
+// Satélite por defecto: en Cumbal las casas se ubican mejor viendo los techos
+// que sobre un plano de calles.
+const MAP_STYLES = {
+  satellite: "mapbox://styles/mapbox/satellite-streets-v12",
+  dark: "mapbox://styles/mapbox/dark-v11",
+};
 
 const round7 = (n) => Number(Number(n).toFixed(7));
 
@@ -33,6 +40,7 @@ const DeliveryMap = ({ value, onChange }) => {
   });
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
+  const [styleKey, setStyleKey] = useState("satellite");
 
   const setPoint = (la, lo, recenter = true) => {
     onChange({ lat: round7(la), lng: round7(lo) });
@@ -131,7 +139,7 @@ const DeliveryMap = ({ value, onChange }) => {
           onMove={(e) => setViewState(e.viewState)}
           onClick={(e) => setPoint(e.lngLat.lat, e.lngLat.lng, false)}
           mapboxAccessToken={token}
-          mapStyle="mapbox://styles/mapbox/dark-v11"
+          mapStyle={MAP_STYLES[styleKey]}
           style={{ width: "100%", height: "100%" }}
           attributionControl={false}
         >
@@ -156,6 +164,18 @@ const DeliveryMap = ({ value, onChange }) => {
             </Marker>
           )}
         </Map>
+
+        {/* Alternar satélite / mapa */}
+        <button
+          type="button"
+          onClick={() =>
+            setStyleKey((k) => (k === "satellite" ? "dark" : "satellite"))
+          }
+          className="absolute top-2 left-2 flex items-center gap-1.5 rounded-full bg-dark/80 backdrop-blur-sm border border-white/15 px-2.5 py-1.5 text-[11px] font-bold text-white/80 hover:bg-dark/95 transition-colors cursor-pointer"
+        >
+          <Layers className="w-3.5 h-3.5" />
+          {styleKey === "satellite" ? "Mapa" : "Satélite"}
+        </button>
 
         {!hasCoords && (
           <div className="absolute inset-x-0 bottom-0 bg-dark/80 backdrop-blur-sm px-3 py-2 text-center">
