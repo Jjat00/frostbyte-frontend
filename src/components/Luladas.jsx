@@ -2,7 +2,6 @@ import React from "react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
-import CardOrderButtons from "@/components/cart/CardOrderButtons";
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -89,7 +88,6 @@ const ProductCard = ({ product, index, styles }) => {
           </div>
 
           {/* Pedir desde la tarjeta */}
-          <CardOrderButtons product={product} />
         </div>
       </div>
     </div>

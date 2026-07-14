@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useCartStore } from "@/stores/useCartStore";
 import { useCartAuthGate } from "@/stores/useCartAuthGate";
-import CartFab from "./CartFab";
 import CartBar from "./CartBar";
 import CartDrawer from "./CartDrawer";
 import CheckoutSheet from "@/components/checkout/CheckoutSheet";
@@ -9,14 +8,11 @@ import OrderSuccess from "@/components/checkout/OrderSuccess";
 import CustomerAuthGate from "@/components/checkout/CustomerAuthGate";
 
 /**
- * Orquesta el flujo de pedido del cliente sobre la carta:
- *   FAB/barra → carrito → checkout → pantalla de éxito.
- * Se monta una sola vez por página (home y /domicilios).
- *
- * `trigger`: "fab" (píldora flotante, home) | "bar" (barra ancha inferior,
- * vista de domicilios).
+ * Orquesta el flujo de pedido del cliente:
+ *   barra de carrito → carrito → checkout → pantalla de éxito.
+ * Se monta una sola vez, en /domicilios (la carta pública es solo vitrina).
  */
-const CartLayer = ({ trigger = "fab" }) => {
+const CartLayer = () => {
   const clear = useCartStore((s) => s.clear);
   const [view, setView] = useState("closed"); // closed | cart | checkout
   const [successOrder, setSuccessOrder] = useState(null);
@@ -28,11 +24,7 @@ const CartLayer = ({ trigger = "fab" }) => {
 
   return (
     <>
-      {trigger === "bar" ? (
-        <CartBar onClick={() => setView("cart")} />
-      ) : (
-        <CartFab onClick={() => setView("cart")} />
-      )}
+      <CartBar onClick={() => setView("cart")} />
 
       <CartDrawer
         open={view === "cart"}

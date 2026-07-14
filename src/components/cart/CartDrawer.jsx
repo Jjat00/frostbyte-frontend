@@ -75,7 +75,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
               {items.length === 0 && (
                 <div className="py-10 text-center text-white/40 text-sm">
-                  Tu carrito está vacío. Agrega productos desde la carta.
+                  Tu carrito está vacío. Agrega productos del catálogo.
                 </div>
               )}
 

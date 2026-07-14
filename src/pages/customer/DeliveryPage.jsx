@@ -369,7 +369,7 @@ const DeliveryPage = () => {
       />
 
       {/* Flujo de pedido completo: barra de carrito → carrito → checkout */}
-      <CartLayer trigger="bar" />
+      <CartLayer />
       <Toaster />
     </div>
   );

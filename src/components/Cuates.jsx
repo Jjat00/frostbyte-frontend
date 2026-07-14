@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Citrus, Cherry, Sun } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
-import CardOrderButtons from "@/components/cart/CardOrderButtons";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -82,7 +81,6 @@ const ProductCard = ({ product, index, styles }) => {
           </div>
 
           {/* Pedir desde la tarjeta */}
-          <CardOrderButtons product={product} />
         </div>
       </div>
     </motion.div>

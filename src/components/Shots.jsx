@@ -4,7 +4,6 @@ import { Droplets } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
-import CardOrderButtons from "@/components/cart/CardOrderButtons";
 
 const flavorShots = [
   {
@@ -124,7 +123,6 @@ const ShotCard = ({ shot, index, styles }) => {
           </div>
 
           {/* Pedir desde la tarjeta */}
-          <CardOrderButtons product={shot} />
         </div>
       </div>
     </motion.div>

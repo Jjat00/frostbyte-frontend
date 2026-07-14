@@ -11,9 +11,9 @@ const formatCOP = (v) =>
   }).format(v || 0);
 
 /**
- * Barra de carrito fija al fondo de la pantalla (variante de CartFab para la
- * vista de domicilios): ancho completo con conteo, CTA y subtotal siempre
- * visibles. Solo aparece cuando hay items en el carrito.
+ * Barra de carrito fija al fondo de la pantalla (vista de domicilios):
+ * ancho completo con conteo, CTA y subtotal siempre visibles. Solo aparece
+ * cuando hay items en el carrito.
  */
 const CartBar = ({ onClick }) => {
   const items = useCartStore((s) => s.items);
