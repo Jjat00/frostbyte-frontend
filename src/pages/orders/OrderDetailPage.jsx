@@ -694,6 +694,14 @@ const OrderDetailPage = () => {
             <span className="text-gray">Subtotal</span>
             <span className="text-light">{formatCurrency(order.subtotal)}</span>
           </div>
+          {Number(order.delivery_fee) > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-gray">Envío a domicilio</span>
+              <span className="text-light">
+                {formatCurrency(order.delivery_fee)}
+              </span>
+            </div>
+          )}
           {order.discount > 0 ? (
             <div className="flex justify-between text-sm items-center">
               <span className="text-gray">Descuento</span>

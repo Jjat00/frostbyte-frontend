@@ -323,6 +323,14 @@ const OrderCard = ({ order, onUpdateStatus }) => {
                       </span>
                     </div>
                   ))}
+                  {Number(order.delivery_fee) > 0 && (
+                    <div className="flex items-center justify-between text-sm gap-2 pt-1.5 border-t border-white/[0.06]">
+                      <span className="text-gray">Envío a domicilio</span>
+                      <span className="text-light flex-shrink-0">
+                        {formatCurrency(order.delivery_fee)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
             </motion.div>
