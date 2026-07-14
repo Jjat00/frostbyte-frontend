@@ -81,12 +81,17 @@ const DeliveryPage = () => {
   const canOrder = !!config?.can_order;
   const deliveryFee = Number(config?.delivery_fee || 0);
 
-  // Solo productos activos y con algo que vender (variantes con precio)
+  // Solo productos activos con variantes activas: el backend rechaza
+  // variantes inactivas al crear el pedido, así que no se deben ofrecer.
   const products = useMemo(
     () =>
-      (productsData?.results || []).filter(
-        (p) => p.is_active !== false && (p.variants || []).length > 0
-      ),
+      (productsData?.results || [])
+        .filter((p) => p.is_active !== false)
+        .map((p) => ({
+          ...p,
+          variants: (p.variants || []).filter((v) => v.is_active !== false),
+        }))
+        .filter((p) => p.variants.length > 0),
     [productsData]
   );
 
