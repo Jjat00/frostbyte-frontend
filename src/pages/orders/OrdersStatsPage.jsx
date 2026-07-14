@@ -38,6 +38,7 @@ import {
   Armchair,
   Receipt,
   ArrowDown,
+  Bike,
   ArrowUp,
 } from 'lucide-react';
 import { ordersService } from '@/services/orders.service';
@@ -491,7 +492,7 @@ const OrdersStatsPage = () => {
       </div>
 
       {/* Stats principales */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4">
         <StatCard
           title="Total Pedidos"
           value={stats?.total_orders || 0}
@@ -524,6 +525,15 @@ const OrdersStatsPage = () => {
           value={stats?.by_status?.delivered || 0}
           icon={CheckCircle}
           color="blue"
+        />
+        <StatCard
+          title="Envíos (domiciliario)"
+          value={formatCurrency(stats?.delivery?.fees_total)}
+          subtitle={`${stats?.delivery?.paid_count || 0} de ${
+            stats?.delivery?.orders_count || 0
+          } domicilios cobrados`}
+          icon={Bike}
+          color="yellow"
         />
       </div>
 
