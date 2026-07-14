@@ -1,11 +1,27 @@
 import React, { useState } from "react";
-import Map, { Marker, GeolocateControl, NavigationControl } from "react-map-gl";
+import Map, {
+  Marker,
+  Source,
+  Layer,
+  GeolocateControl,
+  NavigationControl,
+} from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MapPin, LocateFixed, Loader2, Check, Layers } from "lucide-react";
+import circle from "@turf/circle";
 import { env } from "@/config";
+import {
+  STORE_LOCATION,
+  DELIVERY_RADIUS_KM,
+  isWithinDeliveryArea,
+} from "@/lib/deliveryArea";
 
-// Centro por defecto: Frostbyte, Cumbal (Nariño)
-const CUMBAL = { lat: 0.9069, lng: -77.7906 };
+// Radio de cobertura como capa GeoJSON
+const COVERAGE_GEOJSON = circle(
+  [STORE_LOCATION.lng, STORE_LOCATION.lat],
+  DELIVERY_RADIUS_KM,
+  { steps: 64, units: "kilometers" }
+);
 
 // Satélite por defecto: en Cumbal las casas se ubican mejor viendo los techos
 // que sobre un plano de calles.
@@ -30,13 +46,15 @@ const round7 = (n) => Number(Number(n).toFixed(7));
 const DeliveryMap = ({ value, onChange }) => {
   const token = env.MAPBOX_TOKEN;
   const hasCoords = value?.lat != null && value?.lng != null;
-  const lat = value?.lat ?? CUMBAL.lat;
-  const lng = value?.lng ?? CUMBAL.lng;
+  const lat = value?.lat ?? STORE_LOCATION.lat;
+  const lng = value?.lng ?? STORE_LOCATION.lng;
+  const outOfArea = hasCoords && !isWithinDeliveryArea(value.lat, value.lng);
 
   const [viewState, setViewState] = useState({
     longitude: lng,
     latitude: lat,
-    zoom: hasCoords ? 16 : 14,
+    // zoom 13.2 deja ver el círculo de cobertura completo al abrir
+    zoom: hasCoords ? 16 : 13.2,
   });
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
@@ -107,6 +125,9 @@ const DeliveryMap = ({ value, onChange }) => {
                 ? `Ubicación marcada (${value.lat}, ${value.lng})`
                 : "Marca tu ubicación de entrega"}
             </span>
+            <span className="text-[10px] text-white/30">
+              Entregamos hasta {DELIVERY_RADIUS_KM} km alrededor del local
+            </span>
           </div>
         </div>
         <button
@@ -125,6 +146,12 @@ const DeliveryMap = ({ value, onChange }) => {
           {locating ? "Obteniendo ubicación…" : "Usar mi ubicación"}
         </button>
         {geoError && <p className="text-xs text-red-400">{geoError}</p>}
+        {outOfArea && (
+          <p className="text-xs text-red-400">
+            Tu ubicación está fuera de nuestra zona de domicilios (
+            {DELIVERY_RADIUS_KM} km alrededor del local).
+          </p>
+        )}
         {Inputs}
       </div>
     );
@@ -143,6 +170,44 @@ const DeliveryMap = ({ value, onChange }) => {
           style={{ width: "100%", height: "100%" }}
           attributionControl={false}
         >
+          {/* Radio de cobertura de domicilios */}
+          <Source id="delivery-coverage" type="geojson" data={COVERAGE_GEOJSON}>
+            <Layer
+              id="delivery-coverage-fill"
+              type="fill"
+              paint={{ "fill-color": "#f2c53d", "fill-opacity": 0.08 }}
+            />
+            <Layer
+              id="delivery-coverage-line"
+              type="line"
+              paint={{
+                "line-color": "#f2c53d",
+                "line-opacity": 0.7,
+                "line-width": 1.5,
+                "line-dasharray": [2, 2],
+              }}
+            />
+          </Source>
+
+          {/* El local */}
+          <Marker
+            longitude={STORE_LOCATION.lng}
+            latitude={STORE_LOCATION.lat}
+            anchor="center"
+          >
+            <div
+              className="w-9 h-9 rounded-full bg-dark/85 border-2 border-gold shadow-lg grid place-items-center pointer-events-none"
+              title="Frostbyte"
+            >
+              <img
+                src="/logo.png"
+                alt="Frostbyte"
+                className="w-6 h-6"
+                draggable={false}
+              />
+            </div>
+          </Marker>
+
           <GeolocateControl
             position="top-right"
             trackUserLocation={false}
@@ -160,7 +225,12 @@ const DeliveryMap = ({ value, onChange }) => {
               anchor="bottom"
               onDragEnd={(e) => setPoint(e.lngLat.lat, e.lngLat.lng, false)}
             >
-              <MapPin className="w-8 h-8 text-gold drop-shadow-lg" fill="currentColor" />
+              <MapPin
+                className={`w-8 h-8 drop-shadow-lg ${
+                  outOfArea ? "text-red-500" : "text-gold"
+                }`}
+                fill="currentColor"
+              />
             </Marker>
           )}
         </Map>
@@ -182,14 +252,25 @@ const DeliveryMap = ({ value, onChange }) => {
             <p className="text-[11px] text-white/70">
               Toca el mapa o usa el botón de ubicación para marcar tu entrega
             </p>
+            <p className="text-[11px] text-gold/90 font-semibold">
+              Entregamos solo dentro del área dorada ({DELIVERY_RADIUS_KM} km
+              alrededor del local)
+            </p>
           </div>
         )}
       </div>
 
-      {hasCoords && (
+      {hasCoords && !outOfArea && (
         <p className="text-[11px] text-emerald-400 flex items-center gap-1">
-          <Check className="w-3.5 h-3.5" /> Ubicación marcada · arrastra el pin
-          para ajustar
+          <Check className="w-3.5 h-3.5" /> Ubicación dentro de la zona de
+          entrega · arrastra el pin para ajustar
+        </p>
+      )}
+      {outOfArea && (
+        <p className="text-[11px] text-red-400 flex items-center gap-1">
+          <MapPin className="w-3.5 h-3.5 shrink-0" /> Tu ubicación está fuera de
+          nuestra zona de domicilios: mueve el pin dentro del área dorada (
+          {DELIVERY_RADIUS_KM} km alrededor del local)
         </p>
       )}
 

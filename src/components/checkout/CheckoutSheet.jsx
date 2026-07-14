@@ -4,6 +4,7 @@ import { X, ArrowLeft, Bike, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/useCartStore";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { useStoreConfig, useCreateOrder } from "@/hooks";
+import { isWithinDeliveryArea, DELIVERY_RADIUS_KM } from "@/lib/deliveryArea";
 import CustomerAuthGate from "./CustomerAuthGate";
 
 // El mapa (Mapbox) es pesado: se carga en diferido para no inflar la home.
@@ -23,6 +24,9 @@ const PAYMENTS = [
   { key: "transfer", label: "Transferencia" },
   { key: "card", label: "Tarjeta" },
 ];
+
+// Billetes comunes para "¿con cuánto pagas?" (efectivo)
+const CASH_BILLS = [10000, 20000, 50000, 100000];
 
 const extractError = (e) => {
   const data = e?.response?.data;
@@ -59,6 +63,9 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
   const createOrder = useCreateOrder();
 
   const [payment, setPayment] = useState("");
+  // Efectivo: "exact", un billete de CASH_BILLS (string) u "other" + valor libre
+  const [cashChoice, setCashChoice] = useState("");
+  const [cashOther, setCashOther] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [orderNotes, setOrderNotes] = useState("");
@@ -90,10 +97,19 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
   }, [customer]);
 
   const doSubmit = async () => {
+    // El billete viaja en las notas con el mismo formato que usa el agente de
+    // WhatsApp, para que el staff lo lea igual en ambos canales
+    const cashValue = cashChoice === "other" ? cashOther : cashChoice;
+    const cashNote =
+      payment === "cash"
+        ? cashValue === "exact"
+          ? "Paga en efectivo con el valor exacto."
+          : `Paga en efectivo con $${Number(cashValue).toLocaleString("es-CO")}.`
+        : "";
     const payload = {
       customer_name: name.trim(),
       customer_phone: phone.trim(),
-      customer_notes: orderNotes.trim(),
+      customer_notes: [orderNotes.trim(), cashNote].filter(Boolean).join("\n"),
       payment_method: payment,
       delivery_address: delivery.address.trim(),
       delivery_reference: delivery.reference.trim(),
@@ -130,7 +146,20 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
       return setError("Ingresa la dirección de entrega.");
     if (delivery.lat == null || delivery.lng == null)
       return setError("Marca tu ubicación con el botón de ubicación.");
+    if (!isWithinDeliveryArea(delivery.lat, delivery.lng))
+      return setError(
+        `Tu ubicación está fuera de nuestra zona de domicilios (${DELIVERY_RADIUS_KM} km alrededor del local).`
+      );
     if (!payment) return setError("Elige un método de pago.");
+    if (payment === "cash") {
+      const cashValue = cashChoice === "other" ? cashOther : cashChoice;
+      if (!cashValue)
+        return setError("Cuéntanos con cuánto vas a pagar en efectivo.");
+      if (cashValue !== "exact" && Number(cashValue) < total)
+        return setError(
+          "El valor con el que pagas no alcanza para el total del pedido."
+        );
+    }
     if (!name.trim()) return setError("Ingresa tu nombre.");
     if (!phone.trim())
       return setError("Ingresa un teléfono de contacto para el domicilio.");
@@ -232,6 +261,52 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                   <p className="text-[11px] text-white/30 mt-2">
                     Pagas contra entrega.
                   </p>
+
+                  {payment === "cash" && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs text-white/60">
+                        ¿Con cuánto vas a pagar?{" "}
+                        <span className="text-white/35">
+                          (para alistar tus vueltas)
+                        </span>
+                      </p>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Chip
+                          active={cashChoice === "exact"}
+                          onClick={() => setCashChoice("exact")}
+                        >
+                          Exacto
+                        </Chip>
+                        {CASH_BILLS.filter((b) => b >= total).map((b) => (
+                          <Chip
+                            key={b}
+                            active={cashChoice === String(b)}
+                            onClick={() => setCashChoice(String(b))}
+                          >
+                            {"$" + b.toLocaleString("es-CO")}
+                          </Chip>
+                        ))}
+                        <Chip
+                          active={cashChoice === "other"}
+                          onClick={() => setCashChoice("other")}
+                        >
+                          Otro
+                        </Chip>
+                      </div>
+                      {cashChoice === "other" && (
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={cashOther}
+                          onChange={(e) =>
+                            setCashOther(e.target.value.replace(/\D/g, ""))
+                          }
+                          placeholder="¿Con qué billete? (ej: 60000)"
+                          className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40"
+                        />
+                      )}
+                    </div>
+                  )}
                 </section>
 
                 {/* Datos */}
