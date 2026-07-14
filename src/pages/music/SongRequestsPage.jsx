@@ -199,6 +199,17 @@ const NowPlayingPanel = ({ isConnected, floor }) => {
     mutationFn: (vol) => musicService.playerVolume(vol, floor),
   });
 
+  const disconnectMutation = useMutation({
+    mutationFn: () => musicService.disconnectSpotify(floor),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spotify-status'] });
+      toast({ title: `Spotify desconectado (piso ${floor})`, duration: 2500 });
+    },
+    onError: () => {
+      toast({ title: "Error al desconectar", variant: "destructive", duration: 3000 });
+    },
+  });
+
   const handleVolumeChange = (e) => {
     const vol = parseInt(e.target.value);
     setVolume(vol);
@@ -353,6 +364,23 @@ const NowPlayingPanel = ({ isConnected, floor }) => {
           <p className="text-gray">No hay nada reproduciendose</p>
         </div>
       )}
+
+      {/* Gestion de la cuenta del piso: reconectar sobreescribe el token */}
+      <div className="mt-4 pt-3 border-t border-white/[0.08] flex items-center justify-between text-xs">
+        <a
+          href={`${import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '')}/api/v1/spotify/auth/?floor=${floor}`}
+          className="text-secondary hover:text-secondary/80 font-medium"
+        >
+          Cambiar cuenta (piso {floor})
+        </a>
+        <button
+          onClick={() => disconnectMutation.mutate()}
+          disabled={disconnectMutation.isPending}
+          className="text-red-400/70 hover:text-red-400 font-medium disabled:opacity-50"
+        >
+          Desconectar
+        </button>
+      </div>
     </div>
   );
 };
