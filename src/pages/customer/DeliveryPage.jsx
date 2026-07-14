@@ -227,9 +227,9 @@ const DeliveryPage = () => {
             </h2>
             <p className="text-white/60 text-sm mt-1">
               Muy pronto podrás pedir directo aquí en la app. Por ahora, mira el
-              catálogo y pide por cualquiera de nuestras líneas:
+              catálogo y pide por nuestra línea de WhatsApp:
             </p>
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-3 grid grid-cols-1 gap-2">
               {WHATSAPP_LINES.map((line) => (
                 <a
                   key={line.number}

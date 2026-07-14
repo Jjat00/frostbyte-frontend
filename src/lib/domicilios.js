@@ -1,7 +1,6 @@
 // Líneas de WhatsApp que reciben pedidos a domicilio.
 // Compartidas entre el banner de la carta y la vista /domicilios.
 export const WHATSAPP_LINES = [
-  { display: "320 528 8348", number: "573205288348" },
   { display: "311 781 4338", number: "573117814338" },
 ];
 

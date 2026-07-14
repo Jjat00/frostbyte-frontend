@@ -234,7 +234,7 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                   <p className="text-center text-white/60 text-xs font-bold uppercase tracking-wider mb-2.5">
                     ¿Prefieres pedir por WhatsApp?
                   </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2">
                     {WHATSAPP_LINES.map((line) => (
                       <a
                         key={line.number}
@@ -264,7 +264,7 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                     <span className="text-emerald-300 font-bold">
                       ordena por WhatsApp
                     </span>{" "}
-                    a cualquiera de nuestras líneas.
+                    a nuestra línea de domicilios.
                   </p>
                 </div>
 
