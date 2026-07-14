@@ -1,16 +1,38 @@
 import React from "react";
-import { Bike, MapPin, Navigation } from "lucide-react";
+import { Bike, MapPin, MessageCircle, Navigation, Smartphone } from "lucide-react";
 
 /**
  * Distintivos de domicilio para las vistas del staff.
  *
  * - <DeliveryBadge order /> chip "Domicilio" (solo si order_type === delivery).
+ * - <SourceBadge order />   chip con el origen del pedido: "App" (checkout web)
+ *   o "WhatsApp" (agente de IA). Los pedidos del staff no llevan chip.
  * - <DeliveryInfo order />  bloque con dirección, referencia y link a Google
  *   Maps para el domiciliario. No renderiza nada en pedidos que no son
  *   domicilio, así las vistas lo montan sin condicionales.
  */
 
 export const isDelivery = (order) => order?.order_type === "delivery";
+
+export const SourceBadge = ({ order }) => {
+  if (order?.source === "whatsapp") {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-500/15 text-green-400 rounded-full text-xs font-bold border border-green-500/25">
+        <MessageCircle className="w-3 h-3" />
+        WhatsApp
+      </span>
+    );
+  }
+  if (order?.source === "customer") {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary/15 text-secondary rounded-full text-xs font-bold border border-secondary/25">
+        <Smartphone className="w-3 h-3" />
+        App
+      </span>
+    );
+  }
+  return null;
+};
 
 export const DeliveryBadge = ({ order }) => {
   if (!isDelivery(order)) return null;

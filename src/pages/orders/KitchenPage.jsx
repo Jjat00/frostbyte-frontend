@@ -15,6 +15,7 @@ import { ordersService } from "@/services/orders.service";
 import { businessService } from "@/services/business.service";
 import { useBusinessStore } from "@/stores/useBusinessStore";
 import { useWebSocket } from "@/hooks";
+import { SourceBadge } from "@/components/orders/DeliveryInfo";
 import { cn } from "@/lib/utils";
 
 // Config visual por estado de preparación del item
@@ -102,6 +103,7 @@ const KitchenOrderCard = ({ order, onSetPrep, onAllReady, pendingItemId, busyOrd
             <span className="px-2 py-0.5 rounded-md bg-secondary/15 text-secondary text-xs font-bold border border-secondary/20">
               {tableLabel}
             </span>
+            <SourceBadge order={order} />
           </div>
           <p className="text-sm text-light/80 mt-1 truncate">
             {order.customer_name || "Cliente"}
