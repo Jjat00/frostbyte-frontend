@@ -19,7 +19,7 @@ import {
 import { ordersService } from '@/services/orders.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { DeliveryBadge, SourceBadge } from '@/components/orders/DeliveryInfo';
+import { DeliveryBadge, PaymentPendingBadge, SourceBadge } from '@/components/orders/DeliveryInfo';
 
 const statusConfig = {
   pending: { label: 'Pendiente', color: 'yellow', icon: Clock },
@@ -101,6 +101,7 @@ const OrderHistoryCard = ({ order, getStatusBadge, formatDateTime }) => {
               )}
               <DeliveryBadge order={order} />
               <SourceBadge order={order} />
+              <PaymentPendingBadge order={order} />
             </div>
           </div>
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Bike, MapPin, MessageCircle, Navigation, Smartphone } from "lucide-react";
+import { AlertTriangle, Bike, MapPin, MessageCircle, Navigation, Smartphone } from "lucide-react";
 
 /**
  * Distintivos de domicilio para las vistas del staff.
@@ -7,6 +7,9 @@ import { Bike, MapPin, MessageCircle, Navigation, Smartphone } from "lucide-reac
  * - <DeliveryBadge order /> chip "Domicilio" (solo si order_type === delivery).
  * - <SourceBadge order />   chip con el origen del pedido: "App" (checkout web)
  *   o "WhatsApp" (agente de IA). Los pedidos del staff no llevan chip.
+ * - <PaymentPendingBadge order /> chip ámbar "Pago por verificar" para pedidos
+ *   por transferencia/Nequi/Daviplata que nadie ha confirmado en la app del
+ *   banco (is_paid=false). Nadie despacha sin ver la plata.
  * - <DeliveryInfo order />  bloque con dirección, referencia y link a Google
  *   Maps para el domiciliario. No renderiza nada en pedidos que no son
  *   domicilio, así las vistas lo montan sin condicionales.
@@ -32,6 +35,18 @@ export const SourceBadge = ({ order }) => {
     );
   }
   return null;
+};
+
+const TRANSFER_METHODS = ["transfer", "nequi", "daviplata"];
+
+export const PaymentPendingBadge = ({ order }) => {
+  if (!TRANSFER_METHODS.includes(order?.payment_method) || order?.is_paid) return null;
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/15 text-amber-400 rounded-full text-xs font-bold border border-amber-500/25">
+      <AlertTriangle className="w-3 h-3" />
+      Pago por verificar
+    </span>
+  );
 };
 
 export const DeliveryBadge = ({ order }) => {

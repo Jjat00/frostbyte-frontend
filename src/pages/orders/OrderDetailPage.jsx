@@ -33,7 +33,7 @@ import {
 import { ordersService } from "@/services/orders.service";
 import { productsService } from "@/services/products.service";
 import TableSelect from "@/components/orders/TableSelect";
-import { DeliveryBadge, DeliveryInfo, SourceBadge } from "@/components/orders/DeliveryInfo";
+import { DeliveryBadge, DeliveryInfo, PaymentPendingBadge, SourceBadge } from "@/components/orders/DeliveryInfo";
 
 const statusConfig = {
   pending: {
@@ -495,6 +495,7 @@ const OrderDetailPage = () => {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <DeliveryBadge order={order} />
                   <SourceBadge order={order} />
+                  <PaymentPendingBadge order={order} />
                 </div>
                 <DeliveryInfo order={order} />
               </div>
