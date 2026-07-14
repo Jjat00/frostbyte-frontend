@@ -154,7 +154,13 @@ const NowPlayingBar = ({ data }) => {
   );
 };
 
-const SolicitarCancion = () => {
+const FLOOR_STORAGE_KEY = 'frostbyte_music_floor';
+const FLOORS = [2, 3];
+
+// floorProp: piso conocido con certeza (URL de mesa). Si viene, no se muestran
+// tabs y todo apunta a ese piso. Si no (carta publica), el cliente elige piso
+// con tabs y la eleccion se recuerda en localStorage.
+const SolicitarCancion = ({ floor: floorProp }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
@@ -163,8 +169,25 @@ const SolicitarCancion = () => {
   const searchRef = useRef(null);
   const inputRef = useRef(null);
 
+  const isFloorLocked = FLOORS.includes(floorProp);
+  const [selectedFloor, setSelectedFloor] = useState(() => {
+    const stored = parseInt(localStorage.getItem(FLOOR_STORAGE_KEY), 10);
+    return FLOORS.includes(stored) ? stored : 2;
+  });
+  const floor = isFloorLocked ? floorProp : selectedFloor;
+
+  const handleFloorChange = (f) => {
+    setSelectedFloor(f);
+    localStorage.setItem(FLOOR_STORAGE_KEY, String(f));
+    setSearchQuery('');
+    setDebouncedQuery('');
+    setShowResults(false);
+  };
+
   useWebSocket('/ws/music/', {
-    onMessage: () => {
+    onMessage: (data) => {
+      // Eventos de otro piso no invalidan nada; floor null = cambio global
+      if (data?.floor && data.floor !== floor) return;
       queryClient.invalidateQueries({ queryKey: ['song-requests'] });
       queryClient.invalidateQueries({ queryKey: ['now-playing'] });
     },
@@ -184,29 +207,29 @@ const SolicitarCancion = () => {
   }, []);
 
   const { data: spotifyStatus } = useQuery({
-    queryKey: ['spotify-status'],
-    queryFn: () => musicService.getSpotifyStatus(),
+    queryKey: ['spotify-status', floor],
+    queryFn: () => musicService.getSpotifyStatus(floor),
     refetchInterval: 30000,
   });
   const isSpotifyConnected = spotifyStatus?.connected === true;
 
   const { data: searchResults, isLoading: isSearching } = useQuery({
-    queryKey: ['spotify-search', debouncedQuery],
-    queryFn: () => musicService.searchSpotify(debouncedQuery),
+    queryKey: ['spotify-search', floor, debouncedQuery],
+    queryFn: () => musicService.searchSpotify(debouncedQuery, floor),
     enabled: debouncedQuery.length >= 2 && isSpotifyConnected,
     staleTime: 60000,
   });
 
   const { data: nowPlaying } = useQuery({
-    queryKey: ['now-playing'],
-    queryFn: () => musicService.getNowPlaying(),
+    queryKey: ['now-playing', floor],
+    queryFn: () => musicService.getNowPlaying(floor),
     enabled: isSpotifyConnected,
     refetchInterval: 10000,
   });
 
   const { data: requestsData, isLoading: requestsLoading } = useQuery({
-    queryKey: ['song-requests'],
-    queryFn: () => musicService.getAll(),
+    queryKey: ['song-requests', floor],
+    queryFn: () => musicService.getAll({ floor }),
     refetchInterval: 5000,
   });
 
@@ -269,6 +292,7 @@ const SolicitarCancion = () => {
 
   const handleSelectTrack = (track) => {
     createMutation.mutate({
+      floor,
       song_name: track.name,
       artist_name: track.artists,
       spotify_track_uri: track.uri,
@@ -321,6 +345,35 @@ const SolicitarCancion = () => {
           <p className="text-white/40 text-base max-w-2xl mx-auto">
             Busca tu cancion favorita y se agregara automaticamente a la cola
           </p>
+
+          {isFloorLocked ? (
+            /* Piso conocido por la URL de mesa: solo se informa, sin tabs */
+            <p className="mt-3 text-xs font-bold uppercase tracking-[0.15em] text-secondary/70">
+              Sonara en el piso {floor}
+            </p>
+          ) : (
+            /* Carta publica: el cliente elige en que piso esta */
+            <div className="mt-5 flex flex-col items-center gap-2">
+              <div className="inline-flex items-center gap-1 bg-white/[0.06] backdrop-blur-md border border-white/10 rounded-full p-1">
+                {FLOORS.map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => handleFloorChange(f)}
+                    className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                      floor === f
+                        ? 'bg-primary text-dark shadow-lg shadow-primary/30'
+                        : 'text-white/50 hover:text-white'
+                    }`}
+                  >
+                    Piso {f}
+                  </button>
+                ))}
+              </div>
+              <p className="text-white/30 text-xs">
+                Tu cancion sonara en el piso {floor}
+              </p>
+            </div>
+          )}
         </motion.div>
 
         {/* Now Playing - transparent, floating */}

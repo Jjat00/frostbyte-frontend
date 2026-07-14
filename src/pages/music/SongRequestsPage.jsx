@@ -90,7 +90,7 @@ const parseSyncedLyrics = (syncedLyrics) => {
 };
 
 // ── Now Playing + Controls ─────────────────────────────────────────
-const NowPlayingPanel = ({ isConnected }) => {
+const NowPlayingPanel = ({ isConnected, floor }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [volume, setVolume] = useState(50);
@@ -98,8 +98,8 @@ const NowPlayingPanel = ({ isConnected }) => {
   const lastSyncRef = React.useRef({ uri: null, progress: 0, timestamp: 0 });
 
   const { data: nowPlaying, isLoading } = useQuery({
-    queryKey: ['now-playing'],
-    queryFn: () => musicService.getNowPlaying(),
+    queryKey: ['now-playing', floor],
+    queryFn: () => musicService.getNowPlaying(floor),
     enabled: isConnected,
     refetchInterval: 3000,
   });
@@ -175,10 +175,10 @@ const NowPlayingPanel = ({ isConnected }) => {
   const controlMutation = useMutation({
     mutationFn: (action) => {
       switch (action) {
-        case 'pause': return musicService.playerPause();
-        case 'resume': return musicService.playerResume();
-        case 'next': return musicService.playerNext();
-        case 'previous': return musicService.playerPrevious();
+        case 'pause': return musicService.playerPause(floor);
+        case 'resume': return musicService.playerResume(floor);
+        case 'next': return musicService.playerNext(floor);
+        case 'previous': return musicService.playerPrevious(floor);
         default: return Promise.resolve();
       }
     },
@@ -196,7 +196,7 @@ const NowPlayingPanel = ({ isConnected }) => {
   });
 
   const volumeMutation = useMutation({
-    mutationFn: (vol) => musicService.playerVolume(vol),
+    mutationFn: (vol) => musicService.playerVolume(vol, floor),
   });
 
   const handleVolumeChange = (e) => {
@@ -209,12 +209,13 @@ const NowPlayingPanel = ({ isConnected }) => {
     return (
       <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-red-500/30 rounded-xl p-6 mb-6 text-center">
         <WifiOff className="w-10 h-10 text-red-400 mx-auto mb-3" />
-        <p className="text-red-400 font-medium">Spotify no esta conectado</p>
+        <p className="text-red-400 font-medium">Spotify no esta conectado en el piso {floor}</p>
+        <p className="text-gray text-xs mt-1">Inicia sesion en Spotify con la cuenta del piso {floor}</p>
         <a
-          href={`${import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '')}/api/v1/spotify/auth/`}
+          href={`${import.meta.env.VITE_API_BASE_URL?.replace('/api/v1', '')}/api/v1/spotify/auth/?floor=${floor}`}
           className="inline-block mt-3 px-4 py-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-colors text-sm font-medium"
         >
-          Conectar Spotify
+          Conectar Spotify piso {floor}
         </a>
       </div>
     );
@@ -357,10 +358,10 @@ const NowPlayingPanel = ({ isConnected }) => {
 };
 
 // ── Spotify Queue ──────────────────────────────────────────────────
-const SpotifyQueuePanel = ({ isConnected }) => {
+const SpotifyQueuePanel = ({ isConnected, floor }) => {
   const { data: queueData, isLoading } = useQuery({
-    queryKey: ['spotify-queue'],
-    queryFn: () => musicService.getQueueStatus(),
+    queryKey: ['spotify-queue', floor],
+    queryFn: () => musicService.getQueueStatus(floor),
     enabled: isConnected,
     refetchInterval: 10000,
   });
@@ -408,7 +409,7 @@ const SpotifyQueuePanel = ({ isConnected }) => {
 };
 
 // ── Admin Search ───────────────────────────────────────────────────
-const AdminSearch = ({ isConnected }) => {
+const AdminSearch = ({ isConnected, floor }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [query, setQuery] = useState('');
@@ -420,14 +421,14 @@ const AdminSearch = ({ isConnected }) => {
   }, [query]);
 
   const { data: results, isLoading: isSearching } = useQuery({
-    queryKey: ['admin-spotify-search', debouncedQuery],
-    queryFn: () => musicService.searchSpotify(debouncedQuery),
+    queryKey: ['admin-spotify-search', floor, debouncedQuery],
+    queryFn: () => musicService.searchSpotify(debouncedQuery, floor),
     enabled: debouncedQuery.length >= 2 && isConnected,
     staleTime: 60000,
   });
 
   const playTrackMutation = useMutation({
-    mutationFn: (uri) => musicService.playerPlayTrack(uri),
+    mutationFn: (uri) => musicService.playerPlayTrack(uri, floor),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['now-playing'] });
       toast({ title: "Reproduciendo", duration: 2000 });
@@ -439,6 +440,7 @@ const AdminSearch = ({ isConnected }) => {
 
   const queueMutation = useMutation({
     mutationFn: (track) => musicService.create({
+      floor,
       song_name: track.name,
       artist_name: track.artists,
       spotify_track_uri: track.uri,
@@ -662,13 +664,32 @@ const SongRequestCard = ({ request, onUpdateStatus, onPlayNow, onDelete }) => {
 };
 
 // ── Main Page ──────────────────────────────────────────────────────
+const ADMIN_FLOOR_STORAGE_KEY = 'frostbyte_admin_music_floor';
+const FLOORS = [2, 3];
+
+// Piso inicial: primero el ?floor= de la URL (vuelta del OAuth de Spotify),
+// luego el ultimo piso usado, default piso 2.
+const getInitialFloor = () => {
+  const fromUrl = parseInt(new URLSearchParams(window.location.search).get('floor'), 10);
+  if (FLOORS.includes(fromUrl)) return fromUrl;
+  const stored = parseInt(localStorage.getItem(ADMIN_FLOOR_STORAGE_KEY), 10);
+  return FLOORS.includes(stored) ? stored : 2;
+};
+
 const SongRequestsPage = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState(null);
+  const [floor, setFloor] = useState(getInitialFloor);
+
+  const handleFloorChange = (f) => {
+    setFloor(f);
+    localStorage.setItem(ADMIN_FLOOR_STORAGE_KEY, String(f));
+  };
 
   useWebSocket('/ws/music/', {
     onMessage: () => {
+      // Invalida por prefijo: cubre las queries de ambos pisos
       queryClient.invalidateQueries({ queryKey: ['song-requests'] });
       queryClient.invalidateQueries({ queryKey: ['now-playing'] });
       queryClient.invalidateQueries({ queryKey: ['spotify-queue'] });
@@ -676,16 +697,16 @@ const SongRequestsPage = () => {
   });
 
   const { data: spotifyStatus } = useQuery({
-    queryKey: ['spotify-status'],
-    queryFn: () => musicService.getSpotifyStatus(),
+    queryKey: ['spotify-status', floor],
+    queryFn: () => musicService.getSpotifyStatus(floor),
     refetchInterval: 30000,
   });
 
   const isConnected = spotifyStatus?.connected === true;
 
   const { data: requestsData, isLoading, isRefetching, refetch } = useQuery({
-    queryKey: ['song-requests', 'admin', statusFilter],
-    queryFn: () => musicService.getAll(statusFilter ? { status: statusFilter } : {}),
+    queryKey: ['song-requests', 'admin', floor, statusFilter],
+    queryFn: () => musicService.getAll({ floor, ...(statusFilter ? { status: statusFilter } : {}) }),
     refetchInterval: 30000,
   });
 
@@ -705,7 +726,7 @@ const SongRequestsPage = () => {
   });
 
   const playTrackMutation = useMutation({
-    mutationFn: (uri) => musicService.playerPlayTrack(uri),
+    mutationFn: (uri) => musicService.playerPlayTrack(uri, floor),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['now-playing'] });
       toast({ title: "Reproduciendo", duration: 2000 });
@@ -767,15 +788,32 @@ const SongRequestsPage = () => {
             </button>
           </div>
         </div>
+
+        {/* Selector de piso: cada piso tiene su propia cuenta de Spotify */}
+        <div className="inline-flex items-center gap-1 bg-white/[0.06] border border-white/[0.1] rounded-xl p-1">
+          {FLOORS.map((f) => (
+            <button
+              key={f}
+              onClick={() => handleFloorChange(f)}
+              className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${
+                floor === f
+                  ? 'bg-primary/20 text-primary border border-primary/40'
+                  : 'text-gray hover:text-light border border-transparent'
+              }`}
+            >
+              Piso {f}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Two-column layout: Player | Requests */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Player + Queue + Search */}
         <div className="lg:col-span-1 space-y-0">
-          <NowPlayingPanel isConnected={isConnected} />
-          <SpotifyQueuePanel isConnected={isConnected} />
-          <AdminSearch isConnected={isConnected} />
+          <NowPlayingPanel isConnected={isConnected} floor={floor} />
+          <SpotifyQueuePanel isConnected={isConnected} floor={floor} />
+          <AdminSearch isConnected={isConnected} floor={floor} />
         </div>
 
         {/* Right: Song Requests */}

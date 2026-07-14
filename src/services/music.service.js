@@ -59,35 +59,45 @@ export const musicService = {
     return response.data;
   },
 
-  async searchSpotify(query) {
+  // floor: piso (2 | 3) cuya cuenta de Spotify se consulta/controla
+
+  async searchSpotify(query, floor) {
     const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_SEARCH, {
-      params: { q: query },
+      params: { q: query, floor },
     });
     return response.data;
   },
 
-  async getNowPlaying() {
-    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_NOW_PLAYING);
+  async getNowPlaying(floor) {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_NOW_PLAYING, {
+      params: { floor },
+    });
     return response.data;
   },
 
-  async getQueueStatus() {
-    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_QUEUE_STATUS);
+  async getQueueStatus(floor) {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_QUEUE_STATUS, {
+      params: { floor },
+    });
     return response.data;
   },
 
-  async getSpotifyStatus() {
-    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_SPOTIFY_STATUS);
+  async getSpotifyStatus(floor) {
+    const response = await apiClient.get(ENDPOINTS.SONG_REQUESTS_SPOTIFY_STATUS, {
+      params: { floor },
+    });
     return response.data;
   },
 
-  async getSpotifyAuthUrl() {
-    const response = await apiClient.get(ENDPOINTS.SPOTIFY_AUTH);
+  async getSpotifyAuthUrl(floor) {
+    const response = await apiClient.get(ENDPOINTS.SPOTIFY_AUTH, {
+      params: { floor },
+    });
     return response.data;
   },
 
-  async disconnectSpotify() {
-    const response = await apiClient.post(ENDPOINTS.SPOTIFY_DISCONNECT);
+  async disconnectSpotify(floor) {
+    const response = await apiClient.post(ENDPOINTS.SPOTIFY_DISCONNECT, { floor });
     return response.data;
   },
 
@@ -98,33 +108,33 @@ export const musicService = {
     return response.data;
   },
 
-  async playerPause() {
-    const response = await apiClient.post(ENDPOINTS.PLAYER_PAUSE);
+  async playerPause(floor) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PAUSE, { floor });
     return response.data;
   },
 
-  async playerResume() {
-    const response = await apiClient.post(ENDPOINTS.PLAYER_RESUME);
+  async playerResume(floor) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_RESUME, { floor });
     return response.data;
   },
 
-  async playerNext() {
-    const response = await apiClient.post(ENDPOINTS.PLAYER_NEXT);
+  async playerNext(floor) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_NEXT, { floor });
     return response.data;
   },
 
-  async playerPrevious() {
-    const response = await apiClient.post(ENDPOINTS.PLAYER_PREVIOUS);
+  async playerPrevious(floor) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PREVIOUS, { floor });
     return response.data;
   },
 
-  async playerPlayTrack(trackUri) {
-    const response = await apiClient.post(ENDPOINTS.PLAYER_PLAY_TRACK, { track_uri: trackUri });
+  async playerPlayTrack(trackUri, floor) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_PLAY_TRACK, { track_uri: trackUri, floor });
     return response.data;
   },
 
-  async playerVolume(volume) {
-    const response = await apiClient.post(ENDPOINTS.PLAYER_VOLUME, { volume });
+  async playerVolume(volume, floor) {
+    const response = await apiClient.post(ENDPOINTS.PLAYER_VOLUME, { volume, floor });
     return response.data;
   },
 

@@ -164,7 +164,8 @@ function TablePage() {
           {/* Sala VIP (piso 3): promoción sin precios, el interesado pide
               información al personal o por WhatsApp */}
           <SalaVipBanner />
-          <SolicitarMusica />
+          {/* El piso de la URL fija la cuenta de Spotify destino (sin tabs) */}
+          <SolicitarMusica floor={floor} />
           <PollaMundialBanner variant="prize" />
           <FeedbackSection />
           <FrostbytePlay />
