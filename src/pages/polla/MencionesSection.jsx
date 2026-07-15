@@ -378,6 +378,12 @@ const MencionesSection = () => {
   const firstRow = awards.slice(0, 3);
   const secondRow = awards.slice(3);
 
+  // Con el torneo terminado, el MVP y el Guante de Oro siguen pendientes hasta
+  // que la FIFA los anuncie (el resto se resuelve solo al acabar la final).
+  const pendingOfficial =
+    Boolean(data?.tournament_finished) &&
+    awards.some((a) => (a.code === "mvp" || a.code === "glove") && !a.resolved);
+
   const handlePick = (opt) => {
     if (!active) return;
     const payload =
@@ -512,6 +518,19 @@ const MencionesSection = () => {
                     })}
                   </div>
                 )}
+              </div>
+            )}
+
+            {pendingOfficial && (
+              <div className="mt-3 flex items-start gap-2.5 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <Timer size={16} className="mt-0.5 shrink-0 text-primary" />
+                <p className="text-[11px] leading-snug text-gray">
+                  El <span className="font-bold text-light">MVP</span> y el{" "}
+                  <span className="font-bold text-light">Guante de Oro</span> se
+                  actualizan en cuanto la FIFA los anuncie oficialmente. El
+                  campeón, el subcampeón y el goleador quedan definidos apenas
+                  termina la final.
+                </p>
               </div>
             )}
           </motion.div>
