@@ -26,10 +26,10 @@ const OrderItemsList = ({ items }) => {
             <img loading="lazy" decoding="async"
               src={item.product_image}
               alt={item.product_name}
-              className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
             />
           ) : (
-            <div className="w-10 h-10 rounded-lg bg-gray/10 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-gray/10 flex items-center justify-center flex-shrink-0">
               <Package className="w-5 h-5 text-gray/40" />
             </div>
           )}

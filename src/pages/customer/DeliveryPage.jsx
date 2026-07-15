@@ -147,7 +147,7 @@ const DeliveryPage = () => {
     <div className="min-h-screen bg-dark text-light">
       {/* Barra superior propia, minimal y enfocada en pedir */}
       <header className="fixed top-0 inset-x-0 z-40 bg-dark/95 backdrop-blur-md border-b border-white/[0.08]">
-        <div className="mx-auto flex h-14 max-w-5xl items-center gap-2.5 px-3 sm:px-4">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-3 sm:px-4">
           <Link
             to="/"
             aria-label="Volver a la carta"
@@ -174,7 +174,7 @@ const DeliveryPage = () => {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-3 sm:px-4 pt-[4.5rem] pb-32">
+      <main className="mx-auto max-w-6xl px-3 sm:px-4 pt-[4.5rem] pb-32">
         {/* Estado del servicio */}
         {storeClosed ? (
           <section className="rounded-2xl border border-red-400/25 bg-red-500/10 p-4 flex items-start gap-3">
@@ -190,14 +190,21 @@ const DeliveryPage = () => {
             </div>
           </section>
         ) : inAppOrdering ? (
-          <section className="rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-500/[0.12] via-dark-secondary to-dark-secondary p-4">
-            <h2 className="text-xl font-black uppercase leading-tight">
-              Pide a domicilio <span className="text-emerald-400">en la app</span>
-            </h2>
-            <p className="text-white/60 text-sm mt-1">
-              Escoge lo que se te antoje y te lo llevamos hasta tu puerta.
-            </p>
-            <ol className="mt-3 flex flex-wrap items-center gap-x-1 gap-y-1.5">
+          <section className="rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-500/[0.12] via-dark-secondary to-dark-secondary p-4 lg:p-5 lg:flex lg:items-center lg:justify-between lg:gap-8">
+            <div>
+              <h2 className="text-xl font-black uppercase leading-tight">
+                Pide a domicilio <span className="text-emerald-400">en la app</span>
+              </h2>
+              <p className="text-white/60 text-sm mt-1">
+                Escoge lo que se te antoje y te lo llevamos hasta tu puerta.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-white/45 font-semibold">
+                {deliveryFee > 0 && <span>Envío {formatCOP(deliveryFee)}</span>}
+                <span>Pagas al recibir</span>
+                <span>Sigues tu pedido en vivo</span>
+              </div>
+            </div>
+            <ol className="mt-3 lg:mt-0 flex flex-wrap items-center gap-x-1 gap-y-1.5 lg:flex-shrink-0">
               <li>
                 <StepPill>1. Escoge tus productos</StepPill>
               </li>
@@ -214,11 +221,6 @@ const DeliveryPage = () => {
                 <StepPill>3. Te lo llevamos</StepPill>
               </li>
             </ol>
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-white/45 font-semibold">
-              {deliveryFee > 0 && <span>Envío {formatCOP(deliveryFee)}</span>}
-              <span>Pagas al recibir</span>
-              <span>Sigues tu pedido en vivo</span>
-            </div>
           </section>
         ) : (
           <section className="rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-500/[0.12] via-dark-secondary to-dark-secondary p-4">
@@ -305,7 +307,7 @@ const DeliveryPage = () => {
 
         {/* Grid de productos */}
         {isLoading ? (
-          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
@@ -346,7 +348,7 @@ const DeliveryPage = () => {
                   {catProducts.length === 1 ? "" : "s"}
                 </span>
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 {catProducts.map((product) => (
                   <DeliveryProductCard
                     key={product.id}

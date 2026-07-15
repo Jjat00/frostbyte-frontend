@@ -1,30 +1,46 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Receipt, MapPin } from "lucide-react";
+import { X, Receipt, MapPin, Loader2 } from "lucide-react";
 import OrderStatusBadge from "./OrderStatusBadge";
 import OrderItemsList from "./OrderItemsList";
+import DeliveryStatusTimeline from "./DeliveryStatusTimeline";
 import RecommendedProducts from "./RecommendedProducts";
 import WhileYouWait from "./WhileYouWait";
 
-const OrderTracker = ({ order, show, onClose }) => {
+// El mapa (Mapbox) es pesado: se carga en diferido y solo para domicilios.
+const OrderRouteMap = lazy(() => import("./OrderRouteMap"));
+
+const formatCurrency = (value) =>
+  new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  }).format(value || 0);
+
+/**
+ * Contenido del seguimiento de un pedido (estado, items, domicilio, total).
+ * Vive aparte del modal para poder mostrarse también inline, como en el
+ * panel de detalle de "Mis pedidos" en desktop.
+ */
+export const OrderTrackerContent = ({ order }) => {
   if (!order) return null;
 
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      minimumFractionDigits: 0,
-    }).format(value || 0);
+  const isDelivery = order.order_type === "delivery";
+  const hasCoords = order.delivery_lat != null && order.delivery_lng != null;
 
   // Nombres de productos en el pedido para filtrar recomendados
   const orderProductNames = (order.items || []).map((i) => i.product_name);
 
-  const content = (
+  return (
     <>
-      {/* Status */}
-      <div className="flex items-center justify-center">
-        <OrderStatusBadge status={order.status} />
-      </div>
+      {/* Status: timeline para domicilios, badge para el resto */}
+      {isDelivery ? (
+        <DeliveryStatusTimeline status={order.status} />
+      ) : (
+        <div className="flex items-center justify-center">
+          <OrderStatusBadge status={order.status} />
+        </div>
+      )}
 
       {/* Delivered status */}
       {order.status === "delivered" && !order.is_paid && (
@@ -46,18 +62,34 @@ const OrderTracker = ({ order, show, onClose }) => {
       {/* Items */}
       <OrderItemsList items={order.items} />
 
-      {/* Domicilio */}
-      {order.order_type === "delivery" && (
-        <div className="px-3 py-2 backdrop-blur-sm bg-white/[0.06] rounded-lg border border-white/[0.1] space-y-1">
-          <div className="flex items-center gap-1.5 text-xs text-gray">
-            <MapPin className="w-3.5 h-3.5" /> Entrega a domicilio
+      {/* Domicilio: mapa del recorrido + dirección */}
+      {isDelivery && (
+        <div className="space-y-2">
+          {hasCoords && (
+            <Suspense
+              fallback={
+                <div className="h-48 lg:h-64 rounded-xl bg-white/[0.04] border border-white/10 grid place-items-center text-white/30">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                </div>
+              }
+            >
+              <OrderRouteMap
+                lat={Number(order.delivery_lat)}
+                lng={Number(order.delivery_lng)}
+              />
+            </Suspense>
+          )}
+          <div className="px-3 py-2 backdrop-blur-sm bg-white/[0.06] rounded-lg border border-white/[0.1] space-y-1">
+            <div className="flex items-center gap-1.5 text-xs text-gray">
+              <MapPin className="w-3.5 h-3.5" /> Entrega a domicilio
+            </div>
+            {order.delivery_address && (
+              <p className="text-sm text-light">{order.delivery_address}</p>
+            )}
+            {order.delivery_reference && (
+              <p className="text-xs text-gray">{order.delivery_reference}</p>
+            )}
           </div>
-          {order.delivery_address && (
-            <p className="text-sm text-light">{order.delivery_address}</p>
-          )}
-          {order.delivery_reference && (
-            <p className="text-xs text-gray">{order.delivery_reference}</p>
-          )}
         </div>
       )}
 
@@ -84,6 +116,16 @@ const OrderTracker = ({ order, show, onClose }) => {
       <RecommendedProducts excludeProducts={orderProductNames} />
     </>
   );
+};
+
+/**
+ * Modal de seguimiento: bottom sheet en móvil y panel lateral en desktop.
+ *
+ * Con `desktopPanel={false}` solo existe el bottom sheet (hasta lg), para
+ * páginas que ya muestran el detalle inline en pantallas grandes.
+ */
+const OrderTracker = ({ order, show, onClose, desktopPanel = true }) => {
+  if (!order) return null;
 
   return (
     <AnimatePresence>
@@ -92,7 +134,9 @@ const OrderTracker = ({ order, show, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm ${
+            desktopPanel ? "" : "lg:hidden"
+          }`}
           onClick={onClose}
         >
           {/* Mobile: bottom sheet */}
@@ -101,7 +145,9 @@ const OrderTracker = ({ order, show, onClose }) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="md:hidden absolute bottom-0 left-0 right-0 max-h-[90vh] backdrop-blur-xl bg-dark/95 border-t border-white/[0.1] rounded-t-2xl overflow-hidden flex flex-col shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+            className={`${
+              desktopPanel ? "md:hidden" : "lg:hidden"
+            } absolute bottom-0 left-0 right-0 max-h-[90vh] backdrop-blur-xl bg-dark/95 border-t border-white/[0.1] rounded-t-2xl overflow-hidden flex flex-col shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -130,43 +176,45 @@ const OrderTracker = ({ order, show, onClose }) => {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-              {content}
+              <OrderTrackerContent order={order} />
             </div>
           </motion.div>
 
           {/* Desktop: centered modal / side panel */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 40 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="hidden md:flex absolute inset-y-0 right-0 w-full max-w-lg flex-col backdrop-blur-xl bg-dark/95 border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.3)]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.1]">
-              <div className="flex items-center gap-3">
-                <Receipt className="w-5 h-5 text-secondary" />
-                <div>
-                  <h3 className="font-bold text-light text-xl">Tu Pedido</h3>
-                  <p className="text-sm text-gray">
-                    #{order.order_number?.slice(-6)} · {order.customer_name}
-                  </p>
+          {desktopPanel && (
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 40 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="hidden md:flex absolute inset-y-0 right-0 w-full max-w-lg flex-col backdrop-blur-xl bg-dark/95 border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.3)]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.1]">
+                <div className="flex items-center gap-3">
+                  <Receipt className="w-5 h-5 text-secondary" />
+                  <div>
+                    <h3 className="font-bold text-light text-xl">Tu Pedido</h3>
+                    <p className="text-sm text-gray">
+                      #{order.order_number?.slice(-6)} · {order.customer_name}
+                    </p>
+                  </div>
                 </div>
+                <button
+                  onClick={onClose}
+                  className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 text-gray hover:text-light hover:bg-gray/10 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
-              {content}
-            </div>
-          </motion.div>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+                <OrderTrackerContent order={order} />
+              </div>
+            </motion.div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock, ChefHat, CheckCircle } from "lucide-react";
+import { Clock, ChefHat, CheckCircle, PackageCheck, XCircle } from "lucide-react";
 
 const statusConfig = {
   pending: {
@@ -21,6 +21,20 @@ const statusConfig = {
     icon: CheckCircle,
     bgClass: "bg-green-500/20 border-green-500/40 shadow-lg shadow-green-500/30",
     textClass: "text-green-400",
+    animation: "",
+  },
+  delivered: {
+    label: "Entregado",
+    icon: PackageCheck,
+    bgClass: "bg-emerald-500/10 border-emerald-500/30",
+    textClass: "text-emerald-400",
+    animation: "",
+  },
+  cancelled: {
+    label: "Cancelado",
+    icon: XCircle,
+    bgClass: "bg-red-500/10 border-red-500/30",
+    textClass: "text-red-400",
     animation: "",
   },
 };

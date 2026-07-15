@@ -38,5 +38,5 @@ export { useImageUpload } from './useImageUpload';
 export { useInViewport } from './useInViewport';
 
 // Mobile detection hook
-export { useIsMobile } from './useIsMobile';
+export { useIsMobile, useMediaQuery } from './useIsMobile';
 

@@ -160,7 +160,7 @@ const DeliveryMap = ({ value, onChange }) => {
   // ── Mapa interactivo (Mapbox) ─────────────────────────────────────────────
   return (
     <div className="space-y-3">
-      <div className="relative h-56 rounded-xl overflow-hidden border border-white/10">
+      <div className="relative h-56 md:h-72 rounded-xl overflow-hidden border border-white/10">
         <Map
           {...viewState}
           onMove={(e) => setViewState(e.viewState)}
