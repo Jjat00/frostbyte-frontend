@@ -77,7 +77,8 @@ const BirthdayDiscountBanner = () => {
 
             {/* No acumulable */}
             <p className="text-center text-white/30 text-[10px] mt-3">
-              No acumulable con otras promociones
+              No acumulable con otras promociones. No incluye la jarra de
+              mojito ni botellas de vino.
             </p>
           </div>
         </motion.div>
