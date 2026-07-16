@@ -128,6 +128,8 @@ export const ENDPOINTS = {
   POLLA_ADMIN_OVERVIEW: '/polla/admin/overview/',
   POLLA_ADMIN_PLAYERS: '/polla/admin/',
   POLLA_ADMIN_PLAYER: (userId) => `/polla/admin/${userId}/`,
+  POLLA_ADMIN_AWARDS: '/polla/admin/awards/',
+  POLLA_ADMIN_RESOLVE_AWARD: '/polla/admin/resolve-award/',
 };
 
 export default ENDPOINTS;

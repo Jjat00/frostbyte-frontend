@@ -120,6 +120,13 @@ export const pollaService = {
   async adminPlayer(userId) {
     return (await apiClient.get(ENDPOINTS.POLLA_ADMIN_PLAYER(userId))).data;
   },
+  async adminAwards() {
+    return (await apiClient.get(ENDPOINTS.POLLA_ADMIN_AWARDS)).data;
+  },
+  async adminResolveAward(payload) {
+    // payload: { code, team_code } | { code, player_id } | { code, clear: true }
+    return (await apiClient.post(ENDPOINTS.POLLA_ADMIN_RESOLVE_AWARD, payload)).data;
+  },
 };
 
 export default pollaService;

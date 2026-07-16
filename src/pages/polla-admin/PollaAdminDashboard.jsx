@@ -18,6 +18,7 @@ import {
   usePollaAdminOverview,
   usePollaAdminPlayers,
 } from "@/hooks/usePolla";
+import MencionesAdminSection from "./MencionesAdminSection";
 
 const fmt = (n) => new Intl.NumberFormat("es-CO").format(n || 0);
 
@@ -231,6 +232,9 @@ const PollaAdminDashboard = () => {
             })}
           </div>
         </section>
+
+        {/* ── Menciones del torneo ── */}
+        <MencionesAdminSection />
 
         {/* ── Buscador ── */}
         <div className="relative">

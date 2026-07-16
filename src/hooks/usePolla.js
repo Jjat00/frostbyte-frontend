@@ -32,6 +32,7 @@ export const pollaKeys = {
   referral: () => ["polla", "referral"],
   adminOverview: () => ["polla", "admin", "overview"],
   adminPlayers: (q) => ["polla", "admin", "players", q || ""],
+  adminAwards: () => ["polla", "admin", "awards"],
   adminPlayer: (userId) => ["polla", "admin", "player", String(userId ?? "")],
 };
 
@@ -437,5 +438,30 @@ export function usePollaAdminPlayer(userId, options = {}) {
     enabled: !!userId,
     staleTime: LIVE_STALE,
     ...options,
+  });
+}
+
+/** Menciones del torneo con su estado y las opciones para resolverlas (staff). */
+export function usePollaAdminAwards(options = {}) {
+  return useQuery({
+    queryKey: pollaKeys.adminAwards(),
+    queryFn: () => pollaService.adminAwards(),
+    staleTime: LIVE_STALE,
+    ...options,
+  });
+}
+
+/** Resuelve (o limpia) una mención a mano desde el panel de staff. */
+export function useResolveAward() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => pollaService.adminResolveAward(payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: pollaKeys.adminAwards() });
+      qc.invalidateQueries({ queryKey: pollaKeys.adminPlayers("") });
+      qc.invalidateQueries({ queryKey: pollaKeys.adminOverview() });
+      qc.invalidateQueries({ queryKey: pollaKeys.awards() });
+      qc.invalidateQueries({ queryKey: pollaKeys.ranking() });
+    },
   });
 }
