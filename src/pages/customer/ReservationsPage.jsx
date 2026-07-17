@@ -8,12 +8,12 @@ import {
 import { cn } from "@/lib/utils";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import CustomerAuthGate from "@/components/checkout/CustomerAuthGate";
+import CustomerAvatar from "@/components/auth/CustomerAvatar";
+import MyReservationsList from "@/components/reservations/MyReservationsList";
 import {
   useReservationsConfig,
   useReservationAvailability,
   useCreateReservation,
-  useMyReservations,
-  useCancelReservation,
 } from "@/hooks/useReservations";
 
 /**
@@ -37,16 +37,6 @@ const toISO = (d) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
     d.getDate()
   ).padStart(2, "0")}`;
-
-const STATUS_CHIP = {
-  pending_payment: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  pending_review: "bg-violet-500/15 text-violet-300 border-violet-500/30",
-  confirmed: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  seated: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
-  completed: "bg-white/10 text-white/50 border-white/10",
-  cancelled: "bg-white/10 text-white/40 border-white/10",
-  no_show: "bg-red-500/15 text-red-300 border-red-500/30",
-};
 
 const inputCls =
   "w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] " +
@@ -196,9 +186,21 @@ const ReservationsPage = () => {
           >
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <h1 className="font-black uppercase tracking-wide">
+          <h1 className="font-black uppercase tracking-wide flex-1">
             Reservas <span className="text-gold">Frostbyte</span>
           </h1>
+          {isAuthenticated && (
+            <Link
+              to="/mi-cuenta"
+              aria-label="Mi cuenta"
+              className="grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all"
+            >
+              <CustomerAvatar
+                customer={customer}
+                className="w-8 h-8 text-sm"
+              />
+            </Link>
+          )}
         </div>
       </header>
 
@@ -595,7 +597,29 @@ const ReservationsPage = () => {
             )}
 
             {/* Mis reservas */}
-            {isAuthenticated && step === 1 && <MyReservations />}
+            {isAuthenticated && step === 1 && (
+              <section className="mt-10">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-black uppercase text-white/50">
+                    Tus reservas
+                  </h2>
+                  <Link
+                    to="/mis-reservas"
+                    className="text-xs font-bold text-gold"
+                  >
+                    Ver todas
+                  </Link>
+                </div>
+                <MyReservationsList
+                  mode="upcoming"
+                  emptyState={
+                    <p className="text-xs text-white/40">
+                      No tienes reservas próximas.
+                    </p>
+                  }
+                />
+              </section>
+            )}
           </>
         )}
       </main>
@@ -762,93 +786,6 @@ const SuccessScreen = ({ reservation, onNew }) => {
         </button>
       </div>
     </motion.div>
-  );
-};
-
-const MyReservations = () => {
-  const { data: reservations } = useMyReservations();
-  const { data: config } = useReservationsConfig();
-  const cancelReservation = useCancelReservation();
-  const [confirmId, setConfirmId] = useState(null);
-
-  if (!reservations?.length) return null;
-
-  const cancellable = ["pending_payment", "pending_review", "confirmed"];
-
-  return (
-    <section className="mt-10">
-      <h2 className="text-sm font-black uppercase text-white/50 mb-3">
-        Tus reservas
-      </h2>
-      <div className="grid gap-2">
-        {reservations.map((r) => (
-          <div
-            key={r.id}
-            className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08]"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-bold">
-                {r.type_display} · {formatLongDate(r.date)}
-              </span>
-              <span
-                className={cn(
-                  "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border",
-                  STATUS_CHIP[r.status] || STATUS_CHIP.completed
-                )}
-              >
-                {r.status_display}
-              </span>
-            </div>
-            <p className="text-xs text-white/50 mt-1">
-              {String(r.start_time).slice(0, 5)} · {r.party_size} personas
-              {r.floor ? ` · Piso ${r.floor}` : ""}
-              {Number(r.deposit_amount) > 0 &&
-                ` · Anticipo ${money(r.deposit_amount)}`}
-            </p>
-            {r.status === "pending_review" && (
-              <p className="mt-2 text-xs text-violet-200/80 bg-violet-500/10 border border-violet-500/20 rounded-lg p-2.5">
-                Estamos revisando tu solicitud; te confirmamos por WhatsApp.
-              </p>
-            )}
-            {r.status === "pending_payment" &&
-              config?.payment_instructions && (
-                <p className="mt-2 text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/20 rounded-lg p-2.5 whitespace-pre-line leading-relaxed">
-                  ¡Solicitud aprobada! Para confirmarla falta el anticipo de{" "}
-                  <strong>{money(r.deposit_amount)}</strong>.{" "}
-                  {config.payment_instructions}
-                </p>
-              )}
-            {cancellable.includes(r.status) &&
-              (confirmId === r.id ? (
-                <div className="mt-2 flex gap-2">
-                  <button
-                    onClick={() => {
-                      cancelReservation.mutate(r.id);
-                      setConfirmId(null);
-                    }}
-                    className="text-xs font-bold text-red-300 bg-red-500/10 border border-red-500/25 rounded-lg px-3 py-1.5"
-                  >
-                    Sí, cancelar
-                  </button>
-                  <button
-                    onClick={() => setConfirmId(null)}
-                    className="text-xs text-white/50 px-3 py-1.5"
-                  >
-                    No
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setConfirmId(r.id)}
-                  className="mt-2 text-xs text-white/40 underline underline-offset-2"
-                >
-                  Cancelar reserva
-                </button>
-              ))}
-          </div>
-        ))}
-      </div>
-    </section>
   );
 };
 
