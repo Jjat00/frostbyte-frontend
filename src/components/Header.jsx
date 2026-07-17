@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, LogIn, ClipboardList, Bike } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import CustomerAvatar from "@/components/auth/CustomerAvatar";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -70,6 +71,7 @@ const Header = () => {
   const location = useLocation();
   const { data: categoriesData } = useActiveCategories();
   const isCustomerAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
+  const customer = useCustomerAuthStore((s) => s.customer);
   const { data: storeConfig } = useStoreConfig();
   // Sin domicilios en linea activos no hay pedidos de cliente que mostrar
   const inAppOrdering = !!storeConfig?.customer_ordering_enabled;
@@ -276,6 +278,22 @@ const Header = () => {
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 )}
+                {isCustomerAuthenticated && (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/mi-cuenta"
+                        aria-label="Mi cuenta"
+                        className="ml-1 grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all"
+                      >
+                        <CustomerAvatar
+                          customer={customer}
+                          className="w-8 h-8 text-sm"
+                        />
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )}
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     asChild
@@ -411,6 +429,19 @@ const Header = () => {
                 >
                   <ClipboardList className="w-4 h-4" />
                   Mis pedidos
+                </Link>
+              )}
+              {isCustomerAuthenticated && (
+                <Link
+                  to="/mi-cuenta"
+                  className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <CustomerAvatar
+                    customer={customer}
+                    className="w-6 h-6 text-xs"
+                  />
+                  Mi cuenta
                 </Link>
               )}
               <Link

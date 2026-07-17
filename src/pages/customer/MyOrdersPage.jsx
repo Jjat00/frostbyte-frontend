@@ -8,6 +8,7 @@ import {
   Receipt,
 } from "lucide-react";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import CustomerAvatar from "@/components/auth/CustomerAvatar";
 import { useMyOrders, useMyOrder, useMyOrdersLive, useMediaQuery } from "@/hooks";
 import OrderStatusBadge from "@/components/order-tracker/OrderStatusBadge";
 import OrderTracker, {
@@ -72,6 +73,7 @@ const OrderCard = ({ order, selected, onClick }) => (
 
 const MyOrdersPage = () => {
   const isAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
+  const customer = useCustomerAuthStore((s) => s.customer);
 
   // Hooks siempre en el mismo orden (el guard va después)
   useMyOrdersLive();
@@ -152,9 +154,16 @@ const MyOrdersPage = () => {
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="text-lg font-black uppercase tracking-wide">
+          <h1 className="text-lg font-black uppercase tracking-wide flex-1">
             Mis pedidos
           </h1>
+          <Link
+            to="/mi-cuenta"
+            aria-label="Mi cuenta"
+            className="grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all"
+          >
+            <CustomerAvatar customer={customer} className="w-8 h-8 text-sm" />
+          </Link>
         </div>
       </header>
 

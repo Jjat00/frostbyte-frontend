@@ -113,6 +113,10 @@ const DeliveryPage = lazyLoad(() => import("./pages/customer/DeliveryPage"));
 const ReservationsPage = lazyLoad(() => import("./pages/customer/ReservationsPage"));
 const ReservationsAdminPage = lazyLoad(() => import("./pages/reservations/ReservationsAdminPage"));
 
+// Cuenta del cliente (sesión Google)
+const AccountPage = lazyLoad(() => import("./pages/customer/AccountPage"));
+const MyReservationsPage = lazyLoad(() => import("./pages/customer/MyReservationsPage"));
+
 // Fallback de carga mínimo
 const PageLoader = () => (
   <div className="min-h-screen bg-dark flex items-center justify-center">
@@ -153,12 +157,30 @@ export const router = createBrowserRouter([
     path: "/",
     element: <App />,
   },
+  // Mi cuenta (cliente Google; sin sesión muestra el login)
+  {
+    path: "/mi-cuenta",
+    element: (
+      <Lazy>
+        <AccountPage />
+      </Lazy>
+    ),
+  },
   // Mis pedidos (cliente autenticado con Google)
   {
     path: "/mis-pedidos",
     element: (
       <Lazy>
         <MyOrdersPage />
+      </Lazy>
+    ),
+  },
+  // Mis reservas (cliente autenticado con Google)
+  {
+    path: "/mis-reservas",
+    element: (
+      <Lazy>
+        <MyReservationsPage />
       </Lazy>
     ),
   },
