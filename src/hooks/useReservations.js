@@ -105,6 +105,17 @@ export function useUpdateReservation() {
   });
 }
 
+/** Elimina una reserva definitivamente (la confirmación la pide el UI). */
+export function useDeleteReservation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => reservationsAdminService.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: reservationKeys.admin });
+    },
+  });
+}
+
 /** Crea una reserva desde el dashboard (teléfono / en persona). */
 export function useCreateStaffReservation() {
   const queryClient = useQueryClient();

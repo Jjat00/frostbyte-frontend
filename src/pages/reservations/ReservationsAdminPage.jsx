@@ -4,12 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft, ChevronRight, Crown, UtensilsCrossed, Users, Phone,
   CalendarDays, Settings2, Loader2, Wifi, WifiOff, Plus, X, CheckCircle2,
+  Trash2, AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   useReservationsDay,
   useReservationsCalendar,
   useUpdateReservation,
+  useDeleteReservation,
   useCreateStaffReservation,
   useReservationSettings,
   useUpdateReservationSettings,
@@ -338,6 +340,8 @@ const Kpi = ({ label, value, accent, gold }) => (
 
 const ReservationCard = ({ reservation: r }) => {
   const updateReservation = useUpdateReservation();
+  const deleteReservation = useDeleteReservation();
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const { data: tables } = useReservationTables();
   const isVip = r.reservation_type === "vip_room";
   const actions = actionsFor(r);
@@ -452,10 +456,97 @@ const ReservationCard = ({ reservation: r }) => {
             {a.label}
           </button>
         ))}
+
+        <button
+          onClick={() => setConfirmDelete(true)}
+          disabled={deleteReservation.isPending}
+          aria-label="Eliminar reserva"
+          className="grid place-items-center w-7 h-7 rounded-lg border border-white/10 text-white/30 hover:text-red-300 hover:border-red-500/30 disabled:opacity-40 transition-colors"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
+
+      <ConfirmDeleteDialog
+        open={confirmDelete}
+        reservation={r}
+        pending={deleteReservation.isPending}
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={() =>
+          deleteReservation.mutate(r.id, {
+            onSettled: () => setConfirmDelete(false),
+          })
+        }
+      />
     </article>
   );
 };
+
+/** Diálogo de confirmación para el borrado definitivo de una reserva. */
+const ConfirmDeleteDialog = ({
+  open,
+  reservation: r,
+  pending,
+  onCancel,
+  onConfirm,
+}) => (
+  <AnimatePresence>
+    {open && (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/70 backdrop-blur-sm"
+        onClick={onCancel}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 8 }}
+          onClick={(e) => e.stopPropagation()}
+          role="alertdialog"
+          aria-label="Confirmar eliminación de la reserva"
+          className="w-full max-w-sm rounded-2xl bg-dark-secondary border border-white/10 p-5 shadow-2xl"
+        >
+          <div className="flex items-start gap-3">
+            <span className="grid place-items-center w-10 h-10 rounded-full bg-red-500/15 text-red-300 flex-shrink-0">
+              <AlertTriangle className="w-5 h-5" />
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-black text-sm">¿Eliminar esta reserva?</h3>
+              <p className="mt-1 text-xs text-white/60 leading-relaxed">
+                {r.customer_name} · {String(r.start_time).slice(0, 5)} ·{" "}
+                {r.party_size} personas. Se borra definitivamente y no se
+                puede deshacer. Si solo quieres liberar el cupo, usa
+                Cancelar o Rechazar.
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              onClick={onCancel}
+              className="text-xs font-bold px-3.5 py-2 rounded-lg border border-white/10 text-white/60 hover:text-white/90"
+            >
+              Conservar
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={pending}
+              className="text-xs font-bold px-3.5 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-red-300 disabled:opacity-40 flex items-center gap-1.5"
+            >
+              {pending ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="w-3.5 h-3.5" />
+              )}
+              Eliminar
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
 
 /* ------------------------------------------------------------ configuración */
 

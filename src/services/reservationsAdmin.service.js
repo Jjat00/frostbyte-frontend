@@ -35,6 +35,11 @@ export const reservationsAdminService = {
     return response.data;
   },
 
+  /** Elimina una reserva definitivamente (el UI confirma antes). */
+  async remove(id) {
+    await apiClient.delete(`/reservations/admin/${id}/`);
+  },
+
   /** Configuración del módulo. */
   async getSettings() {
     const response = await apiClient.get("/reservations/admin/settings/");
