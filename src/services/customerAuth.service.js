@@ -71,6 +71,17 @@ export const customerAuthService = {
     localStorage.setItem(CUSTOMER_USER_KEY, JSON.stringify(user));
     return user;
   },
+
+  /**
+   * Actualiza el perfil propio (nombre, teléfono, correos). El backend solo
+   * acepta campos de autoservicio y devuelve el usuario completo.
+   */
+  async updateProfile(data) {
+    const response = await customerClient.patch("/auth/me/", data);
+    const user = response.data;
+    localStorage.setItem(CUSTOMER_USER_KEY, JSON.stringify(user));
+    return user;
+  },
 };
 
 export default customerAuthService;

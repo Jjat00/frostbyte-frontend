@@ -56,6 +56,22 @@ export const useCustomerAuthStore = create((set, get) => ({
     });
   },
 
+  /**
+   * Actualiza el perfil propio (nombre, teléfono, opt-out de correos).
+   */
+  updateProfile: async (data) => {
+    try {
+      const user = await customerAuthService.updateProfile(data);
+      set({ customer: user });
+      return { success: true, user };
+    } catch (error) {
+      const message =
+        error.response?.data?.detail ||
+        "No pudimos guardar tu perfil. Intenta de nuevo.";
+      return { success: false, error: message };
+    }
+  },
+
   refreshCustomer: async () => {
     try {
       const user = await customerAuthService.getCurrentCustomer();
