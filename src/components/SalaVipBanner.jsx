@@ -1,16 +1,21 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Crown, Cake, PartyPopper, Users, UtensilsCrossed, MessageCircle } from "lucide-react";
+import { Crown, Cake, PartyPopper, Users, UtensilsCrossed, MessageCircle, CalendarDays } from "lucide-react";
 import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
+import { useReservationsConfig } from "@/hooks/useReservations";
 
 /**
  * Banner promocional de la Sala VIP (piso 3).
  *
  * Promociona la sala para cumpleaños, celebraciones y eventos de grupos
- * (~12 personas). Fase de expectativa: sin precios ni reserva en línea;
- * el interesado pide información al personal o por WhatsApp.
+ * (hasta ~15 personas). Con las reservas en línea activas el CTA lleva a
+ * /reservas; apagadas, mantiene el flujo de expectativa por WhatsApp.
  */
 const SalaVipBanner = () => {
+  const { data: reservationsConfig } = useReservationsConfig();
+  const onlineReservations = !!reservationsConfig?.reservations_enabled;
+
   return (
     <section id="sala-vip" className="py-8 bg-dark relative overflow-hidden">
       {/* Sistema 26: capa decorativa tipo afiche (sutil, ligera en GPU) */}
@@ -59,7 +64,7 @@ const SalaVipBanner = () => {
               <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-gold/10 to-transparent border border-gold/20 text-center">
                 <Users size={18} className="text-gold" />
                 <span className="text-white/70 text-[11px] leading-tight font-semibold">
-                  Grupos de ~12 personas
+                  Hasta {reservationsConfig?.vip_capacity ?? 15} personas
                 </span>
               </div>
               <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-gold/10 to-transparent border border-gold/20 text-center">
@@ -76,22 +81,39 @@ const SalaVipBanner = () => {
               </div>
             </div>
 
-            {/* CTA: pedir información */}
-            <p className="text-center text-white/70 text-sm font-semibold mb-3">
-              ¿Te interesa?{" "}
-              <span className="text-gold">Pregunta a nuestro personal</span> y
-              te contamos todo.
-            </p>
-
-            <a
-              href="https://wa.me/573164277879?text=Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20Sala%20VIP%20del%20piso%203"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-            >
-              <MessageCircle size={18} />
-              Pedir información por WhatsApp
-            </a>
+            {/* CTA: reservar en línea si el módulo está activo; si no, WhatsApp */}
+            {onlineReservations ? (
+              <>
+                <p className="text-center text-white/70 text-sm font-semibold mb-3">
+                  Elige tu fecha y turno:{" "}
+                  <span className="text-gold">la sala es de ustedes</span>.
+                </p>
+                <Link
+                  to="/reservas"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+                >
+                  <CalendarDays size={18} />
+                  Reservar la sala
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="text-center text-white/70 text-sm font-semibold mb-3">
+                  ¿Te interesa?{" "}
+                  <span className="text-gold">Pregunta a nuestro personal</span> y
+                  te contamos todo.
+                </p>
+                <a
+                  href="https://wa.me/573164277879?text=Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20Sala%20VIP%20del%20piso%203"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+                >
+                  <MessageCircle size={18} />
+                  Pedir información por WhatsApp
+                </a>
+              </>
+            )}
 
             <p className="text-center text-white/30 text-[10px] mt-3">
               Cupos por fecha limitados · Reserva con anticipación

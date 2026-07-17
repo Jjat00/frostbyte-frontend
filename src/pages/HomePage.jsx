@@ -33,6 +33,8 @@ import {
   Users,
   Layers,
   ChevronRight,
+  CalendarDays,
+  Crown,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -234,6 +236,22 @@ const HomePage = () => {
         { icon: ClipboardList, text: 'Activos' },
         { icon: ShoppingCart, text: 'Nuevo Pedido' },
         { icon: BarChart3, text: 'Estadísticas' },
+      ],
+    },
+    {
+      id: 'reservations',
+      title: 'Reservas',
+      description: 'Mesas, grupos grandes y la Sala VIP del piso 3',
+      icon: CalendarDays,
+      path: '/reservas-admin',
+      color: 'from-amber-400 to-yellow-600',
+      bgColor: 'bg-amber-500/10',
+      borderColor: 'border-amber-500/30',
+      glowColor: 'group-hover:shadow-[0_0_30px_rgba(242,197,61,0.3)]',
+      features: [
+        { icon: CalendarDays, text: 'Calendario' },
+        { icon: Crown, text: 'Sala VIP' },
+        { icon: Users, text: 'Grupos' },
       ],
     },
     {

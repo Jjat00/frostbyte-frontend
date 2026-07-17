@@ -109,6 +109,10 @@ const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
 const MyOrdersPage = lazyLoad(() => import("./pages/customer/MyOrdersPage"));
 const DeliveryPage = lazyLoad(() => import("./pages/customer/DeliveryPage"));
 
+// Reservas (mesa, grupo, Sala VIP)
+const ReservationsPage = lazyLoad(() => import("./pages/customer/ReservationsPage"));
+const ReservationsAdminPage = lazyLoad(() => import("./pages/reservations/ReservationsAdminPage"));
+
 // Fallback de carga mínimo
 const PageLoader = () => (
   <div className="min-h-screen bg-dark flex items-center justify-center">
@@ -165,6 +169,26 @@ export const router = createBrowserRouter([
       <Lazy>
         <DeliveryPage />
       </Lazy>
+    ),
+  },
+  // Reservas (pública; el login de Google salta al confirmar)
+  {
+    path: "/reservas",
+    element: (
+      <Lazy>
+        <ReservationsPage />
+      </Lazy>
+    ),
+  },
+  // Gestión de reservas (staff)
+  {
+    path: "/reservas-admin",
+    element: (
+      <ProtectedRoute>
+        <Lazy>
+          <ReservationsAdminPage />
+        </Lazy>
+      </ProtectedRoute>
     ),
   },
   // Landing page pública (SaaS)
