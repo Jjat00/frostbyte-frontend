@@ -3,6 +3,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ChevronDown, Instagram } from "lucide-react";
 import { env } from "@/config/env";
+import { useInViewport, useIsMobile } from "@/hooks";
+import { themeColorChannels } from "@/lib/themeColors";
 
 gsap.registerPlugin(useGSAP);
 
@@ -58,13 +60,138 @@ const getDateStrip = () => {
 const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase";
 const PHRASE_TTL_MS = 30 * 60 * 1000;
 
+// "Byte" in binary: B=01000010 y=01111001 t=01110100 e=01100101
+const BYTE_BINARY = "01000010011110010111010001100101";
+
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
   const sectionRef = useRef(null);
+  const canvasRef = useRef(null);
+  const isInView = useInViewport(sectionRef);
+  const isMobile = useIsMobile();
   const greeting = getGreeting();
   const dayName = DAY_NAMES[new Date().getDay()];
   const dateStrip = getDateStrip();
+
+  // Grid binario interactivo (sensible al hover del mouse). Solo desktop:
+  // en móvil ni se monta el canvas ni corre el rAF (rendimiento), y se pausa
+  // cuando la sección sale del viewport.
+  useEffect(() => {
+    if (!isInView || isMobile) return;
+    const canvas = canvasRef.current;
+    const section = sectionRef.current;
+    if (!canvas || !section) return;
+    const ctx = canvas.getContext("2d");
+    let rafId;
+    const mouse = { x: -9999, y: -9999 };
+    const COL_W = 22;
+    const ROW_H = 20;
+    const FONT_SIZE = 12;
+    const HOVER_RADIUS = 140;
+    // El color del halo del hover sigue al tema activo (canvas no resuelve
+    // var(): se leen los canales del token una sola vez al montar).
+    const [pr, pg, pb] = themeColorChannels("--color-primary") ?? [255, 0, 212];
+    let flickerPhases = [];
+    let cols = 0;
+    let rows = 0;
+    const buildGrid = () => {
+      cols = Math.ceil(canvas.width / COL_W) + 1;
+      rows = Math.ceil(canvas.height / ROW_H) + 1;
+      const total = cols * rows;
+      flickerPhases = new Float32Array(total);
+      for (let i = 0; i < total; i++) {
+        flickerPhases[i] = Math.random() * Math.PI * 2;
+      }
+    };
+    const resize = () => {
+      canvas.width = section.offsetWidth;
+      canvas.height = section.offsetHeight;
+      buildGrid();
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    const handleMouseMove = (e) => {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const handleMouseLeave = () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    };
+    section.addEventListener("mousemove", handleMouseMove);
+    section.addEventListener("mouseleave", handleMouseLeave);
+    ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const t = Date.now() * 0.001;
+      for (let col = 0; col < cols; col++) {
+        for (let row = 0; row < rows; row++) {
+          const idx = col * rows + row;
+          const x = col * COL_W + COL_W / 2;
+          const y = row * ROW_H + ROW_H / 2;
+          const digit = BYTE_BINARY[idx % BYTE_BINARY.length];
+          const phase = flickerPhases[idx];
+          const flicker = 0.5 + 0.5 * Math.sin(t * 0.8 + phase);
+          let alpha = 0.06 + flicker * 0.12;
+          let r = 255,
+            g = 255,
+            b = 255;
+          const colorCycle = Math.sin(t * 0.5 + phase * 1.5);
+          if (colorCycle > 0.3) {
+            r = 180;
+            g = 240;
+            b = 255;
+          } else if (colorCycle < -0.3) {
+            r = 255;
+            g = 180;
+            b = 240;
+          }
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          let drawX = x;
+          let drawY = y;
+          if (dist < HOVER_RADIUS) {
+            const intensity = 1 - dist / HOVER_RADIUS;
+            const ease = intensity * intensity;
+            const waveFreq = 0.06;
+            const waveAmp = 8;
+            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
+            const angle = Math.atan2(dy, dx);
+            drawX += Math.cos(angle) * wave;
+            drawY += Math.sin(angle) * wave;
+            alpha = Math.min(1, alpha + ease * 0.85);
+            r = Math.round(r * (1 - ease) + pr * ease);
+            g = Math.round(g * (1 - ease) + pg * ease);
+            b = Math.round(b * (1 - ease) + pb * ease);
+            const scale = 1 + ease * 0.5;
+            ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Courier New', monospace`;
+            ctx.shadowColor = `rgba(${pr}, ${pg}, ${pb}, ${ease * 0.7})`;
+            ctx.shadowBlur = ease * 16;
+          }
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.fillText(digit, drawX, drawY);
+          if (dist < HOVER_RADIUS) {
+            ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+          }
+        }
+      }
+      rafId = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => {
+      section.removeEventListener("mousemove", handleMouseMove);
+      section.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(rafId);
+    };
+  }, [isInView, isMobile]);
 
   useEffect(() => {
     // 1) Si la frase en cache local sigue fresca (< 30 min), la usamos al
@@ -138,6 +265,12 @@ const Hero = () => {
       <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
+      {!isMobile && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 pointer-events-none"
+        />
+      )}
 
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>
