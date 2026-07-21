@@ -1,0 +1,149 @@
+/* ═══════════════════════════════════════════════════════════════════
+   THEME.CSS — ARCHIVO MAESTRO DEL DESIGN SYSTEM DE FROSTBYTE
+   ───────────────────────────────────────────────────────────────────
+   Toda la apariencia de la plataforma (landing, carta, módulos, panel
+   admin, modales, alertas, toasts) se controla DESDE AQUÍ. Tailwind v4
+   compila sus utilidades a var(--color-*) / var(--font-*), así que
+   cambiar un token en este archivo repinta la app completa sin tocar
+   componentes.
+
+   CÓMO CAMBIAR DE TEMA / TEMÁTICA:
+
+   A) Cambio permanente: edita los valores del bloque @theme de abajo
+      (paleta, fuentes, radios). Nada más.
+
+   B) Temática reversible (estilo "skin del Mundial 2026"): define una
+      clase .theme-<nombre> en la sección TEMAS ALTERNATIVOS que
+      redefina los mismos tokens, y actívala añadiéndola al <body> en
+      index.html. Quitar la clase = volver al tema base. Una página
+      concreta puede llevar la clase en su contenedor raíz para
+      tematizarse solo ella (así conserva la Polla su look Mundial).
+
+   C) Si el tema usa fuentes nuevas, añade su <link> de Google Fonts en
+      index.html (las fuentes no usadas no pesan en runtime si no se
+      referencian, pero conviene retirar el <link> al retirar el tema).
+
+   REGLA DE ORO para nuevos componentes: NUNCA hardcodear colores de
+   marca (#ff00d4, rgba(255,0,212,…), "Orbitron"). Usar utilidades de
+   token (text-primary, from-secondary, shadow, font-display…) o, en
+   estilos inline/arbitrarios, var(--color-primary) y
+   color-mix(in srgb, var(--color-primary) 40%, transparent) para
+   versiones con transparencia.
+
+   EXCEPCIONES CONOCIDAS (no siguen el tema, a propósito):
+   - Identidad de producto: los gradientes propios de cada sección de
+     la carta (cerveza ámbar, vino rojo, lulada verde…) y las paletas
+     de series en gráficas de analytics son color de CONTENIDO, no de
+     tema.
+   - FrostbyteTVPage: pieza autocontenida con su propio CSS (.ft-*).
+   - impostorAvatars.js: paleta propia del juego.
+   - qrStyling.js: la librería de QR exige hex literales.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Paleta de marca (tema base: Frostbyte cyberpunk) ── */
+  --color-dark: #0a0b14; /* fondo global */
+  --color-dark-secondary: #12141f; /* superficies/cards */
+  --color-light: #e8f6ff; /* texto principal (hielo) */
+  --color-gray: #8a8d9c; /* texto secundario */
+  --color-primary: #ff00d4; /* magenta neón */
+  --color-secondary: #00e0ff; /* cyan neón */
+
+  /* Acentos de temporada (Sistema 26 / Mundial). Se conservan porque
+     las páginas de la Polla siguen usándolos bajo .theme-26. */
+  --color-grass: #1e9e5a;
+  --color-gold: #f2c53d;
+
+  /* ── Tipografía ──
+     display = títulos (h1–h6 y .font-display); body = todo lo demás.
+     El tema base usa Orbitron para ambos (única familia del sistema). */
+  --font-display: "Orbitron", sans-serif;
+  --font-body: "Orbitron", sans-serif;
+
+  /* ── Tokens shadcn/Radix (modales, inputs, alertas, toasts) ── */
+  --color-border: oklch(0.27 0.03 255);
+  --color-input: oklch(0.27 0.03 255);
+  --color-ring: #ff00d4;
+  --color-background: #0a0b14;
+  --color-foreground: #e8f6ff;
+
+  --color-card: #0a0b14;
+  --color-card-foreground: #e8f6ff;
+  --color-popover: #0a0b14;
+  --color-popover-foreground: #e8f6ff;
+  --color-primary-foreground: #0a0b14;
+  --color-secondary-foreground: #0a0b14;
+
+  --color-muted: oklch(0.27 0.03 255);
+  --color-muted-foreground: oklch(0.55 0.02 250);
+  --color-accent: oklch(0.27 0.03 255);
+  --color-accent-foreground: #e8f6ff;
+  --color-destructive: oklch(0.6 0.2 25);
+  --color-destructive-foreground: #e8f6ff;
+
+  /* ── Radios ── */
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   TEMAS ALTERNATIVOS
+   Cada tema es una clase que redefine tokens. Activar = ponerla en el
+   <body> (global) o en el contenedor raíz de una página (local).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── theme-26 · Mundial 2026 (histórico) ──────────────────────────
+   Fue el skin global durante el torneo; hoy lo usan localmente las
+   páginas de la Polla (/polla-mundial, /mundial, polla-admin) porque
+   el premio sigue vigente. Fuentes Archivo + Noto Sans (cargadas en
+   index.html). */
+.theme-26 {
+  --color-primary: #1e9e5a; /* verde cancha */
+  --color-secondary: #f2c53d; /* oro */
+  --color-ring: #1e9e5a;
+  --font-display: "Archivo", sans-serif;
+  --font-body: "Noto Sans", sans-serif;
+  font-family: var(--font-body);
+}
+
+/* Ajustes tipográficos propios del tema: display pesado tipo emblema
+   "26" en h1–h3; h4–h6 permanecen en la fuente de texto. */
+.theme-26 h1,
+.theme-26 .t26-display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.theme-26 h2,
+.theme-26 h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+.theme-26 h4,
+.theme-26 h5,
+.theme-26 h6 {
+  font-family: var(--font-body);
+}
+
+/* El numerazo "26" como elemento gráfico (máscara/marco/acento). */
+.t26-num {
+  font-family: "Archivo", sans-serif;
+  font-weight: 900;
+  line-height: 0.82;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Plantilla para un tema nuevo (copiar, renombrar y activar) ──
+.theme-halloween {
+  --color-primary: #ff6d00;
+  --color-secondary: #7c3aed;
+  --color-ring: #ff6d00;
+  --color-dark: #0c0a12;
+  --color-dark-secondary: #171322;
+  --font-display: "Creepster", cursive;   (+ <link> en index.html)
+  --font-body: "Inter", sans-serif;
+  font-family: var(--font-body);
+}
+*/

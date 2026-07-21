@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Map, {
   Marker,
   Source,
@@ -15,6 +15,7 @@ import {
   DELIVERY_RADIUS_KM,
   isWithinDeliveryArea,
 } from "@/lib/deliveryArea";
+import { themeColorRaw } from "@/lib/themeColors";
 
 // Radio de cobertura como capa GeoJSON
 const COVERAGE_GEOJSON = circle(
@@ -59,6 +60,8 @@ const DeliveryMap = ({ value, onChange }) => {
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
   const [styleKey, setStyleKey] = useState("satellite");
+  // Color de la capa de cobertura de Mapbox: leído una vez del tema (no resuelve var()).
+  const secondaryColor = useMemo(() => themeColorRaw("--color-secondary"), []);
 
   const setPoint = (la, lo, recenter = true) => {
     onChange({ lat: round7(la), lng: round7(lo) });
@@ -175,13 +178,13 @@ const DeliveryMap = ({ value, onChange }) => {
             <Layer
               id="delivery-coverage-fill"
               type="fill"
-              paint={{ "fill-color": "#00e0ff", "fill-opacity": 0.08 }}
+              paint={{ "fill-color": secondaryColor, "fill-opacity": 0.08 }}
             />
             <Layer
               id="delivery-coverage-line"
               type="line"
               paint={{
-                "line-color": "#00e0ff",
+                "line-color": secondaryColor,
                 "line-opacity": 0.7,
                 "line-width": 1.5,
                 "line-dasharray": [2, 2],

@@ -128,7 +128,7 @@ const NowPlayingBar = ({ data }) => {
         )}
         <div className="flex-1 min-w-0">
           <p className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] mb-1">Sonando ahora</p>
-          <p className="text-white font-black text-lg md:text-xl truncate drop-shadow-[0_2px_10px_rgba(255,0,212,0.3)]">{data.name}</p>
+          <p className="text-white font-black text-lg md:text-xl truncate drop-shadow-[0_2px_10px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]">{data.name}</p>
           <p className="text-white/50 text-sm truncate">{data.artists}</p>
         </div>
       </div>
@@ -139,7 +139,7 @@ const NowPlayingBar = ({ data }) => {
       {/* Lyrics - floating text, no background */}
       {lyricsLines && (
         <div className="mt-6 text-center">
-          <p className="text-xl md:text-2xl font-bold text-white drop-shadow-[0_0_20px_rgba(0,224,255,0.4)] transition-all duration-300">
+          <p className="text-xl md:text-2xl font-bold text-white drop-shadow-[0_0_20px_color-mix(in_srgb,var(--color-secondary)_40%,transparent)] transition-all duration-300">
             {lyricsLines.current}
           </p>
           {lyricsLines.next && (
@@ -334,7 +334,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
           className="text-center mb-10"
         >
           <h2 className="text-4xl md:text-6xl font-black mb-3">
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,0,212,0.3)]">
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]">
               PIDE TU CANCION
             </span>
           </h2>

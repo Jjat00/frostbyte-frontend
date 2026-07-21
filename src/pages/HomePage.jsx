@@ -68,11 +68,11 @@ const KpiCard = ({ icon: Icon, label, value, subtitle, accent = 'secondary', isL
   const palettes = {
     secondary: {
       gradient: 'from-secondary to-primary',
-      glow: 'group-hover:shadow-[0_0_30px_rgba(0,224,255,0.3)]',
+      glow: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-secondary)_30%,transparent)]',
     },
     primary: {
       gradient: 'from-primary to-secondary',
-      glow: 'group-hover:shadow-[0_0_30px_rgba(255,0,212,0.3)]',
+      glow: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]',
     },
     green: {
       gradient: 'from-emerald-400 to-teal-500',
@@ -212,7 +212,7 @@ const HomePage = () => {
       color: 'from-primary to-secondary',
       bgColor: 'bg-primary/10',
       borderColor: 'border-primary/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(255,0,212,0.3)]',
+      glowColor: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]',
       features: [
         { icon: BarChart3, text: 'Dashboard' },
         { icon: Package, text: 'Materiales' },
@@ -229,7 +229,7 @@ const HomePage = () => {
       color: 'from-secondary to-primary',
       bgColor: 'bg-secondary/10',
       borderColor: 'border-secondary/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(0,224,255,0.3)]',
+      glowColor: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-secondary)_30%,transparent)]',
       features: [
         { icon: ClipboardList, text: 'Activos' },
         { icon: ShoppingCart, text: 'Nuevo Pedido' },
@@ -245,7 +245,7 @@ const HomePage = () => {
       color: 'from-primary to-secondary',
       bgColor: 'bg-primary/10',
       borderColor: 'border-primary/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(255,0,212,0.3)]',
+      glowColor: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]',
       features: [
         { icon: Store, text: 'Lista de Productos' },
         { icon: Package, text: 'Categorías' },
@@ -379,7 +379,7 @@ const HomePage = () => {
       {/* Animated background grid */}
       <div className="fixed inset-0 pointer-events-none opacity-20">
         <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(rgba(255,0,212,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,224,255,0.1) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(color-mix(in srgb, var(--color-primary) 10%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--color-secondary) 10%, transparent) 1px, transparent 1px)`,
           backgroundSize: '50px 50px',
         }} />
       </div>
@@ -428,7 +428,7 @@ const HomePage = () => {
               {/* View Menu Button */}
               <Link
                 to="/"
-                className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/30 rounded-lg hover:bg-primary hover:text-dark transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,212,0.4)]"
+                className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/30 rounded-lg hover:bg-primary hover:text-dark transition-all duration-300 hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_40%,transparent)]"
                 title="Ver Carta Pública"
               >
                 <Store className="w-4 h-4" />

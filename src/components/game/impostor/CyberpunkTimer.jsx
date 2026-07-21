@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { themeColorRaw } from '@/lib/themeColors';
 
 const CyberpunkTimer = ({ timeLeft, duration, size = 120 }) => {
   const progress = duration > 0 ? timeLeft / duration : 0;
@@ -8,7 +9,9 @@ const CyberpunkTimer = ({ timeLeft, duration, size = 120 }) => {
   const strokeDashoffset = circumference * (1 - progress);
   const isWarning = timeLeft <= 5 && timeLeft > 0;
 
-  const color = isWarning ? '#ef4444' : '#00e0ff';
+  // Leído una vez del tema: framer-motion anima este color y no resuelve var().
+  const secondaryColor = useMemo(() => themeColorRaw('--color-secondary'), []);
+  const color = isWarning ? '#ef4444' : secondaryColor;
 
   return (
     <div className="relative inline-flex items-center justify-center">

@@ -129,7 +129,7 @@ const Features = () => {
           {features.map((feature, index) => (
             // feature-card: targeted by ScrollTrigger.batch for entry animation
             <div key={index} className="feature-card group">
-              <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-center text-center transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-primary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(255,0,212,0.1)] hover:transform hover:scale-105">
+              <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-center text-center transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-primary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_color-mix(in_srgb,var(--color-primary)_10%,transparent)] hover:transform hover:scale-105">
                 {/* feature-icon: targeted by ScrollTrigger.batch for rotation */}
                 <div
                   className={`feature-icon w-20 h-20 bg-linear-to-br ${

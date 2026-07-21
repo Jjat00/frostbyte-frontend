@@ -52,8 +52,8 @@ const LoginPage = () => {
       <div 
         className="absolute inset-0 opacity-10"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,0,212,0.1) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(0,224,255,0.1) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(color-mix(in srgb, var(--color-primary) 10%, transparent) 1px, transparent 1px),
+                           linear-gradient(90deg, color-mix(in srgb, var(--color-secondary) 10%, transparent) 1px, transparent 1px)`,
           backgroundSize: '50px 50px',
         }}
       />

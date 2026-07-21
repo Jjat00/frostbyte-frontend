@@ -4,6 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { MapPin, Layers } from "lucide-react";
 import { env } from "@/config";
 import { STORE_LOCATION } from "@/lib/deliveryArea";
+import { themeColorRaw } from "@/lib/themeColors";
 
 // Satélite por defecto, igual que el mapa del checkout: en Cumbal las casas
 // se ubican mejor viendo los techos que sobre un plano de calles.
@@ -23,6 +24,8 @@ const MAP_STYLES = {
 const OrderRouteMap = ({ lat, lng }) => {
   const token = env.MAPBOX_TOKEN;
   const [styleKey, setStyleKey] = useState("satellite");
+  // Color de la línea de ruta en Mapbox: leído una vez del tema (no resuelve var()).
+  const secondaryColor = useMemo(() => themeColorRaw("--color-secondary"), []);
 
   const initialViewState = useMemo(
     () => ({
@@ -69,7 +72,7 @@ const OrderRouteMap = ({ lat, lng }) => {
             id="order-route-line"
             type="line"
             paint={{
-              "line-color": "#00e0ff",
+              "line-color": secondaryColor,
               "line-opacity": 0.8,
               "line-width": 2,
               "line-dasharray": [1.5, 1.5],

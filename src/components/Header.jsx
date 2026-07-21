@@ -290,7 +290,7 @@ const Header = () => {
                   .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_rgba(255,0,212,0.4)] transition-all duration-300"
+              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_color-mix(in_srgb,var(--color-primary)_40%,transparent)] transition-all duration-300"
             >
               Ver Carta
             </Button>
@@ -441,7 +441,7 @@ const Header = () => {
                   ?.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_rgba(255,0,212,0.2)]"
+              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_20%,transparent)]"
             >
               Ver Carta
             </Button>
