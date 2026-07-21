@@ -34,11 +34,11 @@ const CartBar = ({ onClick }) => {
             type="button"
             onClick={onClick}
             aria-label={`Ver mi pedido, ${count} producto${count === 1 ? "" : "s"}`}
-            className="pointer-events-auto mx-auto flex w-full max-w-md items-center gap-3 rounded-2xl bg-gradient-to-r from-gold to-amber-400 text-dark px-4 py-3 font-bold shadow-[0_-4px_28px_rgba(242,197,61,0.4)] active:scale-[0.98] transition-transform cursor-pointer"
+            className="pointer-events-auto mx-auto flex w-full max-w-md items-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-secondary text-dark px-4 py-3 font-bold shadow-[0_-4px_28px_rgba(0,224,255,0.4)] active:scale-[0.98] transition-transform cursor-pointer"
           >
             <span className="relative grid place-items-center w-9 h-9 rounded-full bg-dark/15 flex-shrink-0">
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 grid place-items-center min-w-[18px] h-[18px] px-1 rounded-full bg-dark text-gold text-[11px] font-extrabold">
+              <span className="absolute -top-1.5 -right-1.5 grid place-items-center min-w-[18px] h-[18px] px-1 rounded-full bg-dark text-secondary text-[11px] font-extrabold">
                 {count}
               </span>
             </span>

@@ -37,7 +37,7 @@ const DeliveryStatusTimeline = ({ status }) => {
             {i > 0 && (
               <div
                 className={`flex-1 h-0.5 mt-4 rounded ${
-                  i <= current ? "bg-gold" : "bg-white/10"
+                  i <= current ? "bg-secondary" : "bg-white/10"
                 }`}
               />
             )}
@@ -45,11 +45,11 @@ const DeliveryStatusTimeline = ({ status }) => {
               <span
                 className={`grid place-items-center w-8 h-8 rounded-full border transition-colors ${
                   active
-                    ? `bg-gold/15 border-gold text-gold ${
+                    ? `bg-secondary/15 border-secondary text-secondary ${
                         status !== "delivered" ? "animate-pulse" : ""
                       }`
                     : done
-                    ? "bg-gold border-gold text-dark"
+                    ? "bg-secondary border-secondary text-dark"
                     : "bg-white/[0.04] border-white/10 text-white/30"
                 }`}
               >
@@ -58,7 +58,7 @@ const DeliveryStatusTimeline = ({ status }) => {
               <span
                 className={`text-[10px] font-bold text-center leading-tight ${
                   active
-                    ? "text-gold"
+                    ? "text-secondary"
                     : done
                     ? "text-white/70"
                     : "text-white/30"

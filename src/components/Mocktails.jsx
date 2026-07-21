@@ -13,7 +13,6 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -39,7 +38,7 @@ const ProductCard = ({ product, index, styles }) => {
       className="group relative"
     >
       <div
-        className={`liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-secondary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(242,197,61,0.1)] ${
+        className={`liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-secondary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(0,224,255,0.1)] ${
           product.is_coming_soon ? "opacity-60" : ""
         }`}
       >
@@ -70,12 +69,12 @@ const ProductCard = ({ product, index, styles }) => {
           >
             <Icon className="text-dark" size={24} />
           </div>
-          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-gold transition-colors duration-300">
+          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-secondary transition-colors duration-300">
             {product.name}
           </h3>
           <p className="text-gray mb-2 text-sm">{product.description}</p>
           {styles.liquor && (
-            <p className="text-xs text-gold/80 mb-4 grow">
+            <p className="text-xs text-secondary/80 mb-4 grow">
               <span className="font-semibold">Base:</span> {styles.liquor}
             </p>
           )}
@@ -83,7 +82,7 @@ const ProductCard = ({ product, index, styles }) => {
             {suaveVariant && (
               <div className="flex items-center justify-between">
                 <span className="text-gray text-sm">Suave</span>
-                <span className="text-lg font-bold text-grass">
+                <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
                   {formatPrice(suaveVariant.price)}
                 </span>
               </div>
@@ -91,7 +90,7 @@ const ProductCard = ({ product, index, styles }) => {
             {cargadoVariant && (
               <div className="flex items-center justify-between">
                 <span className="text-gray text-sm">Cargado</span>
-                <span className="text-lg font-bold text-grass">
+                <span className="text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
                   {formatPrice(cargadoVariant.price)}
                 </span>
               </div>
@@ -101,7 +100,7 @@ const ProductCard = ({ product, index, styles }) => {
                 {variants.length > 1 && (
                   <span className="text-gray text-sm">{variant.name}</span>
                 )}
-                <span className={`text-lg font-bold text-grass ${variants.length === 1 ? "mx-auto" : ""}`}>
+                <span className={`text-lg font-bold bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent ${variants.length === 1 ? "mx-auto" : ""}`}>
                   {formatPrice(variant.price)}
                 </span>
               </div>
@@ -116,7 +115,7 @@ const ProductCard = ({ product, index, styles }) => {
                 type="button"
                 onClick={() => setShowHistory((prev) => !prev)}
                 aria-expanded={showHistory}
-                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gold/90 hover:text-gold transition-colors"
+                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-secondary/90 hover:text-secondary transition-colors"
               >
                 <BookOpen size={14} />
                 Historia
@@ -168,49 +167,49 @@ const ProductSkeleton = () => (
 const coctelesStyles = {
   mojito: {
     icon: GlassWater,
-    gradient: "from-grass to-green-600",
+    gradient: "from-green-400 to-emerald-600",
     liquor: "Ron BACARDI Superior",
     image: "https://images.unsplash.com/photo-1652780093319-559c3b12225a",
   },
   margarita: {
     icon: Martini,
-    gradient: "from-grass to-gold",
+    gradient: "from-lime-300 to-yellow-400",
     liquor: "Tequila JOSE CUERVO",
     image: "https://images.unsplash.com/photo-1700909592926-c07b0c2a0bed",
   },
   margarota: {
     icon: PartyPopper,
-    gradient: "from-gold to-amber-500",
+    gradient: "from-yellow-400 to-amber-500",
     liquor: "Tequila JOSE CUERVO",
     image: "./margarota.jpeg",
   },
   caipiroshka: {
     icon: Citrus,
-    gradient: "from-grass to-green-600",
+    gradient: "from-lime-500 to-green-700",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1581284744588-af12206e90db",
   },
   "cuba-libre": {
     icon: Skull,
-    gradient: "from-red-500 to-red-700",
+    gradient: "from-red-900 to-black",
     liquor: "Ron BACARDI Superior",
     image: "https://images.unsplash.com/photo-1665940487849-abe2980c05ab",
   },
   gintonic: {
     icon: Wine,
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-purple-400 to-indigo-600",
     liquor: "Ginebra BEEFEATER",
     image: "/shutterstock-1504207547.jpg",
   },
   "moscow-mule": {
     icon: GlassWater,
-    gradient: "from-gold to-amber-500",
+    gradient: "from-amber-200 to-orange-300",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1527628126150-086ff233b951",
   },
   "blue-long": {
     icon: Palmtree,
-    gradient: "from-blue-500 to-grass",
+    gradient: "from-blue-400 to-cyan-600",
     liquor: "Vodka ABSOLUT",
     image: "https://images.unsplash.com/photo-1682629906883-76eaa5e03693",
   },
@@ -220,7 +219,7 @@ const getCoctelStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
   const localStyles = coctelesStyles[slug] || {
     icon: Martini,
-    gradient: "from-gold to-grass",
+    gradient: "from-secondary to-primary",
   };
 
   // Priorizar image_url de la API sobre estilos locales
@@ -238,8 +237,11 @@ const Mocktails = () => {
   const products = data?.results || [];
 
   return (
-    <section id="mocktails" className="py-20 bg-dark relative overflow-hidden">
-      <Mundial26Backdrop />
+    <section id="mocktails" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
+        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
+      </div>
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -248,11 +250,8 @@ const Mocktails = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
-            Barra Mundial 26
-          </span>
           <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="text-gold">
+            <span className="bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
               CÓCTELES
             </span>
           </h2>

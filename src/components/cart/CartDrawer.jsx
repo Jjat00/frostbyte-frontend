@@ -51,7 +51,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-gold" />
+                <ShoppingBag className="w-5 h-5 text-secondary" />
                 <h2 className="text-base font-black uppercase tracking-wide text-light">
                   Tu pedido
                 </h2>
@@ -94,7 +94,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                           {it.variantName}
                         </p>
                       )}
-                      <p className="text-xs text-gold font-bold mt-0.5">
+                      <p className="text-xs text-secondary font-bold mt-0.5">
                         {formatCOP(it.price)}
                       </p>
                     </div>
@@ -126,7 +126,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                         type="button"
                         onClick={() => incQty(it.product_variant_id)}
                         aria-label="Sumar"
-                        className="grid place-items-center w-6 h-6 rounded-full bg-gold/20 hover:bg-gold/30 text-gold"
+                        className="grid place-items-center w-6 h-6 rounded-full bg-secondary/20 hover:bg-secondary/30 text-secondary"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -145,7 +145,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                     }
                     placeholder="Nota (ej: sin azúcar, extra hielo)"
                     maxLength={200}
-                    className="mt-2 w-full rounded-lg bg-white/[0.04] border border-white/[0.08] px-3 py-1.5 text-xs text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40"
+                    className="mt-2 w-full rounded-lg bg-white/[0.04] border border-white/[0.08] px-3 py-1.5 text-xs text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40"
                   />
                 </div>
               ))}
@@ -164,7 +164,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                   </button>
                   <div className="text-right">
                     <span className="text-xs text-white/40">Subtotal</span>
-                    <p className="text-lg font-black text-gold leading-none">
+                    <p className="text-lg font-black text-secondary leading-none">
                       {formatCOP(subtotal)}
                     </p>
                   </div>
@@ -172,7 +172,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                 <button
                   type="button"
                   onClick={onCheckout}
-                  className="w-full rounded-xl bg-gradient-to-r from-gold to-amber-400 text-dark font-extrabold py-3 active:scale-[0.98] transition-transform"
+                  className="w-full rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-extrabold py-3 active:scale-[0.98] transition-transform"
                 >
                   Pedir a domicilio
                 </button>

@@ -69,7 +69,7 @@ const OrderRouteMap = ({ lat, lng }) => {
             id="order-route-line"
             type="line"
             paint={{
-              "line-color": "#f2c53d",
+              "line-color": "#00e0ff",
               "line-opacity": 0.8,
               "line-width": 2,
               "line-dasharray": [1.5, 1.5],
@@ -84,7 +84,7 @@ const OrderRouteMap = ({ lat, lng }) => {
           anchor="center"
         >
           <div className="flex flex-col items-center pointer-events-none">
-            <div className="w-9 h-9 rounded-full bg-dark/85 border-2 border-gold shadow-lg grid place-items-center">
+            <div className="w-9 h-9 rounded-full bg-dark/85 border-2 border-secondary shadow-lg grid place-items-center">
               <img
                 src="/logo.png"
                 alt="Frostbyte"
@@ -105,7 +105,7 @@ const OrderRouteMap = ({ lat, lng }) => {
               Tu casa
             </span>
             <MapPin
-              className="w-8 h-8 text-gold drop-shadow-lg"
+              className="w-8 h-8 text-secondary drop-shadow-lg"
               fill="currentColor"
             />
           </div>

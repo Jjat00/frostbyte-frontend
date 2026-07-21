@@ -20,7 +20,6 @@ import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
-import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
@@ -138,18 +137,11 @@ function TablePage() {
             />
           )}
 
-          {/* Promo del partido de Colombia (granizado gratis por marcador
-              exacto). Solo aparece si hay partido en vivo o próximo. */}
-          <PartidoColombiaBanner />
-
           <QuickNav />
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}
           <DomiciliosBanner />
-          {/* Anuncio de la Polla Mundialista — igual que en la carta pública,
-              presente varias veces con distintas variantes. */}
-          <PollaMundialBanner variant="feature" />
           <CartaList />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
@@ -157,7 +149,9 @@ function TablePage() {
           <WaterSection />
           {/* Recordatorio compacto de domicilios al cierre de la carta */}
           <DomiciliosBanner variant="strip" />
-          <PollaMundialBanner variant="strip" />
+          {/* La Polla del Mundial ya terminó pero sigue accesible: resultados
+              finales y entrega del premio al campeón pendiente. */}
+          <PollaMundialBanner />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
@@ -166,7 +160,6 @@ function TablePage() {
           <SalaVipBanner />
           {/* El piso de la URL fija la cuenta de Spotify destino (sin tabs) */}
           <SolicitarMusica floor={floor} />
-          <PollaMundialBanner variant="prize" />
           <FeedbackSection />
           <FrostbytePlay />
           <Features />

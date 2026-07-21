@@ -59,7 +59,7 @@ const OrderSuccess = ({ order, onClose }) => {
               )}
               <div className="flex items-center justify-between">
                 <span className="text-white/50 text-sm">Total</span>
-                <span className="text-gold font-black text-lg">
+                <span className="text-secondary font-black text-lg">
                   {formatCOP(order.total)}
                 </span>
               </div>
@@ -67,7 +67,7 @@ const OrderSuccess = ({ order, onClose }) => {
                 <p className="text-[11px] uppercase tracking-wider text-white/40">
                   Código de tu pedido
                 </p>
-                <p className="text-3xl font-black tracking-[0.3em] text-gold mt-1">
+                <p className="text-3xl font-black tracking-[0.3em] text-secondary mt-1">
                   {order.access_code}
                 </p>
               </div>
@@ -80,7 +80,7 @@ const OrderSuccess = ({ order, onClose }) => {
                   onClose?.();
                   navigate("/mis-pedidos");
                 }}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold to-amber-400 text-dark font-extrabold py-3 active:scale-[0.98] transition-transform"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-extrabold py-3 active:scale-[0.98] transition-transform"
               >
                 <ClipboardList className="w-4 h-4" />
                 Ver mis pedidos

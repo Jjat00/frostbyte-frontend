@@ -35,7 +35,7 @@ const OrderCard = ({ order, selected, onClick }) => (
     onClick={onClick}
     className={`w-full text-left rounded-xl border p-4 transition-colors ${
       selected
-        ? "bg-gold/[0.08] border-gold/40"
+        ? "bg-secondary/[0.08] border-secondary/40"
         : "bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.07]"
     }`}
   >
@@ -61,9 +61,9 @@ const OrderCard = ({ order, selected, onClick }) => (
         </p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <span className="text-gold font-black">{formatCOP(order.total)}</span>
+        <span className="text-secondary font-black">{formatCOP(order.total)}</span>
         <ChevronRight
-          className={`w-4 h-4 ${selected ? "text-gold" : "text-white/30"} lg:hidden`}
+          className={`w-4 h-4 ${selected ? "text-secondary" : "text-white/30"} lg:hidden`}
         />
       </div>
     </div>
@@ -108,7 +108,7 @@ const MyOrdersPage = () => {
     <>
       {active.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-xs uppercase tracking-wider text-gold/80">
+          <h2 className="text-xs uppercase tracking-wider text-secondary/80">
             En curso
           </h2>
           {active.map((o) => (
@@ -173,7 +173,7 @@ const MyOrdersPage = () => {
             <p className="text-white/50">Aún no has hecho pedidos.</p>
             <Link
               to="/domicilios"
-              className="rounded-xl bg-gradient-to-r from-gold to-amber-400 text-dark font-bold px-5 py-2.5"
+              className="rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold px-5 py-2.5"
             >
               Pedir a domicilio
             </Link>

@@ -3,7 +3,6 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Cpu, Zap, Shield, Sparkles } from 'lucide-react';
-import { Mundial26Backdrop } from '@/components/mundial/Sistema26';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -108,22 +107,17 @@ const Features = () => {
       ref={sectionRef}
       className="py-20 bg-dark relative overflow-hidden"
     >
-      {/* Capa decorativa Sistema 26 (afiche sutil + patron t26 + "26") */}
-      <Mundial26Backdrop />
-
-      {/* Gradient line — GSAP animates scaleX via .features-gradient-line */}
-      <div className="absolute inset-0 z-[1] pointer-events-none">
-        <div className="features-gradient-line absolute top-1/2 left-0 w-full h-px bg-linear-to-r from-transparent via-gold/50 to-transparent"></div>
+      <div className="absolute inset-0">
+        {/* Gradient line — GSAP animates scaleX via .features-gradient-line */}
+        <div className="features-gradient-line absolute top-1/2 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full filter blur-[120px]"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Title block — targeted as a trigger anchor */}
         <div className="features-title-block text-center mb-16">
-          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
-            Edición Mundial 26
-          </span>
           <h2 className="features-title text-4xl md:text-6xl font-black text-light mb-4">
-            POR QUÉ <span className="text-gold">FROSTBYTE</span>
+            POR QUÉ <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">FROSTBYTE</span>
           </h2>
           <p className="features-subtitle text-gray text-lg max-w-2xl mx-auto">
             El lugar perfecto en Cumbal para pasar un buen rato con amigos o en
@@ -135,11 +129,11 @@ const Features = () => {
           {features.map((feature, index) => (
             // feature-card: targeted by ScrollTrigger.batch for entry animation
             <div key={index} className="feature-card group">
-              <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-center text-center transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-gold/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(242,197,61,0.12)] hover:transform hover:scale-105">
+              <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-center text-center transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-primary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_rgba(255,0,212,0.1)] hover:transform hover:scale-105">
                 {/* feature-icon: targeted by ScrollTrigger.batch for rotation */}
                 <div
                   className={`feature-icon w-20 h-20 bg-linear-to-br ${
-                    feature.color === 'primary' ? 'from-grass to-gold' : 'from-gold to-grass'
+                    feature.color === 'primary' ? 'from-primary to-secondary' : 'from-secondary to-primary'
                   } rounded-full flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform duration-300`}
                 >
                   <feature.icon className="text-dark" size={40} />

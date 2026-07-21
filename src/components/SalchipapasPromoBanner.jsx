@@ -1,27 +1,24 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Flame, Sparkles } from "lucide-react";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 /**
  * Hero promocional de Salchipapas (Frostbyte Food).
  *
  * Anuncia que ahora en Frostbyte se ofrecen salchipapas. Usa la identidad
  * naranja de Frostbyte Food (negocio del 3er piso) sobre el mismo lenguaje
- * visual de la carta (liquid-glass + Mundial26Backdrop). Mobile-first: la
+ * visual de la carta (liquid-glass). Mobile-first: la
  * imagen va arriba en celular y al costado en pantallas grandes.
  */
 const SalchipapasPromoBanner = () => {
   return (
     <section id="salchipapas" className="relative overflow-hidden mb-8 sm:mb-10">
-      <Mundial26Backdrop />
-
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.4 }}
-        className="relative overflow-hidden rounded-2xl border border-orange-400/30 bg-linear-to-br from-orange-500/15 via-dark-secondary to-gold/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]"
+        className="relative overflow-hidden rounded-2xl border border-orange-400/30 bg-linear-to-br from-orange-500/15 via-dark-secondary to-secondary/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]"
       >
         {/* Resplandor cálido detrás de la imagen */}
         <div className="pointer-events-none absolute -top-10 right-0 h-56 w-56 rounded-full bg-orange-500/20 blur-3xl sm:right-10" />

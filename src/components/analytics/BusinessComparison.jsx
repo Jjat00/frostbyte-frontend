@@ -15,7 +15,7 @@ import { Building2, Store } from 'lucide-react';
 
 const BUSINESS_HEX = {
   blue: '#00e0ff',
-  orange: '#f2c53d',
+  orange: '#f59e0b',
 };
 
 function hexFor(color) {

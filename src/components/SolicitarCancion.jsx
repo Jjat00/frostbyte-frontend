@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import MusicVisualizer from '@/components/MusicVisualizer';
-import { Mundial26Backdrop } from '@/components/mundial/Sistema26';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Music, Search, Loader2, Play, Clock, X, ListMusic, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
@@ -129,7 +128,7 @@ const NowPlayingBar = ({ data }) => {
         )}
         <div className="flex-1 min-w-0">
           <p className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] mb-1">Sonando ahora</p>
-          <p className="text-white font-black text-lg md:text-xl truncate">{data.name}</p>
+          <p className="text-white font-black text-lg md:text-xl truncate drop-shadow-[0_2px_10px_rgba(255,0,212,0.3)]">{data.name}</p>
           <p className="text-white/50 text-sm truncate">{data.artists}</p>
         </div>
       </div>
@@ -140,7 +139,7 @@ const NowPlayingBar = ({ data }) => {
       {/* Lyrics - floating text, no background */}
       {lyricsLines && (
         <div className="mt-6 text-center">
-          <p className="text-xl md:text-2xl font-bold text-white transition-all duration-300">
+          <p className="text-xl md:text-2xl font-bold text-white drop-shadow-[0_0_20px_rgba(0,224,255,0.4)] transition-all duration-300">
             {lyricsLines.current}
           </p>
           {lyricsLines.next && (
@@ -321,9 +320,6 @@ const SolicitarCancion = ({ floor: floorProp }) => {
 
   return (
     <section id="solicitar-cancion" className="relative overflow-hidden min-h-[80vh] flex flex-col justify-center" style={{ background: 'linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)' }}>
-      {/* Capa decorativa de afiche del Mundial (ligera en GPU) */}
-      <Mundial26Backdrop />
-
       {/* Canvas animation - PROTAGONIST */}
       <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
 
@@ -338,7 +334,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
           className="text-center mb-10"
         >
           <h2 className="text-4xl md:text-6xl font-black mb-3">
-            <span className="text-gold">
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,0,212,0.3)]">
               PIDE TU CANCION
             </span>
           </h2>

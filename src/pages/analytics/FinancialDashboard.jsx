@@ -105,7 +105,7 @@ const SectionHeader = ({ icon: Icon, title, subtitle, action }) => (
 const CustomChartTooltip = ({ active, payload, label, formatter }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="backdrop-blur-xl bg-white/[0.06] border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_rgba(242,197,61,0.15)]">
+    <div className="backdrop-blur-xl bg-white/[0.06] border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_rgba(0,224,255,0.15)]">
       <p className="text-xs text-secondary font-bold mb-2">{label}</p>
       {payload.map((entry, index) => (
         <div key={index} className="flex items-center justify-between gap-6 mb-1 last:mb-0">
@@ -129,8 +129,8 @@ const StatCard = ({ title, value, subtitle, change, changeYoy, icon: Icon, color
     green: { border: 'border-green-500/30', text: 'text-green-400', bg: 'from-green-500/15 to-green-500/5', glow: 'hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]', icon: 'text-green-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]' },
     blue: { border: 'border-blue-500/30', text: 'text-blue-400', bg: 'from-blue-500/15 to-blue-500/5', glow: 'hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]', icon: 'text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]' },
     red: { border: 'border-red-500/30', text: 'text-red-400', bg: 'from-red-500/15 to-red-500/5', glow: 'hover:shadow-[0_0_30px_rgba(239,68,68,0.2)]', icon: 'text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]' },
-    secondary: { border: 'border-secondary/40', text: 'text-secondary', bg: 'from-secondary/15 to-secondary/5', glow: 'hover:shadow-[0_0_30px_rgba(242,197,61,0.25)]', icon: 'text-secondary drop-shadow-[0_0_12px_rgba(242,197,61,0.7)]' },
-    primary: { border: 'border-primary/30', text: 'text-primary', bg: 'from-primary/15 to-primary/5', glow: 'hover:shadow-[0_0_30px_rgba(30,158,90,0.2)]', icon: 'text-primary drop-shadow-[0_0_10px_rgba(30,158,90,0.6)]' },
+    secondary: { border: 'border-secondary/40', text: 'text-secondary', bg: 'from-secondary/15 to-secondary/5', glow: 'hover:shadow-[0_0_30px_rgba(0,224,255,0.25)]', icon: 'text-secondary drop-shadow-[0_0_12px_rgba(0,224,255,0.7)]' },
+    primary: { border: 'border-primary/30', text: 'text-primary', bg: 'from-primary/15 to-primary/5', glow: 'hover:shadow-[0_0_30px_rgba(255,0,212,0.2)]', icon: 'text-primary drop-shadow-[0_0_10px_rgba(255,0,212,0.6)]' },
   };
 
   const c = colorMap[color] || colorMap.secondary;
@@ -153,7 +153,7 @@ const StatCard = ({ title, value, subtitle, change, changeYoy, icon: Icon, color
       `}
     >
       {/* Subtle grid pattern */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,rgba(242,197,61,0.3)_1px,transparent_1px),linear-gradient(rgba(30,158,90,0.3)_1px,transparent_1px)] bg-[size:24px_24px]" />
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,rgba(0,224,255,0.3)_1px,transparent_1px),linear-gradient(rgba(255,0,212,0.3)_1px,transparent_1px)] bg-[size:24px_24px]" />
 
       <div className="relative">
         <div className="flex items-center justify-between mb-2">
@@ -526,7 +526,7 @@ const FinancialDashboard = () => {
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-light flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-secondary/10 border border-secondary/20">
-              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-secondary drop-shadow-[0_0_8px_rgba(242,197,61,0.6)]" />
+              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-secondary drop-shadow-[0_0_8px_rgba(0,224,255,0.6)]" />
             </div>
             Dashboard Financiero
           </h1>
@@ -559,7 +559,7 @@ const FinancialDashboard = () => {
           transition={{ delay: 0.2 }}
           className="bg-gradient-to-r from-secondary/8 via-primary/5 to-secondary/8 border border-secondary/15 rounded-2xl p-4 md:p-5 relative overflow-hidden"
         >
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_30%_50%,rgba(242,197,61,0.4),transparent_50%),radial-gradient(circle_at_70%_50%,rgba(30,158,90,0.3),transparent_50%)]" />
+          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_30%_50%,rgba(0,224,255,0.4),transparent_50%),radial-gradient(circle_at_70%_50%,rgba(255,0,212,0.3),transparent_50%)]" />
           <div className="relative flex items-start gap-3">
             <Zap className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
             <div>
@@ -887,7 +887,7 @@ const FinancialDashboard = () => {
                       stroke="#00e0ff"
                       strokeWidth={3}
                       dot={{ fill: '#00e0ff', r: viewMode === 'daily' ? 2 : 4, strokeWidth: 2, stroke: '#0a0b14' }}
-                      activeDot={{ r: 6, className: 'drop-shadow-[0_0_8px_rgba(242,197,61,0.8)]' }}
+                      activeDot={{ r: 6, className: 'drop-shadow-[0_0_8px_rgba(0,224,255,0.8)]' }}
                     />
                     <Line
                       type="monotone"

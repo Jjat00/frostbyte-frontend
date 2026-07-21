@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useActiveCategories, useStoreConfig } from "@/hooks";
-import { EmblemaMundial } from "@/components/mundial/Sistema26";
 import StoreStatusBadge from "@/components/StoreStatusBadge";
 
 const ListItem = React.forwardRef(
@@ -58,7 +57,7 @@ const BEVERAGE_SECTIONS = [
   { key: "micheladas", label: "Micheladas", href: "#micheladas", categorySlug: "micheladas" },
   { key: "cervezas", label: "🍺 Cervezas", href: "#cervezas", categorySlug: "cervezas" },
   { key: "cuates", label: "🍹 Cuates", href: "#cuates", categorySlug: "cuates" },
-  { key: "luladas", label: "🍋 Luladas", href: "#luladas", categorySlug: "luladas", className: "text-green-400 hover:text-green-300" },
+  { key: "luladas", label: "🍋 Luladas", href: "#luladas", categorySlug: "luladas", className: "text-lime-400 hover:text-lime-300" },
   { key: "mocktails", label: "Cocteles", href: "#mocktails", categorySlug: "mocktails" },
   { key: "shots", label: "Shots", href: "#shots", categorySlug: "shots" },
   { key: "vinos", label: "🍷 Vinos", href: "#vinos", categorySlug: "vinos" },
@@ -166,14 +165,9 @@ const Header = () => {
               height={40}
               className="w-10 h-10 object-contain"
             />
-            <span className="t26-display text-2xl font-bold text-light tracking-wider">
+            <span className="text-2xl font-bold text-light tracking-wider">
               FROSTBYTE
             </span>
-            <EmblemaMundial
-              className="ml-1 hidden h-9 p-1 sm:inline-flex"
-              loading="eager"
-              alt="Mundial 2026"
-            />
           </motion.a>
 
           {/* Estado del local: visible en la carta (/) y en la vista de mesa (/mesa/*) */}
@@ -257,9 +251,9 @@ const Header = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       to="/polla-mundial"
-                      className="ml-1 inline-flex items-center gap-1.5 rounded-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm tracking-wide whitespace-nowrap shadow-[0_0_18px_rgba(242,197,61,0.35)] hover:shadow-[0_0_26px_rgba(242,197,61,0.55)] transition-all duration-300"
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
                     >
-                      🏆 Polla Mundial
+                      Polla Mundialista
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -296,7 +290,7 @@ const Header = () => {
                   .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_rgba(242,197,61,0.4)] transition-all duration-300"
+              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_rgba(255,0,212,0.4)] transition-all duration-300"
             >
               Ver Carta
             </Button>
@@ -319,10 +313,10 @@ const Header = () => {
           >
             <Link
               to="/polla-mundial"
-              className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold text-center shadow-[0_0_20px_rgba(242,197,61,0.3)]"
+              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              🏆 Polla Mundialista · Gana $500.000
+              🏆 Polla Mundialista
             </Link>
             {inAppOrdering && (
               <Link
@@ -358,14 +352,14 @@ const Header = () => {
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Mas en Frostbyte</p>
               <a
                 href="#que-te-provoca"
-                className="block text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
+                className="block text-violet-400 hover:text-violet-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 ✨ Recomendador de Bebidas
               </a>
               <a
                 href="#descuento-redes"
-                className="block text-sky-400 hover:text-sky-300 transition-colors duration-300 font-medium"
+                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 📱 Descuento por Redes
@@ -406,7 +400,7 @@ const Header = () => {
               {showMyOrders && (
                 <Link
                   to="/mis-pedidos"
-                  className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
+                  className="flex items-center gap-2 text-secondary hover:text-secondary/80 transition-colors duration-300 font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <ClipboardList className="w-4 h-4" />
@@ -447,7 +441,7 @@ const Header = () => {
                   ?.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_rgba(242,197,61,0.2)]"
+              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_rgba(255,0,212,0.2)]"
             >
               Ver Carta
             </Button>

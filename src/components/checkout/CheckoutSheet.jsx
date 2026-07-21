@@ -44,7 +44,7 @@ const Chip = ({ active, onClick, children, icon: Icon }) => (
     onClick={onClick}
     className={`flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors ${
       active
-        ? "border-gold bg-gold/15 text-gold"
+        ? "border-secondary bg-secondary/15 text-secondary"
         : "border-white/10 bg-white/[0.04] text-white/60 hover:bg-white/[0.08]"
     }`}
   >
@@ -207,7 +207,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                   <ArrowLeft className="w-4 h-4" />
                 </button>
                 <h2 className="text-base font-black uppercase tracking-wide text-light flex items-center gap-2">
-                  <Bike className="w-4 h-4 text-gold" />
+                  <Bike className="w-4 h-4 text-secondary" />
                   Pedir a domicilio
                 </h2>
                 <span className="w-8" />
@@ -304,7 +304,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                                 setCashOther(e.target.value.replace(/\D/g, ""))
                               }
                               placeholder="¿Con qué billete? (ej: 60000)"
-                              className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40"
+                              className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40"
                             />
                           )}
                         </div>
@@ -321,21 +321,21 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Nombre *"
-                        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40"
+                        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40"
                       />
                       <input
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="Teléfono de contacto *"
-                        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40"
+                        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40"
                       />
                       <textarea
                         value={orderNotes}
                         onChange={(e) => setOrderNotes(e.target.value)}
                         placeholder="Notas del pedido (opcional)"
                         rows={2}
-                        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40 resize-none"
+                        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40 resize-none"
                       />
                     </section>
 
@@ -365,7 +365,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-bold text-light">Total</span>
-                    <span className="text-xl font-black text-gold">
+                    <span className="text-xl font-black text-secondary">
                       {formatCOP(total)}
                     </span>
                   </div>
@@ -374,7 +374,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                   type="button"
                   onClick={handleConfirm}
                   disabled={submitting || items.length === 0 || orderingDisabled}
-                  className="w-full md:w-auto md:px-10 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold to-amber-400 text-dark font-extrabold py-3 active:scale-[0.98] transition-transform disabled:opacity-60"
+                  className="w-full md:w-auto md:px-10 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-extrabold py-3 active:scale-[0.98] transition-transform disabled:opacity-60"
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   {submitting ? "Enviando…" : "Confirmar domicilio"}

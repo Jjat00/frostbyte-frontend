@@ -52,7 +52,7 @@ export const PaymentPendingBadge = ({ order }) => {
 export const DeliveryBadge = ({ order }) => {
   if (!isDelivery(order)) return null;
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gold/15 text-gold rounded-full text-xs font-bold border border-gold/25">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary/15 text-secondary rounded-full text-xs font-bold border border-secondary/25">
       <Bike className="w-3 h-3" />
       Domicilio
     </span>
@@ -64,10 +64,10 @@ export const DeliveryInfo = ({ order, className = "" }) => {
   const hasCoords = order.delivery_lat != null && order.delivery_lng != null;
   return (
     <div
-      className={`mt-2 rounded-lg bg-gold/[0.06] border border-gold/15 px-2.5 py-2 space-y-1 ${className}`}
+      className={`mt-2 rounded-lg bg-secondary/[0.06] border border-secondary/15 px-2.5 py-2 space-y-1 ${className}`}
     >
       <div className="flex items-start gap-1.5 text-xs text-light">
-        <MapPin className="w-3.5 h-3.5 text-gold flex-shrink-0 mt-0.5" />
+        <MapPin className="w-3.5 h-3.5 text-secondary flex-shrink-0 mt-0.5" />
         <span>{order.delivery_address || "Sin dirección"}</span>
       </div>
       {order.delivery_reference && (
@@ -79,7 +79,7 @@ export const DeliveryInfo = ({ order, className = "" }) => {
           target="_blank"
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline pl-5"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-secondary hover:underline pl-5"
         >
           <Navigation className="w-3 h-3" />
           Cómo llegar

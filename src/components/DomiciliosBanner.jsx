@@ -9,7 +9,6 @@ import {
   ClipboardList,
   UtensilsCrossed,
 } from "lucide-react";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 import { useStoreConfig } from "@/hooks";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
@@ -25,7 +24,7 @@ import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
  *   iniciar sesión con Google (requisito para pedir); con sesión lleva a la
  *   carta y al estado del pedido (/mis-pedidos). WhatsApp queda de respaldo.
  *
- * Variantes (mismo patrón que PollaMundialBanner para repetir sin saturar):
+ * Variantes (mismo patrón que el banner de la Polla Mundialista para repetir sin saturar):
  * - "feature": tarjeta completa, encabeza la carta (lleva el id #domicilios)
  * - "strip": barra compacta de recordatorio al cierre de la carta
  */
@@ -123,9 +122,6 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
 
   return (
     <section id="domicilios" className="py-8 bg-dark relative overflow-hidden">
-      {/* Sistema 26: capa decorativa tipo afiche (sutil, ligera en GPU) */}
-      <Mundial26Backdrop />
-
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

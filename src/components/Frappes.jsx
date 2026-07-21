@@ -1,7 +1,6 @@
 import React from "react";
 import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -10,11 +9,11 @@ const formatPrice = (price) => {
 
 const ProductCard = ({ product, index, styles }) => {
   const variants = product.variants || [];
-  const ringColor = styles.ringColor || "border-gold";
+  const ringColor = styles.ringColor || "border-amber-400";
 
   return (
     <div className="frappe-card group relative h-full">
-      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(242,197,61,0.1)]">
+      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(251,191,36,0.08)]">
         {/* Blur de fondo */}
         <div
           className="absolute inset-0 rounded-3xl pointer-events-none"
@@ -62,7 +61,7 @@ const ProductCard = ({ product, index, styles }) => {
         {/* Badge proximamente */}
         {product.is_coming_soon && (
           <div className="absolute top-4 right-4 z-20">
-            <span className="text-[10px] font-bold uppercase tracking-widest bg-gold/20 text-gold px-3 py-1.5 rounded-full border border-gold/40">
+            <span className="text-[10px] font-bold uppercase tracking-widest bg-amber-500/20 text-amber-300 px-3 py-1.5 rounded-full border border-amber-400/40">
               Próximamente
             </span>
           </div>
@@ -73,11 +72,11 @@ const ProductCard = ({ product, index, styles }) => {
           <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center line-clamp-2 leading-tight">
             {product.name}
           </h3>
-          <div className="w-10 h-0.5 bg-gold/60 rounded-full mt-2"></div>
+          <div className="w-10 h-0.5 bg-amber-400/60 rounded-full mt-2"></div>
         </div>
 
         {/* Descripcion */}
-        <p className="relative z-10 text-gray text-sm text-center mb-5 leading-relaxed max-w-[260px]">
+        <p className="relative z-10 text-slate-400 text-sm text-center mb-5 leading-relaxed max-w-[260px]">
           {product.description}
         </p>
 
@@ -86,17 +85,15 @@ const ProductCard = ({ product, index, styles }) => {
           <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/[0.08]">
             {variants.map((variant) => (
               <div key={variant.id || variant.name} className="flex flex-col items-center">
-                <span className="text-[11px] text-gray uppercase font-semibold tracking-widest mb-0.5">
+                <span className="text-[11px] text-slate-500 uppercase font-semibold tracking-widest mb-0.5">
                   {variant.name}
                 </span>
-                <span className="text-lg font-black text-gold">
+                <span className="text-lg font-black text-amber-400">
                   {formatPrice(variant.price)}
                 </span>
               </div>
             ))}
           </div>
-
-          {/* Pedir desde la tarjeta */}
         </div>
       </div>
     </div>
@@ -138,23 +135,24 @@ const Frappes = () => {
   return (
     <section
       id="frappes"
-      className="py-20 relative overflow-hidden bg-dark"
+      className="py-20 relative overflow-hidden bg-linear-to-br from-stone-950 via-amber-950 to-orange-950"
     >
-      {/* Capa decorativa Sistema 26 — afiche del Mundial (ligera en GPU) */}
-      <Mundial26Backdrop />
+      {/* Neon ambiental — ambar/naranja estilo café cremoso */}
+      <div className="absolute inset-0 opacity-25">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-amber-500 rounded-full filter blur-[120px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500 rounded-full filter blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-400/70 rounded-full filter blur-[100px]" />
+      </div>
 
-      {/* Lineas divisoras — acento oro/verde */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold/40 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-grass/30 to-transparent" />
+      {/* Lineas divisoras */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-400/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-orange-400/30 to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
-            Mundial 2026
-          </span>
-          <h2 className="frappe-title text-4xl md:text-6xl font-black mb-4">
-            <span className="text-gold">
+          <h2 className="frappe-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            <span className="bg-linear-to-r from-amber-300 via-orange-400 to-yellow-400 bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(251,191,36,0.3)]">
               FRAPPÉS
             </span>
           </h2>
