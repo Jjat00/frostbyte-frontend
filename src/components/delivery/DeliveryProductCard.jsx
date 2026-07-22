@@ -58,7 +58,7 @@ const DeliveryProductCard = ({ product, canOrder, onAdd }) => {
           </p>
         )}
         <div className="mt-auto flex items-center justify-between gap-2 pt-1.5">
-          <p className="text-sm font-extrabold text-gold">
+          <p className="text-sm font-extrabold text-secondary">
             {multi && (
               <span className="text-[10px] font-semibold text-white/40 mr-1">
                 Desde
@@ -71,7 +71,7 @@ const DeliveryProductCard = ({ product, canOrder, onAdd }) => {
               type="button"
               onClick={() => onAdd(product)}
               aria-label={`Agregar ${product.name} al pedido`}
-              className="grid place-items-center w-10 h-10 -m-1 rounded-full bg-gradient-to-r from-gold to-amber-400 text-dark shadow-md shadow-gold/25 active:scale-90 transition-transform cursor-pointer"
+              className="grid place-items-center w-10 h-10 -m-1 rounded-full bg-gradient-to-r from-primary to-secondary text-dark shadow-md shadow-secondary/25 active:scale-90 transition-transform cursor-pointer"
             >
               <Plus className="w-5 h-5" strokeWidth={3} />
             </button>

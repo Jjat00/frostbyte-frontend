@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useActiveCategories } from "@/hooks";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 /**
  * Configuración de navegación para cada sección
@@ -102,11 +101,8 @@ const QuickNav = () => {
   );
 
   return (
-    <section id="menu" className="py-8 bg-dark border-y border-gold/15 relative overflow-hidden">
-      {/* Capa decorativa Sistema 26 — sutil para una barra ligera (sin "26" para no competir) */}
-      <Mundial26Backdrop watermark={false} className="opacity-60" />
-
-      <div className="container mx-auto px-4 relative z-10">
+    <section id="menu" className="py-8 backdrop-blur-md bg-white/[0.02] border-y border-white/[0.08] relative">
+      <div className="container mx-auto px-4">
 
         {/* Label */}
         <motion.div
@@ -116,15 +112,14 @@ const QuickNav = () => {
           transition={{ duration: 0.4 }}
           className="flex items-center justify-center gap-2 mb-5"
         >
-          <span className="text-gold text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold">
+          <p className="text-white/40 text-xs uppercase tracking-[0.2em] font-semibold">
             Explorar carta
-          </span>
-          <span className="t26-num text-base leading-none text-gold/30">26</span>
+          </p>
           <motion.div
             animate={{ y: [0, 4, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            <ChevronDown className="w-3.5 h-3.5 text-gold/70" />
+            <ChevronDown className="w-3.5 h-3.5 text-primary/60" />
           </motion.div>
         </motion.div>
 
@@ -146,11 +141,11 @@ const QuickNav = () => {
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleClick(section.href, section.isRoute)}
-              className="liquid-glass-pill group relative px-5 py-2.5 rounded-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/75 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-gold/60 hover:text-white hover:bg-gold/[0.08] hover:shadow-[0_0_20px_rgba(242,197,61,0.22),inset_0_1px_0_rgba(255,255,255,0.08)] cursor-pointer"
+              className="liquid-glass-pill group relative px-5 py-2.5 rounded-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/50 hover:text-white hover:bg-white/[0.1] hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_20%,transparent),inset_0_1px_0_rgba(255,255,255,0.08)] cursor-pointer"
             >
               <span className="relative z-10 flex items-center gap-1.5">
                 {section.name}
-                <ChevronDown className="w-3 h-3 text-gold/40 group-hover:text-gold transition-colors" />
+                <ChevronDown className="w-3 h-3 text-white/30 group-hover:text-primary transition-colors" />
               </span>
             </motion.button>
           ))}

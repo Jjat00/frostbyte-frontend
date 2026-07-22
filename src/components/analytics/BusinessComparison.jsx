@@ -14,12 +14,12 @@ import {
 import { Building2, Store } from 'lucide-react';
 
 const BUSINESS_HEX = {
-  blue: '#00e0ff',
-  orange: '#f2c53d',
+  blue: 'var(--color-secondary)',
+  orange: '#f59e0b',
 };
 
 function hexFor(color) {
-  return BUSINESS_HEX[color] || '#ff00d4';
+  return BUSINESS_HEX[color] || 'var(--color-primary)';
 }
 
 /**

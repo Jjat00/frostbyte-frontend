@@ -47,7 +47,7 @@ const CustomerAuthGate = ({
             </button>
 
             <div className="flex flex-col items-center text-center gap-3">
-              <span className="grid place-items-center w-12 h-12 rounded-full bg-gold/15 text-gold">
+              <span className="grid place-items-center w-12 h-12 rounded-full bg-secondary/15 text-secondary">
                 <ShieldCheck className="w-6 h-6" />
               </span>
               <h2 className="text-lg font-black text-light">

@@ -21,7 +21,7 @@ const palettes = {
   blue: {
     gradient: "from-secondary to-cyan-400",
     ring: "hover:border-secondary/50",
-    glow: "group-hover:shadow-[0_0_40px_rgba(0,224,255,0.25)]",
+    glow: "group-hover:shadow-[0_0_40px_color-mix(in_srgb,var(--color-secondary)_25%,transparent)]",
     icon: Store,
   },
   orange: {
@@ -33,7 +33,7 @@ const palettes = {
   _default: {
     gradient: "from-primary to-secondary",
     ring: "hover:border-primary/50",
-    glow: "group-hover:shadow-[0_0_40px_rgba(255,0,212,0.25)]",
+    glow: "group-hover:shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary)_25%,transparent)]",
     icon: Store,
   },
 };
@@ -174,7 +174,7 @@ const BusinessChooserPage = () => {
               whileHover={{ y: -6 }}
               onClick={() => enter("")}
               className={cn(
-                "liquid-glass-interactive group relative text-left rounded-2xl p-6 border border-white/[0.12] bg-gradient-to-br from-primary/[0.06] to-secondary/[0.06] transition-all overflow-hidden hover:border-primary/40 group-hover:shadow-[0_0_40px_rgba(255,0,212,0.2)]",
+                "liquid-glass-interactive group relative text-left rounded-2xl p-6 border border-white/[0.12] bg-gradient-to-br from-primary/[0.06] to-secondary/[0.06] transition-all overflow-hidden hover:border-primary/40 group-hover:shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary)_20%,transparent)]",
                 selectedBusinessSlug === "" && "ring-2 ring-primary/40"
               )}
             >

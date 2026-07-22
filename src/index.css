@@ -1,41 +1,8 @@
 @import "tailwindcss";
 
-@theme {
-  --color-dark: #0a0b14;
-  --color-dark-secondary: #12141f;
-  --color-light: #e8f6ff;
-  --color-gray: #8a8d9c;
-  --color-primary: #ff00d4;
-  --color-secondary: #00e0ff;
-
-  /* Acentos de temporada (Sistema 26 / estilo Mundial) */
-  --color-grass: #1e9e5a;
-  --color-gold: #f2c53d;
-
-  --color-border: oklch(0.27 0.03 255);
-  --color-input: oklch(0.27 0.03 255);
-  --color-ring: #ff00d4;
-  --color-background: #0a0b14;
-  --color-foreground: #e8f6ff;
-
-  --color-card: #0a0b14;
-  --color-card-foreground: #e8f6ff;
-  --color-popover: #0a0b14;
-  --color-popover-foreground: #e8f6ff;
-  --color-primary-foreground: #0a0b14;
-  --color-secondary-foreground: #0a0b14;
-
-  --color-muted: oklch(0.27 0.03 255);
-  --color-muted-foreground: oklch(0.55 0.02 250);
-  --color-accent: oklch(0.27 0.03 255);
-  --color-accent-foreground: #e8f6ff;
-  --color-destructive: oklch(0.6 0.2 25);
-  --color-destructive-foreground: #e8f6ff;
-
-  --radius-lg: 0.5rem;
-  --radius-md: calc(0.5rem - 2px);
-  --radius-sm: calc(0.5rem - 4px);
-}
+/* Design system completo (tokens de color, tipografía, radios y temas
+   alternativos): se cambia de tema/temática SOLO en theme.css. */
+@import "./theme.css";
 
 @keyframes accordion-down {
   from {
@@ -81,7 +48,15 @@
   }
   body {
     @apply bg-dark text-foreground;
-    font-family: "Orbitron", sans-serif;
+    font-family: var(--font-body);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
   }
 }
 
@@ -140,7 +115,7 @@
   z-index: 1;
 }
 
-/* Edge refraction glow */
+/* Edge refraction glow (sigue la paleta del tema activo) */
 .liquid-glass::after {
   content: "";
   position: absolute;
@@ -148,10 +123,10 @@
   border-radius: inherit;
   background: linear-gradient(
     135deg,
-    rgba(0, 224, 255, 0.08) 0%,
+    color-mix(in srgb, var(--color-secondary) 8%, transparent) 0%,
     transparent 30%,
     transparent 70%,
-    rgba(255, 0, 212, 0.06) 100%
+    color-mix(in srgb, var(--color-primary) 6%, transparent) 100%
   );
   pointer-events: none;
   z-index: 0;
@@ -306,14 +281,14 @@
     -webkit-backdrop-filter: none !important;
   }
   .liquid-glass {
-    background: rgba(18, 20, 38, 0.72);
+    background: color-mix(in srgb, var(--color-dark-secondary) 72%, transparent);
   }
   .liquid-glass-interactive {
-    background: rgba(18, 20, 38, 0.66);
+    background: color-mix(in srgb, var(--color-dark-secondary) 66%, transparent);
   }
   .liquid-glass-light,
   .liquid-glass-pill {
-    background: rgba(18, 20, 38, 0.55);
+    background: color-mix(in srgb, var(--color-dark-secondary) 55%, transparent);
   }
 
   /* Orbes de glow: bajar el radio de blur reduce el coste de forma
@@ -361,16 +336,24 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0b14;
+  background: var(--color-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #f2c53d 0%, #1e9e5a 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #1e9e5a 0%, #f2c53d 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-secondary) 0%,
+    var(--color-primary) 100%
+  );
 }
 
 /* Scroll sin barra visible (ej: nav inferior móvil desplazable horizontalmente) */
@@ -382,55 +365,3 @@ html {
   display: none; /* WebKit */
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Sistema 26 · capa visual estilo Mundial 2026 (legal-safe)
-   ───────────────────────────────────────────────────────────────
-   Inspirado en el lenguaje del Mundial 2026 sin pisar IP de FIFA:
-   sin trofeo, sin escudos, sin la frase "World Cup" ni la fuente FWC.
-   Lo replicable (y lo que usamos) es el SISTEMA: display geométrico
-   ultra-bold expandido, el numerazo "26" como estructura, el patrón
-   modular (cuadrados + cuartos de círculo) y los bloques de color
-   vibrantes sobre la base oscura de Frostbyte.
-
-   Activación: clase `theme-26` en el contenedor raíz de la página.
-   Pensado para escalar luego a todo el sitio (misma clase en <body>).
-   ═══════════════════════════════════════════════════════════════ */
-.theme-26 {
-  font-family: "Noto Sans", sans-serif;
-
-  /* Skin Mundial: recolorea TODA la app reescribiendo los tokens de color.
-     Las utilidades de Tailwind v4 usan var(--color-*), así que cambiar estas
-     variables dentro de .theme-26 (puesta en el <body>) repinta primary/
-     secondary en todo lo que cuelga de ella, sin tocar cada archivo.
-     Para desactivar el skin al terminar el torneo: quitar la clase del body. */
-  --color-primary: #1e9e5a; /* verde cancha (antes magenta #ff00d4) */
-  --color-secondary: #f2c53d; /* oro (antes cyan #00e0ff) */
-  --color-ring: #1e9e5a;
-}
-
-/* Títulos hero y display: geométrico PESADO de ancho normal (Black), como los
-   numerales gordos y redondeados del emblema oficial "26" — no expandido. */
-.theme-26 h1,
-.theme-26 .t26-display {
-  font-family: "Archivo", sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
-
-/* Encabezados secundarios: Archivo extra-negrita (la identidad real prioriza
-   pesos altos para dar dinamismo), ancho normal para no romper layouts densos. */
-.theme-26 h2,
-.theme-26 h3 {
-  font-family: "Archivo", sans-serif;
-  font-weight: 800;
-}
-
-/* El numerazo "26" como elemento gráfico (máscara/marco/acento): Black, ancho
-   normal y muy apretado, como el emblema real. */
-.t26-num {
-  font-family: "Archivo", sans-serif;
-  font-weight: 900;
-  line-height: 0.82;
-  letter-spacing: -0.035em;
-  font-variant-numeric: tabular-nums;
-}

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { themeColorChannels } from "@/lib/themeColors";
 
 const MusicVisualizer = ({ isPlaying = false }) => {
   const canvasRef = useRef(null);
@@ -21,6 +22,8 @@ const MusicVisualizer = ({ isPlaying = false }) => {
 
     const PARTICLE_COUNT = 1400;
     const BASE_RADIUS = 160;
+    // Canales de marca leídos una vez al montar (canvas no resuelve var()).
+    const primaryChannels = themeColorChannels("--color-primary") || [255, 0, 212];
 
     // Fibonacci sphere distribution - even coverage
     const initParticles = () => {
@@ -241,7 +244,7 @@ const MusicVisualizer = ({ isPlaying = false }) => {
       // atmosphere glow around sphere
       const glowAlpha = 0.04 + energy * 0.08 + beat * 0.03;
       const grad = ctx.createRadialGradient(cx, cy, sphereRadius * 0.5, cx, cy, sphereRadius * 1.8);
-      grad.addColorStop(0, `rgba(30,158,90, ${glowAlpha})`);
+      grad.addColorStop(0, `rgba(${primaryChannels[0]}, ${primaryChannels[1]}, ${primaryChannels[2]}, ${glowAlpha})`);
       grad.addColorStop(0.5, `rgba(120, 0, 200, ${glowAlpha * 0.5})`);
       grad.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = grad;

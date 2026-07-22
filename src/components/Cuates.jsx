@@ -2,7 +2,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Citrus, Cherry, Sun } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -28,7 +27,7 @@ const ProductCard = ({ product, index, styles }) => {
           <div className={`absolute inset-2 rounded-full border-2 ${styles.ringColor} opacity-60`}></div>
           
           {/* Contenedor de imagen circular */}
-          <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden bg-gradient-to-br from-grass/25 to-dark-secondary/40 flex items-center justify-center">
+          <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden bg-gradient-to-br from-purple-600/30 to-purple-900/30 flex items-center justify-center">
             {styles.image ? (
               <img
                 alt={product.name}
@@ -58,7 +57,7 @@ const ProductCard = ({ product, index, styles }) => {
         <div className="text-center space-y-2">
           {/* Nombre del producto */}
           <div className={`inline-block px-6 py-2 ${styles.labelBg} rounded-lg shadow-lg`}>
-            <h3 className={`text-2xl md:text-3xl font-black ${styles.labelText} uppercase tracking-wider`}>
+            <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-wider">
               {product.name}
             </h3>
           </div>
@@ -75,12 +74,10 @@ const ProductCard = ({ product, index, styles }) => {
 
           {/* Precio */}
           <div className={`inline-block px-8 py-3 ${styles.priceButtonBg} rounded-full shadow-xl transform transition-all duration-300 group-hover:scale-110`}>
-            <span className={`text-2xl md:text-3xl font-black ${styles.priceText}`}>
+            <span className="text-2xl md:text-3xl font-black text-white">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
-
-          {/* Pedir desde la tarjeta */}
         </div>
       </div>
     </motion.div>
@@ -103,44 +100,36 @@ const ProductSkeleton = () => (
   </div>
 );
 
-// Estilos específicos para Los Cuates (Sistema 26 — afiche Mundial: verde/oro
-// con acentos de póster FIFA). Anillo dorado, etiqueta oro (texto oscuro) y
-// botón de precio en acento de afiche (texto claro).
+// Estilos específicos para Los Cuates (estilo vibrante tropical)
 const cuatesStyles = {
   "cuates-limon": {
     icon: Citrus,
-    gradient: "from-grass to-green-600",
+    gradient: "from-lime-400 to-green-500",
     image: "/cuates-limon.webp",
-    ringColor: "border-gold",
-    labelBg: "bg-gold",
-    labelText: "text-dark",
-    priceButtonBg: "bg-grass",
-    priceText: "text-dark",
-    splashBg: "bg-grass",
+    ringColor: "border-yellow-400",
+    labelBg: "bg-gradient-to-r from-orange-500 to-orange-600",
+    priceButtonBg: "bg-gradient-to-r from-orange-500 to-orange-600",
+    splashBg: "bg-lime-400",
     splash: true,
   },
   "cuates-fresa": {
     icon: Cherry,
-    gradient: "from-red-500 to-red-700",
+    gradient: "from-pink-400 to-red-500",
     image: "/cuate-fresa.webp",
-    ringColor: "border-gold",
-    labelBg: "bg-gold",
-    labelText: "text-dark",
-    priceButtonBg: "bg-red-600",
-    priceText: "text-white",
-    splashBg: "bg-red-500",
+    ringColor: "border-orange-400",
+    labelBg: "bg-gradient-to-r from-red-500 to-red-600",
+    priceButtonBg: "bg-gradient-to-r from-red-500 to-red-600",
+    splashBg: "bg-pink-400",
     splash: true,
   },
   "cuates-mango": {
     icon: Sun,
-    gradient: "from-gold to-grass",
+    gradient: "from-yellow-400 to-orange-500",
     image: "/cuate-mango.webp",
-    ringColor: "border-gold",
-    labelBg: "bg-gold",
-    labelText: "text-dark",
-    priceButtonBg: "bg-blue-600",
-    priceText: "text-white",
-    splashBg: "bg-gold",
+    ringColor: "border-yellow-400",
+    labelBg: "bg-gradient-to-r from-lime-500 to-lime-600",
+    priceButtonBg: "bg-gradient-to-r from-lime-500 to-lime-600",
+    splashBg: "bg-yellow-400",
     splash: true,
   },
 };
@@ -149,13 +138,11 @@ const getCuatesStyles = (product) => {
   const slug = product.slug?.toLowerCase() || "";
   const localStyles = cuatesStyles[slug] || {
     icon: Citrus,
-    gradient: "from-grass to-green-600",
-    ringColor: "border-gold",
-    labelBg: "bg-gold",
-    labelText: "text-dark",
-    priceButtonBg: "bg-grass",
-    priceText: "text-dark",
-    splashBg: "bg-grass",
+    gradient: "from-lime-400 to-green-500",
+    ringColor: "border-yellow-400",
+    labelBg: "bg-gradient-to-r from-orange-500 to-orange-600",
+    priceButtonBg: "bg-gradient-to-r from-orange-500 to-orange-600",
+    splashBg: "bg-lime-400",
     splash: true,
   };
 
@@ -176,14 +163,28 @@ const Cuates = () => {
   return (
     <section
       id="cuates"
-      className="py-20 relative overflow-hidden bg-dark"
+      className="py-20 relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900"
     >
-      {/* Capa decorativa Sistema 26 (afiche Mundial sutil + patrón modular + "26") */}
-      <Mundial26Backdrop />
+      {/* Patrón de fondo decorativo */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundSize: '60px 60px'
+          }}
+        ></div>
+      </div>
+
+      {/* Efectos de luz ambiental */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px]"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-yellow-500 rounded-full filter blur-[120px]"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-400 rounded-full filter blur-[120px]"></div>
+      </div>
 
       {/* Líneas divisoras decorativas */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -193,11 +194,10 @@ const Cuates = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
-            Edición Mundial 2026
-          </span>
-          <h2 className="text-5xl md:text-7xl font-black text-gold mb-4 uppercase tracking-wider">
-            LOS CUATES
+          <h2 className="text-5xl md:text-7xl font-black text-white mb-4 drop-shadow-2xl uppercase tracking-wider">
+            <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 bg-clip-text text-transparent">
+              LOS CUATES
+            </span>
           </h2>
           <p className="text-white text-lg md:text-xl max-w-2xl mx-auto font-semibold drop-shadow-lg">
             Cuates en Cumbal: cocteles listos con auténtico tequila mexicano.

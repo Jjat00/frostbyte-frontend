@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -46,9 +46,14 @@ import { ordersService } from '@/services/orders.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
 import BusinessContextBadge from '@/components/BusinessContextBadge';
 import BusinessComparison from '@/components/analytics/BusinessComparison';
+import { themeColorRaw } from '@/lib/themeColors';
 
-// Cyberpunk color palette for charts
-const CYBERPUNK_COLORS = ['#00e0ff', '#ff00d4', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899'];
+// Cyberpunk color palette for charts (paleta data-viz; los 2 primeros son los colores de marca del tema)
+const buildCyberpunkColors = () => [
+  themeColorRaw('--color-secondary'),
+  themeColorRaw('--color-primary'),
+  '#10B981', '#8B5CF6', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899',
+];
 
 // ─── Skeleton Components ────────────────────────────────────────
 
@@ -105,7 +110,7 @@ const SectionHeader = ({ icon: Icon, title, subtitle, action }) => (
 const CustomChartTooltip = ({ active, payload, label, formatter }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="backdrop-blur-xl bg-white/[0.06] border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_rgba(242,197,61,0.15)]">
+    <div className="backdrop-blur-xl bg-white/[0.06] border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_color-mix(in_srgb,var(--color-secondary)_15%,transparent)]">
       <p className="text-xs text-secondary font-bold mb-2">{label}</p>
       {payload.map((entry, index) => (
         <div key={index} className="flex items-center justify-between gap-6 mb-1 last:mb-0">
@@ -129,8 +134,8 @@ const StatCard = ({ title, value, subtitle, change, changeYoy, icon: Icon, color
     green: { border: 'border-green-500/30', text: 'text-green-400', bg: 'from-green-500/15 to-green-500/5', glow: 'hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]', icon: 'text-green-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]' },
     blue: { border: 'border-blue-500/30', text: 'text-blue-400', bg: 'from-blue-500/15 to-blue-500/5', glow: 'hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]', icon: 'text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]' },
     red: { border: 'border-red-500/30', text: 'text-red-400', bg: 'from-red-500/15 to-red-500/5', glow: 'hover:shadow-[0_0_30px_rgba(239,68,68,0.2)]', icon: 'text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]' },
-    secondary: { border: 'border-secondary/40', text: 'text-secondary', bg: 'from-secondary/15 to-secondary/5', glow: 'hover:shadow-[0_0_30px_rgba(242,197,61,0.25)]', icon: 'text-secondary drop-shadow-[0_0_12px_rgba(242,197,61,0.7)]' },
-    primary: { border: 'border-primary/30', text: 'text-primary', bg: 'from-primary/15 to-primary/5', glow: 'hover:shadow-[0_0_30px_rgba(30,158,90,0.2)]', icon: 'text-primary drop-shadow-[0_0_10px_rgba(30,158,90,0.6)]' },
+    secondary: { border: 'border-secondary/40', text: 'text-secondary', bg: 'from-secondary/15 to-secondary/5', glow: 'hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-secondary)_25%,transparent)]', icon: 'text-secondary drop-shadow-[0_0_12px_color-mix(in_srgb,var(--color-secondary)_70%,transparent)]' },
+    primary: { border: 'border-primary/30', text: 'text-primary', bg: 'from-primary/15 to-primary/5', glow: 'hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_20%,transparent)]', icon: 'text-primary drop-shadow-[0_0_10px_color-mix(in_srgb,var(--color-primary)_60%,transparent)]' },
   };
 
   const c = colorMap[color] || colorMap.secondary;
@@ -153,7 +158,7 @@ const StatCard = ({ title, value, subtitle, change, changeYoy, icon: Icon, color
       `}
     >
       {/* Subtle grid pattern */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,rgba(242,197,61,0.3)_1px,transparent_1px),linear-gradient(rgba(30,158,90,0.3)_1px,transparent_1px)] bg-[size:24px_24px]" />
+      <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-secondary)_30%,transparent)_1px,transparent_1px),linear-gradient(color-mix(in_srgb,var(--color-primary)_30%,transparent)_1px,transparent_1px)] bg-[size:24px_24px]" />
 
       <div className="relative">
         <div className="flex items-center justify-between mb-2">
@@ -351,6 +356,12 @@ const FinancialDashboard = () => {
   const [viewMode, setViewMode] = useState('daily');
   const [trendMonths, setTrendMonths] = useState(12);
 
+  // Tokens de tema leidos una vez para props de Recharts (no resuelven var())
+  const CYBERPUNK_COLORS = useMemo(() => buildCyberpunkColors(), []);
+  const chartSecondary = useMemo(() => themeColorRaw('--color-secondary'), []);
+  const chartPrimary = useMemo(() => themeColorRaw('--color-primary'), []);
+  const chartFontDisplay = useMemo(() => themeColorRaw('--font-display'), []);
+
   // Mes ancla seleccionado (default: mes en curso)
   const now = new Date();
   const [anchor, setAnchor] = useState({ year: now.getFullYear(), month: now.getMonth() + 1 });
@@ -526,7 +537,7 @@ const FinancialDashboard = () => {
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-light flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-secondary/10 border border-secondary/20">
-              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-secondary drop-shadow-[0_0_8px_rgba(242,197,61,0.6)]" />
+              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-secondary drop-shadow-[0_0_8px_color-mix(in_srgb,var(--color-secondary)_60%,transparent)]" />
             </div>
             Dashboard Financiero
           </h1>
@@ -559,7 +570,7 @@ const FinancialDashboard = () => {
           transition={{ delay: 0.2 }}
           className="bg-gradient-to-r from-secondary/8 via-primary/5 to-secondary/8 border border-secondary/15 rounded-2xl p-4 md:p-5 relative overflow-hidden"
         >
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_30%_50%,rgba(242,197,61,0.4),transparent_50%),radial-gradient(circle_at_70%_50%,rgba(30,158,90,0.3),transparent_50%)]" />
+          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_30%_50%,color-mix(in_srgb,var(--color-secondary)_40%,transparent),transparent_50%),radial-gradient(circle_at_70%_50%,color-mix(in_srgb,var(--color-primary)_30%,transparent),transparent_50%)]" />
           <div className="relative flex items-start gap-3">
             <Zap className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
             <div>
@@ -680,13 +691,13 @@ const FinancialDashboard = () => {
                     <BarChart data={peakHoursData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                       <defs>
                         <linearGradient id="hourNormal" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#00e0ff" stopOpacity={0.8} />
-                          <stop offset="100%" stopColor="#00e0ff" stopOpacity={0.25} />
+                          <stop offset="0%" stopColor={chartSecondary} stopOpacity={0.8} />
+                          <stop offset="100%" stopColor={chartSecondary} stopOpacity={0.25} />
                         </linearGradient>
                         <linearGradient id="hourPeak" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#ff00d4" />
-                          <stop offset="50%" stopColor="#00e0ff" />
-                          <stop offset="100%" stopColor="#00e0ff" stopOpacity={0.4} />
+                          <stop offset="0%" stopColor={chartPrimary} />
+                          <stop offset="50%" stopColor={chartSecondary} />
+                          <stop offset="100%" stopColor={chartSecondary} stopOpacity={0.4} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" strokeOpacity={0.4} />
@@ -729,7 +740,7 @@ const FinancialDashboard = () => {
                       <defs>
                         <linearGradient id="weekdayAbove" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#10B981" stopOpacity={0.9} />
-                          <stop offset="100%" stopColor="#00e0ff" stopOpacity={0.3} />
+                          <stop offset="100%" stopColor={chartSecondary} stopOpacity={0.3} />
                         </linearGradient>
                         <linearGradient id="weekdayBelow" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#6B7280" stopOpacity={0.6} />
@@ -745,7 +756,7 @@ const FinancialDashboard = () => {
                       />
                       <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '10px' }} width={50} />
                       <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
-                      <ReferenceLine y={weekdayAvg} stroke="#00e0ff" strokeDasharray="5 5" strokeOpacity={0.4} />
+                      <ReferenceLine y={weekdayAvg} stroke={chartSecondary} strokeDasharray="5 5" strokeOpacity={0.4} />
                       <Bar dataKey="revenue" name="Ingresos" radius={[6, 6, 0, 0]}>
                         {salesByWeekday.data.map((entry, index) => (
                           <Cell key={index} fill={entry.revenue >= weekdayAvg ? 'url(#weekdayAbove)' : 'url(#weekdayBelow)'} />
@@ -884,10 +895,10 @@ const FinancialDashboard = () => {
                       type="monotone"
                       dataKey="revenue"
                       name="Ingresos"
-                      stroke="#00e0ff"
+                      stroke={chartSecondary}
                       strokeWidth={3}
-                      dot={{ fill: '#00e0ff', r: viewMode === 'daily' ? 2 : 4, strokeWidth: 2, stroke: '#0a0b14' }}
-                      activeDot={{ r: 6, className: 'drop-shadow-[0_0_8px_rgba(242,197,61,0.8)]' }}
+                      dot={{ fill: chartSecondary, r: viewMode === 'daily' ? 2 : 4, strokeWidth: 2, stroke: '#0a0b14' }}
+                      activeDot={{ r: 6, className: 'drop-shadow-[0_0_8px_color-mix(in_srgb,var(--color-secondary)_80%,transparent)]' }}
                     />
                     <Line
                       type="monotone"
@@ -949,7 +960,7 @@ const FinancialDashboard = () => {
                       <YAxis stroke="#9CA3AF" tickFormatter={formatCurrency} style={{ fontSize: '11px' }} />
                       <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
                       <Legend />
-                      <Bar dataKey="revenue" name="Ingresos" fill="#00e0ff" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="revenue" name="Ingresos" fill={chartSecondary} radius={[4, 4, 0, 0]} />
                       <Bar dataKey="total_expenses" name="Gastos" fill="#EF4444" radius={[4, 4, 0, 0]} />
                       <Bar dataKey="profit" name="Ganancia" fill="#10B981" radius={[4, 4, 0, 0]} />
                     </BarChart>
@@ -1009,7 +1020,7 @@ const FinancialDashboard = () => {
                         </Pie>
                         <Tooltip content={<CustomChartTooltip formatter={formatCurrencyFull} />} />
                         {/* Center text */}
-                        <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" fill="#e8f6ff" fontSize="18" fontWeight="bold" fontFamily="Orbitron">
+                        <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" fill="#e8f6ff" fontSize="18" fontWeight="bold" fontFamily={chartFontDisplay}>
                           {formatCurrency(expensesBreakdown.total)}
                         </text>
                         <text x="50%" y="56%" textAnchor="middle" dominantBaseline="middle" fill="#8a8d9c" fontSize="11">
@@ -1161,13 +1172,13 @@ const FinancialDashboard = () => {
                     {avgProfit !== 0 && (
                       <ReferenceLine
                         y={avgProfit}
-                        stroke="#00e0ff"
+                        stroke={chartSecondary}
                         strokeDasharray="5 5"
                         strokeWidth={1.5}
                         strokeOpacity={0.6}
                         label={{
                           value: `Prom: ${formatCurrency(avgProfit)}`,
-                          fill: '#00e0ff',
+                          fill: chartSecondary,
                           fontSize: 10,
                           position: 'insideTopRight',
                         }}

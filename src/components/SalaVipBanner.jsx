@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Crown, Cake, PartyPopper, Users, UtensilsCrossed, MessageCircle, CalendarDays } from "lucide-react";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 import { useReservationsConfig } from "@/hooks/useReservations";
 
 /**
@@ -18,63 +17,60 @@ const SalaVipBanner = () => {
 
   return (
     <section id="sala-vip" className="py-8 bg-dark relative overflow-hidden">
-      {/* Sistema 26: capa decorativa tipo afiche (sutil, ligera en GPU) */}
-      <Mundial26Backdrop />
-
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-gold/30 bg-linear-to-br from-gold/15 via-dark-secondary to-violet-500/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]"
+          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-secondary/30 bg-linear-to-br from-secondary/15 via-dark-secondary to-violet-500/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]"
         >
-          {/* Resplandor dorado */}
-          <div className="pointer-events-none absolute -top-12 -right-8 h-48 w-48 rounded-full bg-gold/15 blur-3xl" />
+          {/* Resplandor cian */}
+          <div className="pointer-events-none absolute -top-12 -right-8 h-48 w-48 rounded-full bg-secondary/15 blur-3xl" />
 
           <div className="relative p-6">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-xl bg-linear-to-br from-gold to-amber-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-linear-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
                 <Crown size={20} className="text-dark" />
               </div>
               <div>
-                <span className="inline-block text-[11px] uppercase tracking-[0.3em] text-gold font-bold mb-1">
+                <span className="inline-block text-[11px] uppercase tracking-[0.3em] text-secondary font-bold mb-1">
                   Nuevo · Piso 3
                 </span>
                 <h3 className="text-3xl font-black uppercase leading-none text-light">
-                  Sala <span className="text-gold">VIP</span>
+                  Sala <span className="text-secondary">VIP</span>
                 </h3>
               </div>
             </div>
 
             {/* Descripción */}
             <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-              <PartyPopper size={20} className="text-gold flex-shrink-0 mt-0.5" />
+              <PartyPopper size={20} className="text-secondary flex-shrink-0 mt-0.5" />
               <p className="text-white/70 text-sm leading-relaxed">
                 Reserva nuestra sala privada del tercer piso para tu{" "}
-                <span className="text-gold font-bold">cumpleaños</span>,{" "}
-                <span className="text-gold font-bold">celebración</span> o el
+                <span className="text-secondary font-bold">cumpleaños</span>,{" "}
+                <span className="text-secondary font-bold">celebración</span> o el
                 plan que quieras con tus amigos. Un espacio solo para ustedes.
               </p>
             </div>
 
             {/* Características */}
             <div className="grid grid-cols-3 gap-2 mb-4">
-              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-gold/10 to-transparent border border-gold/20 text-center">
-                <Users size={18} className="text-gold" />
+              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-secondary/10 to-transparent border border-secondary/20 text-center">
+                <Users size={18} className="text-secondary" />
                 <span className="text-white/70 text-[11px] leading-tight font-semibold">
                   Hasta {reservationsConfig?.vip_capacity ?? 15} personas
                 </span>
               </div>
-              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-gold/10 to-transparent border border-gold/20 text-center">
-                <Cake size={18} className="text-gold" />
+              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-secondary/10 to-transparent border border-secondary/20 text-center">
+                <Cake size={18} className="text-secondary" />
                 <span className="text-white/70 text-[11px] leading-tight font-semibold">
                   Cumpleaños y eventos
                 </span>
               </div>
-              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-gold/10 to-transparent border border-gold/20 text-center">
-                <UtensilsCrossed size={18} className="text-gold" />
+              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-secondary/10 to-transparent border border-secondary/20 text-center">
+                <UtensilsCrossed size={18} className="text-secondary" />
                 <span className="text-white/70 text-[11px] leading-tight font-semibold">
                   Con nuestra nueva comida
                 </span>

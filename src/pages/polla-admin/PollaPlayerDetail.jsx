@@ -51,7 +51,7 @@ const PollaPlayerDetail = () => {
   const referral = data?.referral;
 
   return (
-    <div className="min-h-screen bg-dark relative overflow-hidden">
+    <div className="theme-26 min-h-screen bg-dark relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-20">
         <div
           className="absolute inset-0"

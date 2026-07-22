@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useActiveCategories, useProductsByCategory } from "@/hooks";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
+import { getCategoryStyles } from "@/lib/productStyles";
 import SalchipapasPromoBanner from "@/components/SalchipapasPromoBanner";
 
 const formatPrice = (price) => {
@@ -41,49 +41,49 @@ const SPECIAL_SECTIONS = [
   {
     id: "agua",
     name: "Agua",
-    gradient: "from-blue-500 to-grass",
+    gradient: "from-cyan-400 to-blue-400",
     icon: Droplets,
     items: [{ name: "Botella de Agua", price: "$2.000" }],
   },
   {
     id: "que-te-provoca",
     name: "Recomendador de Bebidas",
-    gradient: "from-blue-500 to-gold",
+    gradient: "from-violet-400 to-fuchsia-500",
     icon: Sparkles,
     description: "Deja que te recomendemos la bebida perfecta para ti.",
   },
   {
     id: "descuento-redes",
     name: "Descuento por Redes",
-    gradient: "from-red-500 to-gold",
+    gradient: "from-pink-400 to-rose-500",
     icon: Share2,
     description: "Siguenos en redes sociales y obtendras un descuento.",
   },
   {
     id: "descuento-cumple",
     name: "Descuento de Cumple",
-    gradient: "from-gold to-red-500",
+    gradient: "from-amber-400 to-orange-500",
     icon: Cake,
     description: "Si es tu cumple, tendras un descuento especial.",
   },
   {
     id: "solicitar-cancion",
     name: "Pedir Cancion",
-    gradient: "from-grass to-gold",
+    gradient: "from-green-400 to-emerald-500",
     icon: Music,
     description: "Pide tu cancion favorita y la ponemos para ti.",
   },
   {
     id: "feedback",
     name: "Tu Opinion",
-    gradient: "from-grass to-blue-500",
+    gradient: "from-teal-400 to-cyan-500",
     icon: MessageSquare,
     description: "Dejanos tu opinion, sugerencias o comentarios.",
   },
   {
     id: "frostbyte-play",
     name: "Frostbyte Play",
-    gradient: "from-grass to-gold",
+    gradient: "from-violet-400 to-amber-400",
     icon: Gamepad2,
     tableOnly: true,
     description: "Juega mientras esperas tu pedido.",
@@ -103,6 +103,7 @@ const CategoryGroup = ({ category }) => {
   const { data, isLoading } = useProductsByCategory(category.slug);
   const products = data?.results || [];
   const sectionId = SECTION_IDS[category.slug];
+  const styles = getCategoryStyles(category.slug);
 
   if (isLoading) {
     return (
@@ -125,14 +126,14 @@ const CategoryGroup = ({ category }) => {
       {/* Category header */}
       <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-white/[0.08]">
         <h3
-          className="text-lg sm:text-xl md:text-2xl font-black uppercase tracking-wide sm:tracking-wider text-gold min-w-0"
+          className={`text-lg sm:text-xl md:text-2xl font-black uppercase tracking-wide sm:tracking-wider bg-linear-to-r ${styles.gradient} bg-clip-text text-transparent min-w-0`}
         >
           {category.name}
         </h3>
         {sectionId && (
           <button
             onClick={() => scrollTo(sectionId)}
-            className="liquid-glass-pill group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-gold backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.12] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-gold/30 transition-all duration-200 cursor-pointer flex-shrink-0"
+            className="liquid-glass-pill group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.12] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-primary/30 transition-all duration-200 cursor-pointer flex-shrink-0"
           >
             <Eye className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Ver detalles</span>
@@ -157,7 +158,7 @@ const CategoryGroup = ({ category }) => {
                 </span>
                 <span className="flex-1 border-b border-dotted border-white/[0.1] mb-1 min-w-[12px]" />
                 {!hasMultipleVariants && (
-                  <span className="text-gold font-bold text-xs sm:text-sm md:text-base flex-shrink-0">
+                  <span className="text-primary font-bold text-xs sm:text-sm md:text-base flex-shrink-0">
                     {formatPrice(defaultVariant?.price)}
                   </span>
                 )}
@@ -171,7 +172,7 @@ const CategoryGroup = ({ category }) => {
                         <span className="text-[9px] sm:text-[10px] text-white/35 uppercase tracking-wider leading-none">
                           {variant.name}
                         </span>
-                        <span className="text-gold font-bold text-xs sm:text-sm md:text-base">
+                        <span className="text-primary font-bold text-xs sm:text-sm md:text-base">
                           {formatPrice(variant.price)}
                         </span>
                       </div>
@@ -196,14 +197,14 @@ const SpecialSectionItem = ({ section }) => {
         <div className="flex items-center gap-1.5 min-w-0">
           <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white/50 flex-shrink-0" />
           <h3
-            className="text-base sm:text-lg md:text-2xl font-black uppercase tracking-wide sm:tracking-wider text-gold min-w-0 truncate"
+            className={`text-base sm:text-lg md:text-2xl font-black uppercase tracking-wide sm:tracking-wider bg-linear-to-r ${section.gradient} bg-clip-text text-transparent min-w-0 truncate`}
           >
             {section.name}
           </h3>
         </div>
         <button
           onClick={() => scrollTo(section.id)}
-          className="liquid-glass-pill group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-gold backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.12] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-gold/30 transition-all duration-200 cursor-pointer flex-shrink-0"
+          className="liquid-glass-pill group flex items-center gap-1 text-xs font-semibold text-white/40 hover:text-primary backdrop-blur-sm bg-white/[0.03] hover:bg-white/[0.12] px-2.5 py-1 rounded-full border border-white/[0.06] hover:border-primary/30 transition-all duration-200 cursor-pointer flex-shrink-0"
         >
           <Eye className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Ir a seccion</span>
@@ -227,7 +228,7 @@ const SpecialSectionItem = ({ section }) => {
                 {item.name}
               </span>
               <span className="flex-1 border-b border-dotted border-white/[0.1] mb-1 min-w-[12px]" />
-              <span className="text-gold font-bold text-xs sm:text-sm md:text-base flex-shrink-0">
+              <span className="text-primary font-bold text-xs sm:text-sm md:text-base flex-shrink-0">
                 {item.price}
               </span>
             </li>
@@ -280,23 +281,18 @@ const CartaList = () => {
   if (!activeCategories.length) return null;
 
   return (
-    <section id="carta" className="py-10 sm:py-16 relative overflow-hidden bg-dark">
-      <Mundial26Backdrop />
-
+    <section id="carta" className="py-10 sm:py-16 relative overflow-hidden" style={{ background: 'linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)' }}>
       <div className="container mx-auto px-4 max-w-3xl relative z-10">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
-          <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
-            Mundial 2026
-          </span>
           <h2 className="text-3xl md:text-5xl font-black mb-3">
-            <span className="text-light">
+            <span className="bg-linear-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
               NUESTRA CARTA
             </span>
           </h2>
           <p className="text-white/40 text-sm md:text-base max-w-lg mx-auto">
             Todos nuestros productos y precios. Toca{" "}
-            <span className="text-gold/70">"Ver detalles"</span> en cada
+            <span className="text-primary/70">"Ver detalles"</span> en cada
             seccion para ver imagenes y mas info.
           </p>
         </div>

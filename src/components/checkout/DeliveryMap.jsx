@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Map, {
   Marker,
   Source,
@@ -15,6 +15,7 @@ import {
   DELIVERY_RADIUS_KM,
   isWithinDeliveryArea,
 } from "@/lib/deliveryArea";
+import { themeColorRaw } from "@/lib/themeColors";
 
 // Radio de cobertura como capa GeoJSON
 const COVERAGE_GEOJSON = circle(
@@ -59,6 +60,8 @@ const DeliveryMap = ({ value, onChange }) => {
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
   const [styleKey, setStyleKey] = useState("satellite");
+  // Color de la capa de cobertura de Mapbox: leído una vez del tema (no resuelve var()).
+  const secondaryColor = useMemo(() => themeColorRaw("--color-secondary"), []);
 
   const setPoint = (la, lo, recenter = true) => {
     onChange({ lat: round7(la), lng: round7(lo) });
@@ -80,7 +83,7 @@ const DeliveryMap = ({ value, onChange }) => {
         onChange={(e) => onChange({ address: e.target.value })}
         placeholder="Dirección de entrega *"
         maxLength={300}
-        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40"
+        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40"
       />
       <input
         type="text"
@@ -88,7 +91,7 @@ const DeliveryMap = ({ value, onChange }) => {
         onChange={(e) => onChange({ reference: e.target.value })}
         placeholder="Referencia (ej: casa de 2 pisos, portón verde)"
         maxLength={300}
-        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-gold/40"
+        className="w-full rounded-xl bg-white/[0.04] border border-white/[0.1] px-3 py-2.5 text-sm text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40"
       />
     </>
   );
@@ -119,7 +122,7 @@ const DeliveryMap = ({ value, onChange }) => {
       <div className="space-y-3">
         <div className="relative h-40 rounded-xl overflow-hidden border border-white/10 bg-white/[0.04] grid place-items-center">
           <div className="flex flex-col items-center gap-1 text-white/40">
-            <MapPin className={`w-7 h-7 ${hasCoords ? "text-gold" : ""}`} />
+            <MapPin className={`w-7 h-7 ${hasCoords ? "text-secondary" : ""}`} />
             <span className="text-xs">
               {hasCoords
                 ? `Ubicación marcada (${value.lat}, ${value.lng})`
@@ -134,7 +137,7 @@ const DeliveryMap = ({ value, onChange }) => {
           type="button"
           onClick={useMyLocation}
           disabled={locating}
-          className="w-full flex items-center justify-center gap-2 rounded-xl border border-gold/30 bg-gold/10 hover:bg-gold/20 text-gold text-sm font-semibold py-2.5 transition-colors disabled:opacity-60"
+          className="w-full flex items-center justify-center gap-2 rounded-xl border border-secondary/30 bg-secondary/10 hover:bg-secondary/20 text-secondary text-sm font-semibold py-2.5 transition-colors disabled:opacity-60"
         >
           {locating ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -175,13 +178,13 @@ const DeliveryMap = ({ value, onChange }) => {
             <Layer
               id="delivery-coverage-fill"
               type="fill"
-              paint={{ "fill-color": "#f2c53d", "fill-opacity": 0.08 }}
+              paint={{ "fill-color": secondaryColor, "fill-opacity": 0.08 }}
             />
             <Layer
               id="delivery-coverage-line"
               type="line"
               paint={{
-                "line-color": "#f2c53d",
+                "line-color": secondaryColor,
                 "line-opacity": 0.7,
                 "line-width": 1.5,
                 "line-dasharray": [2, 2],
@@ -196,7 +199,7 @@ const DeliveryMap = ({ value, onChange }) => {
             anchor="center"
           >
             <div
-              className="w-9 h-9 rounded-full bg-dark/85 border-2 border-gold shadow-lg grid place-items-center pointer-events-none"
+              className="w-9 h-9 rounded-full bg-dark/85 border-2 border-secondary shadow-lg grid place-items-center pointer-events-none"
               title="Frostbyte"
             >
               <img
@@ -227,7 +230,7 @@ const DeliveryMap = ({ value, onChange }) => {
             >
               <MapPin
                 className={`w-8 h-8 drop-shadow-lg ${
-                  outOfArea ? "text-red-500" : "text-gold"
+                  outOfArea ? "text-red-500" : "text-secondary"
                 }`}
                 fill="currentColor"
               />
@@ -252,8 +255,8 @@ const DeliveryMap = ({ value, onChange }) => {
             <p className="text-[11px] text-white/70">
               Toca el mapa o usa el botón de ubicación para marcar tu entrega
             </p>
-            <p className="text-[11px] text-gold/90 font-semibold">
-              Entregamos solo dentro del área dorada ({DELIVERY_RADIUS_KM} km
+            <p className="text-[11px] text-secondary/90 font-semibold">
+              Entregamos solo dentro del área cian ({DELIVERY_RADIUS_KM} km
               alrededor del local)
             </p>
           </div>
@@ -269,7 +272,7 @@ const DeliveryMap = ({ value, onChange }) => {
       {outOfArea && (
         <p className="text-[11px] text-red-400 flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 shrink-0" /> Tu ubicación está fuera de
-          nuestra zona de domicilios: mueve el pin dentro del área dorada (
+          nuestra zona de domicilios: mueve el pin dentro del área cian (
           {DELIVERY_RADIUS_KM} km alrededor del local)
         </p>
       )}

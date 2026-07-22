@@ -1,15 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, RotateCw, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import useImpostorGameStore from '@/stores/useImpostorGameStore';
 import { impostorService } from '@/services/impostor.service';
+import { themeColorRaw } from '@/lib/themeColors';
 
 const GameOverScreen = () => {
   const navigate = useNavigate();
   const { players, roundHistory, sessionId, resetGame, restartGame } = useImpostorGameStore();
   const finishedRef = useRef(false);
+  // Colores de marca leídos una vez del tema; el resto son acentos fijos no-marca.
+  const confettiColors = useMemo(
+    () => [themeColorRaw('--color-primary'), themeColorRaw('--color-secondary'), '#facc15', '#a855f7', '#ef4444'],
+    []
+  );
 
   const lastResult = roundHistory[roundHistory.length - 1];
   const impostorCaught = lastResult?.impostorCaught;
@@ -61,7 +67,7 @@ const GameOverScreen = () => {
             }}
             className="absolute left-1/2 w-3 h-3 rounded-sm"
             style={{
-              backgroundColor: ['#1e9e5a', '#f2c53d', '#ef4444', '#a855f7', '#3b82f6'][i % 5],
+              backgroundColor: confettiColors[i % 5],
             }}
           />
         ))}

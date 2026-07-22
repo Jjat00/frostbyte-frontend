@@ -4,7 +4,6 @@ import { Sparkles, Loader2, RotateCcw, ArrowRight, Mic, MicOff } from "lucide-re
 import useAudioRecorder from "@/hooks/useAudioRecorder";
 import { env } from "@/config/env";
 import { ENDPOINTS } from "@/services/api/endpoints";
-import { Mundial26Backdrop } from "@/components/mundial/Sistema26";
 
 // ── Quiz config ──────────────────────────────────────────────────────────────
 
@@ -49,7 +48,7 @@ function TabSwitcher({ active, onChange }) {
           onClick={() => onChange(tab)}
           className={`flex-1 py-2.5 text-sm font-semibold transition-all duration-200 ${
             active === tab
-              ? "bg-linear-to-r from-gold to-grass text-dark"
+              ? "bg-gradient-to-r from-primary to-secondary text-dark"
               : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10"
           }`}
         >
@@ -77,7 +76,7 @@ function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
           placeholder="Ej: Tengo mucho calor y quiero algo refrescante y fuerte..."
           rows={3}
           disabled={isTranscribing}
-          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-14 text-white placeholder-white/30 text-sm resize-none focus:outline-none focus:border-grass/60 transition-colors disabled:opacity-50"
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-14 text-white placeholder-white/30 text-sm resize-none focus:outline-none focus:border-primary/60 transition-colors disabled:opacity-50"
         />
         <button
           type="button"
@@ -102,7 +101,7 @@ function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
       )}
 
       {isTranscribing && (
-        <div className="flex items-center gap-2 text-grass text-xs">
+        <div className="flex items-center gap-2 text-primary text-xs">
           <Loader2 size={12} className="animate-spin" />
           Transcribiendo audio...
         </div>
@@ -117,7 +116,7 @@ function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
         <button
           onClick={onSubmit}
           disabled={loading || mood.trim().length < 5 || isRecording || isTranscribing}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-gold to-grass text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
           Recomendar
@@ -142,7 +141,7 @@ function QuizTab({ answers, onChange, onSubmit, loading }) {
                 onClick={() => onChange(q.key, opt.value)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150 ${
                   answers[q.key] === opt.value
-                    ? "border-grass/80 bg-grass/20 text-grass"
+                    ? "border-primary/80 bg-primary/20 text-primary"
                     : "border-white/10 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
                 }`}
               >
@@ -155,7 +154,7 @@ function QuizTab({ answers, onChange, onSubmit, loading }) {
       <button
         onClick={onSubmit}
         disabled={loading || !allAnswered}
-        className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-linear-to-r from-gold to-grass text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity mt-1"
+        className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity mt-1"
       >
         {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
         Sorpréndeme
@@ -176,8 +175,8 @@ function LoadingState() {
   return (
     <div className="flex flex-col items-center gap-4 py-8">
       <div className="relative">
-        <div className="w-12 h-12 rounded-full border-2 border-gold/30 border-t-gold animate-spin" />
-        <Sparkles size={18} className="absolute inset-0 m-auto text-gold" />
+        <div className="w-12 h-12 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+        <Sparkles size={18} className="absolute inset-0 m-auto text-primary" />
       </div>
       <AnimatePresence mode="wait">
         <motion.p
@@ -223,12 +222,12 @@ function ResultCard({ result, onReset }) {
       )}
 
       {/* Badge */}
-      <span className="self-start px-3 py-1 rounded-full bg-gold/20 border border-gold/40 text-gold text-xs font-semibold uppercase tracking-wide">
+      <span className="self-start px-3 py-1 rounded-full bg-secondary/20 border border-secondary/40 text-secondary text-xs font-semibold uppercase tracking-wide">
         {product.category}
       </span>
 
       {/* Product name */}
-      <h3 className="text-2xl font-extrabold leading-tight text-gold">
+      <h3 className="text-2xl font-extrabold leading-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
         {product.name}
       </h3>
 
@@ -239,9 +238,9 @@ function ResultCard({ result, onReset }) {
 
       {/* AI reason */}
       {reason && (
-        <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3">
+        <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
           <p className="text-white/80 text-sm italic leading-relaxed">
-            <Sparkles size={13} className="inline mr-1.5 text-gold" />
+            <Sparkles size={13} className="inline mr-1.5 text-primary" />
             {reason}
           </p>
         </div>
@@ -251,7 +250,7 @@ function ResultCard({ result, onReset }) {
       <div className="flex flex-wrap gap-3 mt-1">
         <button
           onClick={handleViewInMenu}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-gold to-grass text-dark font-bold text-sm hover:opacity-90 transition-opacity"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm hover:opacity-90 transition-opacity"
         >
           Ver en carta
           <ArrowRight size={15} />
@@ -348,18 +347,14 @@ export default function DrinkRecommender() {
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5 }}
       id="que-te-provoca"
-      className="relative overflow-hidden py-6 bg-dark"
+      className="py-6 bg-dark"
     >
-      <Mundial26Backdrop />
-      <div className="relative container mx-auto px-4">
+      <div className="container mx-auto px-4">
       <div className="liquid-glass max-w-xl mx-auto backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.3)]">
         {/* Header */}
-        <span className="inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">
-          Mundial 2026
-        </span>
         <div className="flex items-center gap-2.5 mb-5">
-          <div className="p-2 rounded-lg bg-linear-to-br from-grass/25 to-gold/20 border border-white/10">
-            <Sparkles size={18} className="text-gold" />
+          <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 border border-white/10">
+            <Sparkles size={18} className="text-primary" />
           </div>
           <div>
             <h2 className="text-white font-bold text-lg leading-tight">

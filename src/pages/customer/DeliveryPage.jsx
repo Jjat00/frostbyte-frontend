@@ -165,7 +165,7 @@ const DeliveryPage = () => {
           {isCustomerAuthenticated && inAppOrdering && (
             <Link
               to="/mis-pedidos"
-              className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-xs font-bold text-gold flex-shrink-0"
+              className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-xs font-bold text-secondary flex-shrink-0"
             >
               <ClipboardList className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Mis pedidos</span>

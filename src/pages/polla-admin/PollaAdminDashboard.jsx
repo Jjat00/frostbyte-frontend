@@ -111,7 +111,7 @@ const PollaAdminDashboard = () => {
   }, [players, search]);
 
   return (
-    <div className="min-h-screen bg-dark relative overflow-hidden">
+    <div className="theme-26 min-h-screen bg-dark relative overflow-hidden">
       {/* Fondo de grilla sutil */}
       <div className="fixed inset-0 pointer-events-none opacity-20">
         <div

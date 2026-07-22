@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ChevronDown, Instagram, Trophy, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ChevronDown, Instagram } from "lucide-react";
 import { env } from "@/config/env";
-import { MundialColorField, EmblemaMundial } from "@/components/mundial/Sistema26";
+import { useInViewport, useIsMobile } from "@/hooks";
+import { themeColorChannels } from "@/lib/themeColors";
 
 gsap.registerPlugin(useGSAP);
 
@@ -56,17 +56,142 @@ const getDateStrip = () => {
 };
 
 // Cache local de la frase: válida 30 min (alineado con el caché del backend,
-// que rota el dato del Mundial cada media hora).
-const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase_mundial";
+// que rota la frase cada media hora).
+const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase";
 const PHRASE_TTL_MS = 30 * 60 * 1000;
+
+// "Byte" in binary: B=01000010 y=01111001 t=01110100 e=01100101
+const BYTE_BINARY = "01000010011110010111010001100101";
 
 const Hero = () => {
   const [motivationalPhrase, setMotivationalPhrase] = useState("");
   const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
   const sectionRef = useRef(null);
+  const canvasRef = useRef(null);
+  const isInView = useInViewport(sectionRef);
+  const isMobile = useIsMobile();
   const greeting = getGreeting();
   const dayName = DAY_NAMES[new Date().getDay()];
   const dateStrip = getDateStrip();
+
+  // Grid binario interactivo (sensible al hover del mouse). Solo desktop:
+  // en móvil ni se monta el canvas ni corre el rAF (rendimiento), y se pausa
+  // cuando la sección sale del viewport.
+  useEffect(() => {
+    if (!isInView || isMobile) return;
+    const canvas = canvasRef.current;
+    const section = sectionRef.current;
+    if (!canvas || !section) return;
+    const ctx = canvas.getContext("2d");
+    let rafId;
+    const mouse = { x: -9999, y: -9999 };
+    const COL_W = 22;
+    const ROW_H = 20;
+    const FONT_SIZE = 12;
+    const HOVER_RADIUS = 140;
+    // El color del halo del hover sigue al tema activo (canvas no resuelve
+    // var(): se leen los canales del token una sola vez al montar).
+    const [pr, pg, pb] = themeColorChannels("--color-primary") ?? [255, 0, 212];
+    let flickerPhases = [];
+    let cols = 0;
+    let rows = 0;
+    const buildGrid = () => {
+      cols = Math.ceil(canvas.width / COL_W) + 1;
+      rows = Math.ceil(canvas.height / ROW_H) + 1;
+      const total = cols * rows;
+      flickerPhases = new Float32Array(total);
+      for (let i = 0; i < total; i++) {
+        flickerPhases[i] = Math.random() * Math.PI * 2;
+      }
+    };
+    const resize = () => {
+      canvas.width = section.offsetWidth;
+      canvas.height = section.offsetHeight;
+      buildGrid();
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    const handleMouseMove = (e) => {
+      const rect = section.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    };
+    const handleMouseLeave = () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    };
+    section.addEventListener("mousemove", handleMouseMove);
+    section.addEventListener("mouseleave", handleMouseLeave);
+    ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const t = Date.now() * 0.001;
+      for (let col = 0; col < cols; col++) {
+        for (let row = 0; row < rows; row++) {
+          const idx = col * rows + row;
+          const x = col * COL_W + COL_W / 2;
+          const y = row * ROW_H + ROW_H / 2;
+          const digit = BYTE_BINARY[idx % BYTE_BINARY.length];
+          const phase = flickerPhases[idx];
+          const flicker = 0.5 + 0.5 * Math.sin(t * 0.8 + phase);
+          let alpha = 0.06 + flicker * 0.12;
+          let r = 255,
+            g = 255,
+            b = 255;
+          const colorCycle = Math.sin(t * 0.5 + phase * 1.5);
+          if (colorCycle > 0.3) {
+            r = 180;
+            g = 240;
+            b = 255;
+          } else if (colorCycle < -0.3) {
+            r = 255;
+            g = 180;
+            b = 240;
+          }
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          let drawX = x;
+          let drawY = y;
+          if (dist < HOVER_RADIUS) {
+            const intensity = 1 - dist / HOVER_RADIUS;
+            const ease = intensity * intensity;
+            const waveFreq = 0.06;
+            const waveAmp = 8;
+            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
+            const angle = Math.atan2(dy, dx);
+            drawX += Math.cos(angle) * wave;
+            drawY += Math.sin(angle) * wave;
+            alpha = Math.min(1, alpha + ease * 0.85);
+            r = Math.round(r * (1 - ease) + pr * ease);
+            g = Math.round(g * (1 - ease) + pg * ease);
+            b = Math.round(b * (1 - ease) + pb * ease);
+            const scale = 1 + ease * 0.5;
+            ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Courier New', monospace`;
+            ctx.shadowColor = `rgba(${pr}, ${pg}, ${pb}, ${ease * 0.7})`;
+            ctx.shadowBlur = ease * 16;
+          }
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          ctx.fillText(digit, drawX, drawY);
+          if (dist < HOVER_RADIUS) {
+            ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+          }
+        }
+      }
+      rafId = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => {
+      section.removeEventListener("mousemove", handleMouseMove);
+      section.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(rafId);
+    };
+  }, [isInView, isMobile]);
 
   useEffect(() => {
     // 1) Si la frase en cache local sigue fresca (< 30 min), la usamos al
@@ -136,21 +261,31 @@ const Hero = () => {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
-      {/* Fondo estilo póster del Mundial (bloques de color + patrón + "26") */}
-      <MundialColorField scrim="center" />
+      <div className="absolute inset-0 backdrop-blur-xl bg-black/[0.3]" />
+      <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
+      {!isMobile && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 pointer-events-none"
+        />
+      )}
+
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>
+        <div
+          className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px] animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+      </div>
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-7 pb-16">
-          {/* Emblema oficial del Mundial */}
-          <div className="flex justify-center">
-            <EmblemaMundial className="h-24 sm:h-32" loading="eager" />
-          </div>
-
           {/* Badge */}
           <div>
-            <span className="hero-badge inline-flex items-center gap-2 px-4 py-2 bg-gold/10 border border-gold/40 rounded-full text-gold text-xs sm:text-sm font-bold tracking-wider whitespace-nowrap">
-              <Trophy size={15} />
-              BEBIDAS HELADAS · MUNDIAL 2026 · CUMBAL
+            <span className="hero-badge inline-block px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap">
+              BEBIDAS HELADAS · CUMBAL, NARIÑO
             </span>
           </div>
 
@@ -159,7 +294,7 @@ const Hero = () => {
             <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-white/70">
               {greeting}
             </span>
-            <span className="text-base sm:text-lg font-bold tracking-wider uppercase text-secondary">
+            <span className="text-base sm:text-lg font-bold tracking-wider uppercase text-primary">
               {dayName}
             </span>
             <div className="hero-subtitle flex items-center gap-4">
@@ -167,7 +302,7 @@ const Hero = () => {
                 <span
                   key={i}
                   className={`text-xs sm:text-sm font-medium ${
-                    d.isCurrent ? "text-secondary" : "text-white/30"
+                    d.isCurrent ? "text-primary" : "text-white/30"
                   }`}
                 >
                   {String(d.day).padStart(2, "0")}
@@ -177,13 +312,13 @@ const Hero = () => {
           </div>
 
           {/* Headline */}
-          <h1 className="w-full text-center font-black text-light leading-none tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)]">
+          <h1 className="w-full text-center font-black text-light leading-none tracking-tight">
             {/* flex + justify-center centra aunque el texto sea más ancho que el
                 contenedor (text-align no lo hace); el clamp lo mantiene dentro del viewport */}
             <span className="flex w-full justify-center whitespace-nowrap text-[clamp(2rem,9vw,7.5rem)]">
               FROSTBYTE
             </span>
-            <span className="mt-2 block text-gold text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest">
+            <span className="mt-2 block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest">
               CUMBAL, NARIÑO
             </span>
           </h1>
@@ -191,10 +326,10 @@ const Hero = () => {
           {/* Frase motivacional */}
           {!isLoadingPhrase && motivationalPhrase && (
             <div className="hero-phrase max-w-2xl mx-auto text-center">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-gold font-bold">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">
                 Para hoy
               </p>
-              <div className="w-16 h-[2px] bg-linear-to-r from-gold to-grass mx-auto mt-2 mb-4" />
+              <div className="w-16 h-[2px] bg-linear-to-r from-primary to-secondary mx-auto mt-2 mb-4" />
               <p className="text-secondary text-base sm:text-lg md:text-xl leading-relaxed font-medium italic">
                 &ldquo;{motivationalPhrase}&rdquo;
               </p>
@@ -202,52 +337,11 @@ const Hero = () => {
           )}
 
           {/* Descripción */}
-          <p className="hero-description text-light/85 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <p className="hero-description text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
             Granizados, frappés, cocteles, shots y micheladas con amigos o en
             familia. Bebidas heladas premium con un estilo único en Cumbal,
             Nariño.
           </p>
-
-          {/* CTA destacado: Polla Mundialista */}
-          <div className="flex justify-center">
-            <Link
-              to="/polla-mundial"
-              className="hero-cta-btn group relative w-full max-w-xl flex flex-col gap-3 px-5 sm:px-7 py-5 rounded-2xl bg-linear-to-r from-grass to-gold text-dark overflow-hidden shadow-2xl shadow-grass/40 hover:shadow-gold/50 transition-all duration-300 hover:scale-[1.02]"
-            >
-              {/* Glow / shimmer + anillo */}
-              <span className="absolute inset-0 bg-linear-to-r from-white/0 via-white/40 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none" />
-              <span className="absolute -inset-1 rounded-2xl ring-2 ring-gold/60 animate-pulse pointer-events-none" />
-
-              {/* Fila 1: identidad de la polla */}
-              <div className="relative flex items-center gap-3 sm:gap-4 w-full">
-                <div className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-dark/15 backdrop-blur-sm flex items-center justify-center">
-                  <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
-                </div>
-                <div className="flex-1 text-left">
-                  <span className="block text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.2em]">
-                    ⚽ Mundial 2026 · ¡Participa ya!
-                  </span>
-                  <span className="block text-xl sm:text-2xl font-black leading-tight">
-                    Polla Mundialista
-                  </span>
-                </div>
-                <ArrowRight className="shrink-0 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </div>
-
-              {/* Fila 2: premio destacado */}
-              <div className="relative flex items-center justify-center gap-2 sm:gap-3 w-full border-t border-dark/20 pt-3">
-                <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wide">
-                  Gana
-                </span>
-                <span className="t26-num text-3xl sm:text-4xl tracking-tight leading-none">
-                  $500.000
-                </span>
-                <span className="text-xs sm:text-sm font-bold uppercase tracking-wide">
-                  medio millón
-                </span>
-              </div>
-            </Link>
-          </div>
 
           {/* Redes sociales */}
           <div className="flex items-center justify-center gap-4">
@@ -259,7 +353,7 @@ const Hero = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                className="hero-social-link flex items-center gap-2 px-4 py-2 bg-linear-to-r from-grass/10 to-gold/10 border border-gold/40 rounded-full text-gold hover:from-grass hover:to-gold hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(242,197,61,0.4)] transition-all duration-300"
+                className="hero-social-link flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/40 rounded-full text-primary hover:from-primary hover:to-secondary hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-300"
               >
                 <social.icon size={20} />
                 <span className="text-sm font-semibold">{social.label}</span>
@@ -271,7 +365,7 @@ const Hero = () => {
 
       {/* Scroll indicator */}
       <div className="hero-scroll-indicator absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <ChevronDown className="text-gold" size={40} />
+        <ChevronDown className="text-primary" size={40} />
       </div>
     </section>
   );

@@ -69,15 +69,15 @@ const VariantPickerSheet = ({ product, image, open, onClose, onAdd }) => {
                   key={variant.id || variant.name}
                   type="button"
                   onClick={() => onAdd(variant)}
-                  className="w-full flex items-center gap-3 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-gold/40 px-4 py-3 transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-secondary/40 px-4 py-3 transition-colors cursor-pointer"
                 >
                   <span className="text-sm font-semibold text-light text-left">
                     {variant.name}
                   </span>
-                  <span className="ml-auto text-sm font-extrabold text-gold whitespace-nowrap">
+                  <span className="ml-auto text-sm font-extrabold text-secondary whitespace-nowrap">
                     {formatCOP(variant.price)}
                   </span>
-                  <span className="grid place-items-center w-8 h-8 rounded-full bg-gradient-to-r from-gold to-amber-400 text-dark flex-shrink-0">
+                  <span className="grid place-items-center w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary text-dark flex-shrink-0">
                     <Plus className="w-4 h-4" strokeWidth={3} />
                   </span>
                 </button>

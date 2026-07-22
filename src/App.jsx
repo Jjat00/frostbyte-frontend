@@ -19,7 +19,6 @@ import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
-import PartidoColombiaBanner from "@/components/PartidoColombiaBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import { env } from "@/config/env";
 
@@ -48,14 +47,6 @@ function App() {
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}
           <DomiciliosBanner />
-          {/* Promo del partido de Colombia: solo aparece cuando la selección
-              tiene un partido en vivo o próximo (granizado gratis por acertar
-              el marcador exacto). Encabeza la carta. */}
-          <PartidoColombiaBanner />
-          {/* Anuncio de la Polla Mundialista — aparece varias veces a lo largo
-              de la carta con distintas variantes para mantener el premio
-              ($500.000) visible sin saturar. */}
-          <PollaMundialBanner variant="feature" />
           <CartaList />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
@@ -63,7 +54,9 @@ function App() {
           <WaterSection />
           {/* Recordatorio compacto de domicilios al cierre de la carta */}
           <DomiciliosBanner variant="strip" />
-          <PollaMundialBanner variant="strip" />
+          {/* La Polla del Mundial ya terminó pero sigue accesible: resultados
+              finales y entrega del premio al campeón pendiente. */}
+          <PollaMundialBanner />
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />
@@ -71,7 +64,6 @@ function App() {
               información al personal o por WhatsApp */}
           <SalaVipBanner />
           <SolicitarMusica />
-          <PollaMundialBanner variant="prize" />
           <FeedbackSection />
           <Features />
           {/* <Gallery /> */}
