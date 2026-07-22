@@ -618,7 +618,7 @@ const SettingsPanel = ({ onClose }) => {
                 onChange={(e) =>
                   setDraft((d) => ({ ...d, reservations_enabled: e.target.checked }))
                 }
-                className="w-5 h-5 accent-[#f2c53d]"
+                className="w-5 h-5 accent-gold"
               />
             </label>
 

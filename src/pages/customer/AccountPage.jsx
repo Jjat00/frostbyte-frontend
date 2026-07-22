@@ -191,7 +191,7 @@ const ProfileCard = () => {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, email_opt_out: !e.target.checked }))
                 }
-                className="w-4 h-4 accent-[#f2c53d]"
+                className="w-4 h-4 accent-gold"
               />
             </label>
             {error && <p className="text-xs text-red-300">{error}</p>}
