@@ -53,6 +53,8 @@ const inputCls =
 
 const LoginHero = () => {
   const [error, setError] = useState("");
+  const { data: reservationsConfig } = useReservationsConfig();
+  const reservationsEnabled = !!reservationsConfig?.reservations_enabled;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -72,7 +74,9 @@ const LoginHero = () => {
       <ul className="grid gap-2 mb-6 max-w-xs mx-auto text-sm text-white/60">
         {[
           [Bike, "Pide a domicilio y sigue tu pedido en tiempo real"],
-          [CalendarDays, "Reserva mesa o la Sala VIP en segundos"],
+          ...(reservationsEnabled
+            ? [[CalendarDays, "Reserva mesa o la Sala VIP en segundos"]]
+            : []),
           [Trophy, "Juega la Polla Mundialista con tu cuenta"],
         ].map(([Icon, text]) => (
           <li key={text} className="flex items-start gap-2.5">
@@ -255,6 +259,9 @@ const AccountPage = () => {
   );
   const orderingEnabled = !!storeConfig?.customer_ordering_enabled;
   const reservationsEnabled = !!reservationsConfig?.reservations_enabled;
+  // Con las reservas en línea apagadas (solo staff) el cliente no ve nada de
+  // reservas, salvo que el staff le haya creado alguna a su nombre
+  const showReservations = reservationsEnabled || reservations?.length > 0;
 
   return (
     <div className="min-h-screen bg-dark text-light pb-16">
@@ -327,35 +334,40 @@ const AccountPage = () => {
             )}
 
             {/* Próximas reservas */}
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <SectionTitle>Próximas reservas</SectionTitle>
-                <Link to="/mis-reservas" className="text-xs font-bold text-gold">
-                  Ver todas
-                </Link>
-              </div>
-              <MyReservationsList
-                mode="upcoming"
-                limit={3}
-                emptyState={
-                  <p className="text-xs text-white/40">
-                    No tienes reservas próximas.
-                    {reservationsEnabled && (
-                      <>
-                        {" "}
-                        <Link
-                          to="/reservas"
-                          className="text-gold font-bold underline underline-offset-2"
-                        >
-                          Reserva aquí
-                        </Link>
-                        .
-                      </>
-                    )}
-                  </p>
-                }
-              />
-            </section>
+            {showReservations && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <SectionTitle>Próximas reservas</SectionTitle>
+                  <Link
+                    to="/mis-reservas"
+                    className="text-xs font-bold text-gold"
+                  >
+                    Ver todas
+                  </Link>
+                </div>
+                <MyReservationsList
+                  mode="upcoming"
+                  limit={3}
+                  emptyState={
+                    <p className="text-xs text-white/40">
+                      No tienes reservas próximas.
+                      {reservationsEnabled && (
+                        <>
+                          {" "}
+                          <Link
+                            to="/reservas"
+                            className="text-gold font-bold underline underline-offset-2"
+                          >
+                            Reserva aquí
+                          </Link>
+                          .
+                        </>
+                      )}
+                    </p>
+                  }
+                />
+              </section>
+            )}
 
             {/* Accesos */}
             <section>
@@ -387,16 +399,18 @@ const AccountPage = () => {
                       : "Tu historial"
                   }
                 />
-                <QuickAction
-                  to="/mis-reservas"
-                  icon={CalendarCheck2}
-                  label="Mis reservas"
-                  sub={
-                    reservations?.length
-                      ? `${reservations.length} en total`
-                      : "Tu historial"
-                  }
-                />
+                {showReservations && (
+                  <QuickAction
+                    to="/mis-reservas"
+                    icon={CalendarCheck2}
+                    label="Mis reservas"
+                    sub={
+                      reservations?.length
+                        ? `${reservations.length} en total`
+                        : "Tu historial"
+                    }
+                  />
+                )}
               </div>
               <Link
                 to="/polla-mundial"
