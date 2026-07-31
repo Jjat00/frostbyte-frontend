@@ -26,6 +26,7 @@ import {
   useReservationsConfig,
   useMyReservations,
 } from "@/hooks/useReservations";
+import { useMyStats } from "@/hooks/usePolla";
 
 /**
  * Mi cuenta: el hogar del cliente autenticado con Google (mobile-first).
@@ -251,6 +252,7 @@ const AccountPage = () => {
   });
   const { data: storeConfig } = useStoreConfig();
   const { data: reservationsConfig } = useReservationsConfig();
+  const { data: pollaStats } = useMyStats({ enabled: isAuthenticated });
   const [confirmLogout, setConfirmLogout] = useState(false);
 
   const orders = ordersData?.results || [];
@@ -262,6 +264,11 @@ const AccountPage = () => {
   // Con las reservas en línea apagadas (solo staff) el cliente no ve nada de
   // reservas, salvo que el staff le haya creado alguna a su nombre
   const showReservations = reservationsEnabled || reservations?.length > 0;
+  // Todo cliente con sesión tiene fila en el ranking, así que jugar la Polla se
+  // mide por actividad real: pronósticos hechos o puntos (bracket, menciones,
+  // referidos). Quien no jugó no ve el acceso.
+  const playedPolla =
+    pollaStats?.predicted > 0 || pollaStats?.points > 0;
 
   return (
     <div className="min-h-screen bg-dark text-light pb-16">
@@ -412,21 +419,23 @@ const AccountPage = () => {
                   />
                 )}
               </div>
-              <Link
-                to="/polla-mundial"
-                className="mt-2.5 p-4 rounded-2xl bg-linear-to-r from-primary/20 to-secondary/20 border border-white/10 flex items-center gap-3 hover:border-white/20 transition-colors"
-              >
-                <Trophy className="w-6 h-6 text-gold flex-shrink-0" />
-                <span className="flex-1">
-                  <span className="block text-sm font-black">
-                    Polla Mundialista
+              {playedPolla && (
+                <Link
+                  to="/polla-mundial"
+                  className="mt-2.5 p-4 rounded-2xl bg-linear-to-r from-primary/20 to-secondary/20 border border-white/10 flex items-center gap-3 hover:border-white/20 transition-colors"
+                >
+                  <Trophy className="w-6 h-6 text-gold flex-shrink-0" />
+                  <span className="flex-1">
+                    <span className="block text-sm font-black">
+                      Polla Mundialista
+                    </span>
+                    <span className="block text-xs text-white/40">
+                      Tus pronósticos, ranking y misiones
+                    </span>
                   </span>
-                  <span className="block text-xs text-white/40">
-                    Tus pronósticos, ranking y misiones
-                  </span>
-                </span>
-                <ChevronRight className="w-4 h-4 text-white/30" />
-              </Link>
+                  <ChevronRight className="w-4 h-4 text-white/30" />
+                </Link>
+              )}
             </section>
 
             {/* Cerrar sesión */}
