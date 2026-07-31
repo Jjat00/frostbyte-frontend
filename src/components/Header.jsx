@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, LogIn, ClipboardList, Bike } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  LogIn,
+  ClipboardList,
+  Bike,
+  UserCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import CustomerAvatar from "@/components/auth/CustomerAvatar";
@@ -272,7 +280,7 @@ const Header = () => {
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 )}
-                {isCustomerAuthenticated && (
+                {isCustomerAuthenticated ? (
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
                       <Link
@@ -284,6 +292,18 @@ const Header = () => {
                           customer={customer}
                           className="w-8 h-8 text-sm"
                         />
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ) : (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      asChild
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gold hover:text-gold/80 focus:text-gold/80 font-medium tracking-wide`}
+                    >
+                      <Link to="/mi-cuenta" className="flex items-center gap-2">
+                        <UserCircle2 className="w-4 h-4" />
+                        Entrar
                       </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
@@ -425,7 +445,7 @@ const Header = () => {
                   Mis pedidos
                 </Link>
               )}
-              {isCustomerAuthenticated && (
+              {isCustomerAuthenticated ? (
                 <Link
                   to="/mi-cuenta"
                   className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
@@ -436,6 +456,15 @@ const Header = () => {
                     className="w-6 h-6 text-xs"
                   />
                   Mi cuenta
+                </Link>
+              ) : (
+                <Link
+                  to="/mi-cuenta"
+                  className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <UserCircle2 className="w-4 h-4" />
+                  Entrar
                 </Link>
               )}
               <Link
