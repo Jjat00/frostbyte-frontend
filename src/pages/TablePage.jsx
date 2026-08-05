@@ -22,6 +22,7 @@ import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
+import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
 import OrderMiniBar from "@/components/order-tracker/OrderMiniBar";
 import OrderTracker from "@/components/order-tracker/OrderTracker";
@@ -118,7 +119,7 @@ function TablePage() {
           content="Experimenta el futuro de las bebidas heladas. Frostbyte ofrece granizados y frappés premium con sabores únicos. Sabores vibrantes, experiencia única."
         />
       </Helmet>
-      <div className="min-h-screen bg-dark overflow-hidden">
+      <div className={`min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
         <main>
           <Hero />
@@ -166,6 +167,8 @@ function TablePage() {
         </main>
         <Footer />
         <ScrollToCarta />
+        {/* La pestaña Carta se queda en esta misma mesa (no manda a /) */}
+        <CustomerTabBar />
         <Toaster />
 
         {/* Order Tracker Panel */}

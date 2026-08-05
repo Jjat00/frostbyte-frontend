@@ -452,19 +452,6 @@ const Header = () => {
                   🎮 Frostbyte Play
                 </Link>
               )}
-              {/* La vista de mesa no monta la barra inferior (su carta vive en
-                  /mesa/N y "Carta" sacaría al cliente de ahí), así que allí el
-                  acceso a la cuenta se queda en el menú. */}
-              {isTableRoute && !isCustomerAuthenticated && (
-                <Link
-                  to="/mi-cuenta"
-                  className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <UserCircle2 className="w-4 h-4" />
-                  Mi cuenta
-                </Link>
-              )}
               <a
                 href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
                 target="_blank"
