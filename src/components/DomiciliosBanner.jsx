@@ -164,9 +164,8 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                   </p>
                 </div>
 
-                {/* Aquí no se pide sesión: el login es uno solo y salta al
-                    confirmar el pedido. Pedirla en un banner de la carta era
-                    fricción para quien todavía estaba mirando. */}
+                {/* El login no se pide aquí sino en /domicilios, que es un
+                    muro: una sola puerta para pedir, no tres copys sueltos. */}
                 {isCustomerAuthenticated && (
                   <p className="text-center text-emerald-300/90 text-sm font-semibold mb-3">
                     {firstName ? `¡Listo, ${firstName}!` : "¡Listo!"} Tu cuenta
@@ -179,7 +178,11 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                     className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
                   >
                     <Bike size={18} />
-                    Pedir a domicilio
+                    {/* Sin sesión el siguiente paso es entrar: decirlo evita
+                        que el muro se sienta una puerta en la cara */}
+                    {isCustomerAuthenticated
+                      ? "Pedir a domicilio"
+                      : "Entrar y pedir a domicilio"}
                   </Link>
                   {isCustomerAuthenticated && (
                     <Link

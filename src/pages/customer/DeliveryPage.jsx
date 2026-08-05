@@ -20,6 +20,7 @@ import StoreStatusBadge from "@/components/StoreStatusBadge";
 import CartLayer from "@/components/cart/CartLayer";
 import CustomerTabBar from "@/components/CustomerTabBar";
 import DeliveryProductCard from "@/components/delivery/DeliveryProductCard";
+import DeliveryLoginWall from "@/components/delivery/DeliveryLoginWall";
 import VariantPickerSheet from "@/components/delivery/VariantPickerSheet";
 
 const formatCOP = (v) =>
@@ -64,10 +65,22 @@ const StepPill = ({ done, children }) => (
  */
 const DeliveryPage = () => {
   const { data: config } = useStoreConfig();
-  const { data: categoriesData } = useActiveCategories();
-  const { data: productsData, isLoading } = useProducts({ page_size: 300 });
   const isCustomerAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
   const add = useAddToCart();
+
+  const inAppOrdering = !!config?.customer_ordering_enabled;
+  const storeClosed = config?.is_open === false;
+  // Pedir a domicilio exige cuenta desde el primer paso: sin sesión la tienda
+  // no se abre. Con los pedidos en la app apagados no hay nada que proteger
+  // (se pide por WhatsApp), así que ahí el catálogo sigue abierto.
+  const requiresLogin = inAppOrdering && !isCustomerAuthenticated;
+
+  const { data: categoriesData } = useActiveCategories();
+  // Sin sesión no se pinta el catálogo: tampoco se trae (son ~300 productos)
+  const { data: productsData, isLoading } = useProducts(
+    { page_size: 300 },
+    { enabled: !requiresLogin }
+  );
 
   const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState("todo");
@@ -77,8 +90,6 @@ const DeliveryPage = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const inAppOrdering = !!config?.customer_ordering_enabled;
-  const storeClosed = config?.is_open === false;
   const canOrder = !!config?.can_order;
   const deliveryFee = Number(config?.delivery_fee || 0);
 
@@ -144,36 +155,54 @@ const DeliveryPage = () => {
     ? getProductStyles(picker, picker.category_slug).image
     : null;
 
+  // Barra superior propia, minimal y enfocada en pedir
+  const topBar = (
+    <header className="fixed top-0 inset-x-0 z-40 bg-dark/95 backdrop-blur-md border-b border-white/[0.08]">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-3 sm:px-4">
+        <Link
+          to="/"
+          aria-label="Volver a la carta"
+          className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-white/70 flex-shrink-0"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Link>
+        <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 text-dark flex-shrink-0">
+          <Bike className="w-4 h-4" />
+        </span>
+        <h1 className="text-lg font-black uppercase tracking-wide leading-none">
+          Domicilios
+        </h1>
+        <StoreStatusBadge isOpen={config?.is_open} />
+        {isCustomerAuthenticated && inAppOrdering && (
+          <Link
+            to="/mis-pedidos"
+            className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-xs font-bold text-secondary flex-shrink-0"
+          >
+            <ClipboardList className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Mis pedidos</span>
+          </Link>
+        )}
+      </div>
+    </header>
+  );
+
+  // Muro: sin sesión la tienda no se abre (ni se carga el catálogo)
+  if (requiresLogin) {
+    return (
+      <div className="min-h-screen bg-dark text-light">
+        {topBar}
+        <main className="mx-auto max-w-6xl px-3 sm:px-4 pt-[4.5rem] pb-40 md:pb-32">
+          <DeliveryLoginWall storeClosed={storeClosed} />
+        </main>
+        <CustomerTabBar />
+        <Toaster />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-dark text-light">
-      {/* Barra superior propia, minimal y enfocada en pedir */}
-      <header className="fixed top-0 inset-x-0 z-40 bg-dark/95 backdrop-blur-md border-b border-white/[0.08]">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-3 sm:px-4">
-          <Link
-            to="/"
-            aria-label="Volver a la carta"
-            className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-white/70 flex-shrink-0"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 text-dark flex-shrink-0">
-            <Bike className="w-4 h-4" />
-          </span>
-          <h1 className="text-lg font-black uppercase tracking-wide leading-none">
-            Domicilios
-          </h1>
-          <StoreStatusBadge isOpen={config?.is_open} />
-          {isCustomerAuthenticated && inAppOrdering && (
-            <Link
-              to="/mis-pedidos"
-              className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-xs font-bold text-secondary flex-shrink-0"
-            >
-              <ClipboardList className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Mis pedidos</span>
-            </Link>
-          )}
-        </div>
-      </header>
+      {topBar}
 
       {/* En móvil el fondo lo ocupan la barra de pestañas y, sobre ella, el
           carrito: hace falta más aire que en escritorio */}
