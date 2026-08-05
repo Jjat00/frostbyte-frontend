@@ -5,6 +5,7 @@ import {
   Menu,
   X,
   ChevronDown,
+  LogIn,
   ClipboardList,
   Bike,
   UserCircle2,
@@ -280,6 +281,21 @@ const Header = () => {
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 )}
+                {/* Acceso del staff: sigue en el header porque el equipo entra
+                    cada turno, pero apagado y con el nombre de a quién sirve.
+                    Lo que confundía no era su presencia sino la etiqueta
+                    "Login" junto a "Entrar": dos sinónimos, ningún dueño. */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    asChild
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-white/35 hover:text-primary focus:text-primary text-xs font-medium tracking-wide`}
+                  >
+                    <Link to="/login" className="flex items-center gap-1.5">
+                      <LogIn className="w-3.5 h-3.5" />
+                      Acceso equipo
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
                 {isCustomerAuthenticated ? (
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
@@ -298,19 +314,18 @@ const Header = () => {
                 ) : (
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
+                      {/* Mismo nombre que la pestaña de la barra en móvil:
+                          un destino con dos etiquetas se lee como dos sitios */}
                       <Link
                         to="/mi-cuenta"
                         className="ml-1 flex items-center gap-1.5 rounded-full bg-linear-to-r from-gold to-amber-600 text-dark px-4 py-2 text-xs font-black uppercase tracking-wide hover:opacity-90 transition-opacity"
                       >
                         <UserCircle2 className="w-4 h-4" />
-                        Entrar
+                        Mi cuenta
                       </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 )}
-                {/* El acceso del staff (/login) vive en el pie como "Acceso
-                    equipo": aquí competía con "Entrar" y nadie distinguía
-                    cuál era cuál. */}
               </NavigationMenuList>
             </NavigationMenu>
 
@@ -447,7 +462,7 @@ const Header = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <UserCircle2 className="w-4 h-4" />
-                  Entrar a mi cuenta
+                  Mi cuenta
                 </Link>
               )}
               <a
@@ -468,6 +483,19 @@ const Header = () => {
               >
                 💬 WhatsApp
               </a>
+              {/* Puerta del staff. Está aquí abajo y no arriba porque el
+                  cliente no la necesita, pero el equipo entra cada turno: al
+                  pie de la carta completa le quedaba demasiado lejos. Con el
+                  nombre propio ya no se confunde con "Mi cuenta", que era el
+                  problema de la vieja etiqueta "Login". */}
+              <Link
+                to="/login"
+                className="flex items-center gap-2 text-white/35 hover:text-primary transition-colors duration-300 text-sm font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                Acceso equipo
+              </Link>
             </div>
             <Button
               onClick={() => {
