@@ -1,26 +1,22 @@
 import React, { useState } from "react";
 import { useCartStore } from "@/stores/useCartStore";
-import { useCartAuthGate } from "@/stores/useCartAuthGate";
 import CartBar from "./CartBar";
 import CartDrawer from "./CartDrawer";
 import CheckoutSheet from "@/components/checkout/CheckoutSheet";
 import OrderSuccess from "@/components/checkout/OrderSuccess";
-import CustomerAuthGate from "@/components/checkout/CustomerAuthGate";
 
 /**
  * Orquesta el flujo de pedido del cliente:
  *   barra de carrito → carrito → checkout → pantalla de éxito.
  * Se monta una sola vez, en /domicilios (la carta pública es solo vitrina).
+ *
+ * El login con Google es uno solo y vive dentro de CheckoutSheet: salta al
+ * confirmar, cuando el cliente ya sabe qué pide y cuánto cuesta.
  */
 const CartLayer = () => {
   const clear = useCartStore((s) => s.clear);
   const [view, setView] = useState("closed"); // closed | cart | checkout
   const [successOrder, setSuccessOrder] = useState(null);
-
-  // Compuerta de login: el cliente debe entrar con Google ANTES de agregar.
-  const authGateOpen = useCartAuthGate((s) => s.open);
-  const resolveAuthGate = useCartAuthGate((s) => s.resolve);
-  const closeAuthGate = useCartAuthGate((s) => s.close);
 
   return (
     <>
@@ -45,16 +41,6 @@ const CartLayer = () => {
       <OrderSuccess
         order={successOrder}
         onClose={() => setSuccessOrder(null)}
-      />
-
-      {/* Login obligatorio para empezar a pedir. Al autenticarse, se agrega
-          automáticamente el producto que el cliente intentó añadir. */}
-      <CustomerAuthGate
-        open={authGateOpen}
-        onClose={closeAuthGate}
-        onAuthenticated={resolveAuthGate}
-        title="Inicia sesión para pedir"
-        description="Para armar tu pedido entra con tu cuenta de Google. Así lo sigues en vivo y queda en tu historial."
       />
     </>
   );

@@ -20,6 +20,8 @@ import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 import CustomerAvatar from "@/components/auth/CustomerAvatar";
 import OrderStatusBadge from "@/components/order-tracker/OrderStatusBadge";
 import MyReservationsList from "@/components/reservations/MyReservationsList";
+import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
+import { ACTIVE_ORDER_STATUSES } from "@/lib/domicilios";
 import { useMyOrders, useMyOrdersLive } from "@/hooks";
 import { useStoreConfig } from "@/hooks/useCustomerOrders";
 import {
@@ -35,8 +37,6 @@ import { useMyStats } from "@/hooks/usePolla";
  * a todo lo que puede hacer con su sesión. Sin sesión muestra el login de
  * Google con los beneficios — no redirige.
  */
-
-const ACTIVE_ORDER_STATUSES = ["pending", "preparing", "ready"];
 
 const formatCOP = (v) =>
   new Intl.NumberFormat("es-CO", {
@@ -72,13 +72,16 @@ const LoginHero = () => {
         </p>
       </div>
 
+      {/* Lo que promete la cuenta es lo que de verdad hace por el cliente:
+          pedir, seguir el pedido y no volver a escribir sus datos. */}
       <ul className="grid gap-2 mb-6 max-w-xs mx-auto text-sm text-white/60">
         {[
-          [Bike, "Pide a domicilio y sigue tu pedido en tiempo real"],
+          [Bike, "Pide a domicilio y sigue tu pedido en vivo hasta tu puerta"],
+          [ClipboardList, "Tu historial de pedidos, siempre a mano"],
+          [UserCircle2, "Tus datos listos: no los escribes en cada pedido"],
           ...(reservationsEnabled
             ? [[CalendarDays, "Reserva mesa o la Sala VIP en segundos"]]
             : []),
-          [Trophy, "Juega la Polla Mundialista con tu cuenta"],
         ].map(([Icon, text]) => (
           <li key={text} className="flex items-start gap-2.5">
             <Icon className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
@@ -220,13 +223,19 @@ const ProfileCard = () => {
 
 /* -------------------------------------------------------- quick actions -- */
 
-const QuickAction = ({ to, icon: Icon, label, sub }) => (
+const QuickAction = ({ to, icon: Icon, label, sub, dot }) => (
   <Link
     to={to}
     className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-white/20 transition-colors"
   >
-    <span className="grid place-items-center w-10 h-10 rounded-xl bg-white/10 text-gold mb-2.5">
+    <span className="relative grid place-items-center w-10 h-10 rounded-xl bg-white/10 text-gold mb-2.5">
       <Icon className="w-5 h-5" />
+      {dot && (
+        <span
+          aria-hidden
+          className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-dark"
+        />
+      )}
     </span>
     <span className="block text-sm font-black leading-tight">{label}</span>
     {sub && <span className="block text-xs text-white/40 mt-0.5">{sub}</span>}
@@ -271,7 +280,7 @@ const AccountPage = () => {
     pollaStats?.predicted > 0 || pollaStats?.points > 0;
 
   return (
-    <div className="min-h-screen bg-dark text-light pb-16">
+    <div className={`min-h-screen bg-dark text-light ${tabBarSpacing}`}>
       <header className="sticky top-0 z-40 bg-dark/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center gap-3">
           <Link
@@ -400,10 +409,13 @@ const AccountPage = () => {
                   to="/mis-pedidos"
                   icon={ClipboardList}
                   label="Mis pedidos"
+                  dot={activeOrders.length > 0}
                   sub={
-                    orders.length
-                      ? `${orders.length} en total`
-                      : "Tu historial"
+                    activeOrders.length
+                      ? `${activeOrders.length} en curso`
+                      : orders.length
+                        ? `${orders.length} en total`
+                        : "Tu historial"
                   }
                 />
                 {showReservations && (
@@ -466,6 +478,8 @@ const AccountPage = () => {
           </motion.div>
         )}
       </main>
+
+      <CustomerTabBar />
     </div>
   );
 };

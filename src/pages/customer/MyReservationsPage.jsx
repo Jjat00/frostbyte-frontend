@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { ArrowLeft, CalendarDays, Plus } from "lucide-react";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import MyReservationsList from "@/components/reservations/MyReservationsList";
+import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import { useReservationsConfig } from "@/hooks/useReservations";
 
 /**
@@ -17,7 +18,7 @@ const MyReservationsPage = () => {
   if (!isAuthenticated) return <Navigate to="/mi-cuenta" replace />;
 
   return (
-    <div className="min-h-screen bg-dark text-light pb-16">
+    <div className={`min-h-screen bg-dark text-light ${tabBarSpacing}`}>
       <header className="sticky top-0 z-40 bg-dark/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center gap-3">
           <Link
@@ -62,6 +63,8 @@ const MyReservationsPage = () => {
           }
         />
       </main>
+
+      <CustomerTabBar />
     </div>
   );
 };

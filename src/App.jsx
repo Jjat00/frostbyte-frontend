@@ -20,6 +20,7 @@ import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
 import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
+import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import { env } from "@/config/env";
 
 function App() {
@@ -38,7 +39,7 @@ function App() {
 
   return (
     <>
-      <div className="min-h-screen bg-dark overflow-hidden">
+      <div className={`min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
         <main>
           <Hero />
@@ -73,6 +74,7 @@ function App() {
         {/* El pedido en línea vive en /domicilios (la carta es solo vitrina):
             allí se monta CartLayer con la barra de carrito. */}
         <ScrollToCarta />
+        <CustomerTabBar />
         <Toaster />
       </div>
     </>

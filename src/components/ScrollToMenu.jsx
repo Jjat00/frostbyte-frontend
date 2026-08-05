@@ -33,7 +33,8 @@ const ScrollToCarta = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToCarta}
-          className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-shadow duration-300"
+          // En móvil se apoya sobre la barra de pestañas, que ocupa el fondo
+          className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6 right-6 z-50 w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-shadow duration-300"
           aria-label="Ir a la carta"
         >
           <ArrowUp className="text-dark" size={22} />

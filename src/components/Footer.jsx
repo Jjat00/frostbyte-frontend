@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
-import { Instagram, MapPin, MessageCircle, Trophy } from "lucide-react";
+import { Instagram, LogIn, MapPin, MessageCircle, Trophy } from "lucide-react";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -221,6 +221,17 @@ const Footer = () => {
                   className="text-gray hover:text-primary transition-colors duration-300 text-sm"
                 >
                   Términos de Servicio
+                </Link>
+                {/* Puerta del staff. Vivía en el header como "Login", al lado
+                    de "Entrar" (la del cliente): dos etiquetas sinónimas que
+                    nadie sabía distinguir. Aquí no estorba a quien no es del
+                    equipo y quien la necesita sabe buscarla. */}
+                <Link
+                  to="/login"
+                  className="flex items-center gap-1.5 text-gray/60 hover:text-primary transition-colors duration-300 text-sm"
+                >
+                  <LogIn size={14} />
+                  Acceso equipo
                 </Link>
               </div>
             </div>

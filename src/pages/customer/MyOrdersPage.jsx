@@ -14,6 +14,7 @@ import OrderStatusBadge from "@/components/order-tracker/OrderStatusBadge";
 import OrderTracker, {
   OrderTrackerContent,
 } from "@/components/order-tracker/OrderTracker";
+import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 
 const formatCOP = (v) =>
   new Intl.NumberFormat("es-CO", {
@@ -143,7 +144,7 @@ const MyOrdersPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-dark text-light">
+    <div className={`min-h-screen bg-dark text-light ${tabBarSpacing}`}>
       {/* Header */}
       <header className="sticky top-0 z-20 backdrop-blur-xl bg-dark/90 border-b border-white/10">
         <div className="container mx-auto max-w-2xl lg:max-w-6xl px-4 py-3 flex items-center gap-3">
@@ -252,6 +253,8 @@ const MyOrdersPage = () => {
         onClose={() => setSheetOpen(false)}
         desktopPanel={false}
       />
+
+      <CustomerTabBar />
     </div>
   );
 };

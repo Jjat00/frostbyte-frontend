@@ -28,7 +28,9 @@ const CartBar = ({ onClick }) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 110, opacity: 0 }}
           transition={{ type: "spring", stiffness: 380, damping: 32 }}
-          className="fixed bottom-0 inset-x-0 z-50 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pointer-events-none"
+          // En móvil se apoya SOBRE la barra de pestañas (4rem + safe area),
+          // que ocupa el fondo; en escritorio esa barra no existe.
+          className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 inset-x-0 z-50 px-3 pb-3 md:pb-[max(0.75rem,env(safe-area-inset-bottom))] pointer-events-none"
         >
           <button
             type="button"

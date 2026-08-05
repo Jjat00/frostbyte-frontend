@@ -4,10 +4,11 @@ import { X, ShieldCheck } from "lucide-react";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 
 /**
- * Modal que pide iniciar sesión con Google. Se usa en dos momentos:
- *  - al agregar el primer producto al carrito (login obligatorio para pedir), y
- *  - como respaldo al confirmar el pedido.
- * Al autenticarse, llama onAuthenticated() para que el flujo continúe solo.
+ * Modal que pide iniciar sesión con Google.
+ *
+ * Es el ÚNICO login del cliente y salta al final: al confirmar el pedido o la
+ * reserva, nunca antes. Al autenticarse llama onAuthenticated() y el flujo
+ * sigue solo, sin que el cliente tenga que repetir nada.
  * `title`/`description` permiten adaptar el copy a cada contexto.
  */
 const CustomerAuthGate = ({
@@ -15,8 +16,8 @@ const CustomerAuthGate = ({
   onClose,
   onAuthenticated,
   onError,
-  title = "Inicia sesión para confirmar",
-  description = "Vincula tu pedido a tu cuenta para seguirlo en tiempo real y ver tu historial. Solo te tomará un segundo.",
+  title = "Falta un paso: tu cuenta",
+  description = "Entra con Google para enviar tu pedido. Así lo sigues en vivo hasta tu puerta, queda en tu historial y no vuelves a escribir tus datos.",
 }) => {
   return (
     <AnimatePresence>

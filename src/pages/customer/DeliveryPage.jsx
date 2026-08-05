@@ -18,6 +18,7 @@ import { getProductStyles } from "@/lib/productStyles";
 import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
 import StoreStatusBadge from "@/components/StoreStatusBadge";
 import CartLayer from "@/components/cart/CartLayer";
+import CustomerTabBar from "@/components/CustomerTabBar";
 import DeliveryProductCard from "@/components/delivery/DeliveryProductCard";
 import VariantPickerSheet from "@/components/delivery/VariantPickerSheet";
 
@@ -174,7 +175,9 @@ const DeliveryPage = () => {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-3 sm:px-4 pt-[4.5rem] pb-32">
+      {/* En móvil el fondo lo ocupan la barra de pestañas y, sobre ella, el
+          carrito: hace falta más aire que en escritorio */}
+      <main className="mx-auto max-w-6xl px-3 sm:px-4 pt-[4.5rem] pb-40 md:pb-32">
         {/* Estado del servicio */}
         {storeClosed ? (
           <section className="rounded-2xl border border-red-400/25 bg-red-500/10 p-4 flex items-start gap-3">
@@ -377,6 +380,7 @@ const DeliveryPage = () => {
 
       {/* Flujo de pedido completo: barra de carrito → carrito → checkout */}
       <CartLayer />
+      <CustomerTabBar />
       <Toaster />
     </div>
   );

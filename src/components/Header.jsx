@@ -5,7 +5,6 @@ import {
   Menu,
   X,
   ChevronDown,
-  LogIn,
   ClipboardList,
   Bike,
   UserCircle2,
@@ -173,9 +172,10 @@ const Header = () => {
               alt="Frostbyte - Granizados y Cocteles en Cumbal"
               width={40}
               height={40}
-              className="w-10 h-10 object-contain"
+              className="w-9 h-9 md:w-10 md:h-10 object-contain"
             />
-            <span className="text-2xl font-bold text-light tracking-wider">
+            {/* En móvil comparte fila con el estado del local y el avatar */}
+            <span className="text-xl md:text-2xl font-bold text-light tracking-wider">
               FROSTBYTE
             </span>
           </motion.a>
@@ -297,28 +297,20 @@ const Header = () => {
                   </NavigationMenuItem>
                 ) : (
                   <NavigationMenuItem>
-                    <NavigationMenuLink
-                      asChild
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gold hover:text-gold/80 focus:text-gold/80 font-medium tracking-wide`}
-                    >
-                      <Link to="/mi-cuenta" className="flex items-center gap-2">
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to="/mi-cuenta"
+                        className="ml-1 flex items-center gap-1.5 rounded-full bg-linear-to-r from-gold to-amber-600 text-dark px-4 py-2 text-xs font-black uppercase tracking-wide hover:opacity-90 transition-opacity"
+                      >
                         <UserCircle2 className="w-4 h-4" />
                         Entrar
                       </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 )}
-                <NavigationMenuItem>
-                  <NavigationMenuLink
-                    asChild
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
-                  >
-                    <Link to="/login" className="flex items-center gap-2">
-                      <LogIn className="w-4 h-4" />
-                      Login
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+                {/* El acceso del staff (/login) vive en el pie como "Acceso
+                    equipo": aquí competía con "Entrar" y nadie distinguía
+                    cuál era cuál. */}
               </NavigationMenuList>
             </NavigationMenu>
 
@@ -334,8 +326,25 @@ const Header = () => {
             </Button>
           </div>
 
+          {/* Rastro de sesión en móvil: el avatar solo existía en escritorio,
+              así que en el celular no había forma de saber si habías entrado
+              sin abrir el menú. Al invitado no se le repite la puerta aquí:
+              la barra inferior ya lleva "Mi cuenta" con etiqueta y sin
+              competir por el poco ancho de esta fila. */}
+          {isCustomerAuthenticated && (
+            <Link
+              to="/mi-cuenta"
+              aria-label="Mi cuenta"
+              className="md:hidden grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all mr-2.5"
+            >
+              <CustomerAvatar customer={customer} className="w-8 h-8 text-sm" />
+            </Link>
+          )}
+
           <button
             className="md:hidden text-light"
+            aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isMobileMenuOpen}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -356,16 +365,9 @@ const Header = () => {
             >
               🏆 Polla Mundialista
             </Link>
-            {inAppOrdering && (
-              <Link
-                to="/domicilios"
-                className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-gradient-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-center shadow-[0_0_20px_rgba(52,211,153,0.25)]"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Bike className="w-5 h-5" />
-                Pedir a Domicilio
-              </Link>
-            )}
+            {/* Domicilios y Mi cuenta ya no viven aquí: son pestañas fijas de
+                la barra inferior (CustomerTabBar). Este menú se queda con lo
+                que la barra no cubre: la carta y el resto de secciones. */}
             <a
               href="#carta"
               className="block text-primary hover:text-primary/80 transition-colors duration-300 font-bold"
@@ -435,46 +437,19 @@ const Header = () => {
                   🎮 Frostbyte Play
                 </Link>
               )}
-              {showMyOrders && (
-                <Link
-                  to="/mis-pedidos"
-                  className="flex items-center gap-2 text-secondary hover:text-secondary/80 transition-colors duration-300 font-medium"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <ClipboardList className="w-4 h-4" />
-                  Mis pedidos
-                </Link>
-              )}
-              {isCustomerAuthenticated ? (
-                <Link
-                  to="/mi-cuenta"
-                  className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <CustomerAvatar
-                    customer={customer}
-                    className="w-6 h-6 text-xs"
-                  />
-                  Mi cuenta
-                </Link>
-              ) : (
+              {/* La vista de mesa no monta la barra inferior (su carta vive en
+                  /mesa/N y "Carta" sacaría al cliente de ahí), así que allí el
+                  acceso a la cuenta se queda en el menú. */}
+              {isTableRoute && !isCustomerAuthenticated && (
                 <Link
                   to="/mi-cuenta"
                   className="flex items-center gap-2 text-gold hover:text-gold/80 transition-colors duration-300 font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <UserCircle2 className="w-4 h-4" />
-                  Entrar
+                  Entrar a mi cuenta
                 </Link>
               )}
-              <Link
-                to="/login"
-                className="flex items-center gap-2 text-secondary hover:text-primary transition-colors duration-300 font-medium"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <LogIn className="w-4 h-4" />
-                Login
-              </Link>
               <a
                 href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
                 target="_blank"

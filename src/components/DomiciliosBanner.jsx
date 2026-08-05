@@ -7,12 +7,9 @@ import {
   Clock,
   MapPin,
   ClipboardList,
-  UtensilsCrossed,
 } from "lucide-react";
 import { useStoreConfig } from "@/hooks";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
-import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
-import { useToast } from "@/components/ui/use-toast";
 import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
 
 /**
@@ -20,9 +17,9 @@ import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
  *
  * Tiene dos modos según `StoreSettings.customer_ordering_enabled`:
  * - Apagado: anuncia el servicio con las líneas de WhatsApp (modo actual de prod).
- * - Encendido: invita a pedir DENTRO de la app. Sin sesión de cliente pide
- *   iniciar sesión con Google (requisito para pedir); con sesión lleva a la
- *   carta y al estado del pedido (/mis-pedidos). WhatsApp queda de respaldo.
+ * - Encendido: invita a pedir DENTRO de la app, con o sin sesión — el login
+ *   con Google salta una sola vez, al confirmar el pedido. Con sesión suma el
+ *   acceso al estado del pedido (/mis-pedidos). WhatsApp queda de respaldo.
  *
  * Variantes (mismo patrón que el banner de la Polla Mundialista para repetir sin saturar):
  * - "feature": tarjeta completa, encabeza la carta (lleva el id #domicilios)
@@ -35,7 +32,6 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
     (s) => s.isAuthenticated
   );
   const customer = useCustomerAuthStore((s) => s.customer);
-  const { toast } = useToast();
 
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "";
@@ -168,62 +164,33 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                   </p>
                 </div>
 
-                {isCustomerAuthenticated ? (
-                  <>
-                    {/* Sesión lista: a pedir y a seguir el pedido */}
-                    <p className="text-center text-emerald-300/90 text-sm font-semibold mb-3">
-                      {firstName ? `¡Listo, ${firstName}!` : "¡Listo!"} Tu
-                      cuenta está conectada, solo falta escoger.
-                    </p>
-                    <div className="space-y-2">
-                      <Link
-                        to="/domicilios"
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-                      >
-                        <Bike size={18} />
-                        Pedir a domicilio
-                      </Link>
-                      <Link
-                        to="/mis-pedidos"
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
-                      >
-                        <ClipboardList size={18} />
-                        Ver el estado de mi pedido
-                      </Link>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Login primero: requisito para pedir y seguir el pedido */}
-                    <div className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 p-4 mb-3">
-                      <p className="text-center text-light text-sm font-bold mb-1">
-                        Inicia sesión con Google para pedir tu domicilio
-                      </p>
-                      <p className="text-center text-white/50 text-xs mb-3">
-                        Con tu cuenta también puedes ver el estado de tu pedido
-                        en tiempo real.
-                      </p>
-                      <div className="flex justify-center">
-                        <GoogleSignInButton
-                          onError={(message) =>
-                            toast({
-                              variant: "destructive",
-                              title: "No pudimos iniciar tu sesión",
-                              description: message,
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
+                {/* Aquí no se pide sesión: el login es uno solo y salta al
+                    confirmar el pedido. Pedirla en un banner de la carta era
+                    fricción para quien todavía estaba mirando. */}
+                {isCustomerAuthenticated && (
+                  <p className="text-center text-emerald-300/90 text-sm font-semibold mb-3">
+                    {firstName ? `¡Listo, ${firstName}!` : "¡Listo!"} Tu cuenta
+                    está conectada, solo falta escoger.
+                  </p>
+                )}
+                <div className="space-y-2">
+                  <Link
+                    to="/domicilios"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+                  >
+                    <Bike size={18} />
+                    Pedir a domicilio
+                  </Link>
+                  {isCustomerAuthenticated && (
                     <Link
-                      to="/domicilios"
+                      to="/mis-pedidos"
                       className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
                     >
-                      <UtensilsCrossed size={18} />
-                      Ver productos y pedir
+                      <ClipboardList size={18} />
+                      Ver el estado de mi pedido
                     </Link>
-                  </>
-                )}
+                  )}
+                </div>
 
                 {/* WhatsApp sigue siendo un canal de pedidos de primera, no letra pequeña */}
                 <div className="mt-4 pt-4 border-t border-white/10">

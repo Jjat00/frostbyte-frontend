@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, User, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -75,7 +75,7 @@ const LoginPage = () => {
             <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-16 h-16" />
           </motion.div>
           <h1 className="text-3xl font-bold text-light tracking-wider">FROSTBYTE</h1>
-          <p className="text-gray mt-2">Panel de Inventario</p>
+          <p className="text-gray mt-2">Acceso equipo</p>
         </div>
 
         {/* Login Card */}
@@ -170,11 +170,26 @@ const LoginPage = () => {
               ← Volver a la carta
             </a>
           </div>
+
+          {/* Rescate: este formulario es solo del equipo. El cliente que llega
+              aquí por error no tiene usuario ni contraseña que poner, y antes
+              se quedaba sin salida. */}
+          <div className="mt-5 pt-5 border-t border-white/[0.08] text-center">
+            <p className="text-sm text-gray">
+              ¿Eres cliente?{" "}
+              <Link
+                to="/mi-cuenta"
+                className="text-gold font-semibold hover:underline underline-offset-4"
+              >
+                Tu cuenta se crea con Google →
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* Footer */}
         <p className="text-center text-gray/50 text-xs mt-6">
-          © 2025 Frostbyte. Todos los derechos reservados.
+          © 2026 Frostbyte. Todos los derechos reservados.
         </p>
       </motion.div>
     </div>

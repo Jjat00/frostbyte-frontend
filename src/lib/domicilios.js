@@ -9,3 +9,10 @@ const WA_TEXT = encodeURIComponent(
 );
 
 export const waLink = (number) => `https://wa.me/${number}?text=${WA_TEXT}`;
+
+// Estados en los que un pedido sigue vivo para el cliente (lo espera).
+// Compartido por "Mi cuenta" y el aviso de la barra inferior.
+export const ACTIVE_ORDER_STATUSES = ["pending", "preparing", "ready"];
+
+export const isActiveOrder = (order) =>
+  ACTIVE_ORDER_STATUSES.includes(order?.status);
