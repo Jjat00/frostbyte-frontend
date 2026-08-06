@@ -1,14 +1,14 @@
-import { useCallback, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { pollaService } from "@/services/polla.service";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
-import { useWebSocket } from "@/hooks/useWebSocket";
 
 /**
  * Hooks de React Query para la Polla Mundialista.
  *
- * Las lecturas tienen un staleTime corto (1 min) porque los datos cambian en
- * vivo durante el torneo. Las mutaciones invalidan las queries afectadas.
+ * El torneo terminó: los datos son un archivo, no algo que cambie en vivo. Las
+ * lecturas no expiran dentro de una visita (`LIVE_STALE`) y no hay polling ni
+ * WebSocket. Las mutaciones siguen invalidando las queries afectadas, que es lo
+ * único que puede cambiar hoy (menciones resueltas a mano, granizado entregado).
  */
 export const pollaKeys = {
   all: ["polla"],
@@ -36,8 +36,12 @@ export const pollaKeys = {
   adminPlayer: (userId) => ["polla", "admin", "player", String(userId ?? "")],
 };
 
-const LIVE_STALE = 60 * 1000; // 1 min
-const STATIC_STALE = 30 * 60 * 1000; // 30 min (grupos, torneo: cambian poco)
+// Torneo terminado: los datos ya no cambian solos, así que una sola carga por
+// visita basta. `Infinity` evita que React Query los vuelva a pedir al remontar
+// una pestaña o volver al foco; las mutaciones que sí cambian algo invalidan su
+// query a mano y fuerzan el refetch. Para un torneo en curso, volver a ~60 s.
+const LIVE_STALE = Infinity;
+const STATIC_STALE = Infinity; // grupos, torneo: fijos desde que acabó el Mundial
 
 // Normalizan `kickoff` (ISO string) a Date. DEFINIDAS A NIVEL DE MÓDULO a
 // propósito: React Query solo memoiza el resultado de `select` si la función
@@ -340,71 +344,19 @@ export function useRedeemGranizado() {
   });
 }
 
-// ── Tiempo real ──────────────────────────────────────────────────────────────
-
-// Queries que muestran datos que cambian con cada gol / partido finalizado.
-const LIVE_QUERY_KEYS = [
-  ["polla", "matches"], // prefijo: cubre todas las variantes de params
-  ["polla", "match"], // prefijo: detalle abierto en el sheet (eventos en vivo)
-  ["polla", "team"], // prefijo: ficha de selección abierta (forma, posición)
-  ["polla", "player"], // prefijo: ficha de jugador abierta (goles en vivo)
-  pollaKeys.standings(),
-  pollaKeys.topScorers(),
-  pollaKeys.bracket(),
-  pollaKeys.ranking(),
-  ["polla", "participant"], // prefijo: perfil abierto en el sheet del ranking
-  pollaKeys.missions(),
-  pollaKeys.myStats(),
-  pollaKeys.awards(),
-  pollaKeys.granizado(), // un partido de Colombia finalizado puede emitir premio
-];
-
-/**
- * Mantiene frescos los datos de la Polla para todos los participantes.
- * Montar UNA vez en el shell (PollaApp).
- *
- * Tres mecanismos, del más al menos inmediato:
- *  1. WebSocket /ws/polla/: el backend emite `polla_changed` cuando el sync
- *     detecta cambios; aquí invalidamos las queries vivas y React Query
- *     refetchea solo las que están en pantalla.
- *  2. Heartbeat: query ligera de partidos en vivo cada 60 s (cada 5 min si no
- *     hay ninguno) para detectar transiciones aunque el WS esté caído.
- *  3. Respaldo: si hay partidos en vivo y el WS no conecta (típico en móvil
- *     tras bloquear la pantalla), invalida las queries vivas cada 60 s.
- */
-export function usePollaLive() {
-  const qc = useQueryClient();
-
-  const invalidateLive = useCallback(() => {
-    LIVE_QUERY_KEYS.forEach((key) => qc.invalidateQueries({ queryKey: key }));
-  }, [qc]);
-
-  // Heartbeat: ¿hay partidos en vivo ahora mismo?
-  const { data: liveMatches } = useQuery({
-    queryKey: pollaKeys.matches({ status: "live" }),
-    queryFn: () => pollaService.getMatches({ status: "live" }),
-    select: selectMatches,
-    refetchInterval: (query) =>
-      query.state.data?.length ? 60 * 1000 : 5 * 60 * 1000,
-    staleTime: 30 * 1000,
-  });
-  const hasLive = (liveMatches?.length ?? 0) > 0;
-
-  const { isConnected } = useWebSocket("/ws/polla/", {
-    onMessage: (msg) => {
-      if (msg?.type === "polla_changed") invalidateLive();
-    },
-  });
-
-  // Respaldo por polling cuando el WS está caído durante partidos en vivo.
-  useEffect(() => {
-    if (isConnected || !hasLive) return undefined;
-    const id = setInterval(invalidateLive, 60 * 1000);
-    return () => clearInterval(id);
-  }, [isConnected, hasLive, invalidateLive]);
-
-  return { isConnected, hasLive, liveMatches };
-}
+// ── Tiempo real: RETIRADO ────────────────────────────────────────────────────
+//
+// El Mundial 2026 terminó, así que la Polla ya no recibe datos nuevos: aquí
+// vivía `usePollaLive()`, que mantenía los datos frescos con el WebSocket
+// /ws/polla/ (señal `polla_changed`), un heartbeat de partidos en vivo y un
+// polling de respaldo. Se quitó junto con el sync del backend
+// (`POLLA_REALTIME_LOOP`, apagado por defecto): sin sync no hay nada que
+// anunciar, y el refresco solo generaba peticiones en vacío.
+//
+// Las páginas siguen accesibles como archivo del torneo: cargan una vez por
+// visita (ver `LIVE_STALE`) y se refrescan solo cuando una mutación invalida su
+// query. Para el próximo torneo, recuperar el hook del historial de git y
+// volver a montarlo en `PollaApp`.
 
 // ── Administración (sesión de staff) ────────────────────────────────────────
 // Estos hooks consumen los endpoints `/polla/admin/*` con la sesión de staff
