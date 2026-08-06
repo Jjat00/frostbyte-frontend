@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -18,7 +18,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { recetariosService } from "@/services/recetarios.service";
-import { useAuthStore } from "@/stores/useAuthStore";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import toast from "react-hot-toast";
 
 const DIFFICULTY_STYLES = {
@@ -31,7 +31,8 @@ const RecetarioDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isAdmin } = useAuthStore();
+  // Diálogo de confirmación antes de eliminar (todo el staff puede hacerlo)
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const { data: recipe, isLoading } = useQuery({
     queryKey: ["recetario", slug],
@@ -45,7 +46,10 @@ const RecetarioDetailPage = () => {
       toast.success("Recetario eliminado");
       navigate("/recetarios");
     },
-    onError: () => toast.error("Error al eliminar recetario"),
+    onError: () => {
+      setConfirmDelete(false);
+      toast.error("Error al eliminar recetario");
+    },
   });
 
   if (isLoading) {
@@ -101,19 +105,13 @@ const RecetarioDetailPage = () => {
             <Edit className="w-4 h-4" />
             Editar
           </Link>
-          {isAdmin() && (
-            <button
-              onClick={() => {
-                if (confirm("¿Eliminar este recetario?")) {
-                  deleteMutation.mutate();
-                }
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-              Eliminar
-            </button>
-          )}
+          <button
+            onClick={() => setConfirmDelete(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+            Eliminar
+          </button>
         </div>
       </div>
 
@@ -327,6 +325,25 @@ const RecetarioDetailPage = () => {
           </div>
         </motion.div>
       )}
+
+      <ConfirmDialog
+        open={confirmDelete}
+        tone="danger"
+        icon={Trash2}
+        title="¿Eliminar este recetario?"
+        message={
+          <>
+            <strong className="text-light">{recipe.name}</strong> dejará de aparecer
+            en el listado, con sus pasos e ingredientes. No se borra del todo: se
+            puede recuperar pidiéndoselo al administrador.
+          </>
+        }
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        loading={deleteMutation.isPending}
+        onConfirm={() => deleteMutation.mutate()}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </div>
   );
 };

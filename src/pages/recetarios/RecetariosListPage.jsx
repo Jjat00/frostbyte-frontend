@@ -16,8 +16,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { recetariosService } from "@/services/recetarios.service";
 import { businessService } from "@/services/business.service";
 import { apiClient } from "@/services/api/client";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { useBusinessStore } from "@/stores/useBusinessStore";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import toast from "react-hot-toast";
 
 const DIFFICULTY_STYLES = {
@@ -35,10 +35,11 @@ const businessDot = (color) => {
 const RecetariosListPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isAdmin } = useAuthStore();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("");
+  // Receta pendiente de confirmar su eliminación (null = diálogo cerrado)
+  const [recipeToDelete, setRecipeToDelete] = useState(null);
 
   // Negocio activo (contexto global) para filtrar las recetas
   const { selectedBusinessSlug } = useBusinessStore();
@@ -77,9 +78,13 @@ const RecetariosListPage = () => {
     mutationFn: (slug) => recetariosService.deleteRecipe(slug),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recetarios"] });
+      setRecipeToDelete(null);
       toast.success("Recetario eliminado");
     },
-    onError: () => toast.error("Error al eliminar recetario"),
+    onError: () => {
+      setRecipeToDelete(null);
+      toast.error("Error al eliminar recetario");
+    },
   });
 
   const recipes = data?.results || data || [];
@@ -248,7 +253,7 @@ const RecetariosListPage = () => {
                     </span>
                   </div>
 
-                  {/* Acciones de staff (eliminar solo admin) */}
+                  {/* Acciones de staff */}
                   <div className="flex items-center gap-2 pt-2 border-t border-white/[0.1]">
                     <Link
                       to={`/recetarios/editar/${recipe.slug}`}
@@ -258,20 +263,16 @@ const RecetariosListPage = () => {
                       <Edit className="w-3.5 h-3.5" />
                       Editar
                     </Link>
-                    {isAdmin() && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm("¿Eliminar este recetario?")) {
-                            deleteMutation.mutate(recipe.slug);
-                          }
-                        }}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Eliminar
-                      </button>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setRecipeToDelete(recipe);
+                      }}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Eliminar
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -279,6 +280,25 @@ const RecetariosListPage = () => {
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!recipeToDelete}
+        tone="danger"
+        icon={Trash2}
+        title="¿Eliminar este recetario?"
+        message={
+          <>
+            <strong className="text-light">{recipeToDelete?.name}</strong> dejará de
+            aparecer en el listado, con sus pasos e ingredientes. No se borra del
+            todo: se puede recuperar pidiéndoselo al administrador.
+          </>
+        }
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        loading={deleteMutation.isPending}
+        onConfirm={() => deleteMutation.mutate(recipeToDelete.slug)}
+        onCancel={() => setRecipeToDelete(null)}
+      />
     </div>
   );
 };
