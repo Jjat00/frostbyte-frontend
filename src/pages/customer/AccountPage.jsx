@@ -11,7 +11,6 @@ import {
   Loader2,
   LogOut,
   Pencil,
-  Trophy,
   UserCircle2,
   X,
 } from "lucide-react";
@@ -28,7 +27,6 @@ import {
   useReservationsConfig,
   useMyReservations,
 } from "@/hooks/useReservations";
-import { useMyStats } from "@/hooks/usePolla";
 
 /**
  * Mi cuenta: el hogar del cliente autenticado con Google (mobile-first).
@@ -191,7 +189,7 @@ const ProfileCard = () => {
             />
             <label className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] text-sm cursor-pointer">
               <span className="text-white/70">
-                Recibir correos (Polla y novedades)
+                Recibir correos de Frostbyte
               </span>
               <input
                 type="checkbox"
@@ -263,7 +261,6 @@ const AccountPage = () => {
   });
   const { data: storeConfig } = useStoreConfig();
   const { data: reservationsConfig } = useReservationsConfig();
-  const { data: pollaStats } = useMyStats({ enabled: isAuthenticated });
   const [confirmLogout, setConfirmLogout] = useState(false);
 
   const orders = ordersData?.results || [];
@@ -275,11 +272,6 @@ const AccountPage = () => {
   // Con las reservas en línea apagadas (solo staff) el cliente no ve nada de
   // reservas, salvo que el staff le haya creado alguna a su nombre
   const showReservations = reservationsEnabled || reservations?.length > 0;
-  // Todo cliente con sesión tiene fila en el ranking, así que jugar la Polla se
-  // mide por actividad real: pronósticos hechos o puntos (bracket, menciones,
-  // referidos). Quien no jugó no ve el acceso.
-  const playedPolla =
-    pollaStats?.predicted > 0 || pollaStats?.points > 0;
 
   return (
     <div className={`min-h-screen bg-dark text-light ${tabBarSpacing}`}>
@@ -433,23 +425,6 @@ const AccountPage = () => {
                   />
                 )}
               </div>
-              {playedPolla && (
-                <Link
-                  to="/polla-mundial"
-                  className="mt-2.5 p-4 rounded-2xl bg-linear-to-r from-primary/20 to-secondary/20 border border-white/10 flex items-center gap-3 hover:border-white/20 transition-colors"
-                >
-                  <Trophy className="w-6 h-6 text-gold flex-shrink-0" />
-                  <span className="flex-1">
-                    <span className="block text-sm font-black">
-                      Polla Mundialista
-                    </span>
-                    <span className="block text-xs text-white/40">
-                      Tus pronósticos, ranking y misiones
-                    </span>
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-white/30" />
-                </Link>
-              )}
             </section>
 
             {/* Cerrar sesión */}

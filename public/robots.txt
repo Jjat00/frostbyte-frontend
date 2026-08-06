@@ -10,4 +10,14 @@ Disallow: /musica/
 Disallow: /feedback/
 Disallow: /juegos-admin
 
+# El Mundial salio de la app: sus vistas siguen vivas para el equipo pero ya
+# no son puerta de entrada para el cliente, tampoco desde Google.
+Disallow: /polla-mundial
+Disallow: /mundial
+Disallow: /partidos
+Disallow: /grupos
+Disallow: /ranking
+Disallow: /misiones
+Disallow: /polla-admin
+
 Sitemap: https://frostbyte.com.co/sitemap.xml

@@ -18,7 +18,6 @@ import SocialDiscountBanner from "@/components/SocialDiscountBanner";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
-import PollaMundialBanner from "@/components/PollaMundialBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import { env } from "@/config/env";
@@ -55,9 +54,9 @@ function App() {
           <WaterSection />
           {/* Recordatorio compacto de domicilios al cierre de la carta */}
           <DomiciliosBanner variant="strip" />
-          {/* La Polla del Mundial ya terminó pero sigue accesible: resultados
-              finales y entrega del premio al campeón pendiente. */}
-          <PollaMundialBanner />
+          {/* El Mundial se retiró de la carta: sus vistas siguen en el código
+              y accesibles por URL para el equipo, pero el cliente ya no ve
+              nada del torneo. */}
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />

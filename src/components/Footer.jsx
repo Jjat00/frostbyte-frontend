@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
-import { Instagram, LogIn, MapPin, MessageCircle, Trophy } from "lucide-react";
+import { Instagram, LogIn, MapPin, MessageCircle } from "lucide-react";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -113,13 +113,6 @@ const Footer = () => {
               Enlaces Rápidos
             </span>
             <nav className="space-y-2">
-              <Link
-                to="/polla-mundial"
-                className="flex items-center gap-2 text-primary hover:text-secondary transition-colors duration-300 font-semibold"
-              >
-                <Trophy size={16} />
-                Polla Mundialista
-              </Link>
               <a
                 href="#products"
                 className="block text-gray hover:text-primary transition-colors duration-300"

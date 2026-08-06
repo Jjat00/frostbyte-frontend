@@ -258,16 +258,6 @@ const Header = () => {
                     )}
                   </NavigationMenuItem>
                 ))}
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      to="/polla-mundial"
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
-                    >
-                      Polla Mundialista
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
                 {showMyOrders && (
                   <NavigationMenuItem>
                     <NavigationMenuLink
@@ -373,13 +363,6 @@ const Header = () => {
             exit={{ opacity: 0, height: 0 }}
             className="liquid-glass md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.08] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
           >
-            <Link
-              to="/polla-mundial"
-              className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              🏆 Polla Mundialista
-            </Link>
             {/* Domicilios y Mi cuenta ya no viven aquí: son pestañas fijas de
                 la barra inferior (CustomerTabBar). Este menú se queda con lo
                 que la barra no cubre: la carta y el resto de secciones. */}

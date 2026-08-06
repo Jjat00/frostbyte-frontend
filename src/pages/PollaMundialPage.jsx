@@ -319,6 +319,9 @@ const PollaMundialPage = () => {
           name="description"
           content="Participa en la Polla Mundialista de Frostbyte: pronostica los marcadores del Mundial 2026, arma tu bracket de eliminación, suma con menciones y misiones, y gana $500.000. Pronostica, acierta y corónate campeón."
         />
+        {/* El Mundial salió de la app: la vista sigue viva para el equipo,
+            pero no debe seguir apareciendo en Google como puerta de entrada */}
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       {/* Nav minimal */}

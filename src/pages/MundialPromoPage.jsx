@@ -83,6 +83,8 @@ const MundialPromoPage = () => {
           name="description"
           content="Predice los partidos del Mundial 2026 en Frostbyte y gana $500.000 en efectivo. Participar es totalmente gratis: entra con tu cuenta de Google y empieza a sumar puntos."
         />
+        {/* El Mundial salió de la app: esta promo ya no debe captar visitas */}
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       {/* Campo de color estilo póster del Mundial */}
