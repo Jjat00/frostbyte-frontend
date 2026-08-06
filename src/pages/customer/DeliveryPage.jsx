@@ -12,7 +12,13 @@ import {
   X,
 } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
-import { useActiveCategories, useProducts, useStoreConfig, useAddToCart } from "@/hooks";
+import {
+  useActiveCategories,
+  useProducts,
+  useStoreConfig,
+  useAddToCart,
+  useCartaPath,
+} from "@/hooks";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { getProductStyles } from "@/lib/productStyles";
 import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
@@ -67,6 +73,8 @@ const DeliveryPage = () => {
   const { data: config } = useStoreConfig();
   const isCustomerAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
   const add = useAddToCart();
+  // Si el cliente vino del QR de una mesa, "volver a la carta" es volver a ella
+  const { cartaPath } = useCartaPath();
 
   const inAppOrdering = !!config?.customer_ordering_enabled;
   const storeClosed = config?.is_open === false;
@@ -160,7 +168,7 @@ const DeliveryPage = () => {
     <header className="fixed top-0 inset-x-0 z-40 bg-dark/95 backdrop-blur-md border-b border-white/[0.08]">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-3 sm:px-4">
         <Link
-          to="/"
+          to={cartaPath}
           aria-label="Volver a la carta"
           className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-white/70 flex-shrink-0"
         >

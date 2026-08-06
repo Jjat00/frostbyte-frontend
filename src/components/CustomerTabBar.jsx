@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Bike, UserCircle2, UtensilsCrossed } from "lucide-react";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
-import { useMyOrders, useStoreConfig } from "@/hooks";
+import { useCartaPath, useMyOrders, useStoreConfig } from "@/hooks";
 import { isActiveOrder } from "@/lib/domicilios";
 
 /**
@@ -25,8 +25,9 @@ import { isActiveOrder } from "@/lib/domicilios";
  * de mesa, domicilios, cuenta, pedidos, reservas). Nunca en rutas de staff.
  *
  * En `/mesa/:piso/:n` la pestaña Carta apunta a la propia mesa: esa página YA
- * es la carta, con el añadido del pedido de la mesa. Mandarla a `/` perdería
- * el piso y el número, que solo viven en la URL del QR.
+ * es la carta, con el añadido del pedido de la mesa. Y la mesa se recuerda
+ * durante la visita (`useCartaPath`), así que volver a Carta desde Domicilios
+ * o Mi cuenta devuelve a la mesa, no a `/`.
  */
 
 // Hueco que deben dejar al fondo las páginas que la montan para que su último
@@ -48,13 +49,13 @@ const CustomerTabBar = () => {
   const hasActiveOrder = (ordersData?.results || []).some(isActiveOrder);
 
   const { pathname } = location;
-  // La vista de mesa es la carta de esa mesa: la pestaña se queda en ella
-  const isTableRoute = pathname.startsWith("/mesa/");
+  // La carta de esta visita: la mesa del QR si vino por ahí, o `/`
+  const { cartaPath, isTableRoute } = useCartaPath();
   const tabs = useMemo(
     () =>
       [
         {
-          to: isTableRoute ? pathname : "/",
+          to: cartaPath,
           label: "Carta",
           icon: UtensilsCrossed,
           active: pathname === "/" || isTableRoute,
@@ -79,7 +80,7 @@ const CustomerTabBar = () => {
           dot: hasActiveOrder,
         },
       ].filter(Boolean),
-    [pathname, isTableRoute, inAppOrdering, hasActiveOrder]
+    [pathname, cartaPath, isTableRoute, inAppOrdering, hasActiveOrder]
   );
 
   // Tocar la pestaña en la que ya estás vuelve arriba, como en cualquier app

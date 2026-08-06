@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Bike, ClipboardList, Lock, UserCircle2, UtensilsCrossed } from "lucide-react";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
+import { useCartaPath } from "@/hooks";
 
 /**
  * Muro de /domicilios: sin sesión de cliente no se entra a la tienda.
@@ -17,6 +18,7 @@ import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
  */
 const DeliveryLoginWall = ({ storeClosed, onError }) => {
   const [error, setError] = useState("");
+  const { cartaPath } = useCartaPath();
 
   const handleError = (message) => {
     setError(message);
@@ -69,7 +71,7 @@ const DeliveryLoginWall = ({ storeClosed, onError }) => {
 
       {/* Salida para quien solo quería mirar: la carta no pide nada */}
       <Link
-        to="/"
+        to={cartaPath}
         className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-white/50 hover:text-white/80 transition-colors"
       >
         <UtensilsCrossed className="w-4 h-4" />

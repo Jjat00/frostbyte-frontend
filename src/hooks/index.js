@@ -10,8 +10,11 @@ export { useSongRequestsNotification } from './useSongRequestsNotification';
 // WebSocket hook
 export { useWebSocket } from './useWebSocket';
 
-// Carrito: agregar con compuerta de login (Google obligatorio para pedir)
+// Carrito: agregar producto (el login del cliente se pide antes, en /domicilios)
 export { useAddToCart } from './useAddToCart';
+
+// A dónde vuelve "la carta": recuerda la mesa del QR durante la visita
+export { useCartaPath, isTablePath } from './useCartaPath';
 
 // Customer orders hooks (pedidos en línea del cliente)
 export {

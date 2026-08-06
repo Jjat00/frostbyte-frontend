@@ -22,7 +22,7 @@ import OrderStatusBadge from "@/components/order-tracker/OrderStatusBadge";
 import MyReservationsList from "@/components/reservations/MyReservationsList";
 import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import { ACTIVE_ORDER_STATUSES } from "@/lib/domicilios";
-import { useMyOrders, useMyOrdersLive } from "@/hooks";
+import { useCartaPath, useMyOrders, useMyOrdersLive } from "@/hooks";
 import { useStoreConfig } from "@/hooks/useCustomerOrders";
 import {
   useReservationsConfig,
@@ -252,6 +252,8 @@ const SectionTitle = ({ children }) => (
 
 const AccountPage = () => {
   const { customer, isAuthenticated, logout } = useCustomerAuthStore();
+  // Quien vino del QR de una mesa vuelve a su mesa, no a la carta pública
+  const { cartaPath } = useCartaPath();
 
   // Hooks siempre en el mismo orden; el estado sin sesión se pinta abajo
   useMyOrdersLive();
@@ -284,7 +286,7 @@ const AccountPage = () => {
       <header className="sticky top-0 z-40 bg-dark/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center gap-3">
           <Link
-            to="/"
+            to={cartaPath}
             aria-label="Volver a la carta"
             className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10"
           >

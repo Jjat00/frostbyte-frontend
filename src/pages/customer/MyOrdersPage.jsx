@@ -9,7 +9,13 @@ import {
 } from "lucide-react";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import CustomerAvatar from "@/components/auth/CustomerAvatar";
-import { useMyOrders, useMyOrder, useMyOrdersLive, useMediaQuery } from "@/hooks";
+import {
+  useMyOrders,
+  useMyOrder,
+  useMyOrdersLive,
+  useMediaQuery,
+  useCartaPath,
+} from "@/hooks";
 import OrderStatusBadge from "@/components/order-tracker/OrderStatusBadge";
 import OrderTracker, {
   OrderTrackerContent,
@@ -82,6 +88,8 @@ const MyOrdersPage = () => {
   // En lg+ la página es maestro-detalle: lista a la izquierda, detalle fijo
   // a la derecha. En pantallas menores el detalle abre como bottom sheet.
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  // Quien vino del QR de una mesa vuelve a su mesa, no a la carta pública
+  const { cartaPath } = useCartaPath();
   const [selectedId, setSelectedId] = useState(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { data: selectedOrder, isLoading: isLoadingOrder } =
@@ -100,7 +108,7 @@ const MyOrdersPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  if (!isAuthenticated) return <Navigate to="/" replace />;
+  if (!isAuthenticated) return <Navigate to={cartaPath} replace />;
 
   const handleSelect = (id) => {
     setSelectedId(id);
@@ -149,7 +157,7 @@ const MyOrdersPage = () => {
       <header className="sticky top-0 z-20 backdrop-blur-xl bg-dark/90 border-b border-white/10">
         <div className="container mx-auto max-w-2xl lg:max-w-6xl px-4 py-3 flex items-center gap-3">
           <Link
-            to="/"
+            to={cartaPath}
             aria-label="Volver a la carta"
             className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-white/70"
           >
