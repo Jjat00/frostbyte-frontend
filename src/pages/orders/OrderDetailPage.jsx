@@ -13,10 +13,7 @@ import {
   MessageSquare,
   DollarSign,
   Loader2,
-  CreditCard,
   Banknote,
-  Smartphone,
-  Building,
   AlertCircle,
   Trash2,
   Plus,
@@ -32,6 +29,10 @@ import {
 } from "lucide-react";
 import { ordersService } from "@/services/orders.service";
 import { productsService } from "@/services/products.service";
+import {
+  ACTIVE_PAYMENT_METHODS,
+  getPaymentMethodLabel,
+} from "@/lib/paymentMethods";
 import TableSelect from "@/components/orders/TableSelect";
 import { DeliveryBadge, DeliveryInfo, PaymentPendingBadge, SourceBadge } from "@/components/orders/DeliveryInfo";
 
@@ -78,13 +79,9 @@ const statusConfig = {
   },
 };
 
-const paymentMethods = [
-  { id: "cash", label: "Efectivo", icon: Banknote },
-  { id: "card", label: "Tarjeta", icon: CreditCard },
-  { id: "transfer", label: "Transferencia", icon: Building },
-  { id: "nequi", label: "Nequi", icon: Smartphone },
-  { id: "daviplata", label: "Daviplata", icon: Smartphone },
-];
+// Los métodos que se pueden cobrar salen de ACTIVE_PAYMENT_METHODS; los
+// pedidos viejos siguen mostrando su método con getPaymentMethodLabel.
+const paymentMethods = ACTIVE_PAYMENT_METHODS;
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -607,9 +604,7 @@ const OrderDetailPage = () => {
                     {item.is_paid && (
                       <span className="text-xs text-green-400 flex items-center gap-1">
                         <DollarSign className="w-3 h-3" />
-                        {paymentMethods.find(
-                          (m) => m.id === item.payment_method
-                        )?.label || "Pagado"}
+                        {getPaymentMethodLabel(item.payment_method) || "Pagado"}
                       </span>
                     )}
                     {item.is_delivered && (
@@ -926,9 +921,9 @@ const OrderDetailPage = () => {
                   <p className="text-xs text-green-400 mt-2 flex items-center gap-1">
                     <Check className="w-3 h-3" />
                     Pagado con:{" "}
-                    {paymentMethods.find(
-                      (m) => m.id === selectedItemForPayment.payment_method
-                    )?.label || "Sin especificar"}
+                    {getPaymentMethodLabel(
+                      selectedItemForPayment.payment_method
+                    ) || "Sin especificar"}
                   </p>
                 )}
               </div>

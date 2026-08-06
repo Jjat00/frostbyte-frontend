@@ -5,6 +5,7 @@ import { useCartStore } from "@/stores/useCartStore";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { useStoreConfig, useCreateOrder } from "@/hooks";
 import { isWithinDeliveryArea, DELIVERY_RADIUS_KM } from "@/lib/deliveryArea";
+import { ACTIVE_PAYMENT_METHODS } from "@/lib/paymentMethods";
 import CustomerAuthGate from "./CustomerAuthGate";
 
 // El mapa (Mapbox) es pesado: se carga en diferido para no inflar la home.
@@ -17,13 +18,12 @@ const formatCOP = (v) =>
     minimumFractionDigits: 0,
   }).format(v || 0);
 
-const PAYMENTS = [
-  { key: "cash", label: "Efectivo" },
-  { key: "nequi", label: "Nequi" },
-  { key: "daviplata", label: "Daviplata" },
-  { key: "transfer", label: "Transferencia" },
-  { key: "card", label: "Tarjeta" },
-];
+// Solo los métodos que el local acepta hoy (efectivo y Nequi). El backend
+// rechaza cualquier otro, así que la lista vive en un único sitio.
+const PAYMENTS = ACTIVE_PAYMENT_METHODS.map((m) => ({
+  key: m.id,
+  label: m.label,
+}));
 
 // Billetes comunes para "¿con cuánto pagas?" (efectivo)
 const CASH_BILLS = [10000, 20000, 50000, 100000];
@@ -249,7 +249,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                       <h3 className="text-xs uppercase tracking-wider text-white/40 mb-2">
                         Método de pago
                       </h3>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         {PAYMENTS.map((p) => (
                           <Chip
                             key={p.key}

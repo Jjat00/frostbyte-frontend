@@ -281,7 +281,7 @@ export const ordersService = {
   /**
    * Marcar un item como pagado
    * @param {number} itemId - ID del item
-   * @param {string} paymentMethod - Método de pago (cash, nequi, card, transfer, daviplata)
+   * @param {string} paymentMethod - Método de pago (cash, nequi)
    */
   async markItemAsPaid(itemId, paymentMethod = '') {
     const response = await apiClient.post(`/order-items/${itemId}/mark_paid/`, {
