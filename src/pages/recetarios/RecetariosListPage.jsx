@@ -106,15 +106,13 @@ const RecetariosListPage = () => {
           </p>
         </div>
 
-        {isAdmin() && (
-          <Link
-            to="/recetarios/nuevo"
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
-          >
-            <Plus className="w-4 h-4" />
-            Nuevo Recetario
-          </Link>
-        )}
+        <Link
+          to="/recetarios/nuevo"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-dark rounded-lg font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
+        >
+          <Plus className="w-4 h-4" />
+          Nuevo Recetario
+        </Link>
       </div>
 
       {/* Search and Filters */}
@@ -250,17 +248,17 @@ const RecetariosListPage = () => {
                     </span>
                   </div>
 
-                  {/* Admin Actions */}
-                  {isAdmin() && (
-                    <div className="flex items-center gap-2 pt-2 border-t border-white/[0.1]">
-                      <Link
-                        to={`/recetarios/editar/${recipe.slug}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs text-secondary hover:bg-secondary/10 rounded-lg transition-colors"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                        Editar
-                      </Link>
+                  {/* Acciones de staff (eliminar solo admin) */}
+                  <div className="flex items-center gap-2 pt-2 border-t border-white/[0.1]">
+                    <Link
+                      to={`/recetarios/editar/${recipe.slug}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs text-secondary hover:bg-secondary/10 rounded-lg transition-colors"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                      Editar
+                    </Link>
+                    {isAdmin() && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -273,8 +271,8 @@ const RecetariosListPage = () => {
                         <Trash2 className="w-3.5 h-3.5" />
                         Eliminar
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </motion.div>
             );

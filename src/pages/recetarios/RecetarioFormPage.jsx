@@ -282,9 +282,14 @@ const RecetarioFormPage = () => {
   });
 
   // Load products
+  // page_size alto: la API pagina productos a 50 y en consolidado los de
+  // Frostbyte Food quedarían fuera del selector.
   const { data: productsData } = useQuery({
     queryKey: ["products-for-recipe", selectedBusinessSlug],
-    queryFn: () => apiClient.get(`/products/?active_only=true${bizQs}`).then((r) => r.data),
+    queryFn: () =>
+      apiClient
+        .get(`/products/?active_only=true&page_size=500${bizQs}`)
+        .then((r) => r.data),
   });
 
   // Load variants when product is selected

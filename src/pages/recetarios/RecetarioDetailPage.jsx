@@ -93,15 +93,15 @@ const RecetarioDetailPage = () => {
           <span>Volver</span>
         </button>
 
-        {isAdmin() && (
-          <div className="flex items-center gap-2">
-            <Link
-              to={`/recetarios/editar/${slug}`}
-              className="flex items-center gap-2 px-4 py-2 bg-secondary/20 text-secondary rounded-lg hover:bg-secondary/30 transition-colors"
-            >
-              <Edit className="w-4 h-4" />
-              Editar
-            </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to={`/recetarios/editar/${slug}`}
+            className="flex items-center gap-2 px-4 py-2 bg-secondary/20 text-secondary rounded-lg hover:bg-secondary/30 transition-colors"
+          >
+            <Edit className="w-4 h-4" />
+            Editar
+          </Link>
+          {isAdmin() && (
             <button
               onClick={() => {
                 if (confirm("¿Eliminar este recetario?")) {
@@ -113,8 +113,8 @@ const RecetarioDetailPage = () => {
               <Trash2 className="w-4 h-4" />
               Eliminar
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Hero */}

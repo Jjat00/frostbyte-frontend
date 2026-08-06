@@ -577,7 +577,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // Panel de recetarios (empleados y admin)
+  // Panel de recetarios (empleados y admin: ambos crean y editan)
   {
     path: "/recetarios",
     element: (
@@ -600,9 +600,7 @@ export const router = createBrowserRouter([
         path: "nuevo",
         element: (
           <Lazy>
-            <AdminRoute>
-              <RecetarioFormPage />
-            </AdminRoute>
+            <RecetarioFormPage />
           </Lazy>
         ),
       },
@@ -610,9 +608,7 @@ export const router = createBrowserRouter([
         path: "editar/:slug",
         element: (
           <Lazy>
-            <AdminRoute>
-              <RecetarioFormPage />
-            </AdminRoute>
+            <RecetarioFormPage />
           </Lazy>
         ),
       },

@@ -18,7 +18,7 @@ import { useSongRequestsNotification } from "@/hooks";
 const RecetariosLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, isAdmin } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { hasPendingRequests, pendingCount } = useSongRequestsNotification();
 
@@ -27,7 +27,7 @@ const RecetariosLayout = () => {
     navigate("/login");
   };
 
-  const allNavItems = [
+  const navItems = [
     {
       name: "Home",
       shortName: "Home",
@@ -53,7 +53,6 @@ const RecetariosLayout = () => {
       shortName: "Nuevo",
       path: "/recetarios/nuevo",
       icon: PlusCircle,
-      adminOnly: true,
     },
     {
       name: "Musica",
@@ -69,10 +68,6 @@ const RecetariosLayout = () => {
       icon: Gamepad2,
     },
   ];
-
-  const navItems = allNavItems.filter(
-    (item) => !item.adminOnly || isAdmin()
-  );
 
   const isActivePath = (path, end) => {
     if (end) {
