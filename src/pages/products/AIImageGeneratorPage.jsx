@@ -27,6 +27,11 @@ import { cn } from "@/lib/utils";
 // Modelos que NO soportan background transparente en el endpoint de OpenAI.
 const MODELS_WITHOUT_TRANSPARENCY = new Set(["gpt-image-2"]);
 
+// Modelo preseleccionado. Los modelos Gemini estan caidos porque la
+// GEMINI_API_KEY quedo invalida; al renovarla se puede volver a
+// "gemini-3-pro-image-preview".
+const DEFAULT_AI_MODEL = "gpt-image-1.5";
+
 /**
  * Página principal para generación de imágenes de productos con IA
  * Integra OpenAI GPT Image 1.5 para crear imágenes profesionales
@@ -44,7 +49,7 @@ const AIImageGeneratorPage = () => {
   const [referenceImage, setReferenceImage] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [transparent, setTransparent] = useState(false);
-  const [aiModel, setAiModel] = useState("gemini-3-pro-image-preview");
+  const [aiModel, setAiModel] = useState(DEFAULT_AI_MODEL);
   const [errors, setErrors] = useState({});
 
   // Estado del modal de selección de producto
@@ -73,6 +78,7 @@ const AIImageGeneratorPage = () => {
     saveToProduct,
     discardGeneration,
     downloadImage,
+    generateError,
     reset,
   } = useImageGeneration({
     onSuccess: (data) => {
@@ -190,10 +196,19 @@ const AIImageGeneratorPage = () => {
     setReferenceImage(null);
     setPrompt("");
     setTransparent(false);
-    setAiModel("gemini-3-pro-image-preview");
+    setAiModel(DEFAULT_AI_MODEL);
     setErrors({});
     reset();
   }, [reset]);
+
+  // Mensaje de fallo de la generación (el backend responde con el motivo)
+  const generationErrorMessage = generateError
+    ? generateError.response?.data?.error ||
+      generateError.response?.data?.detail ||
+      (generateError.code === "ECONNABORTED"
+        ? "La generación tardó demasiado y se canceló. Intenta de nuevo o usa un modelo más rápido."
+        : "No se pudo generar la imagen. Intenta de nuevo o prueba con otro modelo.")
+    : null;
 
   // Estados de UI
   const isUploading = uploadProgress > 0 && uploadProgress < 100;
@@ -410,6 +425,26 @@ const AIImageGeneratorPage = () => {
               <span>Generar Imagen con IA</span>
             </button>
           </div>
+
+          {generationErrorMessage && !isGenerating && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-red-500/10 border border-red-500/20 rounded-lg p-4"
+            >
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-red-400 mb-1">
+                    No se pudo generar la imagen
+                  </p>
+                  <p className="text-xs text-red-300">
+                    {generationErrorMessage}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {Object.keys(errors).length > 0 && (
             <motion.div

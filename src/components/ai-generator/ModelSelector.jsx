@@ -8,8 +8,8 @@ const AI_MODELS = [
     provider: "Google",
     description: "Mejor calidad, texto nitido",
     icon: Crown,
-    badge: "Recomendado",
-    badgeColor: "text-secondary",
+    badge: null,
+    badgeColor: null,
   },
   {
     id: "gemini-3.1-flash-image-preview",
@@ -26,8 +26,8 @@ const AI_MODELS = [
     provider: "OpenAI",
     description: "Alta calidad, fondo transparente nativo",
     icon: Cpu,
-    badge: null,
-    badgeColor: null,
+    badge: "Recomendado",
+    badgeColor: "text-secondary",
   },
   {
     id: "gpt-image-2",

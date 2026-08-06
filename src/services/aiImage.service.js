@@ -21,7 +21,7 @@ export const aiImageService = {
     referenceImage = null,
     prompt = '',
     transparent = true,
-    aiModel = 'gemini-3-pro-image-preview',
+    aiModel = 'gpt-image-1.5',
     onProgress = null,
   }) {
     const formData = new FormData();
@@ -50,8 +50,10 @@ export const aiImageService = {
           onProgress(percentCompleted);
         }
       },
-      // Extended timeout para generación de IA (hasta 2 minutos)
-      timeout: 120000,
+      // Extended timeout para generación de IA. Los modelos de alta calidad
+      // tardan minutos: con 2 min se cortaba la petición y parecía que no
+      // pasaba nada.
+      timeout: 300000,
     });
 
     return response.data;
