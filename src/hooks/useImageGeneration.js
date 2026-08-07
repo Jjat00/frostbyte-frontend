@@ -159,6 +159,12 @@ export function useImageValidation() {
         return 'Debes seleccionar una imagen';
       }
 
+      // Pasa en el celular con fotos que viven en Google Fotos/iCloud y no
+      // estan descargadas: el navegador entrega el archivo vacio.
+      if (file.size === 0) {
+        return 'El archivo llegó vacío. Si la foto está en Google Fotos o iCloud, ábrela primero para que se descargue al teléfono y vuelve a intentar';
+      }
+
       if (!ALLOWED_TYPES.includes(file.type)) {
         return 'Formato no permitido. Usa JPG, PNG o WebP';
       }
