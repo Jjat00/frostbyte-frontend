@@ -27,8 +27,9 @@ import { cn } from "@/lib/utils";
 // Modelos que NO soportan background transparente en el endpoint de OpenAI.
 const MODELS_WITHOUT_TRANSPARENCY = new Set(["gpt-image-2"]);
 
-// Modelo preseleccionado.
-const DEFAULT_AI_MODEL = "gemini-3-pro-image-preview";
+// Modelo preseleccionado. Los cuatro modelos funcionan; GPT Image 1.5 es
+// el que arranca elegido por decision de Jaime.
+const DEFAULT_AI_MODEL = "gpt-image-1.5";
 
 /**
  * Página principal para generación de imágenes de productos con IA
