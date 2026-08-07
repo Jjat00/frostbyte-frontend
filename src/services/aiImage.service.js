@@ -21,7 +21,7 @@ export const aiImageService = {
     referenceImage = null,
     prompt = '',
     transparent = true,
-    aiModel = 'gpt-image-1.5',
+    aiModel = 'gemini-3-pro-image-preview',
     onProgress = null,
   }) {
     const formData = new FormData();
