@@ -9,15 +9,16 @@ import { ENDPOINTS } from './api/endpoints';
  * usa `customerOrdersService.getConfig()` (endpoint /my-orders/config/).
  */
 export const storeSettingsService = {
-  /** Estado actual: { is_open, customer_ordering_enabled, can_order, delivery_fee, status_changed_at } */
+  /** Estado actual: { is_open, customer_ordering_enabled, can_order, delivery_fee, delivery_radius_km, status_changed_at } */
   async get() {
     const response = await apiClient.get(ENDPOINTS.STORE_SETTINGS);
     return response.data;
   },
 
   /**
-   * Actualiza uno o ambos interruptores.
-   * @param {{ is_open?: boolean, customer_ordering_enabled?: boolean }} data
+   * Actualiza los interruptores y/o el radio de cobertura.
+   * `delivery_radius_km` solo lo acepta el backend si el usuario es admin.
+   * @param {{ is_open?: boolean, customer_ordering_enabled?: boolean, delivery_radius_km?: number }} data
    */
   async update(data) {
     const response = await apiClient.patch(ENDPOINTS.STORE_SETTINGS, data);

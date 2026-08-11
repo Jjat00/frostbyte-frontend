@@ -4,7 +4,7 @@ import { myOrderKeys } from "./useCustomerOrders";
 
 /**
  * Hooks del STAFF para la configuración operativa del local
- * (abierto/cerrado y domicilios en línea).
+ * (abierto/cerrado, domicilios en línea y radio de cobertura).
  *
  * La lectura pega contra el endpoint de staff (apiClient). Las mutaciones
  * invalidan tanto la vista del staff como la config pública que consume el

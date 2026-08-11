@@ -4,7 +4,11 @@ import { X, ArrowLeft, Bike, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/useCartStore";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { useStoreConfig, useCreateOrder } from "@/hooks";
-import { isWithinDeliveryArea, DELIVERY_RADIUS_KM } from "@/lib/deliveryArea";
+import {
+  isWithinDeliveryArea,
+  resolveDeliveryRadiusKm,
+  formatRadiusKm,
+} from "@/lib/deliveryArea";
 import { ACTIVE_PAYMENT_METHODS } from "@/lib/paymentMethods";
 import CustomerAuthGate from "./CustomerAuthGate";
 
@@ -87,6 +91,8 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
     : "Los domicilios están pausados por el momento.";
   const deliveryFee = Number(config?.delivery_fee || 0);
   const total = subtotal + deliveryFee;
+  // Radio de cobertura vigente (lo configura el admin desde el dashboard)
+  const deliveryRadiusKm = resolveDeliveryRadiusKm(config?.delivery_radius_km);
 
   // Prefijar datos del cliente cuando hay sesión
   useEffect(() => {
@@ -146,9 +152,11 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
       return setError("Ingresa la dirección de entrega.");
     if (delivery.lat == null || delivery.lng == null)
       return setError("Marca tu ubicación con el botón de ubicación.");
-    if (!isWithinDeliveryArea(delivery.lat, delivery.lng))
+    if (!isWithinDeliveryArea(delivery.lat, delivery.lng, deliveryRadiusKm))
       return setError(
-        `Tu ubicación está fuera de nuestra zona de domicilios (${DELIVERY_RADIUS_KM} km alrededor del local).`
+        `Tu ubicación está fuera de nuestra zona de domicilios (${formatRadiusKm(
+          deliveryRadiusKm
+        )} alrededor del local).`
       );
     if (!payment) return setError("Elige un método de pago.");
     if (payment === "cash") {
@@ -239,6 +247,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                         onChange={(partial) =>
                           setDelivery((d) => ({ ...d, ...partial }))
                         }
+                        radiusKm={deliveryRadiusKm}
                       />
                     </Suspense>
                   </section>

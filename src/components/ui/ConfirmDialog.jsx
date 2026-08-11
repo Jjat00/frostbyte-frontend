@@ -18,6 +18,9 @@ import { cn } from "@/lib/utils";
  * @param {"default"|"danger"|"success"} [tone="default"] - Color del botón confirmar.
  * @param {React.ComponentType} [icon] - Icono lucide opcional junto al título.
  * @param {boolean} [loading=false] - Deshabilita botones y muestra spinner.
+ * @param {boolean} [confirmDisabled=false] - Bloquea el confirmar (ej: input inválido).
+ * @param {React.ReactNode} [children] - Contenido extra entre el mensaje y los botones
+ *   (ej: un campo para editar un valor antes de confirmar).
  * @param {() => void} onConfirm
  * @param {() => void} onCancel
  */
@@ -45,6 +48,8 @@ const ConfirmDialog = ({
   tone = "default",
   icon: Icon = AlertTriangle,
   loading = false,
+  confirmDisabled = false,
+  children,
   onConfirm,
   onCancel,
 }) => {
@@ -71,7 +76,7 @@ const ConfirmDialog = ({
             aria-label={title}
           >
             <div
-              className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4"
+              className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4 max-h-[85vh] overflow-y-auto"
               style={{ backgroundColor: "rgba(18, 20, 31, 0.96)" }}
             >
               <div className="flex items-start gap-3">
@@ -88,6 +93,8 @@ const ConfirmDialog = ({
                 </div>
               </div>
 
+              {children}
+
               <div className="flex gap-2 pt-1">
                 <button
                   type="button"
@@ -100,7 +107,7 @@ const ConfirmDialog = ({
                 <button
                   type="button"
                   onClick={onConfirm}
-                  disabled={loading}
+                  disabled={loading || confirmDisabled}
                   className={cn(
                     "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 font-semibold rounded-lg transition-opacity disabled:opacity-50",
                     toneCfg.button

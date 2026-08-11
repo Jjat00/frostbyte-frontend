@@ -12,17 +12,12 @@ import circle from "@turf/circle";
 import { env } from "@/config";
 import {
   STORE_LOCATION,
-  DELIVERY_RADIUS_KM,
   isWithinDeliveryArea,
+  resolveDeliveryRadiusKm,
+  formatRadiusKm,
+  fitZoomForRadiusKm,
 } from "@/lib/deliveryArea";
 import { themeColorRaw } from "@/lib/themeColors";
-
-// Radio de cobertura como capa GeoJSON
-const COVERAGE_GEOJSON = circle(
-  [STORE_LOCATION.lng, STORE_LOCATION.lat],
-  DELIVERY_RADIUS_KM,
-  { steps: 64, units: "kilometers" }
-);
 
 // Satélite por defecto: en Cumbal las casas se ubican mejor viendo los techos
 // que sobre un plano de calles.
@@ -43,19 +38,32 @@ const round7 = (n) => Number(Number(n).toFixed(7));
  *
  * value: { address, reference, lat, lng }
  * onChange: (partial) => void
+ * radiusKm: radio de cobertura vigente (lo configura el admin; opcional)
  */
-const DeliveryMap = ({ value, onChange }) => {
+const DeliveryMap = ({ value, onChange, radiusKm }) => {
   const token = env.MAPBOX_TOKEN;
   const hasCoords = value?.lat != null && value?.lng != null;
   const lat = value?.lat ?? STORE_LOCATION.lat;
   const lng = value?.lng ?? STORE_LOCATION.lng;
-  const outOfArea = hasCoords && !isWithinDeliveryArea(value.lat, value.lng);
+  const radius = resolveDeliveryRadiusKm(radiusKm);
+  const radiusLabel = formatRadiusKm(radius);
+  const outOfArea = hasCoords && !isWithinDeliveryArea(value.lat, value.lng, radius);
+
+  // Radio de cobertura como capa GeoJSON (se redibuja si el admin lo cambia)
+  const coverageGeoJson = useMemo(
+    () =>
+      circle([STORE_LOCATION.lng, STORE_LOCATION.lat], radius, {
+        steps: 64,
+        units: "kilometers",
+      }),
+    [radius]
+  );
 
   const [viewState, setViewState] = useState({
     longitude: lng,
     latitude: lat,
-    // zoom 13.2 deja ver el círculo de cobertura completo al abrir
-    zoom: hasCoords ? 16 : 13.2,
+    // Sin pin, se abre mostrando el círculo de cobertura completo
+    zoom: hasCoords ? 16 : fitZoomForRadiusKm(radius),
   });
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
@@ -129,7 +137,7 @@ const DeliveryMap = ({ value, onChange }) => {
                 : "Marca tu ubicación de entrega"}
             </span>
             <span className="text-[10px] text-white/30">
-              Entregamos hasta {DELIVERY_RADIUS_KM} km alrededor del local
+              Entregamos hasta {radiusLabel} alrededor del local
             </span>
           </div>
         </div>
@@ -152,7 +160,7 @@ const DeliveryMap = ({ value, onChange }) => {
         {outOfArea && (
           <p className="text-xs text-red-400">
             Tu ubicación está fuera de nuestra zona de domicilios (
-            {DELIVERY_RADIUS_KM} km alrededor del local).
+            {radiusLabel} alrededor del local).
           </p>
         )}
         {Inputs}
@@ -174,7 +182,7 @@ const DeliveryMap = ({ value, onChange }) => {
           attributionControl={false}
         >
           {/* Radio de cobertura de domicilios */}
-          <Source id="delivery-coverage" type="geojson" data={COVERAGE_GEOJSON}>
+          <Source id="delivery-coverage" type="geojson" data={coverageGeoJson}>
             <Layer
               id="delivery-coverage-fill"
               type="fill"
@@ -256,8 +264,8 @@ const DeliveryMap = ({ value, onChange }) => {
               Toca el mapa o usa el botón de ubicación para marcar tu entrega
             </p>
             <p className="text-[11px] text-secondary/90 font-semibold">
-              Entregamos solo dentro del área cian ({DELIVERY_RADIUS_KM} km
-              alrededor del local)
+              Entregamos solo dentro del área cian ({radiusLabel} alrededor del
+              local)
             </p>
           </div>
         )}
@@ -273,7 +281,7 @@ const DeliveryMap = ({ value, onChange }) => {
         <p className="text-[11px] text-red-400 flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 shrink-0" /> Tu ubicación está fuera de
           nuestra zona de domicilios: mueve el pin dentro del área cian (
-          {DELIVERY_RADIUS_KM} km alrededor del local)
+          {radiusLabel} alrededor del local)
         </p>
       )}
 
