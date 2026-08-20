@@ -91,6 +91,8 @@ Use `@/` for imports from `src/` directory (configured in vite.config.js)
 - Base theme: dark cyberpunk — primary (#ff00d4 magenta), secondary (#00e0ff cyan), Orbitron font. To retheme the whole app, edit tokens in `theme.css` only.
 - NEVER hardcode brand colors or fonts in components. Use token utilities (`text-primary`, `from-secondary`…); in inline/arbitrary styles use `var(--color-primary)` and `color-mix(in srgb, var(--color-primary) 40%, transparent)`; in canvas/Mapbox/charts/framer-motion-animated values use the helpers in `src/lib/themeColors.js`.
 - Known exceptions that intentionally don't follow the theme: product-identity gradients in menu sections, data-viz series palettes, `FrostbyteTVPage`, `impostorAvatars.js`, `qrStyling.js`.
+- **The public menu (`/` and `/mesa/*`) has its own visual layer in `src/minimal.css`** (imported after `theme.css`): `fb-section`, `fb-card`, `fb-inset`, `fb-eyebrow`, `fb-rule`, `fb-hairline`, `fb-btn`, `fb-pill`, `fb-reveal`. Build customer-facing sections with those instead of `liquid-glass` + `backdrop-blur` + gradient headings. Per-section content color goes in the `--fb-accent` / `--fb-accent-2` CSS variables on the section element. Everything there lives in `@layer components` on purpose: in Tailwind v4 unlayered CSS beats every utility, so without the layer a `px-4` next to `fb-btn` would do nothing.
+- Section headings use `SectionHeading.jsx`; the "extras" blocks at the foot of a menu section use `CartaExtras.jsx`.
 - Use `cn()` utility from `@/lib/utils` for merging Tailwind classes
 
 ### Commit Format

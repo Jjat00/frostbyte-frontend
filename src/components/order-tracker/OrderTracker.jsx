@@ -147,7 +147,7 @@ const OrderTracker = ({ order, show, onClose, desktopPanel = true }) => {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className={`${
               desktopPanel ? "md:hidden" : "lg:hidden"
-            } absolute bottom-0 left-0 right-0 max-h-[90vh] backdrop-blur-xl bg-dark/95 border-t border-white/[0.1] rounded-t-2xl overflow-hidden flex flex-col shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]`}
+            } absolute bottom-0 left-0 right-0 flex max-h-[90vh] flex-col overflow-hidden rounded-t-2xl border-t border-white/[0.08] bg-dark/97`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
@@ -187,7 +187,7 @@ const OrderTracker = ({ order, show, onClose, desktopPanel = true }) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 40 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="hidden md:flex absolute inset-y-0 right-0 w-full max-w-lg flex-col backdrop-blur-xl bg-dark/95 border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.3)]"
+              className="absolute inset-y-0 right-0 hidden w-full max-w-lg flex-col border-l border-white/[0.08] bg-dark/97 md:flex"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}

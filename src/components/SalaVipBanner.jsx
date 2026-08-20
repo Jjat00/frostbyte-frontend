@@ -1,7 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Crown, Cake, PartyPopper, Users, UtensilsCrossed, MessageCircle, CalendarDays, Phone } from "lucide-react";
+import {
+  Crown,
+  Cake,
+  Users,
+  UtensilsCrossed,
+  MessageCircle,
+  CalendarDays,
+  Phone,
+} from "lucide-react";
 import { useReservationsConfig } from "@/hooks/useReservations";
 import {
   RESERVATIONS_PHONE,
@@ -16,123 +23,105 @@ import {
  * (hasta ~15 personas). Con las reservas en línea activas el CTA lleva a
  * /reservas; apagadas (estado de hoy: el módulo lo opera el staff), la sala se
  * aparta escribiendo o llamando a la línea de reservas.
+ *
+ * Reservar es el servicio "duo" del hero: no lleva un color propio sino el
+ * degradado de los dos de marca. Por eso aquí el bloque va en neutro y el
+ * único color es el hilo de 44 px.
  */
 const SalaVipBanner = () => {
   const { data: reservationsConfig } = useReservationsConfig();
   const onlineReservations = !!reservationsConfig?.reservations_enabled;
 
+  const rasgos = [
+    { Icon: Users, text: `Hasta ${reservationsConfig?.vip_capacity ?? 15} personas` },
+    { Icon: Cake, text: "Cumpleaños y eventos" },
+    { Icon: UtensilsCrossed, text: "Con nuestra comida" },
+  ];
+
   return (
-    <section id="sala-vip" className="py-8 bg-dark relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-secondary/30 bg-linear-to-br from-secondary/15 via-dark-secondary to-violet-500/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]"
-        >
-          {/* Resplandor cian */}
-          <div className="pointer-events-none absolute -top-12 -right-8 h-48 w-48 rounded-full bg-secondary/15 blur-3xl" />
-
-          <div className="relative p-6">
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-xl bg-linear-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
-                <Crown size={20} className="text-dark" />
-              </div>
-              <div>
-                <span className="inline-block text-[11px] uppercase tracking-[0.3em] text-secondary font-bold mb-1">
-                  Nuevo · Piso 3
-                </span>
-                <h3 className="text-3xl font-black uppercase leading-none text-light">
-                  Sala <span className="text-secondary">VIP</span>
-                </h3>
-              </div>
+    <section id="sala-vip" className="fb-section py-9">
+      <div className="container relative z-10 mx-auto px-5">
+        <div className="fb-reveal fb-card mx-auto max-w-xl p-5 sm:p-6">
+          {/* Encabezado */}
+          <div className="mb-5 flex items-center gap-3.5">
+            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[13px] border border-white/[0.12] bg-linear-to-br from-primary/15 to-secondary/15">
+              <Crown size={19} className="text-light/75" />
+            </span>
+            <div className="min-w-0">
+              <span className="fb-eyebrow block">Piso 3</span>
+              <h3 className="font-display m-0 mt-1.5 text-lg font-semibold uppercase leading-none tracking-[0.14em] text-light">
+                Sala VIP
+              </h3>
             </div>
+          </div>
 
-            {/* Descripción */}
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-              <PartyPopper size={20} className="text-secondary flex-shrink-0 mt-0.5" />
-              <p className="text-white/70 text-sm leading-relaxed">
-                Reserva nuestra sala privada del tercer piso para tu{" "}
-                <span className="text-secondary font-bold">cumpleaños</span>,{" "}
-                <span className="text-secondary font-bold">celebración</span> o el
-                plan que quieras con tus amigos. Un espacio solo para ustedes.
-              </p>
-            </div>
-
-            {/* Características */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-secondary/10 to-transparent border border-secondary/20 text-center">
-                <Users size={18} className="text-secondary" />
-                <span className="text-white/70 text-[11px] leading-tight font-semibold">
-                  Hasta {reservationsConfig?.vip_capacity ?? 15} personas
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-secondary/10 to-transparent border border-secondary/20 text-center">
-                <Cake size={18} className="text-secondary" />
-                <span className="text-white/70 text-[11px] leading-tight font-semibold">
-                  Cumpleaños y eventos
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-linear-to-b from-secondary/10 to-transparent border border-secondary/20 text-center">
-                <UtensilsCrossed size={18} className="text-secondary" />
-                <span className="text-white/70 text-[11px] leading-tight font-semibold">
-                  Con nuestra nueva comida
-                </span>
-              </div>
-            </div>
-
-            {/* CTA: reservar en línea si el módulo está activo; si no, WhatsApp */}
-            {onlineReservations ? (
-              <>
-                <p className="text-center text-white/70 text-sm font-semibold mb-3">
-                  Elige tu fecha y turno:{" "}
-                  <span className="text-gold">la sala es de ustedes</span>.
-                </p>
-                <Link
-                  to="/reservas"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-                >
-                  <CalendarDays size={18} />
-                  Reservar la sala
-                </Link>
-              </>
-            ) : (
-              <>
-                <p className="text-center text-white/70 text-sm font-semibold mb-3">
-                  ¿Te interesa? Escríbenos o llámanos al{" "}
-                  <span className="text-gold">{RESERVATIONS_PHONE.display}</span>{" "}
-                  y te contamos todo.
-                </p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <a
-                    href={reservationsWaLink(
-                      "Hola, quiero más información sobre la Sala VIP del piso 3"
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-                  >
-                    <MessageCircle size={18} />
-                    Escribir por WhatsApp
-                  </a>
-                  <a
-                    href={reservationsTelLink}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gold/10 border border-gold/30 text-gold font-bold text-sm uppercase tracking-wide hover:bg-gold/20 transition-colors"
-                  >
-                    <Phone size={18} />
-                    Llamar
-                  </a>
-                </div>
-              </>
-            )}
-
-            <p className="text-center text-white/30 text-[10px] mt-3">
-              Cupos por fecha limitados · Reserva con anticipación
+          {/* Qué es */}
+          <div className="fb-inset mb-4 p-3.5">
+            <p className="text-[0.78rem] leading-relaxed text-light/65">
+              La sala privada del tercer piso se aparta para tu{" "}
+              <span className="text-light">cumpleaños</span>, una{" "}
+              <span className="text-light">celebración</span> o el plan que
+              quieras con tus amigos. Un espacio solo para ustedes.
             </p>
           </div>
-        </motion.div>
+
+          {/* Rasgos */}
+          <div className="mb-5 grid grid-cols-3 gap-2">
+            {rasgos.map(({ Icon, text }) => (
+              <div
+                key={text}
+                className="fb-inset flex flex-col items-center gap-2 p-3 text-center"
+              >
+                <Icon size={16} className="text-light/55" />
+                <span className="text-[0.62rem] leading-tight text-light/55">
+                  {text}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA: reservar en línea si el módulo está activo; si no, WhatsApp */}
+          {onlineReservations ? (
+            <>
+              <p className="mb-3 text-center text-[0.75rem] text-light/60">
+                Elige tu fecha y tu turno: la sala es de ustedes.
+              </p>
+              <Link to="/reservas" className="fb-btn fb-btn--accent w-full">
+                <CalendarDays size={16} />
+                Reservar la sala
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="mb-3 text-center text-[0.75rem] text-light/60">
+                ¿Te interesa? Escríbenos o llámanos al{" "}
+                <span className="text-light">{RESERVATIONS_PHONE.display}</span>{" "}
+                y te contamos todo.
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <a
+                  href={reservationsWaLink(
+                    "Hola, quiero más información sobre la Sala VIP del piso 3"
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="fb-btn fb-btn--accent w-full"
+                >
+                  <MessageCircle size={16} />
+                  Escribir por WhatsApp
+                </a>
+                <a href={reservationsTelLink} className="fb-btn w-full">
+                  <Phone size={16} />
+                  Llamar
+                </a>
+              </div>
+            </>
+          )}
+
+          <p className="mt-4 text-center text-[0.62rem] text-light/30">
+            Cupos por fecha limitados · Reserva con anticipación
+          </p>
+        </div>
       </div>
     </section>
   );

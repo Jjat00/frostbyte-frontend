@@ -1,70 +1,43 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Droplets } from "lucide-react";
+import SectionHeading from "@/components/SectionHeading";
 
+/**
+ * Agua embotellada. Una sola tarjeta: el precio es toda la información.
+ * Llevaba un orbe de 500 px con blur de 200 px para vender una botella de
+ * agua; ahora el fondo es el mismo de toda la carta.
+ */
 const WaterSection = () => {
   return (
-    <section id="agua" className="py-16 sm:py-24 bg-dark relative overflow-hidden">
-      {/* Subtle background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500 rounded-full filter blur-[200px] opacity-5"></div>
+    <section
+      id="agua"
+      className="fb-section py-14"
+      style={{ "--fb-accent": "#38bdf8", "--fb-accent-2": "#38bdf8" }}
+    >
+      <div className="container relative z-10 mx-auto px-5">
+        <SectionHeading
+          eyebrow="Para hidratarte"
+          title="Agua"
+          className="mb-9"
+        />
 
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black mb-4">
-            <span className="bg-linear-to-r from-cyan-400 via-sky-400 to-blue-300 bg-clip-text text-transparent">
-              AGUA
+        <div className="flex justify-center">
+          <div className="fb-card fb-card--accent fb-card--link fb-card--lift fb-reveal flex flex-col items-center px-10 py-8 text-center sm:px-14">
+            <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-[14px] border border-sky-400/25 bg-sky-400/10">
+              <Droplets className="text-sky-400" size={22} />
             </span>
-          </h2>
-          <p className="text-base sm:text-lg text-gray max-w-xl mx-auto">
-            Mantente hidratado con agua{" "}
-            <span className="text-cyan-400 font-semibold">pura y refrescante</span>
-          </p>
-        </motion.div>
 
-        {/* Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex justify-center"
-        >
-          <motion.div
-            whileHover={{ y: -8, scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-            className="group relative"
-          >
-            {/* Glow */}
-            <div className="absolute -inset-0.5 bg-linear-to-r from-cyan-400/40 to-blue-500/40 rounded-3xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <h3 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
+              Botella de agua
+            </h3>
 
-            <div className="liquid-glass relative backdrop-blur-xl bg-white/[0.08] border border-cyan-500/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-3xl px-10 sm:px-16 py-8 sm:py-10 flex flex-col items-center text-center transition-all duration-300 group-hover:border-cyan-500/40">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                <Droplets className="text-cyan-400" size={28} />
-              </div>
+            <p className="mt-3 max-w-xs text-[0.78rem] leading-relaxed text-light/55">
+              La forma más simple de refrescarte.
+            </p>
 
-              <h3 className="text-xl sm:text-2xl font-bold text-light mb-2">
-                Botella de Agua
-              </h3>
-
-              <p className="text-gray text-sm sm:text-base mb-6 max-w-xs">
-                La mejor forma de refrescarte y mantenerte hidratado
-              </p>
-
-              <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-8 py-4">
-                <span className="text-3xl sm:text-4xl font-black bg-linear-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                  $2.000
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
+            <span className="mt-5 text-xl font-medium text-light">$2.000</span>
+          </div>
+        </div>
       </div>
     </section>
   );

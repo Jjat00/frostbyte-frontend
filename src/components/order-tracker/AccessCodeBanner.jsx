@@ -81,37 +81,34 @@ const AccessCodeBanner = ({ onVerified }) => {
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="w-full bg-gradient-to-r from-secondary/8 via-dark-secondary to-primary/8 border-y border-secondary/20"
+      className="fb-section fb-section--plain w-full border-y border-white/[0.06]"
     >
-      <div className="container mx-auto px-4 py-5">
+      <div className="container relative z-10 mx-auto px-5 py-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-5 md:gap-12">
 
           {/* Info: icono + títulos */}
           <div className="flex items-center gap-3 md:flex-shrink-0">
-            <div className="relative w-10 h-10 rounded-xl bg-secondary/15 border border-secondary/30 flex items-center justify-center flex-shrink-0">
-              <Radio className="w-5 h-5 text-secondary" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-secondary animate-ping opacity-75" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-secondary" />
-            </div>
+            <span className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[12px] border border-secondary/20 bg-secondary/10">
+              <Radio className="h-[18px] w-[18px] text-secondary" />
+              <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-secondary" />
+            </span>
             <div>
-              <p className="text-sm font-bold text-light leading-tight">
-                Mirá tu pedido y lo que vas consumiendo
+              <p className="text-[0.82rem] font-medium leading-tight text-light">
+                Mira tu pedido y lo que vas consumiendo
               </p>
-              <p className="text-xs text-secondary/70 mt-0.5">
-                Seguí en vivo el estado y te avisamos cuando esté listo
+              <p className="mt-1 text-[0.7rem] text-light/45">
+                Sigue el estado en vivo y te avisamos cuando esté listo
               </p>
             </div>
           </div>
 
           {/* Divisor visible solo en desktop */}
-          <div className="hidden md:block w-px h-10 bg-white/10 flex-shrink-0" />
+          <div className="hidden h-10 w-px flex-shrink-0 bg-white/[0.08] md:block" />
 
           {/* Inputs + feedback */}
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <div className="flex flex-col items-center sm:items-start gap-1.5">
-              <p className="text-xs text-white/40">
-                Código del mesero
-              </p>
+              <p className="fb-eyebrow">Código del mesero</p>
               <div className="flex gap-2.5">
                 {code.map((char, idx) => (
                   <input
@@ -125,7 +122,7 @@ const AccessCodeBanner = ({ onVerified }) => {
                     onChange={(e) => handleInputChange(idx, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(idx, e)}
                     onPaste={idx === 0 ? handlePaste : undefined}
-                    className="w-12 h-13 text-center text-xl font-bold bg-dark border-2 border-white/15 rounded-xl text-light focus:border-secondary focus:outline-none transition-colors disabled:opacity-50"
+                    className="h-12 w-11 rounded-xl border border-white/[0.12] bg-white/[0.03] text-center text-lg font-medium text-light transition-colors focus:border-secondary/50 focus:outline-none disabled:opacity-50"
                     disabled={isLoading}
                   />
                 ))}
@@ -135,13 +132,13 @@ const AccessCodeBanner = ({ onVerified }) => {
             {/* Estado: error / loading */}
             <div className="h-8 flex items-center">
               {error && (
-                <div className="flex items-center gap-1.5 text-red-400 text-xs">
+                <div className="flex items-center gap-1.5 text-[0.7rem] text-light/70">
                   <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                   {error}
                 </div>
               )}
               {isLoading && (
-                <div className="flex items-center gap-2 text-secondary text-xs">
+                <div className="flex items-center gap-2 text-[0.7rem] text-secondary">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   Verificando...
                 </div>

@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Bike, MessageCircle, MapPin, ClipboardList } from "lucide-react";
 import { useStoreConfig } from "@/hooks";
@@ -19,6 +18,10 @@ import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
  * Variantes (mismo patrón que el banner de la Polla Mundialista para repetir sin saturar):
  * - "feature": tarjeta completa, encabeza la carta (lleva el id #domicilios)
  * - "strip": barra compacta de recordatorio al cierre de la carta
+ *
+ * El verde esmeralda que llevaba se retiró el 2026-08-20: en el lenguaje del
+ * hero los domicilios son cyan, y un tercer color de servicio solo diluía lo
+ * que el color significa.
  */
 const DomiciliosBanner = ({ variant = "feature" }) => {
   const { data: storeConfig } = useStoreConfig();
@@ -34,37 +37,31 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
   // Servicio en pausa: el banner no existe, en ninguna de sus variantes.
   if (!inAppOrdering) return null;
 
+  // Cyan de marca para todo el bloque: es el color de los domicilios.
+  const accent = { "--fb-accent": "var(--color-secondary)" };
+
   if (variant === "strip") {
     return (
-      <section className="py-6 bg-dark relative overflow-hidden">
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="max-w-xl mx-auto flex flex-col items-center gap-3 rounded-xl border border-emerald-400/25 bg-linear-to-r from-emerald-500/10 via-dark-secondary to-emerald-500/10 p-4 sm:flex-row sm:justify-between"
+      <section className="fb-section fb-section--plain py-7">
+        <div className="container relative z-10 mx-auto px-5">
+          <div
+            style={accent}
+            className="fb-reveal fb-card mx-auto flex max-w-xl flex-col items-center gap-3 p-4 sm:flex-row sm:justify-between"
           >
             <div className="flex items-center gap-2.5">
-              <Bike size={20} className="text-emerald-400 flex-shrink-0" />
-              <p className="text-white/75 text-sm font-semibold">
+              <Bike size={17} className="flex-shrink-0 text-secondary" />
+              <p className="text-[0.78rem] text-light/70">
                 ¿Antojado? Pide tu domicilio{" "}
-                <span className="text-emerald-300">aquí en la app</span>
+                <span className="text-light">aquí en la app</span>
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-2">
-              <Link
-                to="/domicilios"
-                className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 text-dark px-3.5 py-1.5 text-xs font-bold hover:opacity-90 transition-opacity"
-              >
+              <Link to="/domicilios" className="fb-btn fb-btn--accent px-3.5 py-2 text-[0.7rem]">
                 <Bike size={13} />
                 Pedir en la app
               </Link>
               {isCustomerAuthenticated && (
-                <Link
-                  to="/mis-pedidos"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
-                >
+                <Link to="/mis-pedidos" className="fb-btn px-3.5 py-2 text-[0.7rem]">
                   <ClipboardList size={13} />
                   Estado de mi pedido
                 </Link>
@@ -75,117 +72,96 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                   href={waLink(line.number)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                  className="fb-btn px-3.5 py-2 text-[0.7rem]"
                 >
                   <MessageCircle size={13} />
                   {line.display}
                 </a>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     );
   }
 
   return (
-    <section id="domicilios" className="py-8 bg-dark relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-emerald-400/30 bg-linear-to-br from-emerald-500/15 via-dark-secondary to-secondary/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]"
-        >
-          {/* Resplandor verde */}
-          <div className="pointer-events-none absolute -top-12 -right-8 h-48 w-48 rounded-full bg-emerald-500/15 blur-3xl" />
-
-          <div className="relative p-6">
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-xl bg-linear-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
-                <Bike size={20} className="text-dark" />
-              </div>
-              <div>
-                <span className="inline-block text-[11px] uppercase tracking-[0.3em] text-emerald-300 font-bold mb-1">
-                  Nuevo servicio
-                </span>
-                <h3 className="text-3xl font-black uppercase leading-none text-light">
-                  Domi<span className="text-emerald-400">cilios</span>
-                </h3>
-              </div>
-            </div>
-
-            {/* Descripción del pedido en la app */}
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-              <MapPin
-                size={20}
-                className="text-emerald-300 flex-shrink-0 mt-0.5"
-              />
-              <p className="text-white/70 text-sm leading-relaxed">
-                ¡Pide tu domicilio{" "}
-                <span className="text-emerald-300 font-bold">
-                  directo en la app
-                </span>
-                ! Escoge tus productos con fotos y precios, marca tu ubicación
-                en el mapa y sigue tu pedido en vivo hasta tu puerta.
-              </p>
-            </div>
-
-            {/* El login no se pide aquí sino en /domicilios, que es un
-                  muro: una sola puerta para pedir, no tres copys sueltos. */}
-            {isCustomerAuthenticated && (
-              <p className="text-center text-emerald-300/90 text-sm font-semibold mb-3">
-                {firstName ? `¡Listo, ${firstName}!` : "¡Listo!"} Tu cuenta está
-                conectada, solo falta escoger.
-              </p>
-            )}
-            <div className="space-y-2">
-              <Link
-                to="/domicilios"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-              >
-                <Bike size={18} />
-                {/* Sin sesión el siguiente paso es entrar: decirlo evita
-                      que el muro se sienta una puerta en la cara */}
-                {isCustomerAuthenticated
-                  ? "Pedir a domicilio"
-                  : "Entrar y pedir a domicilio"}
-              </Link>
-              {isCustomerAuthenticated && (
-                <Link
-                  to="/mis-pedidos"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
-                >
-                  <ClipboardList size={18} />
-                  Ver el estado de mi pedido
-                </Link>
-              )}
-            </div>
-
-            {/* WhatsApp sigue siendo un canal de pedidos de primera, no letra pequeña */}
-            <div className="mt-4 pt-4 border-t border-white/10">
-              <p className="text-center text-white/60 text-xs font-bold uppercase tracking-wider mb-2.5">
-                ¿Prefieres pedir por WhatsApp?
-              </p>
-              <div className="grid grid-cols-1 gap-2">
-                {WHATSAPP_LINES.map((line) => (
-                  <a
-                    key={line.number}
-                    href={waLink(line.number)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-bold text-sm hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
-                  >
-                    <MessageCircle size={17} className="flex-shrink-0" />
-                    {line.display}
-                  </a>
-                ))}
-              </div>
+    <section id="domicilios" style={accent} className="fb-section py-9">
+      <div className="container relative z-10 mx-auto px-5">
+        <div className="fb-reveal fb-card fb-card--accent mx-auto max-w-xl p-5 sm:p-6">
+          {/* Encabezado */}
+          <div className="mb-5 flex items-center gap-3.5">
+            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[13px] border border-secondary/20 bg-secondary/10">
+              <Bike size={19} className="text-secondary" />
+            </span>
+            <div className="min-w-0">
+              <span className="fb-eyebrow fb-eyebrow--accent block">
+                Nuevo servicio
+              </span>
+              <h3 className="font-display m-0 mt-1.5 text-lg font-semibold uppercase leading-none tracking-[0.14em] text-light">
+                Domicilios
+              </h3>
             </div>
           </div>
-        </motion.div>
+
+          {/* Qué es */}
+          <div className="fb-inset mb-4 flex items-start gap-3 p-3.5">
+            <MapPin size={17} className="mt-0.5 flex-shrink-0 text-secondary" />
+            <p className="text-[0.78rem] leading-relaxed text-light/65">
+              Pide tu domicilio{" "}
+              <span className="text-light">directo en la app</span>: escoge tus
+              productos con fotos y precios, marca tu ubicación en el mapa y
+              sigue tu pedido en vivo hasta tu puerta.
+            </p>
+          </div>
+
+          {/* El login no se pide aquí sino en /domicilios, que es un muro:
+              una sola puerta para pedir, no tres copys sueltos. */}
+          {isCustomerAuthenticated && (
+            <p className="mb-3 text-center text-[0.75rem] text-light/60">
+              {firstName ? `Listo, ${firstName}.` : "Listo."} Tu cuenta está
+              conectada, solo falta escoger.
+            </p>
+          )}
+
+          <div className="space-y-2">
+            <Link to="/domicilios" className="fb-btn fb-btn--accent w-full">
+              <Bike size={16} />
+              {/* Sin sesión el siguiente paso es entrar: decirlo evita que el
+                  muro se sienta una puerta en la cara */}
+              {isCustomerAuthenticated
+                ? "Pedir a domicilio"
+                : "Entrar y pedir a domicilio"}
+            </Link>
+            {isCustomerAuthenticated && (
+              <Link to="/mis-pedidos" className="fb-btn w-full">
+                <ClipboardList size={16} />
+                Ver el estado de mi pedido
+              </Link>
+            )}
+          </div>
+
+          {/* WhatsApp sigue siendo un canal de pedidos de primera, no letra pequeña */}
+          <div className="mt-5 border-t border-white/[0.06] pt-4">
+            <p className="fb-eyebrow mb-2.5 text-center">
+              ¿Prefieres pedir por WhatsApp?
+            </p>
+            <div className="grid gap-2">
+              {WHATSAPP_LINES.map((line) => (
+                <a
+                  key={line.number}
+                  href={waLink(line.number)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="fb-btn w-full"
+                >
+                  <MessageCircle size={15} />
+                  {line.display}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

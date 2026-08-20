@@ -1,5 +1,6 @@
 import React from "react";
 import { useProductsByCategory } from "@/hooks";
+import SectionHeading from "@/components/SectionHeading";
 import { getProductStyles } from "@/lib/productStyles";
 
 const formatPrice = (price) => {
@@ -13,27 +14,7 @@ const ProductCard = ({ product, index, styles }) => {
 
   return (
     <div className="lulada-card group relative h-full">
-      <div className="relative flex flex-col items-center h-full rounded-3xl p-6 overflow-hidden bg-white/[0.02] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.08),0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-500 hover:bg-white/[0.08] hover:border-white/[0.2] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(0,0,0,0.08),0_8px_40px_rgba(0,0,0,0.2),0_0_50px_rgba(132,204,22,0.08)]">
-        {/* Blur de fondo */}
-        <div
-          className="absolute inset-0 rounded-3xl pointer-events-none"
-          style={{
-            backdropFilter: "blur(1px)",
-            WebkitBackdropFilter: "blur(1px)",
-          }}
-        />
-
-        {/* Reflejo especular superior */}
-        <div
-          className="absolute top-0 inset-x-0 h-1/2 rounded-t-3xl pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 40%, transparent 100%)",
-          }}
-        />
-
-        {/* Brillo en borde superior */}
-        <div className="absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+      <div className="fb-card fb-card--link fb-card--lift flex h-full flex-col items-center overflow-hidden p-6">
 
         {/* Imagen del producto */}
         <div className="relative mb-5 shrink-0 z-10">
@@ -60,26 +41,26 @@ const ProductCard = ({ product, index, styles }) => {
 
         {/* Nombre del producto */}
         <div className="relative z-10 w-full flex flex-col items-center mb-3">
-          <h3 className="text-base md:text-lg font-black text-white uppercase tracking-wider text-center line-clamp-2 leading-tight">
+          <h3 className="font-display line-clamp-2 text-center text-[0.95rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
             {product.name}
           </h3>
-          <div className="w-10 h-0.5 bg-lime-400/60 rounded-full mt-2"></div>
+          <span aria-hidden className="fb-rule mt-2.5" />
         </div>
 
         {/* Descripcion */}
-        <p className="relative z-10 text-slate-400 text-sm text-center mb-5 leading-relaxed max-w-[260px]">
+        <p className="relative z-10 mb-5 max-w-[260px] text-center text-[0.78rem] leading-relaxed text-light/55">
           {product.description}
         </p>
 
         {/* Precios */}
         <div className="relative z-10 mt-auto w-full">
-          <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/[0.08]">
+          <div className="flex items-center justify-center gap-5 pt-3 border-t border-white/[0.06]">
             {variants.map((variant) => (
               <div key={variant.id || variant.name} className="flex flex-col items-center">
-                <span className="text-[11px] text-slate-500 uppercase font-semibold tracking-widest mb-0.5">
+                <span className="mb-0.5 text-[0.62rem] uppercase tracking-[0.14em] text-light/35">
                   {variant.name}
                 </span>
-                <span className="text-lg font-black text-lime-400">
+                <span className="text-[0.95rem] font-medium text-light">
                   {formatPrice(variant.price)}
                 </span>
               </div>
@@ -92,7 +73,7 @@ const ProductCard = ({ product, index, styles }) => {
 };
 
 const ProductSkeleton = () => (
-  <div className="bg-white/4 border border-white/8 rounded-3xl p-6 animate-pulse">
+  <div className="fb-card animate-pulse p-6">
     <div className="flex flex-col items-center h-full">
       <div className="relative mb-5 shrink-0">
         <div className="w-52 h-52 md:w-56 md:h-56 rounded-full bg-white/6"></div>
@@ -126,35 +107,20 @@ const Luladas = ({ showExtras = true }) => {
   return (
     <section
       id="luladas"
-      className="py-20 relative overflow-hidden bg-linear-to-br from-green-950 via-emerald-950 to-lime-950"
+      className="fb-section py-16"
+      style={{ "--fb-accent": "#84cc16", "--fb-accent-2": "#84cc16" }}
     >
-      {/* Neon ambiental — verde/lima estilo tropical */}
-      <div className="absolute inset-0 opacity-25">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-lime-500 rounded-full filter blur-[120px]" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-500 rounded-full filter blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-green-400/70 rounded-full filter blur-[100px]" />
-      </div>
-
-      {/* Lineas divisoras */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-lime-400/40 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-emerald-400/30 to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="lulada-title text-4xl md:text-6xl font-black mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-            <span className="bg-linear-to-r from-lime-300 via-green-400 to-emerald-400 bg-clip-text text-transparent [text-shadow:0_0_20px_rgba(132,204,22,0.3)]">
-              LULADAS
-            </span>
-          </h2>
-          <p className="lulada-subtitle text-white text-lg max-w-2xl mx-auto font-semibold drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
-            Refrescantes luladas con el mejor lulo de Nariño.
-            Frescura tropical en cada sorbo.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Lulo de Nariño"
+          title="Luladas"
+          description="Refrescantes luladas con el mejor lulo de Nariño. Frescura tropical en cada sorbo."
+          className="mb-12"
+        />
 
         {error && (
-          <div className="text-center text-white bg-red-500/20 backdrop-blur-sm rounded-lg p-4 mb-8 border border-red-300">
+          <div className="fb-inset mb-8 p-4 text-center text-[0.8rem] text-light/70">
             Error al cargar los productos. Por favor intenta de nuevo.
           </div>
         )}

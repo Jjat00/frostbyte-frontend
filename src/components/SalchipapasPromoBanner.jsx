@@ -1,79 +1,73 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Flame, Sparkles } from "lucide-react";
+import { Flame } from "lucide-react";
 
 /**
  * Hero promocional de Salchipapas (Frostbyte Food).
  *
- * Anuncia que ahora en Frostbyte se ofrecen salchipapas. Usa la identidad
- * naranja de Frostbyte Food (negocio del 3er piso) sobre el mismo lenguaje
- * visual de la carta (liquid-glass). Mobile-first: la
- * imagen va arriba en celular y al costado en pantallas grandes.
+ * Anuncia que ahora en Frostbyte se ofrecen salchipapas. Conserva el naranja
+ * porque es la identidad de OTRA marca (el negocio del tercer piso), no un
+ * adorno: es la única excepción a la regla de dejar la carta en magenta, cyan
+ * y neutro. Aun así va rebajado al lenguaje del hero — velo tenue en vez de
+ * resplandor, titular en Orbitron 600 en vez de font-black.
+ *
+ * Mobile-first: la imagen va arriba en celular y al costado en pantallas
+ * grandes.
  */
 const SalchipapasPromoBanner = () => {
   return (
-    <section id="salchipapas" className="relative overflow-hidden mb-8 sm:mb-10">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.4 }}
-        className="relative overflow-hidden rounded-2xl border border-orange-400/30 bg-linear-to-br from-orange-500/15 via-dark-secondary to-secondary/10 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)]"
-      >
-        {/* Resplandor cálido detrás de la imagen */}
-        <div className="pointer-events-none absolute -top-10 right-0 h-56 w-56 rounded-full bg-orange-500/20 blur-3xl sm:right-10" />
-
+    <section
+      id="salchipapas"
+      className="mb-8 sm:mb-10"
+      style={{
+        "--fb-accent": "var(--color-food)",
+        "--fb-accent-2": "var(--color-food)",
+      }}
+    >
+      <div className="fb-reveal fb-card fb-card--accent overflow-hidden">
         <div className="relative flex flex-col items-center gap-5 p-5 sm:flex-row sm:gap-7 sm:p-7">
           {/* Imagen del producto */}
-          <motion.img
+          <img
             src="/salchipapas-frostbyte-food.png"
             alt="Salchipapas Frostbyte Food"
             loading="lazy"
-            initial={{ scale: 0.9, rotate: -3 }}
-            whileInView={{ scale: 1, rotate: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-52 max-w-[70%] flex-shrink-0 drop-shadow-[0_18px_30px_rgba(0,0,0,0.55)] sm:w-64"
+            className="w-48 max-w-[68%] flex-shrink-0 drop-shadow-[0_18px_30px_rgba(0,0,0,0.55)] sm:w-60"
           />
 
           {/* Texto */}
           <div className="min-w-0 flex-1 text-center sm:text-left">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-400/40 bg-orange-500/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-orange-300">
-              <Sparkles size={12} />
+            <span className="fb-eyebrow fb-eyebrow--accent block">
               Nuevo · Frostbyte Food
             </span>
 
-            <h3 className="mt-3 text-3xl font-black uppercase leading-none text-light sm:text-4xl md:text-5xl">
-              Salchi<span className="text-orange-400">papas</span>
+            <h3 className="font-display m-0 mt-2.5 text-xl font-semibold uppercase leading-none tracking-[0.14em] text-light sm:text-2xl">
+              Salchipapas
             </h3>
 
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/70 sm:mx-0 md:text-base">
-              ¡Ahora en Frostbyte también ofrecemos{" "}
-              <span className="font-bold text-orange-300">salchipapas</span>!
+            <span
+              aria-hidden
+              className="fb-rule mt-3.5 mx-auto block sm:mx-0"
+            />
+
+            <p className="mx-auto mt-3.5 max-w-md text-[0.78rem] leading-relaxed text-light/60 sm:mx-0">
               Todas llevan las tres salchichas —{" "}
-              <span className="font-bold text-orange-300">sevillana</span>,{" "}
-              <span className="font-bold text-orange-300">chorizo</span> y{" "}
-              <span className="font-bold text-orange-300">ranchera</span> — y las
-              puedes cargar con <span className="font-bold text-orange-300">carne</span> y{" "}
-              <span className="font-bold text-orange-300">queso fundido</span>.
+              <span className="text-light/85">sevillana</span>,{" "}
+              <span className="text-light/85">chorizo</span> y{" "}
+              <span className="text-light/85">ranchera</span> — y las puedes
+              cargar con <span className="text-light/85">carne</span> y{" "}
+              <span className="text-light/85">queso fundido</span>.
             </p>
 
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
               {/* Tamaños sin precio: los precios viven en la carta */}
-              <div className="inline-flex items-baseline gap-2 rounded-xl border border-orange-400/30 bg-orange-500/10 px-4 py-2">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-white/60">
-                  Personal · Para 2
-                </span>
-              </div>
-
-              <div className="inline-flex items-center gap-2 rounded-xl border border-orange-400/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80">
-                <Flame size={16} className="text-orange-400" />
+              <span className="fb-pill">Personal · Para 2</span>
+              <span className="fb-pill">
+                <Flame size={13} className="text-food" />
                 Encuéntralas en la carta
-              </div>
+              </span>
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };

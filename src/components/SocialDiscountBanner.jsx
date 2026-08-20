@@ -1,93 +1,83 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Instagram, Tag, ArrowRight } from "lucide-react";
+import { Instagram, Tag } from "lucide-react";
 
 const TikTokIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
   </svg>
 );
 
 const STEPS = [
-  { num: 1, text: "Síguenos en Instagram o TikTok" },
-  { num: 2, text: "Sube una foto y etiquétanos" },
-  { num: 3, text: "Muéstrale la publicación al mesero" },
+  "Síguenos en Instagram o TikTok",
+  "Sube una foto y etiquétanos",
+  "Muéstrale la publicación al mesero",
 ];
 
+/**
+ * Descuento por seguir en redes.
+ *
+ * Es un gancho, no un servicio: por eso va en neutro (regla del hero — el
+ * color se reserva para la carta, los domicilios y reservar). Lo que manda
+ * aquí es el número, y manda por tamaño, no por color.
+ */
 const SocialDiscountBanner = () => {
   return (
-    <section id="descuento-redes" className="py-8 bg-dark">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-dark-secondary to-secondary/10"
-        >
-          {/* Glow decorativo */}
-          <div className="absolute -top-16 -right-16 w-40 h-40 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative p-6">
-            {/* Header con icono + porcentaje */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30">
-                <Tag size={20} className="text-dark" />
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    10% OFF
-                  </span>
-                </div>
-                <p className="text-white/80 text-sm font-semibold -mt-0.5">
-                  en tu pedido de hoy
-                </p>
-              </div>
+    <section id="descuento-redes" className="fb-section fb-section--plain py-9">
+      <div className="container relative z-10 mx-auto px-5">
+        <div className="fb-reveal fb-card mx-auto max-w-xl p-5 sm:p-6">
+          {/* Encabezado */}
+          <div className="mb-5 flex items-center gap-3.5">
+            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[13px] border border-white/[0.1] bg-white/[0.04]">
+              <Tag size={19} className="text-light/70" />
+            </span>
+            <div className="min-w-0">
+              <span className="fb-eyebrow block">Descuento por redes</span>
+              <h3 className="font-display m-0 mt-1.5 text-2xl font-semibold leading-none tracking-[0.06em] text-light">
+                10%{" "}
+                <span className="text-base tracking-[0.14em] text-light/55">
+                  OFF
+                </span>
+              </h3>
             </div>
-
-            {/* Pasos numerados */}
-            <div className="space-y-2 mb-5">
-              {STEPS.map((step) => (
-                <div key={step.num} className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs font-bold text-white/80 flex-shrink-0">
-                    {step.num}
-                  </span>
-                  <span className="text-white/70 text-sm">{step.text}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTAs con verbo de acción */}
-            <div className="flex gap-2">
-              <a
-                href="https://www.instagram.com/frostbyte.col/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/40 text-white text-sm font-semibold hover:border-primary/70 hover:bg-primary/25 transition-all duration-200"
-              >
-                <Instagram size={16} />
-                Seguir en Instagram
-              </a>
-              <a
-                href="https://www.tiktok.com/@frostbyte.col"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-secondary/20 to-secondary/10 border border-secondary/40 text-white text-sm font-semibold hover:border-secondary/70 hover:bg-secondary/25 transition-all duration-200"
-              >
-                <TikTokIcon size={16} />
-                Seguir en TikTok
-              </a>
-            </div>
-
-            {/* Urgencia */}
-            <p className="text-center text-white/40 text-xs mt-4 flex items-center justify-center gap-1.5">
-              <ArrowRight size={12} className="text-primary" />
-              Válido para tu pedido de hoy
-            </p>
           </div>
-        </motion.div>
+
+          {/* Pasos */}
+          <ol className="mb-5 space-y-2.5">
+            {STEPS.map((text, i) => (
+              <li key={text} className="flex items-center gap-3">
+                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.1] text-[0.62rem] font-medium text-light/55">
+                  {i + 1}
+                </span>
+                <span className="text-[0.78rem] text-light/65">{text}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            <a
+              href="https://www.instagram.com/frostbyte.col/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="fb-btn w-full"
+            >
+              <Instagram size={15} />
+              Instagram
+            </a>
+            <a
+              href="https://www.tiktok.com/@frostbyte.col"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="fb-btn w-full"
+            >
+              <TikTokIcon size={15} />
+              TikTok
+            </a>
+          </div>
+
+          <p className="mt-4 text-center text-[0.62rem] text-light/30">
+            Válido para tu pedido de hoy
+          </p>
+        </div>
       </div>
     </section>
   );

@@ -35,7 +35,7 @@ const SpotifyTrackCard = ({ track, onSelect, isLoading }) => (
     exit={{ opacity: 0, y: -10 }}
     onClick={() => onSelect(track)}
     disabled={isLoading}
-    className="w-full flex items-center gap-3 p-3 bg-white/[0.08] backdrop-blur-md border border-white/10 rounded-xl hover:border-primary/40 hover:bg-white/[0.08] transition-all duration-200 text-left disabled:opacity-50"
+    className="fb-card fb-card--link flex w-full items-center gap-3 p-3 text-left disabled:opacity-50"
   >
     {track.image ? (
       <img loading="lazy" decoding="async" src={track.image} alt={track.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
@@ -128,7 +128,7 @@ const NowPlayingBar = ({ data }) => {
         )}
         <div className="flex-1 min-w-0">
           <p className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] mb-1">Sonando ahora</p>
-          <p className="text-white font-black text-lg md:text-xl truncate drop-shadow-[0_2px_10px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]">{data.name}</p>
+          <p className="truncate text-[0.95rem] font-medium text-light md:text-base">{data.name}</p>
           <p className="text-white/50 text-sm truncate">{data.artists}</p>
         </div>
       </div>
@@ -319,7 +319,10 @@ const SolicitarCancion = ({ floor: floorProp }) => {
   };
 
   return (
-    <section id="solicitar-cancion" className="relative overflow-hidden min-h-[80vh] flex flex-col justify-center" style={{ background: 'linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)' }}>
+    <section
+      id="solicitar-cancion"
+      className="fb-section flex min-h-[80vh] flex-col justify-center"
+    >
       {/* Canvas animation - PROTAGONIST */}
       <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
 
@@ -333,40 +336,38 @@ const SolicitarCancion = ({ floor: floorProp }) => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10"
         >
-          <h2 className="text-4xl md:text-6xl font-black mb-3">
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]">
-              PIDE TU CANCION
-            </span>
+          <span className="fb-eyebrow block">Suena en el local</span>
+          <h2 className="font-display m-0 mt-3 text-[clamp(1.35rem,6vw,1.75rem)] font-semibold uppercase leading-none tracking-[0.16em] text-light md:text-[2.1rem] md:tracking-[0.09em]">
+            Pide tu canción
           </h2>
-          <p className="text-white/40 text-base max-w-2xl mx-auto">
-            Busca tu cancion favorita y se agregara automaticamente a la cola
+          <span aria-hidden className="fb-rule mx-auto mt-4 block" />
+          <p className="mx-auto mt-4 max-w-lg text-xs leading-relaxed text-light/50 md:text-[0.84rem]">
+            Busca tu canción favorita y se agrega sola a la cola.
           </p>
 
           {isFloorLocked ? (
             /* Piso conocido por la URL de mesa: solo se informa, sin tabs */
-            <p className="mt-3 text-xs font-bold uppercase tracking-[0.15em] text-secondary/70">
-              Sonara en el piso {floor}
-            </p>
+            <p className="fb-eyebrow mt-4">Sonará en el piso {floor}</p>
           ) : (
             /* Carta publica: el cliente elige en que piso esta */
             <div className="mt-5 flex flex-col items-center gap-2">
-              <div className="inline-flex items-center gap-1 bg-white/[0.06] backdrop-blur-md border border-white/10 rounded-full p-1">
+              <div className="inline-flex items-center gap-1 rounded-full border border-white/[0.1] bg-white/[0.03] p-1">
                 {FLOORS.map((f) => (
                   <button
                     key={f}
                     onClick={() => handleFloorChange(f)}
-                    className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
+                    className={`rounded-full px-5 py-2 text-[0.75rem] font-medium transition-colors ${
                       floor === f
-                        ? 'bg-primary text-dark shadow-lg shadow-primary/30'
-                        : 'text-white/50 hover:text-white'
+                        ? 'border border-primary/40 bg-primary/12 text-light'
+                        : 'border border-transparent text-light/50 hover:text-light'
                     }`}
                   >
                     Piso {f}
                   </button>
                 ))}
               </div>
-              <p className="text-white/30 text-xs">
-                Tu cancion sonara en el piso {floor}
+              <p className="text-[0.68rem] text-light/30">
+                Tu canción sonará en el piso {floor}
               </p>
             </div>
           )}
@@ -393,14 +394,14 @@ const SolicitarCancion = ({ floor: floorProp }) => {
         >
           {!isSpotifyConnected ? (
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.03]">
                 <Music className="text-white/30" size={28} />
               </div>
-              <p className="text-white/40 text-lg mb-2">El sistema de musica no esta disponible</p>
-              <p className="text-white/20 text-sm">Pregunta al personal para solicitar una cancion</p>
+              <p className="mb-2 text-[0.85rem] text-light/50">El sistema de música no está disponible</p>
+              <p className="text-[0.72rem] text-light/30">Pregunta al personal para solicitar una canción</p>
             </div>
           ) : (
-            <div className="backdrop-blur-md bg-white/[0.03] border border-white/10 rounded-2xl p-5 md:p-6">
+            <div className="fb-card p-5 md:p-6">
               {/* Search */}
               <div ref={searchRef} className="relative">
                 <div className="relative">
@@ -411,7 +412,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); setShowResults(true); }}
                     onFocus={() => setShowResults(true)}
-                    className="w-full bg-white/[0.09] border border-white/15 rounded-xl pl-12 pr-10 py-4 text-light text-lg focus:outline-none focus:border-primary/50 focus:bg-white/[0.08] transition-all duration-300 placeholder:text-white/25"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] py-3.5 pl-12 pr-10 text-[0.9rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     placeholder="Busca una cancion o artista..."
                     disabled={createMutation.isPending}
                   />
@@ -472,7 +473,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl mx-auto mt-10"
           >
-            <h3 className="text-lg font-bold text-white/60 mb-4 text-center uppercase tracking-wider">
+            <h3 className="fb-eyebrow mb-4 block text-center">
               Solicitudes en Cola
             </h3>
             {requestsLoading ? (
@@ -488,7 +489,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 20 }}
-                      className="backdrop-blur-sm bg-white/[0.03] border border-white/8 rounded-xl p-3 hover:bg-white/[0.06] hover:border-white/15 transition-all duration-300"
+                      className="fb-inset p-3 transition-colors hover:border-white/15"
                     >
                       <div className="flex items-center gap-3">
                         {request.spotify_track_image ? (

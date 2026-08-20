@@ -66,7 +66,7 @@ const CustomerTabBar = () => {
           label: "Domicilios",
           icon: Bike,
           active: pathname.startsWith("/domicilios"),
-          activeClass: "text-emerald-400",
+          activeClass: "text-secondary",
         },
         {
           to: "/mi-cuenta",
@@ -76,7 +76,7 @@ const CustomerTabBar = () => {
           active: ["/mi-cuenta", "/mis-pedidos", "/mis-reservas"].some((p) =>
             pathname.startsWith(p)
           ),
-          activeClass: "text-gold",
+          activeClass: "text-light",
           dot: hasActiveOrder,
         },
       ].filter(Boolean),
@@ -93,7 +93,7 @@ const CustomerTabBar = () => {
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-dark/95 border-t border-white/[0.1] pb-[env(safe-area-inset-bottom)]"
+      className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-dark/95 border-t border-white/[0.07] pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="flex items-stretch">
         {tabs.map((tab) => {
@@ -105,7 +105,7 @@ const CustomerTabBar = () => {
                 onClick={(e) => handleTabClick(e, tab)}
                 aria-current={active ? "page" : undefined}
                 className={`flex h-16 flex-col items-center justify-center gap-1 transition-colors ${
-                  active ? activeClass : "text-white/45 hover:text-white/70"
+                  active ? activeClass : "text-light/40 hover:text-light/70"
                 }`}
               >
                 <span className="relative">
@@ -116,11 +116,11 @@ const CustomerTabBar = () => {
                   {dot && (
                     <span
                       aria-hidden
-                      className="absolute -top-0.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-dark"
+                      className="absolute -top-0.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-dark"
                     />
                   )}
                 </span>
-                <span className="text-[11px] font-bold tracking-wide leading-none">
+                <span className="text-[0.68rem] font-medium tracking-[0.06em] leading-none">
                   {label}
                 </span>
                 {dot && (

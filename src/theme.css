@@ -54,6 +54,12 @@
   --color-grass: #1e9e5a;
   --color-gold: #f2c53d;
 
+  /* Frostbyte Food (negocio del 3er piso). Es identidad de OTRA marca, no
+     un acento decorativo: por eso sobrevive a la regla de dejar la carta
+     pública en magenta, cyan y neutro. Vive aquí para que exista un solo
+     naranja en toda la plataforma. */
+  --color-food: #f97316;
+
   /* ── Tipografía ──
      display = títulos (h1–h6 y .font-display); body = todo lo demás.
      El tema base usa Orbitron para ambos (única familia del sistema). */

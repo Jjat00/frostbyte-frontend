@@ -1,5 +1,4 @@
 import React from "react";
-import { CheckCircle, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,50 +15,27 @@ const StoreStatusBadge = ({ isOpen, className }) => {
   // Mientras carga la config no mostramos nada para evitar parpadeos de estado.
   if (isOpen === undefined || isOpen === null) return null;
 
-  const config = isOpen
-    ? {
-        label: "Abierto",
-        Icon: CheckCircle,
-        bgClass: "bg-green-500/15 border-green-500/40",
-        textClass: "text-green-400",
-        dotClass: "bg-green-400",
-        pulse: true,
-      }
-    : {
-        label: "Cerrado",
-        Icon: Lock,
-        bgClass: "bg-red-500/15 border-red-500/40",
-        textClass: "text-red-400",
-        dotClass: "bg-red-400",
-        pulse: false,
-      };
-
-  const { label, Icon, bgClass, textClass, dotClass, pulse } = config;
+  // El verde y el rojo se quedan porque aquí el color ES el dato (abierto o
+  // cerrado), pero reducidos a un punto: el resto va en neutro como el resto
+  // de la carta.
+  const { label, dotClass } = isOpen
+    ? { label: "Abierto", dotClass: "bg-green-400" }
+    : { label: "Cerrado", dotClass: "bg-red-400" };
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border backdrop-blur-sm transition-all select-none",
-        bgClass,
+        "inline-flex select-none items-center gap-1.5 rounded-full border border-white/[0.09] bg-white/[0.03] px-2.5 py-1",
         className
       )}
       role="status"
       aria-label={`El local está ${label.toLowerCase()}`}
       title={`El local está ${label.toLowerCase()}`}
     >
-      <span className="relative flex h-2 w-2">
-        {pulse && (
-          <span
-            className={cn(
-              "absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping",
-              dotClass
-            )}
-          />
-        )}
-        <span className={cn("relative inline-flex h-2 w-2 rounded-full", dotClass)} />
+      <span className={cn("inline-flex h-1.5 w-1.5 rounded-full", dotClass)} />
+      <span className="text-[0.68rem] font-medium tracking-[0.06em] text-light/60">
+        {label}
       </span>
-      <Icon className={cn("w-3.5 h-3.5", textClass)} />
-      <span className={cn("text-xs font-bold tracking-wide", textClass)}>{label}</span>
     </div>
   );
 };

@@ -36,7 +36,7 @@ const YouTubeVideoCard = ({ video, onSelect, isLoading }) => (
     exit={{ opacity: 0, y: -10 }}
     onClick={() => onSelect(video)}
     disabled={isLoading}
-    className="w-full flex items-center gap-3 p-3 bg-white/[0.08] backdrop-blur-md border border-white/10 rounded-xl hover:border-red-400/40 hover:bg-white/[0.08] transition-all duration-200 text-left disabled:opacity-50"
+    className="fb-card fb-card--link flex w-full items-center gap-3 p-3 text-left disabled:opacity-50"
   >
     {video.thumbnail ? (
       <img loading="lazy" decoding="async"
@@ -70,7 +70,7 @@ const NowPlayingCard = ({ video }) => {
       <p className="text-[10px] text-red-400 font-bold uppercase tracking-[0.2em] mb-3 text-center">
         Reproduciendo ahora
       </p>
-      <div className="flex items-center gap-4 backdrop-blur-md bg-white/[0.04] border border-white/10 rounded-2xl p-3 shadow-[0_0_40px_rgba(239,68,68,0.1)]">
+      <div className="fb-card flex items-center gap-4 p-3">
         {/* Thumbnail */}
         <div className="relative flex-shrink-0">
           {video.thumbnail ? (
@@ -233,11 +233,6 @@ const SolicitarVideo = () => {
       {/* Canvas animation - esfera 3D de particulas */}
       <MusicVisualizer isPlaying={!!nowPlaying?.video_id} />
 
-      {/* Neon ambiental rojo */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-red-500 rounded-full filter blur-[120px]" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary rounded-full filter blur-[120px]" />
-      </div>
 
       <div className="container mx-auto px-4 relative z-10 py-16">
         {/* Title */}
@@ -248,14 +243,16 @@ const SolicitarVideo = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10"
         >
-          <h2 className="text-4xl md:text-6xl font-black mb-3 flex items-center justify-center gap-3 flex-wrap">
-            <Youtube className="w-10 h-10 md:w-14 md:h-14 text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
-            <span className="bg-gradient-to-r from-red-400 via-primary to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]">
-              PIDE TU VIDEO
-            </span>
+          <span className="fb-eyebrow inline-flex items-center gap-2">
+            <Youtube className="h-3.5 w-3.5 text-red-500" />
+            En la pantalla del local
+          </span>
+          <h2 className="font-display m-0 mt-3 text-[clamp(1.35rem,6vw,1.75rem)] font-semibold uppercase leading-none tracking-[0.16em] text-light md:text-[2.1rem] md:tracking-[0.09em]">
+            Pide tu video
           </h2>
-          <p className="text-white/40 text-base max-w-2xl mx-auto">
-            Busca un video y se reproducira en la pantalla del local
+          <span aria-hidden className="fb-rule mx-auto mt-4 block" />
+          <p className="mx-auto mt-4 max-w-lg text-xs leading-relaxed text-light/50 md:text-[0.84rem]">
+            Busca un video y se reproduce en la pantalla del local.
           </p>
         </motion.div>
 
@@ -277,7 +274,7 @@ const SolicitarVideo = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="backdrop-blur-md bg-white/[0.03] border border-white/10 rounded-2xl p-5 md:p-6">
+          <div className="fb-card p-5 md:p-6">
             <div ref={searchRef} className="relative">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
@@ -290,7 +287,7 @@ const SolicitarVideo = () => {
                     setShowResults(true);
                   }}
                   onFocus={() => setShowResults(true)}
-                  className="w-full bg-white/[0.09] border border-white/15 rounded-xl pl-12 pr-10 py-4 text-light text-lg focus:outline-none focus:border-red-400/50 focus:bg-white/[0.08] transition-all duration-300 placeholder:text-white/25"
+                  className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] py-3.5 pl-12 pr-10 text-[0.9rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   placeholder="Busca un video..."
                   disabled={createMutation.isPending}
                 />
@@ -360,7 +357,7 @@ const SolicitarVideo = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl mx-auto mt-10"
           >
-            <h3 className="text-lg font-bold text-white/60 mb-4 text-center uppercase tracking-wider">
+            <h3 className="fb-eyebrow mb-4 block text-center">
               Videos en Cola
             </h3>
             {requestsLoading ? (
@@ -376,7 +373,7 @@ const SolicitarVideo = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 20 }}
-                      className="backdrop-blur-sm bg-white/[0.03] border border-white/8 rounded-xl p-3 hover:bg-white/[0.06] hover:border-white/15 transition-all duration-300"
+                      className="fb-inset p-3 transition-colors hover:border-white/15"
                     >
                       <div className="flex items-center gap-3">
                         {request.thumbnail ? (

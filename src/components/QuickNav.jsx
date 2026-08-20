@@ -1,7 +1,5 @@
 import React, { useMemo } from "react";
-import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
 import { useActiveCategories, useStoreConfig } from "@/hooks";
 
 /**
@@ -107,56 +105,29 @@ const QuickNav = () => {
   );
 
   return (
-    <section id="menu" className="py-8 backdrop-blur-md bg-white/[0.02] border-y border-white/[0.08] relative">
-      <div className="container mx-auto px-4">
+    <section
+      id="menu"
+      className="fb-section fb-section--plain border-y border-white/[0.06] py-7"
+    >
+      <div className="container relative z-10 mx-auto px-5">
+        <div className="fb-reveal mx-auto flex max-w-4xl flex-col items-center gap-4">
+          <span className="fb-eyebrow">Explorar carta</span>
 
-        {/* Label */}
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="flex items-center justify-center gap-2 mb-5"
-        >
-          <p className="text-white/40 text-xs uppercase tracking-[0.2em] font-semibold">
-            Explorar carta
-          </p>
-          <motion.div
-            animate={{ y: [0, 4, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <ChevronDown className="w-3.5 h-3.5 text-primary/60" />
-          </motion.div>
-        </motion.div>
-
-        {/* Pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex flex-wrap justify-center gap-2"
-        >
-          {visibleSections.map((section, index) => (
-            <motion.button
-              key={section.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.03 }}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleClick(section.href, section.isRoute)}
-              className="liquid-glass-pill group relative px-5 py-2.5 rounded-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/70 text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:border-primary/50 hover:text-white hover:bg-white/[0.1] hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_20%,transparent),inset_0_1px_0_rgba(255,255,255,0.08)] cursor-pointer"
-            >
-              <span className="relative z-10 flex items-center gap-1.5">
+          {/* Los atajos son la tabla de contenidos de la carta: van todos
+              iguales y en neutro. El color lo pone la sección a la que
+              llevan, no el atajo. */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {visibleSections.map((section) => (
+              <button
+                key={section.name}
+                onClick={() => handleClick(section.href, section.isRoute)}
+                className="fb-pill cursor-pointer whitespace-nowrap"
+              >
                 {section.name}
-                <ChevronDown className="w-3 h-3 text-white/30 group-hover:text-primary transition-colors" />
-              </span>
-            </motion.button>
-          ))}
-        </motion.div>
-
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

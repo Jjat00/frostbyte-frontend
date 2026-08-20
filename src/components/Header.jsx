@@ -10,7 +10,6 @@ import {
   Bike,
   UserCircle2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import CustomerAvatar from "@/components/auth/CustomerAvatar";
 import {
@@ -73,18 +72,18 @@ ListItem.displayName = "ListItem";
  * categorySlug: slug de la categoría en BD (null = siempre visible)
  */
 const BEVERAGE_SECTIONS = [
-  { key: "desguayabator", label: "🩹 Desguayabator", href: "#desguayabator", categorySlug: null, className: "text-emerald-400 hover:text-emerald-300" },
-  { key: "agua", label: "💧 Agua", href: "#agua", categorySlug: null, className: "text-cyan-400 hover:text-cyan-300" },
+  { key: "desguayabator", label: "Desguayabator", href: "#desguayabator", categorySlug: null },
+  { key: "agua", label: "Agua", href: "#agua", categorySlug: null },
   { key: "granizados", label: "Granizados", href: "#granizados", categorySlug: "granizados" },
   { key: "frappes", label: "Frappes", href: "#frappes", categorySlug: "frappes" },
   { key: "sodas", label: "Sodas Italianas", href: "#sodas", categorySlug: "sodas-italianas" },
   { key: "micheladas", label: "Micheladas", href: "#micheladas", categorySlug: "micheladas" },
-  { key: "cervezas", label: "🍺 Cervezas", href: "#cervezas", categorySlug: "cervezas" },
-  { key: "cuates", label: "🍹 Cuates", href: "#cuates", categorySlug: "cuates" },
-  { key: "luladas", label: "🍋 Luladas", href: "#luladas", categorySlug: "luladas", className: "text-lime-400 hover:text-lime-300" },
+  { key: "cervezas", label: "Cervezas", href: "#cervezas", categorySlug: "cervezas" },
+  { key: "cuates", label: "Cuates", href: "#cuates", categorySlug: "cuates" },
+  { key: "luladas", label: "Luladas", href: "#luladas", categorySlug: "luladas" },
   { key: "mocktails", label: "Cocteles", href: "#mocktails", categorySlug: "mocktails" },
   { key: "shots", label: "Shots", href: "#shots", categorySlug: "shots" },
-  { key: "vinos", label: "🍷 Vinos", href: "#vinos", categorySlug: "vinos" },
+  { key: "vinos", label: "Vinos", href: "#vinos", categorySlug: "vinos" },
 ];
 
 const Header = () => {
@@ -129,23 +128,23 @@ const Header = () => {
   }, []);
 
   const productLinks = [
-    { title: "🩹 Desguayabator", href: "#desguayabator", description: "Bebida helada para curar guayabos. Electrolit + Bonfiest.", categorySlug: null },
-    { title: "💧 Agua", href: "#agua", description: "Agua pura y refrescante para hidratarte.", categorySlug: null },
+    { title: "Desguayabator", href: "#desguayabator", description: "Bebida helada para curar guayabos. Electrolit + Bonfiest.", categorySlug: null },
+    { title: "Agua", href: "#agua", description: "Agua pura y refrescante para hidratarte.", categorySlug: null },
     { title: "Granizados", href: "#granizados", description: "Mango, Maracumango, Lulo y más.", categorySlug: "granizados" },
     { title: "Frappés", href: "#frappes", description: "Café, Oreo, Fresa, Brownie.", categorySlug: "frappes" },
     { title: "Sodas Italianas", href: "#sodas", description: "Refrescantes sodas de Fresa y Maracuyá.", categorySlug: "sodas-italianas" },
     { title: "Micheladas", href: "#micheladas", description: "Poker, Budweiser y Corona con nuestra mezcla secreta.", categorySlug: "micheladas" },
-    { title: "🍺 Cervezas", href: "#cervezas", description: "Poker, Budweiser, Corona y Coronita bien frías.", categorySlug: "cervezas" },
-    { title: "🍹 Cuates", href: "#cuates", description: "Cócteles con tequila mexicano. Limón, Fresa y Mango.", categorySlug: "cuates" },
-    { title: "🍋 Luladas", href: "#luladas", description: "Refrescantes luladas preparadas con lulo natural.", categorySlug: "luladas" },
+    { title: "Cervezas", href: "#cervezas", description: "Poker, Budweiser, Corona y Coronita bien frías.", categorySlug: "cervezas" },
+    { title: "Cuates", href: "#cuates", description: "Cócteles con tequila mexicano. Limón, Fresa y Mango.", categorySlug: "cuates" },
+    { title: "Luladas", href: "#luladas", description: "Refrescantes luladas preparadas con lulo natural.", categorySlug: "luladas" },
     { title: "Cócteles", href: "#mocktails", description: "Mojitos, Margaritas, Moscow Mule y más.", categorySlug: "mocktails" },
     { title: "Shots", href: "#shots", description: "Ginebra, Vodka, Whisky, Tequila y Ron.", categorySlug: "shots" },
-    { title: "🍷 Vinos", href: "#vinos", description: "Copas de Gato Negro y Casillero del Diablo.", categorySlug: "vinos" },
-    { title: "✨ Recomendador", href: "#que-te-provoca", description: "Deja que te recomendemos la bebida perfecta.", categorySlug: null },
-    { title: "📱 Descuento Redes", href: "#descuento-redes", description: "Siguenos en redes y obtendras un descuento.", categorySlug: null },
-    { title: "🎂 Descuento Cumple", href: "#descuento-cumple", description: "Si es tu cumple, tendras un descuento especial.", categorySlug: null },
-    { title: "🎵 Pedir Cancion", href: "#solicitar-cancion", description: "Pide tu cancion favorita y la ponemos para ti.", categorySlug: null },
-    { title: "💬 Tu Opinion", href: "#feedback", description: "Dejanos tu feedback, sugerencias o comentarios.", categorySlug: null },
+    { title: "Vinos", href: "#vinos", description: "Copas de Gato Negro y Casillero del Diablo.", categorySlug: "vinos" },
+    { title: "Recomendador", href: "#que-te-provoca", description: "Deja que te recomendemos la bebida perfecta.", categorySlug: null },
+    { title: "Descuento Redes", href: "#descuento-redes", description: "Siguenos en redes y obtendras un descuento.", categorySlug: null },
+    { title: "Descuento Cumple", href: "#descuento-cumple", description: "Si es tu cumple, tendras un descuento especial.", categorySlug: null },
+    { title: "Pedir Cancion", href: "#solicitar-cancion", description: "Pide tu cancion favorita y la ponemos para ti.", categorySlug: null },
+    { title: "Tu Opinion", href: "#feedback", description: "Dejanos tu feedback, sugerencias o comentarios.", categorySlug: null },
   ];
 
   // Filtrar productLinks del desktop según categorías activas
@@ -172,7 +171,7 @@ const Header = () => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled || isMobileMenuOpen
-          ? "liquid-glass backdrop-blur-xl bg-white/[0.08] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
+          ? "bg-dark/92 border-b border-white/[0.07]"
           : "bg-transparent"
       }`}
     >
@@ -213,7 +212,7 @@ const Header = () => {
                     Productos
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="liquid-glass grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] backdrop-blur-xl bg-dark/90 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)]">
+                    <ul className="grid w-[400px] gap-2 rounded-xl border border-white/[0.08] bg-dark/95 p-3 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                       {visibleProductLinks.map((component) => (
                         <ListItem
                           key={component.title}
@@ -254,7 +253,7 @@ const Header = () => {
                           "text-gray hover:text-primary focus:text-primary"
                         )}
                       >
-                        🎮 Frostbyte Play
+                        Frostbyte Play
                       </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
@@ -329,7 +328,7 @@ const Header = () => {
                       <Link
                         to="/mi-cuenta"
                         aria-label="Mi cuenta"
-                        className="ml-1 grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all"
+                        className="ml-1 grid place-items-center rounded-full ring-1 ring-white/15 transition-all hover:ring-white/35"
                       >
                         <CustomerAvatar
                           customer={customer}
@@ -345,7 +344,7 @@ const Header = () => {
                           un destino con dos etiquetas se lee como dos sitios */}
                       <Link
                         to="/mi-cuenta"
-                        className="ml-1 flex items-center gap-1.5 rounded-full bg-linear-to-r from-gold to-amber-600 text-dark px-4 py-2 text-xs font-black uppercase tracking-wide hover:opacity-90 transition-opacity"
+                        className="fb-btn ml-1 rounded-full px-4 py-2 text-[0.7rem]"
                       >
                         <UserCircle2 className="w-4 h-4" />
                         Mi cuenta
@@ -356,16 +355,17 @@ const Header = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            <Button
+            <button
+              type="button"
               onClick={() =>
                 document
                   .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="ml-3 2xl:ml-6 flex-shrink-0 whitespace-nowrap backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_color-mix(in_srgb,var(--color-primary)_40%,transparent)] transition-all duration-300"
+              className="fb-btn fb-btn--accent ml-3 flex-shrink-0 whitespace-nowrap px-4 py-2 2xl:ml-6"
             >
-              Ver Carta
-            </Button>
+              Ver la carta
+            </button>
           </div>
 
           {/* Rastro de sesión en móvil: el avatar solo existía en escritorio,
@@ -377,7 +377,7 @@ const Header = () => {
             <Link
               to="/mi-cuenta"
               aria-label="Mi cuenta"
-              className="xl:hidden grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all mr-2.5"
+              className="xl:hidden mr-2.5 grid place-items-center rounded-full ring-1 ring-white/15 transition-all hover:ring-white/35"
             >
               <CustomerAvatar customer={customer} className="w-8 h-8 text-sm" />
             </Link>
@@ -398,7 +398,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="liquid-glass xl:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.08] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
+            className="fb-card xl:hidden mt-4 max-h-[calc(100vh-80px)] space-y-4 overflow-y-auto px-4 pb-6 pt-4"
           >
             {/* Domicilios y Mi cuenta no se repiten en móvil: son pestañas
                 fijas de la barra inferior (CustomerTabBar). Este menú se queda
@@ -406,10 +406,10 @@ const Header = () => {
                 secciones. */}
             <a
               href="#carta"
-              className="block text-primary hover:text-primary/80 transition-colors duration-300 font-bold"
+              className="block text-[0.85rem] font-medium text-primary transition-colors hover:text-primary/80"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Carta Completa
+              Carta completa
             </a>
 
             {/* De 768 px en adelante la barra inferior ya no está y el nav
@@ -419,7 +419,7 @@ const Header = () => {
               {inAppOrdering && (
                 <Link
                   to="/domicilios"
-                  className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-300 font-bold"
+                  className="flex items-center gap-2 text-[0.85rem] font-medium text-secondary transition-colors hover:text-secondary/80"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Bike className="w-4 h-4" />
@@ -429,7 +429,7 @@ const Header = () => {
               {showMyOrders && (
                 <Link
                   to="/mis-pedidos"
-                  className="flex items-center gap-2 text-gray hover:text-primary transition-colors duration-300 font-medium"
+                  className="flex items-center gap-2 text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <ClipboardList className="w-4 h-4" />
@@ -438,7 +438,7 @@ const Header = () => {
               )}
               <Link
                 to="/mi-cuenta"
-                className="flex items-center gap-2 text-gold hover:text-amber-300 transition-colors duration-300 font-medium"
+                className="flex items-center gap-2 text-[0.85rem] font-medium text-light/70 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {isCustomerAuthenticated ? (
@@ -453,12 +453,12 @@ const Header = () => {
               </Link>
             </div>
             <div className="border-t border-white/[0.08] pt-3 space-y-4">
-              <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Bebidas</p>
+              <p className="fb-eyebrow">Bebidas</p>
               {visibleBeverages.map((section) => (
                 <a
                   key={section.key}
                   href={section.href}
-                  className={`block ${section.className || "text-gray hover:text-primary"} transition-colors duration-300 font-medium`}
+                  className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {section.label}
@@ -466,41 +466,41 @@ const Header = () => {
               ))}
             </div>
             <div className="border-t border-white/[0.08] pt-3 space-y-4">
-              <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Mas en Frostbyte</p>
+              <p className="fb-eyebrow">Más en Frostbyte</p>
               <a
                 href="#que-te-provoca"
-                className="block text-violet-400 hover:text-violet-300 transition-colors duration-300 font-medium"
+                className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                ✨ Recomendador de Bebidas
+                Recomendador de bebidas
               </a>
               <a
                 href="#descuento-redes"
-                className="block text-pink-400 hover:text-pink-300 transition-colors duration-300 font-medium"
+                className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                📱 Descuento por Redes
+                Descuento por redes
               </a>
               <a
                 href="#descuento-cumple"
-                className="block text-amber-400 hover:text-amber-300 transition-colors duration-300 font-medium"
+                className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                🎂 Descuento de Cumple
+                Descuento de cumpleaños
               </a>
               <a
                 href="#solicitar-cancion"
-                className="block text-green-400 hover:text-green-300 transition-colors duration-300 font-medium"
+                className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                🎵 Pedir Cancion
+                Pedir canción
               </a>
               <a
                 href="#feedback"
-                className="block text-teal-400 hover:text-teal-300 transition-colors duration-300 font-medium"
+                className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                💬 Tu Opinion
+                Tu opinión
               </a>
             </div>
             <div className="border-t border-white/[0.08] pt-4 space-y-4">
@@ -508,29 +508,29 @@ const Header = () => {
               {isTableRoute && (
                 <Link
                   to="/game"
-                  className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                  className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  🎮 Frostbyte Play
+                  Frostbyte Play
                 </Link>
               )}
               <a
                 href="https://www.google.com/maps/place/Frostbyte/@0.9083283,-77.7931126,800m/data=!3m2!1e3!4b1!4m6!3m5!1s0x8e295de01695b4bb:0x5a702a162899374d!8m2!3d0.9083229!4d-77.7905377!16s%2Fg%2F11mm01x7jq?entry=ttu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-gray hover:text-primary transition-colors duration-300 font-medium"
+                className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                📍 Ubicación
+                Ubicación
               </a>
               <a
                 href="https://wa.me/573164277879"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-green-400 hover:text-green-300 transition-colors duration-300 font-medium"
+                className="block text-[0.85rem] font-medium text-light/55 transition-colors hover:text-light"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                💬 WhatsApp
+                WhatsApp
               </a>
               {/* Puerta del staff. Está aquí abajo y no arriba porque el
                   cliente no la necesita, pero el equipo entra cada turno: al
@@ -539,24 +539,25 @@ const Header = () => {
                   problema de la vieja etiqueta "Login". */}
               <Link
                 to="/login"
-                className="flex items-center gap-2 text-white/35 hover:text-primary transition-colors duration-300 text-sm font-medium"
+                className="flex items-center gap-2 text-[0.78rem] font-medium text-light/35 transition-colors hover:text-light/70"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <LogIn className="w-3.5 h-3.5" />
                 Acceso equipo
               </Link>
             </div>
-            <Button
+            <button
+              type="button"
               onClick={() => {
                 document
                   .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" });
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold shadow-[0_0_20px_color-mix(in_srgb,var(--color-primary)_20%,transparent)]"
+              className="fb-btn fb-btn--accent w-full"
             >
-              Ver Carta
-            </Button>
+              Ver la carta
+            </button>
           </motion.div>
         )}
       </nav>

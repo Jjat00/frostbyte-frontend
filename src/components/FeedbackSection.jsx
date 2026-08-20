@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, Send, Loader2, Star, ChevronDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import SectionHeading from '@/components/SectionHeading';
 import { feedbackService } from '@/services';
 import { useMutation } from '@tanstack/react-query';
 
 const feedbackTypes = [
-  { value: 'compliment', label: 'Felicitacion', emoji: '🎉' },
+  { value: 'compliment', label: 'Felicitación', emoji: '🎉' },
   { value: 'suggestion', label: 'Sugerencia', emoji: '💡' },
   { value: 'complaint', label: 'Queja', emoji: '😔' },
   { value: 'question', label: 'Pregunta', emoji: '❓' },
@@ -39,7 +39,7 @@ const StarRating = ({ rating, setRating, disabled }) => {
         </button>
       ))}
       {rating > 0 && (
-        <span className="ml-2 text-sm text-gray">
+        <span className="ml-2 text-[0.72rem] text-light/45">
           {rating === 5 && 'Excelente'}
           {rating === 4 && 'Muy bueno'}
           {rating === 3 && 'Bueno'}
@@ -121,30 +121,14 @@ const FeedbackSection = () => {
   const selectedType = feedbackTypes.find(t => t.value === formData.feedback_type);
 
   return (
-    <section id="feedback" className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(10,10,20,0.95), rgba(13,13,26,0.95))" }}>
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            <span className="bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
-              TU OPINION IMPORTA
-            </span>
-          </h2>
-          <p className="text-gray text-lg max-w-2xl mx-auto">
-            Para nosotros es muy importante saber tu opinion para mejorar.
-            Cuéntanos qué tal tu experiencia en Frostbyte Cumbal 💙
-          </p>
-        </motion.div>
+    <section id="feedback" className="fb-section fb-section--plain py-16">
+      <div className="container relative z-10 mx-auto px-5">
+        <SectionHeading
+          eyebrow="Cuéntanos"
+          title="Tu opinión importa"
+          description="Saber qué tal te fue es lo que nos deja mejorar. Cuéntanos tu experiencia en Frostbyte Cumbal."
+          className="mb-10"
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -153,25 +137,19 @@ const FeedbackSection = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-8 md:p-10 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.25)]">
-            {/* Efectos de fondo */}
-            <div className="absolute inset-0 opacity-5">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary rounded-full filter blur-[80px]"></div>
-            </div>
-
+          <div className="fb-card p-6 sm:p-8">
             <div className="relative z-10">
-              {/* Icono decorativo */}
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center">
-                  <MessageSquare className="text-dark" size={40} />
-                </div>
+              {/* Icono */}
+              <div className="mb-6 flex justify-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-[14px] border border-white/[0.1] bg-white/[0.03]">
+                  <MessageSquare className="text-light/70" size={20} strokeWidth={1.6} />
+                </span>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Nombre (opcional) */}
                 <div>
-                  <label htmlFor="customer_name" className="block text-light font-semibold mb-2">
+                  <label htmlFor="customer_name" className="fb-eyebrow mb-2 block">
                     Tu nombre (opcional)
                   </label>
                   <input
@@ -180,7 +158,7 @@ const FeedbackSection = () => {
                     name="customer_name"
                     value={formData.customer_name}
                     onChange={handleChange}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     placeholder="Ej: Maria"
                     disabled={createMutation.isPending}
                   />
@@ -188,7 +166,7 @@ const FeedbackSection = () => {
 
                 {/* Tipo de feedback */}
                 <div>
-                  <label className="block text-light font-semibold mb-2">
+                  <label className="fb-eyebrow mb-2 block">
                     Tipo de comentario
                   </label>
                   <div className="relative">
@@ -196,7 +174,7 @@ const FeedbackSection = () => {
                       type="button"
                       onClick={() => setShowTypeDropdown(!showTypeDropdown)}
                       disabled={createMutation.isPending}
-                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 flex items-center justify-between"
+                      className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none flex items-center justify-between"
                     >
                       <span>
                         {selectedType?.emoji} {selectedType?.label}
@@ -205,7 +183,7 @@ const FeedbackSection = () => {
                     </button>
 
                     {showTypeDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-2 backdrop-blur-xl bg-dark/90 border border-white/[0.1] rounded-lg overflow-hidden z-20 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+                      <div className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-xl border border-white/[0.1] bg-dark/95">
                         {feedbackTypes.map((type) => (
                           <button
                             key={type.value}
@@ -228,8 +206,8 @@ const FeedbackSection = () => {
 
                 {/* Rating */}
                 <div>
-                  <label className="block text-light font-semibold mb-2">
-                    Calificacion (opcional)
+                  <label className="fb-eyebrow mb-2 block">
+                    Calificación (opcional)
                   </label>
                   <StarRating
                     rating={formData.rating}
@@ -240,7 +218,7 @@ const FeedbackSection = () => {
 
                 {/* Comentario */}
                 <div>
-                  <label htmlFor="comment" className="block text-light font-semibold mb-2">
+                  <label htmlFor="comment" className="fb-eyebrow mb-2 block">
                     Tu comentario *
                   </label>
                   <textarea
@@ -249,33 +227,33 @@ const FeedbackSection = () => {
                     value={formData.comment}
                     onChange={handleChange}
                     rows="4"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-secondary/50 focus:bg-white/[0.08] transition-all duration-300 resize-none"
-                    placeholder="Cuentanos tu experiencia, sugerencias o lo que quieras compartir..."
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none resize-none"
+                    placeholder="Cuéntanos tu experiencia, sugerencias o lo que quieras compartir…"
                     required
                     disabled={createMutation.isPending}
                   ></textarea>
-                  <p className="text-xs text-gray mt-1">
-                    Minimo 10 caracteres ({formData.comment.length}/10)
+                  <p className="mt-1.5 text-[0.68rem] text-light/35">
+                    Mínimo 10 caracteres ({formData.comment.length}/10)
                   </p>
                 </div>
 
-                <Button
+                <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="w-full bg-gradient-to-r from-secondary to-primary text-dark font-bold text-lg py-6 hover:shadow-2xl hover:shadow-secondary/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="fb-btn fb-btn--accent w-full disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {createMutation.isPending ? (
                     <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                       Enviando...
                     </>
                   ) : (
                     <>
-                      <Send className="w-5 h-5 mr-2" />
-                      Enviar Feedback
+                      <Send className="w-4 h-4" />
+                      Enviar
                     </>
                   )}
-                </Button>
+                </button>
               </form>
 
               {/* Mensaje informativo */}
@@ -286,8 +264,8 @@ const FeedbackSection = () => {
                 transition={{ delay: 0.4 }}
                 className="mt-6 text-center"
               >
-                <p className="text-gray text-sm">
-                  Tu opinion nos ayuda a mejorar cada dia. ¡Gracias! 💙
+                <p className="text-[0.72rem] text-light/35">
+                  Tu opinión nos ayuda a mejorar cada día. ¡Gracias!
                 </p>
               </motion.div>
             </div>

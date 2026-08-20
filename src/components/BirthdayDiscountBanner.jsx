@@ -1,81 +1,88 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Cake, PartyPopper, CreditCard, Users } from "lucide-react";
+import { Cake, CreditCard, Users } from "lucide-react";
 
+const REQUISITOS = [
+  {
+    Icon: CreditCard,
+    text: (
+      <>
+        Muestra tu <span className="text-light">documento de identidad</span> al
+        mesero para verificar tu fecha de nacimiento.
+      </>
+    ),
+  },
+  {
+    Icon: Users,
+    text: (
+      <>
+        Válido si vienes con mínimo{" "}
+        <span className="text-light">2 amigos</span>.
+      </>
+    ),
+  },
+];
+
+/**
+ * Descuento de cumpleaños.
+ *
+ * Igual que el de redes: es un gancho, va en neutro y el número manda por
+ * tamaño. Las condiciones son parte de la oferta, no letra pequeña, así que
+ * se leen antes del cierre.
+ */
 const BirthdayDiscountBanner = () => {
   return (
-    <section id="descuento-cumple" className="py-8 bg-dark">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="max-w-xl mx-auto relative overflow-hidden rounded-2xl border border-secondary/30 bg-gradient-to-br from-secondary/10 via-dark-secondary to-primary/10"
-        >
-          {/* Glow decorativo */}
-          <div className="absolute -top-16 -right-16 w-40 h-40 bg-secondary/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative p-6">
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-secondary to-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-secondary/30">
-                <Cake size={20} className="text-dark" />
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black bg-gradient-to-r from-secondary to-primary bg-clip-text text-transparent">
-                    50% OFF
-                  </span>
-                </div>
-                <p className="text-white/80 text-sm font-semibold -mt-0.5">
-                  para cumpleañeros
-                </p>
-              </div>
+    <section id="descuento-cumple" className="fb-section fb-section--plain py-9">
+      <div className="container relative z-10 mx-auto px-5">
+        <div className="fb-reveal fb-card mx-auto max-w-xl p-5 sm:p-6">
+          {/* Encabezado */}
+          <div className="mb-5 flex items-center gap-3.5">
+            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[13px] border border-white/[0.1] bg-white/[0.04]">
+              <Cake size={19} className="text-light/70" />
+            </span>
+            <div className="min-w-0">
+              <span className="fb-eyebrow block">Para cumpleañeros</span>
+              <h3 className="font-display m-0 mt-1.5 text-2xl font-semibold leading-none tracking-[0.06em] text-light">
+                50%{" "}
+                <span className="text-base tracking-[0.14em] text-light/55">
+                  OFF
+                </span>
+              </h3>
             </div>
+          </div>
 
-            {/* Descripción */}
-            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-              <PartyPopper size={20} className="text-secondary flex-shrink-0 mt-0.5" />
-              <p className="text-white/70 text-sm leading-relaxed">
-                Si hoy es tu cumpleaños, obtienes <span className="text-secondary font-bold">50% de descuento</span> en el producto que elijas. Aplica para <span className="text-secondary font-bold">un solo producto</span> de cualquier categoría.
-              </p>
-            </div>
-
-            {/* Requisitos */}
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-secondary/10 to-primary/10 border border-secondary/20">
-                <CreditCard size={20} className="text-primary flex-shrink-0" />
-                <p className="text-white/70 text-sm">
-                  Muestra tu <span className="text-primary font-bold">documento de identidad</span> al mesero para verificar tu fecha de nacimiento.
-                </p>
-              </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-secondary/10 to-primary/10 border border-secondary/20">
-                <Users size={20} className="text-primary flex-shrink-0" />
-                <p className="text-white/70 text-sm">
-                  Válido si vienes con mínimo <span className="text-primary font-bold">2 amigos</span>.
-                </p>
-              </div>
-            </div>
-
-            {/* Urgencia */}
-            <p className="text-center text-secondary/80 text-xs font-semibold mb-3">
-              Válido únicamente el día de tu cumpleaños
-            </p>
-
-            {/* CTA */}
-            <p className="text-center text-white/50 text-xs">
-              Pregúntale al mesero para reclamar tu descuento
-            </p>
-
-            {/* No acumulable */}
-            <p className="text-center text-white/30 text-[10px] mt-3">
-              No acumulable con otras promociones. No incluye la jarra de
-              mojito ni botellas de vino.
+          {/* Qué es */}
+          <div className="fb-inset mb-4 p-3.5">
+            <p className="text-[0.78rem] leading-relaxed text-light/65">
+              Si hoy es tu cumpleaños, tienes{" "}
+              <span className="text-light">50% de descuento</span> en el
+              producto que elijas. Aplica para{" "}
+              <span className="text-light">un solo producto</span> de cualquier
+              categoría.
             </p>
           </div>
-        </motion.div>
+
+          {/* Requisitos */}
+          <div className="mb-5 space-y-2">
+            {REQUISITOS.map(({ Icon, text }, i) => (
+              <div key={i} className="fb-inset flex items-center gap-3 p-3.5">
+                <Icon size={17} className="flex-shrink-0 text-light/55" />
+                <p className="text-[0.78rem] leading-relaxed text-light/65">
+                  {text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-[0.75rem] text-light/60">
+            Válido únicamente el día de tu cumpleaños. Pregúntale al mesero
+            para reclamarlo.
+          </p>
+
+          <p className="mt-3 text-center text-[0.62rem] text-light/30">
+            No acumulable con otras promociones. No incluye la jarra de mojito
+            ni botellas de vino.
+          </p>
+        </div>
       </div>
     </section>
   );

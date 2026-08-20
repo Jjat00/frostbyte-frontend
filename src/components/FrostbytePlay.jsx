@@ -1,100 +1,85 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Play, Gamepad2, Zap, Search, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Play, Zap, Search, Users } from "lucide-react";
+import SectionHeading from "@/components/SectionHeading";
+
+/**
+ * Frostbyte Play: los juegos de la mesa. Solo se monta en `/mesa/*`.
+ *
+ * El 2026-08-20 pasó al lenguaje del hero. Se fueron los tres orbes con
+ * `animate-pulse`, el brillo pulsante sobre cada tarjeta y los dos mandos que
+ * se balanceaban en bucle junto al titular: movimiento infinito en una página
+ * que ya castiga las GPU de gama baja.
+ *
+ * Cada juego conserva su color como chip, que es lo que los distingue de un
+ * vistazo.
+ */
 
 const games = [
   {
     id: "duelo-frostbyte",
     name: "Duelo Frostbyte",
     description:
-      "Juego de reflejos ultra rapido. Compite con tus amigos para ver quien reacciona mas rapido.",
+      "Juego de reflejos ultra rápido. Compite con tus amigos para ver quién reacciona más rápido.",
     icon: Zap,
     minPlayers: 2,
-    accent: "violet",
     gradient: "from-violet-500 via-purple-500 to-amber-500",
-    border: "border-violet-500/40",
-    shadow: "shadow-violet-500/20",
-    features: ["Juego de reflejos", "Rondas rapidas"],
+    features: ["Juego de reflejos", "Rondas rápidas"],
   },
   {
     id: "impostor-frostbyte",
     name: "Impostor Frostbyte",
     description:
-      "Descubre al impostor entre tus amigos. Un celular, muchas sospechas. Encuentra quien no pertenece.",
+      "Descubre al impostor entre tus amigos. Un celular, muchas sospechas. Encuentra quién no pertenece.",
     icon: Search,
     minPlayers: 3,
-    accent: "red",
     gradient: "from-red-500 via-rose-500 to-orange-500",
-    border: "border-red-500/40",
-    shadow: "shadow-red-500/20",
-    features: ["Juego de deduccion", "Conversacion en grupo"],
+    features: ["Juego de deducción", "Conversación en grupo"],
   },
 ];
 
-const GameCard = ({ game, index }) => {
+const GameCard = ({ game }) => {
   const navigate = useNavigate();
   const Icon = game.icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.15 }}
-      className="flex-1 min-w-0"
-    >
-      <div
-        className={`liquid-glass-interactive bg-dark/90 backdrop-blur-xl border-2 ${game.border} rounded-2xl p-6 md:p-8 ${game.shadow} shadow-xl relative overflow-hidden h-full flex flex-col`}
+    <div className="fb-card fb-reveal flex h-full flex-col p-6">
+      <span
+        className={`mb-5 flex h-10 w-10 items-center justify-center rounded-[12px] bg-linear-to-br ${game.gradient} opacity-90`}
       >
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-50 animate-pulse" />
+        <Icon className="h-[18px] w-[18px] text-dark" />
+      </span>
 
-        <div className="relative z-10 flex flex-col h-full">
-          <motion.div
-            className={`inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br ${game.gradient} mb-5 shadow-lg`}
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <Icon className="w-8 h-8 text-white" />
-          </motion.div>
+      <h3 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
+        {game.name}
+      </h3>
 
-          <h3
-            className={`text-xl md:text-2xl font-bold bg-gradient-to-r ${game.gradient} bg-clip-text text-transparent mb-3`}
-          >
-            {game.name}
-          </h3>
+      <p className="mt-3 text-[0.78rem] leading-relaxed text-light/55">
+        {game.description}
+      </p>
 
-          <p className="text-gray/70 text-sm mb-4 leading-relaxed">
-            {game.description}
-          </p>
+      <ul className="mt-4 space-y-1.5 text-[0.72rem] text-light/45">
+        {game.features.map((f) => (
+          <li key={f} className="flex items-center gap-2">
+            <span className="text-light/25">·</span>
+            <span>{f}</span>
+          </li>
+        ))}
+        <li className="flex items-center gap-2">
+          <Users className="h-3 w-3 text-light/25" />
+          <span>{game.minPlayers}+ jugadores</span>
+        </li>
+      </ul>
 
-          <ul className="text-gray/60 space-y-1.5 mb-6 text-sm">
-            {game.features.map((f) => (
-              <li key={f} className="flex items-center gap-2">
-                <span className="text-white/30">-</span>
-                <span>{f}</span>
-              </li>
-            ))}
-            <li className="flex items-center gap-2">
-              <Users className="w-3.5 h-3.5 text-white/30" />
-              <span>{game.minPlayers}+ jugadores</span>
-            </li>
-          </ul>
-
-          <div className="mt-auto">
-            <Button
-              onClick={() => navigate(`/game/${game.id}/instrucciones`)}
-              size="sm"
-              className={`bg-gradient-to-r ${game.gradient} text-white font-bold hover:shadow-lg transition-all hover:scale-105 w-full`}
-            >
-              <Play className="w-4 h-4 mr-1.5" />
-              Jugar
-            </Button>
-          </div>
-        </div>
-      </div>
-    </motion.div>
+      <button
+        type="button"
+        onClick={() => navigate(`/game/${game.id}/instrucciones`)}
+        className="fb-btn fb-btn--accent mt-6 w-full"
+      >
+        <Play className="h-3.5 w-3.5" />
+        Jugar
+      </button>
+    </div>
   );
 };
 
@@ -102,53 +87,20 @@ const FrostbytePlay = () => {
   return (
     <section
       id="frostbyte-play"
-      className="py-20 bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary relative overflow-hidden"
+      className="fb-section py-16"
+      style={{ "--fb-accent": "#8b5cf6", "--fb-accent-2": "#f59e0b" }}
     >
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-violet-500/30 rounded-full blur-3xl animate-pulse" />
-        <div
-          className="absolute bottom-1/4 -right-20 w-96 h-96 bg-red-500/20 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "1s" }}
+      <div className="container relative z-10 mx-auto px-5">
+        <SectionHeading
+          eyebrow="En tu mesa"
+          title="Frostbyte Play"
+          description="Juegos rápidos para compartir con tus amigos mientras esperas el pedido."
+          className="mb-12"
         />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
-      </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6">
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
-              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-violet-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.6)]" />
-            </motion.div>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-amber-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_20px_rgba(139,92,246,0.4)]">
-              Frostbyte Play
-            </h2>
-            <motion.div
-              animate={{ rotate: [0, -10, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
-              <Gamepad2 className="w-10 h-10 sm:w-12 sm:h-12 text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" />
-            </motion.div>
-          </div>
-          <p className="text-xl text-gray/80 max-w-3xl mx-auto mb-2">
-            Diviertete jugando mientras esperas tu pedido
-          </p>
-          <p className="text-gray/60 max-w-2xl mx-auto">
-            Juegos rapidos y divertidos para compartir con tus amigos en la mesa
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {games.map((game, index) => (
-            <GameCard key={game.id} game={game} index={index} />
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
+          {games.map((game) => (
+            <GameCard key={game.id} game={game} />
           ))}
         </div>
       </div>

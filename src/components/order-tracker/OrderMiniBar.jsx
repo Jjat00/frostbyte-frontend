@@ -18,30 +18,30 @@ const OrderMiniBar = ({ order, onClick }) => {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       onClick={onClick}
-      className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-dark-secondary/90 backdrop-blur-sm border border-gray/20 rounded-xl hover:border-secondary/30 transition-all group"
+      className="fb-card fb-card--link group flex w-full items-center justify-between gap-3 px-4 py-3"
     >
       <div className="flex items-center gap-3 min-w-0">
         <OrderStatusBadge status={order.status} />
         <div className="hidden md:flex flex-col items-start min-w-0">
-          <span className="text-sm text-light font-medium truncate">
+          <span className="truncate text-[0.82rem] font-medium text-light">
             {order.customer_name}
           </span>
-          <span className="text-xs text-gray">
+          <span className="text-[0.7rem] text-light/45">
             #{order.order_number?.slice(-6)} · {order.items_count || 0} items
             {order.status === "delivered" && !order.is_paid && (
-              <span className="text-yellow-400 ml-1">· Pendiente de pago</span>
+              <span className="ml-1 text-light/70">· Pendiente de pago</span>
             )}
           </span>
         </div>
-        <span className="md:hidden text-sm text-gray truncate">
+        <span className="truncate text-[0.78rem] text-light/55 md:hidden">
           {order.customer_name}
         </span>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <span className="text-sm font-bold text-light">
+        <span className="text-[0.82rem] font-medium text-light">
           {formatCurrency(order.total)}
         </span>
-        <ChevronRight className="w-4 h-4 text-gray group-hover:text-secondary transition-colors" />
+        <ChevronRight className="h-4 w-4 text-light/35 transition-colors group-hover:text-light/70" />
       </div>
     </motion.button>
   );

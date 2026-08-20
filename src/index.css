@@ -4,6 +4,11 @@
    alternativos): se cambia de tema/temática SOLO en theme.css. */
 @import "./theme.css";
 
+/* Lenguaje visual de la carta pública (fondos, superficies, botones y
+   micro-tipografía del hero de servicios). Compone con los tokens de
+   theme.css: no define ningún color de marca propio. */
+@import "./minimal.css";
+
 @keyframes accordion-down {
   from {
     height: 0;

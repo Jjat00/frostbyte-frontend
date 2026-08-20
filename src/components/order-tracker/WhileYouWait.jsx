@@ -11,7 +11,7 @@ const WhileYouWait = ({ status }) => {
     <div className="mt-6">
       <button
         onClick={() => navigate("/game")}
-        className="w-full p-4 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.1] hover:border-violet-500/40 hover:bg-white/[0.1] transition-all group shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+        className="fb-card fb-card--link group w-full p-4"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-amber-500 flex items-center justify-center flex-shrink-0">

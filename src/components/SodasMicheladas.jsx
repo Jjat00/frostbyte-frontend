@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Cherry, Citrus, Sun } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
+import SectionHeading from "@/components/SectionHeading";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -16,16 +17,16 @@ const ProductCard = ({ product, index, styles }) => {
 
   return (
     <motion.div
-      whileHover={{ y: -10 }}
+      whileHover={{ y: -3 }}
       className="group relative"
     >
-      <div className="liquid-glass-interactive backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full flex flex-col transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-primary/40 hover:bg-white/[0.12] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_32px_color-mix(in_srgb,var(--color-primary)_10%,transparent)]">
+      <div className="fb-card fb-card--link flex h-full flex-col overflow-hidden">
         <div className="h-48 overflow-hidden relative">
           <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent z-10 opacity-60"></div>
           {styles.image ? (
             <img
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               src={styles.image}
               loading="lazy"
             />
@@ -36,7 +37,7 @@ const ProductCard = ({ product, index, styles }) => {
           )}
           {product.is_coming_soon && (
             <div className="absolute inset-0 bg-dark/70 z-20 flex items-center justify-center">
-              <span className="text-light font-bold text-lg tracking-wider uppercase bg-primary/20 px-4 py-2 rounded-lg border border-primary/50">
+              <span className="fb-pill bg-dark/80 text-[0.68rem] uppercase tracking-[0.16em]">
                 Próximamente
               </span>
             </div>
@@ -45,16 +46,16 @@ const ProductCard = ({ product, index, styles }) => {
 
         <div className="p-6 flex flex-col grow relative z-20 -mt-12">
           <div
-            className={`w-12 h-12 bg-linear-to-br ${styles.gradient} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}
+            className={`w-9 h-9 bg-linear-to-br ${styles.gradient} rounded-[11px] flex items-center justify-center mb-3.5 opacity-90`}
           >
-            <Icon className="text-dark" size={24} />
+            <Icon className="text-dark" size={17} />
           </div>
-          <h3 className="text-2xl font-bold text-light mb-2 group-hover:text-primary transition-colors duration-300">
+          <h3 className="font-display mb-2 text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
             {product.name}
           </h3>
-          <p className="text-gray mb-4 grow text-sm">{product.description}</p>
-          <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray/10">
-            <span className="text-2xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <p className="mb-4 grow text-[0.78rem] leading-relaxed text-light/55">{product.description}</p>
+          <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/[0.06]">
+            <span className="text-base font-medium text-light">
               {formatPrice(defaultVariant?.price)}
             </span>
           </div>
@@ -65,7 +66,7 @@ const ProductCard = ({ product, index, styles }) => {
 };
 
 const ProductSkeleton = () => (
-  <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl overflow-hidden h-full animate-pulse">
+  <div className="fb-card h-full overflow-hidden animate-pulse">
     <div className="h-48 bg-gray/20"></div>
     <div className="p-6 -mt-12">
       <div className="w-12 h-12 bg-gray/30 rounded-xl mb-4"></div>
@@ -119,34 +120,18 @@ const SodasMicheladas = () => {
   return (
     <section
       id="sodas"
-      className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(to bottom, rgba(13,13,26,0.95), rgba(10,10,20,0.95))" }}
+      className="fb-section py-16"
     >
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-secondary rounded-full filter blur-[100px]"></div>
-      </div>
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            SODAS{" "}
-            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-              ITALIANAS
-            </span>
-          </h2>
-          <p className="text-gray text-lg max-w-2xl mx-auto">
-            Sodas italianas en Cumbal: refrescantes, burbujeantes y llenas de
-            sabor frutal en Frostbyte.
-          </p>
-        </motion.div>
+        <SectionHeading
+          eyebrow="Burbujas y fruta"
+          title="Sodas italianas"
+          description="Sodas italianas en Cumbal: refrescantes, burbujeantes y llenas de sabor frutal en Frostbyte."
+          className="mb-12"
+        />
 
         {error && (
-          <div className="text-center text-red-400 mb-8">
+          <div className="fb-inset mb-8 p-4 text-center text-[0.8rem] text-light/70">
             Error al cargar los productos.
           </div>
         )}

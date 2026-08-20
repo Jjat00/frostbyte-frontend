@@ -1,0 +1,329 @@
+/* ═══════════════════════════════════════════════════════════════════
+   MINIMAL.CSS — LENGUAJE VISUAL DE LA CARTA PÚBLICA
+   ───────────────────────────────────────────────────────────────────
+   El hero de servicios (`Hero.jsx`, 2026-08-20) fijó un lenguaje que
+   el resto de la carta contradecía: títulos en `font-black` con texto
+   en degradado, `backdrop-blur-xl`, orbes de `blur-[120px]` y un color
+   distinto por servicio. Este archivo extrae ese lenguaje a clases
+   para que TODA la ruta `/` y las vistas de mesa (`/mesa/*`) hablen
+   igual, sin repetir los mismos valores en veinte componentes.
+
+   Las cinco reglas del lenguaje:
+
+   1. FONDO: velos radiales del acento sobre el degradado oscuro, más
+      una textura de grano. Todo CSS, sin imágenes ni `filter: blur`
+      (los orbes de blur eran lo que fundía las GPU de gama baja).
+   2. SUPERFICIE: el liquid glass de la app rebajado a la mitad y SIN
+      `backdrop-filter`. Borde blanco al 8,5 %, radio 18.
+   3. EL COLOR SIGNIFICA ALGO: magenta la carta, cyan los domicilios,
+      el resto neutro. Las secciones de producto conservan el color de
+      su contenido (ámbar el frappé, rojo el vino…) pero solo en el
+      icono, la hairline y el precio — nunca en el titular ni en un
+      resplandor. Si todo lleva color, el color deja de decir nada.
+   4. TIPOGRAFÍA: Orbitron en 500 y 600 con tracking amplio, nunca en
+      black, nunca con el texto en degradado.
+   5. MOVIMIENTO: entradas cortas (opacidad y 14 px), nada infinito.
+
+   CÓMO SE USA EL ACENTO: cada sección declara su color de contenido en
+   la variable `--fb-accent` (y opcionalmente `--fb-accent-2`), y todas
+   las clases de aquí lo leen. Sin declararla, el acento es el magenta
+   de marca.
+
+       <section className="fb-section" style={{ "--fb-accent": "#f59e0b" }}>
+
+   Los tokens de marca siguen viviendo en `theme.css`: aquí no se
+   hardcodea ningún color de marca, solo se compone con var().
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Todo va en la capa `components` a propósito: en Tailwind v4 lo que está
+   fuera de una capa gana a TODAS las utilidades, así que sin esto un
+   `px-4` o un `rounded-full` junto a `fb-btn` no haría nada. Dentro de la
+   capa, la utilidad manda — que es lo que se espera al escribir el JSX. */
+
+@layer components {
+  /* ── Sección: fondo de degradado con velos de acento y grano ────────
+     El contenido de la sección debe ir en un contenedor con `relative`
+     (y z-index si hace falta) porque los velos son ::before/::after. */
+  .fb-section {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-dark);
+  }
+
+  .fb-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(
+        115% 75% at 8% -5%,
+        color-mix(in srgb, var(--fb-accent, var(--color-primary)) 11%, transparent)
+          0%,
+        transparent 58%
+      ),
+      radial-gradient(
+        105% 70% at 100% 105%,
+        color-mix(
+            in srgb,
+            var(--fb-accent-2, var(--color-secondary)) 9%,
+            transparent
+          )
+          0%,
+        transparent 58%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.022) 0%,
+        transparent 45%,
+        rgba(0, 0, 0, 0.28) 100%
+      );
+  }
+
+  .fb-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* Variante lisa: mismo negro y mismo grano, sin velos de color. Para
+     secciones seguidas que si no encadenarían tres degradados. */
+  .fb-section--plain::before {
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.015) 0%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.22) 100%
+    );
+  }
+
+  /* ── Superficie: el vidrio de las tarjetas del hero ─────────────────
+     Sin backdrop-filter a propósito (ver regla 2). */
+  .fb-card {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    background-image: linear-gradient(
+      155deg,
+      rgba(255, 255, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.018) 48%,
+      rgba(255, 255, 255, 0.038) 100%
+    );
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  /* Tarjeta que lleva el color de su contenido: un velo desde la esquina
+     superior izquierda y el borde teñido. */
+  .fb-card--accent {
+    border-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 20%,
+      transparent
+    );
+    background-image:
+      radial-gradient(
+        85% 120% at 0% 0%,
+        color-mix(in srgb, var(--fb-accent, var(--color-primary)) 11%, transparent)
+          0%,
+        transparent 62%
+      ),
+      linear-gradient(
+        155deg,
+        rgba(255, 255, 255, 0.055) 0%,
+        rgba(255, 255, 255, 0.018) 48%,
+        rgba(255, 255, 255, 0.038) 100%
+      );
+  }
+
+  /* Tarjeta pulsable: el borde despierta. El levantón va aparte (--lift)
+     porque algunas tarjetas ya lo hacen con framer-motion y los dos gestos se
+     sumaban. */
+  .fb-card--link:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .fb-card--lift:hover {
+    transform: translateY(-2px);
+  }
+
+  .fb-card--accent.fb-card--link:hover {
+    border-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 45%,
+      transparent
+    );
+  }
+
+  /* Superficie interior (una nota dentro de una tarjeta): más tenue,
+     para que no compita con la tarjeta que la contiene. */
+  .fb-inset {
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background-color: rgba(255, 255, 255, 0.025);
+  }
+
+  /* ── Micro-tipografía: la etiqueta de tracking largo del hero ──────── */
+  .fb-eyebrow {
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-light) 45%, transparent);
+  }
+
+  .fb-eyebrow--accent {
+    color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 75%,
+      var(--color-light)
+    );
+  }
+
+  /* ── Hilos ──────────────────────────────────────────────────────────
+     El de 44 px con degradado es la firma del hero; el de ancho completo
+     separa bloques sin la dureza de un borde. */
+  .fb-rule {
+    display: block;
+    height: 1px;
+    width: 2.75rem;
+    background-image: linear-gradient(
+      to right,
+      var(--fb-accent, var(--color-primary)),
+      var(--fb-accent-2, var(--color-secondary))
+    );
+  }
+
+  .fb-hairline {
+    display: block;
+    height: 1px;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+  }
+
+  /* ── Botones ────────────────────────────────────────────────────────
+     El hero no tiene botones: todo es tarjeta con borde. Los CTA siguen
+     la misma idea — vidrio y borde del acento, nunca un bloque de color
+     saturado con texto oscuro. */
+  .fb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-image: linear-gradient(
+      155deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.015) 100%
+    );
+    padding: 0.75rem 1.1rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: color-mix(in srgb, var(--color-light) 85%, transparent);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .fb-btn:hover {
+    border-color: rgba(255, 255, 255, 0.24);
+    color: var(--color-light);
+  }
+
+  .fb-btn--accent {
+    border-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 35%,
+      transparent
+    );
+    background-image:
+      radial-gradient(
+        100% 140% at 0% 0%,
+        color-mix(in srgb, var(--fb-accent, var(--color-primary)) 14%, transparent)
+          0%,
+        transparent 70%
+      ),
+      linear-gradient(
+        155deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.015) 100%
+      );
+    color: var(--color-light);
+  }
+
+  .fb-btn--accent:hover {
+    border-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 60%,
+      transparent
+    );
+  }
+
+  /* ── Pastilla: los atajos del QuickNav y las etiquetas sueltas ────── */
+  .fb-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 0.45rem 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--color-light) 62%, transparent);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .fb-pill:hover {
+    border-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 45%,
+      transparent
+    );
+    color: var(--color-light);
+  }
+
+  /* ── Entrada al hacer scroll ────────────────────────────────────────
+     El equivalente en CSS del reveal del hero, para no montar un
+     framer-motion por sección. Sin JavaScript: `animation-timeline`
+     donde exista, y visible desde el principio donde no. */
+  .fb-reveal {
+    animation: fb-reveal-in 0.5s ease-out both;
+  }
+
+  @keyframes fb-reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .fb-reveal {
+        animation: fb-reveal-in linear both;
+        animation-timeline: view();
+        animation-range: entry 5% cover 22%;
+      }
+    }
+  }
+}

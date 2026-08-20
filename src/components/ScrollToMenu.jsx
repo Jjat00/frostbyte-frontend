@@ -30,14 +30,14 @@ const ScrollToCarta = () => {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
-          whileHover={{ scale: 1.1 }}
+          whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToCarta}
           // En móvil se apoya sobre la barra de pestañas, que ocupa el fondo
-          className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-6 right-6 z-50 w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/50 transition-shadow duration-300"
+          className="fb-card fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full md:bottom-6"
           aria-label="Ir a la carta"
         >
-          <ArrowUp className="text-dark" size={22} />
+          <ArrowUp className="text-light/70" size={19} />
         </motion.button>
       )}
     </AnimatePresence>

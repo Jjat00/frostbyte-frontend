@@ -41,15 +41,15 @@ const QUIZ_QUESTIONS = [
 
 function TabSwitcher({ active, onChange }) {
   return (
-    <div className="flex rounded-xl overflow-hidden border border-white/10 mb-6">
+    <div className="mb-6 flex overflow-hidden rounded-xl border border-white/[0.1]">
       {["quiz", "mood"].map((tab) => (
         <button
           key={tab}
           onClick={() => onChange(tab)}
-          className={`flex-1 py-2.5 text-sm font-semibold transition-all duration-200 ${
+          className={`flex-1 py-2.5 text-[0.78rem] font-medium transition-colors ${
             active === tab
-              ? "bg-gradient-to-r from-primary to-secondary text-dark"
-              : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10"
+              ? "bg-white/[0.07] text-light"
+              : "text-light/50 hover:text-light"
           }`}
         >
           {tab === "quiz" ? "Quiz rápido" : "Cuéntanos"}
@@ -66,7 +66,7 @@ function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-white/60 text-sm">
+      <p className="text-[0.78rem] text-light/55">
         Cuéntanos qué se te antoja y encontramos tu bebida perfecta.
       </p>
       <div className="relative">
@@ -76,13 +76,13 @@ function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
           placeholder="Ej: Tengo mucho calor y quiero algo refrescante y fuerte..."
           rows={3}
           disabled={isTranscribing}
-          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-14 text-white placeholder-white/30 text-sm resize-none focus:outline-none focus:border-primary/60 transition-colors disabled:opacity-50"
+          className="w-full resize-none rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 pr-14 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none disabled:opacity-50"
         />
         <button
           type="button"
           onClick={isRecording ? stopRecording : startRecording}
           disabled={isTranscribing || loading}
-          className={`absolute right-3 top-3 p-2 rounded-lg transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
+          className={`absolute right-3 top-3 rounded-lg p-2 transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
             isRecording
               ? "bg-red-500/20 border border-red-500/50 text-red-400 animate-pulse"
               : "bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-white/30"
@@ -112,11 +112,11 @@ function MoodTab({ mood, onChange, onSubmit, loading, audio }) {
       )}
 
       <div className="flex items-center justify-between">
-        <span className="text-white/30 text-xs">{mood.length}/150</span>
+        <span className="text-[0.68rem] text-light/30">{mood.length}/150</span>
         <button
           onClick={onSubmit}
           disabled={loading || mood.trim().length < 5 || isRecording || isTranscribing}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+          className="fb-btn fb-btn--accent"
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
           Recomendar
@@ -133,16 +133,16 @@ function QuizTab({ answers, onChange, onSubmit, loading }) {
     <div className="flex flex-col gap-5">
       {QUIZ_QUESTIONS.map((q) => (
         <div key={q.key}>
-          <p className="text-white/80 text-sm font-semibold mb-2">{q.label}</p>
+          <p className="fb-eyebrow mb-2.5 block">{q.label}</p>
           <div className="flex flex-wrap gap-2">
             {q.options.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => onChange(q.key, opt.value)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150 ${
+                className={`rounded-lg border px-3 py-1.5 text-[0.75rem] font-medium transition-colors ${
                   answers[q.key] === opt.value
-                    ? "border-primary/80 bg-primary/20 text-primary"
-                    : "border-white/10 bg-white/5 text-white/60 hover:border-white/30 hover:text-white"
+                    ? "border-primary/45 bg-primary/10 text-light"
+                    : "border-white/[0.1] bg-white/[0.03] text-light/55 hover:border-white/25 hover:text-light"
                 }`}
               >
                 {opt.label}
@@ -154,7 +154,7 @@ function QuizTab({ answers, onChange, onSubmit, loading }) {
       <button
         onClick={onSubmit}
         disabled={loading || !allAnswered}
-        className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity mt-1"
+        className="fb-btn fb-btn--accent"
       >
         {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
         Sorpréndeme
@@ -185,7 +185,7 @@ function LoadingState() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.3 }}
-          className="text-white/50 text-sm"
+          className="text-[0.78rem] text-light/50"
         >
           {messages[idx]}
         </motion.p>
@@ -222,24 +222,24 @@ function ResultCard({ result, onReset }) {
       )}
 
       {/* Badge */}
-      <span className="self-start px-3 py-1 rounded-full bg-secondary/20 border border-secondary/40 text-secondary text-xs font-semibold uppercase tracking-wide">
+      <span className="fb-pill self-start text-[0.62rem] uppercase tracking-[0.2em]">
         {product.category}
       </span>
 
       {/* Product name */}
-      <h3 className="text-2xl font-extrabold leading-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+      <h3 className="font-display text-[1.05rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
         {product.name}
       </h3>
 
       {/* Description */}
       {product.description && (
-        <p className="text-white/60 text-sm leading-relaxed">{product.description}</p>
+        <p className="text-[0.78rem] leading-relaxed text-light/55">{product.description}</p>
       )}
 
       {/* AI reason */}
       {reason && (
-        <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
-          <p className="text-white/80 text-sm italic leading-relaxed">
+        <div className="fb-inset px-4 py-3">
+          <p className="text-[0.78rem] italic leading-relaxed text-light/70">
             <Sparkles size={13} className="inline mr-1.5 text-primary" />
             {reason}
           </p>
@@ -250,14 +250,14 @@ function ResultCard({ result, onReset }) {
       <div className="flex flex-wrap gap-3 mt-1">
         <button
           onClick={handleViewInMenu}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold text-sm hover:opacity-90 transition-opacity"
+          className="fb-btn fb-btn--accent"
         >
           Ver en carta
           <ArrowRight size={15} />
         </button>
         <button
           onClick={onReset}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/15 text-white/60 text-sm font-medium hover:border-white/30 hover:text-white transition-colors"
+          className="fb-btn"
         >
           <RotateCcw size={14} />
           Intentar de nuevo
@@ -347,20 +347,20 @@ export default function DrinkRecommender() {
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5 }}
       id="que-te-provoca"
-      className="py-6 bg-dark"
+      className="fb-section fb-section--plain py-9"
     >
-      <div className="container mx-auto px-4">
-      <div className="liquid-glass max-w-xl mx-auto backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.3)]">
+      <div className="container relative z-10 mx-auto px-5">
+      <div className="fb-card mx-auto max-w-xl p-5 sm:p-6">
         {/* Header */}
-        <div className="flex items-center gap-2.5 mb-5">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 border border-white/10">
-            <Sparkles size={18} className="text-primary" />
-          </div>
-          <div>
-            <h2 className="text-white font-bold text-lg leading-tight">
+        <div className="mb-5 flex items-center gap-3.5">
+          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[12px] border border-white/[0.1] bg-white/[0.03]">
+            <Sparkles size={17} className="text-primary" strokeWidth={1.6} />
+          </span>
+          <div className="min-w-0">
+            <span className="fb-eyebrow block">Recomendador</span>
+            <h2 className="font-display m-0 mt-1.5 text-[0.95rem] font-semibold uppercase leading-none tracking-[0.12em] text-light">
               ¿Qué te provoca hoy?
             </h2>
-            <p className="text-white/40 text-xs">3 preguntas y encontramos tu bebida ideal</p>
           </div>
         </div>
 
@@ -404,7 +404,7 @@ export default function DrinkRecommender() {
 
         {/* Error */}
         {error && !loading && (
-          <p className="mt-3 text-red-400 text-sm text-center">{error}</p>
+          <p className="mt-3 text-center text-[0.75rem] text-light/60">{error}</p>
         )}
       </div>
       </div>
