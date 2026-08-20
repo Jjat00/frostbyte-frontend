@@ -26,6 +26,21 @@ import { cn } from "@/lib/utils";
 import { useActiveCategories, useStoreConfig } from "@/hooks";
 import StoreStatusBadge from "@/components/StoreStatusBadge";
 
+/**
+ * Estilo de los enlaces del nav de escritorio.
+ *
+ * El padding es compacto y solo se ensancha en pantallas muy anchas: con la
+ * marca, el estado del local, los seis enlaces y el botón de la carta, la fila
+ * llegaba a desbordarse por la derecha (el avatar y "Ver Carta" quedaban fuera
+ * de pantalla) antes de los 1500 px.
+ */
+const navLinkCls = (extra = "") =>
+  cn(
+    navigationMenuTriggerStyle(),
+    "bg-transparent px-2.5 2xl:px-4 font-medium tracking-wide whitespace-nowrap",
+    extra
+  );
+
 const ListItem = React.forwardRef(
   ({ className, title, children, ...props }, ref) => {
     return (
@@ -166,7 +181,7 @@ const Header = () => {
           <motion.a
             href="#"
             whileHover={{ scale: 1.05 }}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 flex-shrink-0"
           >
             <img
               src="/logo.png"
@@ -176,19 +191,25 @@ const Header = () => {
               className="w-9 h-9 md:w-10 md:h-10 object-contain"
             />
             {/* En móvil comparte fila con el estado del local y el avatar */}
-            <span className="text-xl md:text-2xl font-bold text-light tracking-wider">
+            <span className="text-xl 2xl:text-2xl font-bold text-light tracking-wider whitespace-nowrap">
               FROSTBYTE
             </span>
           </motion.a>
 
           {/* Estado del local: visible en la carta (/) y en la vista de mesa (/mesa/*) */}
-          <StoreStatusBadge isOpen={storeConfig?.is_open} className="mr-auto ml-3" />
+          <StoreStatusBadge
+            isOpen={storeConfig?.is_open}
+            className="mr-auto ml-3 flex-shrink-0"
+          />
 
-          <div className="hidden md:flex items-center">
+          {/* El nav entero (seis enlaces + cuenta + botón) no cabe por debajo
+              de 1280 px: hasta ahí manda el menú de hamburguesa, que lleva lo
+              mismo y ya muestra el avatar de quien tiene sesión. */}
+          <div className="hidden xl:flex items-center min-w-0">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide">
+                  <NavigationMenuTrigger className="bg-transparent px-2.5 2xl:px-4 text-gray hover:text-primary focus:text-primary font-medium tracking-wide">
                     Productos
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -212,7 +233,9 @@ const Header = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         to="/domicilios"
-                        className={`${navigationMenuTriggerStyle()} bg-transparent text-emerald-400 hover:text-emerald-300 focus:text-emerald-300 font-bold tracking-wide flex items-center gap-1.5`}
+                        className={navLinkCls(
+                          "text-emerald-400 hover:text-emerald-300 focus:text-emerald-300 font-bold flex items-center gap-1.5"
+                        )}
                       >
                         <Bike className="w-4 h-4" />
                         Domicilios
@@ -227,7 +250,9 @@ const Header = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         to="/game"
-                        className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                        className={navLinkCls(
+                          "text-gray hover:text-primary focus:text-primary"
+                        )}
                       >
                         🎮 Frostbyte Play
                       </Link>
@@ -242,7 +267,9 @@ const Header = () => {
                         href={item.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                        className={navLinkCls(
+                          "text-gray hover:text-primary focus:text-primary"
+                        )}
                       >
                         {item.name}
                       </NavigationMenuLink>
@@ -250,7 +277,9 @@ const Header = () => {
                       <NavigationMenuLink asChild>
                         <Link
                           to={item.href}
-                          className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                          className={navLinkCls(
+                            "text-gray hover:text-primary focus:text-primary"
+                          )}
                         >
                           {item.name}
                         </Link>
@@ -262,7 +291,9 @@ const Header = () => {
                   <NavigationMenuItem>
                     <NavigationMenuLink
                       asChild
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray hover:text-primary focus:text-primary font-medium tracking-wide`}
+                      className={navLinkCls(
+                        "text-gray hover:text-primary focus:text-primary"
+                      )}
                     >
                       <Link to="/mis-pedidos" className="flex items-center gap-2">
                         <ClipboardList className="w-4 h-4" />
@@ -278,11 +309,17 @@ const Header = () => {
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     asChild
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-white/35 hover:text-primary focus:text-primary text-xs font-medium tracking-wide`}
+                    className={navLinkCls(
+                      "text-white/35 hover:text-primary focus:text-primary text-xs"
+                    )}
                   >
-                    <Link to="/login" className="flex items-center gap-1.5">
+                    <Link
+                      to="/login"
+                      aria-label="Acceso equipo"
+                      className="flex items-center gap-1.5"
+                    >
                       <LogIn className="w-3.5 h-3.5" />
-                      Acceso equipo
+                      <span className="hidden 2xl:inline">Acceso equipo</span>
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -325,7 +362,7 @@ const Header = () => {
                   .getElementById("menu")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="ml-6 backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_color-mix(in_srgb,var(--color-primary)_40%,transparent)] transition-all duration-300"
+              className="ml-3 2xl:ml-6 flex-shrink-0 whitespace-nowrap backdrop-blur-sm bg-gradient-to-r from-primary/90 to-secondary/90 text-dark font-bold hover:shadow-[0_0_25px_color-mix(in_srgb,var(--color-primary)_40%,transparent)] transition-all duration-300"
             >
               Ver Carta
             </Button>
@@ -340,14 +377,14 @@ const Header = () => {
             <Link
               to="/mi-cuenta"
               aria-label="Mi cuenta"
-              className="md:hidden grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all mr-2.5"
+              className="xl:hidden grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all mr-2.5"
             >
               <CustomerAvatar customer={customer} className="w-8 h-8 text-sm" />
             </Link>
           )}
 
           <button
-            className="md:hidden text-light"
+            className="xl:hidden text-light"
             aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={isMobileMenuOpen}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -361,11 +398,12 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="liquid-glass md:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.08] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
+            className="liquid-glass xl:hidden mt-4 pb-6 pt-4 px-4 space-y-4 backdrop-blur-xl bg-white/[0.08] rounded-2xl border border-white/[0.1] shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] max-h-[calc(100vh-80px)] overflow-y-auto"
           >
-            {/* Domicilios y Mi cuenta ya no viven aquí: son pestañas fijas de
-                la barra inferior (CustomerTabBar). Este menú se queda con lo
-                que la barra no cubre: la carta y el resto de secciones. */}
+            {/* Domicilios y Mi cuenta no se repiten en móvil: son pestañas
+                fijas de la barra inferior (CustomerTabBar). Este menú se queda
+                con lo que la barra no cubre: la carta y el resto de
+                secciones. */}
             <a
               href="#carta"
               className="block text-primary hover:text-primary/80 transition-colors duration-300 font-bold"
@@ -373,6 +411,47 @@ const Header = () => {
             >
               Carta Completa
             </a>
+
+            {/* De 768 px en adelante la barra inferior ya no está y el nav
+                completo todavía no entra: ese tramo se queda sin puerta a los
+                domicilios y a la cuenta si no se repiten aquí. */}
+            <div className="hidden md:block space-y-4">
+              {inAppOrdering && (
+                <Link
+                  to="/domicilios"
+                  className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-300 font-bold"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Bike className="w-4 h-4" />
+                  Domicilios
+                </Link>
+              )}
+              {showMyOrders && (
+                <Link
+                  to="/mis-pedidos"
+                  className="flex items-center gap-2 text-gray hover:text-primary transition-colors duration-300 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <ClipboardList className="w-4 h-4" />
+                  Mis pedidos
+                </Link>
+              )}
+              <Link
+                to="/mi-cuenta"
+                className="flex items-center gap-2 text-gold hover:text-amber-300 transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {isCustomerAuthenticated ? (
+                  <CustomerAvatar
+                    customer={customer}
+                    className="w-6 h-6 text-xs"
+                  />
+                ) : (
+                  <UserCircle2 className="w-4 h-4" />
+                )}
+                Mi cuenta
+              </Link>
+            </div>
             <div className="border-t border-white/[0.08] pt-3 space-y-4">
               <p className="text-white/25 text-[10px] uppercase tracking-widest font-semibold">Bebidas</p>
               {visibleBeverages.map((section) => (
