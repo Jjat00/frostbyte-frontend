@@ -134,12 +134,7 @@ const GameResults = ({ room, roomId }) => {
   };
 
   return (
-    <div className="min-h-screen bg-dark p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen min-h-screen p-4">
 
       <div className="max-w-3xl mx-auto relative z-10">
         {/* Header */}
@@ -156,10 +151,10 @@ const GameResults = ({ room, roomId }) => {
           >
             <Trophy className="w-16 h-16 text-yellow-400" />
           </motion.div>
-          <h1 className="text-4xl font-bold text-light tracking-wider mb-2">
+          <h1 className="font-display text-[1.35rem] font-semibold uppercase tracking-[0.14em] text-light">
             ¡Juego Terminado!
           </h1>
-          <p className="text-gray">Resultados finales</p>
+          <p className="mt-3 text-[0.8rem] text-light/50">Resultados finales</p>
         </motion.div>
 
         {/* Results Card */}
@@ -167,7 +162,7 @@ const GameResults = ({ room, roomId }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6 mb-6 shadow-2xl shadow-primary/10"
+          className="fb-card mb-6 p-6"
         >
           <div className="space-y-4">
             {results.map((result, index) => {
@@ -250,7 +245,7 @@ const GameResults = ({ room, roomId }) => {
               onClick={handleNewGame}
               disabled={rematchMutation.isPending || !room.order_is_active}
               size="lg"
-              className="bg-gradient-to-r from-primary to-secondary text-dark font-bold"
+              className="fb-btn fb-btn--accent bg-transparent text-light hover:bg-transparent"
             >
               <Play className="w-5 h-5 mr-2" />
               Nuevo juego

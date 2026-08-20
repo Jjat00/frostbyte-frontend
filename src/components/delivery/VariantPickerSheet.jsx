@@ -27,29 +27,29 @@ const VariantPickerSheet = ({ product, image, open, onClose, onAdd }) => {
           exit={{ opacity: 0 }}
         >
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70"
             onClick={onClose}
           />
           <motion.div
-            className="relative w-full max-w-md bg-dark border-t border-white/10 rounded-t-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-md overflow-hidden rounded-t-2xl border-t border-white/[0.08] bg-dark"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 360, damping: 34 }}
           >
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+            <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-3">
               {image && (
                 <img
                   src={image}
                   alt=""
-                  className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
+                  className="h-11 w-11 flex-shrink-0 rounded-[12px] object-cover"
                 />
               )}
               <div className="min-w-0">
-                <h2 className="text-base font-black uppercase tracking-wide text-light truncate">
+                <h2 className="font-display truncate text-[0.88rem] font-semibold uppercase tracking-[0.12em] text-light">
                   {product.name}
                 </h2>
-                <p className="text-xs text-white/40">
+                <p className="mt-1 text-[0.7rem] text-light/40">
                   Elige el tamaño para agregarlo
                 </p>
               </div>
@@ -57,7 +57,7 @@ const VariantPickerSheet = ({ product, image, open, onClose, onAdd }) => {
                 type="button"
                 onClick={onClose}
                 aria-label="Cerrar"
-                className="ml-auto grid place-items-center w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white/70 flex-shrink-0"
+                className="ml-auto grid h-8 w-8 flex-shrink-0 place-items-center rounded-full border border-white/[0.09] text-light/60 transition-colors hover:text-light"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -69,16 +69,16 @@ const VariantPickerSheet = ({ product, image, open, onClose, onAdd }) => {
                   key={variant.id || variant.name}
                   type="button"
                   onClick={() => onAdd(variant)}
-                  className="w-full flex items-center gap-3 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-secondary/40 px-4 py-3 transition-colors cursor-pointer"
+                  className="fb-card fb-card--link flex w-full cursor-pointer items-center gap-3 px-4 py-3"
                 >
-                  <span className="text-sm font-semibold text-light text-left">
+                  <span className="text-left text-[0.82rem] font-medium text-light">
                     {variant.name}
                   </span>
-                  <span className="ml-auto text-sm font-extrabold text-secondary whitespace-nowrap">
+                  <span className="ml-auto whitespace-nowrap text-[0.85rem] font-medium text-light">
                     {formatCOP(variant.price)}
                   </span>
-                  <span className="grid place-items-center w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary text-dark flex-shrink-0">
-                    <Plus className="w-4 h-4" strokeWidth={3} />
+                  <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full border border-secondary/30 bg-secondary/10">
+                    <Plus className="h-3.5 w-3.5 text-secondary" strokeWidth={2.2} />
                   </span>
                 </button>
               ))}

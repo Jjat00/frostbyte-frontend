@@ -142,12 +142,7 @@ const GamePlaying = ({ room, roomId }) => {
   );
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen flex min-h-screen items-center justify-center p-4">
 
       <div className="relative z-10 w-full max-w-2xl text-center">
         {/* Round Info */}
@@ -165,7 +160,7 @@ const GamePlaying = ({ room, roomId }) => {
         <motion.div
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
-          className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-3xl p-12 min-h-[400px] flex items-center justify-center"
+          className="fb-card flex min-h-[400px] items-center justify-center p-10"
         >
           <AnimatePresence mode="wait">
             {/* Countdown */}

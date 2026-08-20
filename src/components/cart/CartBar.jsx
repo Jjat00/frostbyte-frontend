@@ -36,20 +36,23 @@ const CartBar = ({ onClick }) => {
             type="button"
             onClick={onClick}
             aria-label={`Ver mi pedido, ${count} producto${count === 1 ? "" : "s"}`}
-            className="pointer-events-auto mx-auto flex w-full max-w-md items-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-secondary text-dark px-4 py-3 font-bold shadow-[0_-4px_28px_color-mix(in_srgb,var(--color-secondary)_40%,transparent)] active:scale-[0.98] transition-transform cursor-pointer"
+            style={{ "--fb-accent": "var(--color-secondary)" }}
+            // Flota sobre contenido cualquiera, así que el fondo es sólido:
+            // el vidrio del hero aquí dejaría el total ilegible.
+            className="fb-card fb-card--accent pointer-events-auto mx-auto flex w-full max-w-md cursor-pointer items-center gap-3 bg-dark/95 px-4 py-3 transition-transform active:scale-[0.98]"
           >
-            <span className="relative grid place-items-center w-9 h-9 rounded-full bg-dark/15 flex-shrink-0">
-              <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 grid place-items-center min-w-[18px] h-[18px] px-1 rounded-full bg-dark text-secondary text-[11px] font-extrabold">
+            <span className="relative grid h-9 w-9 flex-shrink-0 place-items-center rounded-full border border-secondary/25 bg-secondary/10">
+              <ShoppingBag className="h-4 w-4 text-secondary" />
+              <span className="absolute -right-1.5 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-secondary px-1 text-[0.62rem] font-semibold text-dark">
                 {count}
               </span>
             </span>
-            <span className="text-sm font-extrabold uppercase tracking-wide">
+            <span className="text-[0.8rem] font-medium tracking-[0.06em] text-light">
               Ver mi pedido
             </span>
-            <span className="ml-auto flex items-center gap-0.5 text-base font-black">
+            <span className="ml-auto flex items-center gap-1 text-[0.95rem] font-medium text-light">
               {formatCOP(subtotal)}
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="h-4 w-4 text-light/45" />
             </span>
           </button>
         </motion.div>

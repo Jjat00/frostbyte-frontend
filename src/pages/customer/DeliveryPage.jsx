@@ -43,13 +43,11 @@ const norm = (s = "") =>
 
 const StepPill = ({ done, children }) => (
   <span
-    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold whitespace-nowrap ${
-      done
-        ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-300"
-        : "border-white/10 bg-white/5 text-white/70"
+    className={`fb-pill whitespace-nowrap text-[0.68rem] ${
+      done ? "border-secondary/35 text-light" : ""
     }`}
   >
-    {done && <Check className="w-3 h-3" strokeWidth={3} />}
+    {done && <Check className="h-3 w-3 text-secondary" strokeWidth={2.5} />}
     {children}
   </span>
 );
@@ -163,26 +161,26 @@ const DeliveryPage = () => {
 
   // Barra superior propia, minimal y enfocada en pedir
   const topBar = (
-    <header className="fixed top-0 inset-x-0 z-40 bg-dark/95 backdrop-blur-md border-b border-white/[0.08]">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/[0.07] bg-dark/95">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-2.5 px-3 sm:px-4">
         <Link
           to={cartaPath}
           aria-label="Volver a la carta"
-          className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-white/70 flex-shrink-0"
+          className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-full border border-white/[0.09] text-light/60 transition-colors hover:text-light"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <span className="grid place-items-center w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 text-dark flex-shrink-0">
-          <Bike className="w-4 h-4" />
+        <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-[10px] border border-secondary/20 bg-secondary/10">
+          <Bike className="h-4 w-4 text-secondary" />
         </span>
-        <h1 className="text-lg font-black uppercase tracking-wide leading-none">
+        <h1 className="font-display text-[0.95rem] font-semibold uppercase leading-none tracking-[0.14em] text-light">
           Domicilios
         </h1>
         <StoreStatusBadge isOpen={config?.is_open} />
         {isCustomerAuthenticated && (
           <Link
             to="/mis-pedidos"
-            className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-xs font-bold text-secondary flex-shrink-0"
+            className="fb-pill ml-auto flex-shrink-0"
           >
             <ClipboardList className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Mis pedidos</span>
@@ -201,7 +199,7 @@ const DeliveryPage = () => {
   // Muro: sin sesión la tienda no se abre (ni se carga el catálogo)
   if (requiresLogin) {
     return (
-      <div className="min-h-screen bg-dark text-light">
+      <div className="fb-screen fb-screen--plain min-h-screen text-light">
         {topBar}
         <main className="mx-auto max-w-6xl px-3 sm:px-4 pt-[4.5rem] pb-40 md:pb-32">
           <DeliveryLoginWall storeClosed={storeClosed} />
@@ -213,7 +211,7 @@ const DeliveryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-dark text-light">
+    <div className="fb-screen fb-screen--plain min-h-screen text-light">
       {topBar}
 
       {/* En móvil el fondo lo ocupan la barra de pestañas y, sobre ella, el
@@ -221,28 +219,34 @@ const DeliveryPage = () => {
       <main className="mx-auto max-w-6xl px-3 sm:px-4 pt-[4.5rem] pb-40 md:pb-32">
         {/* Estado del servicio */}
         {storeClosed ? (
-          <section className="rounded-2xl border border-red-400/25 bg-red-500/10 p-4 flex items-start gap-3">
-            <Lock className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <section className="fb-card flex items-start gap-3 p-4">
+            <Lock className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />
             <div>
-              <h2 className="text-base font-black uppercase text-red-300 leading-tight">
+              <h2 className="font-display text-[0.88rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
                 Estamos cerrados
               </h2>
-              <p className="text-white/60 text-sm mt-1">
+              <p className="mt-1.5 text-[0.78rem] leading-relaxed text-light/55">
                 No estamos recibiendo pedidos en este momento. Mira la carta y
                 vuelve cuando el badge diga Abierto.
               </p>
             </div>
           </section>
         ) : (
-          <section className="rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-500/[0.12] via-dark-secondary to-dark-secondary p-4 lg:p-5 lg:flex lg:items-center lg:justify-between lg:gap-8">
+          <section
+            style={{ "--fb-accent": "var(--color-secondary)" }}
+            className="fb-card fb-card--accent p-4 lg:flex lg:items-center lg:justify-between lg:gap-8 lg:p-5"
+          >
             <div>
-              <h2 className="text-xl font-black uppercase leading-tight">
-                Pide a domicilio <span className="text-emerald-400">en la app</span>
+              <span className="fb-eyebrow fb-eyebrow--accent block">
+                Pide a domicilio
+              </span>
+              <h2 className="font-display m-0 mt-2 text-[1.05rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
+                Te lo llevamos a tu puerta
               </h2>
-              <p className="text-white/60 text-sm mt-1">
-                Escoge lo que se te antoje y te lo llevamos hasta tu puerta.
+              <p className="mt-2 text-[0.78rem] leading-relaxed text-light/55">
+                Escoge lo que se te antoje y sigue el pedido hasta que llegue.
               </p>
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-white/45 font-semibold">
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[0.68rem] text-light/40">
                 {deliveryFee > 0 && <span>Envío {formatCOP(deliveryFee)}</span>}
                 <span>Pagas al recibir</span>
                 <span>Sigues tu pedido en vivo</span>
@@ -252,7 +256,7 @@ const DeliveryPage = () => {
               <li>
                 <StepPill>1. Escoge tus productos</StepPill>
               </li>
-              <ChevronRight className="w-3.5 h-3.5 text-white/30" aria-hidden />
+              <ChevronRight className="h-3 w-3 text-light/25" aria-hidden />
               <li>
                 <StepPill done={isCustomerAuthenticated}>
                   {isCustomerAuthenticated
@@ -260,7 +264,7 @@ const DeliveryPage = () => {
                     : "2. Confirma con Google"}
                 </StepPill>
               </li>
-              <ChevronRight className="w-3.5 h-3.5 text-white/30" aria-hidden />
+              <ChevronRight className="h-3 w-3 text-light/25" aria-hidden />
               <li>
                 <StepPill>3. Te lo llevamos</StepPill>
               </li>
@@ -271,7 +275,7 @@ const DeliveryPage = () => {
         {/* Búsqueda */}
         <div className="relative mt-4">
           <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 pointer-events-none"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-light/30"
             aria-hidden
           />
           <input
@@ -280,14 +284,14 @@ const DeliveryPage = () => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="¿Qué se te antoja hoy?"
             aria-label="Buscar productos"
-            className="w-full rounded-2xl bg-white/[0.05] border border-white/[0.1] pl-10 pr-10 py-3 text-base text-light placeholder:text-white/30 focus:outline-none focus:border-emerald-400/40 [&::-webkit-search-cancel-button]:hidden"
+            className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] py-3 pl-10 pr-10 text-[0.9rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Limpiar búsqueda"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 grid place-items-center w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white/60"
+              className="absolute right-2.5 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full border border-white/[0.1] text-light/50 transition-colors hover:text-light"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -295,15 +299,15 @@ const DeliveryPage = () => {
         </div>
 
         {/* Chips de categorías (pegajosos bajo la barra superior) */}
-        <div className="sticky top-14 z-30 -mx-3 sm:-mx-4 bg-dark/95 backdrop-blur-md px-3 sm:px-4 py-2.5 border-b border-white/[0.06]">
+        <div className="sticky top-14 z-30 -mx-3 border-b border-white/[0.06] bg-dark/95 px-3 py-2.5 sm:-mx-4 sm:px-4">
           <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
               type="button"
               onClick={() => setActiveCat("todo")}
-              className={`flex-shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wide transition-colors cursor-pointer ${
+              className={`fb-pill flex-shrink-0 cursor-pointer whitespace-nowrap ${
                 activeCat === "todo"
-                  ? "bg-gradient-to-r from-emerald-400 to-emerald-600 text-dark"
-                  : "bg-white/5 border border-white/10 text-white/60 hover:bg-white/10"
+                  ? "border-secondary/40 bg-secondary/10 text-light"
+                  : ""
               }`}
             >
               Todo
@@ -313,10 +317,10 @@ const DeliveryPage = () => {
                 key={c.slug}
                 type="button"
                 onClick={() => setActiveCat(c.slug)}
-                className={`flex-shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wide transition-colors cursor-pointer ${
+                className={`fb-pill flex-shrink-0 cursor-pointer whitespace-nowrap ${
                   activeCat === c.slug
-                    ? "bg-gradient-to-r from-emerald-400 to-emerald-600 text-dark"
-                    : "bg-white/5 border border-white/10 text-white/60 hover:bg-white/10"
+                    ? "border-secondary/40 bg-secondary/10 text-light"
+                    : ""
                 }`}
               >
                 {c.name}
@@ -331,7 +335,7 @@ const DeliveryPage = () => {
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl bg-white/[0.04] border border-white/[0.06] overflow-hidden animate-pulse"
+                className="fb-card animate-pulse overflow-hidden"
               >
                 <div className="aspect-[4/3] bg-white/[0.05]" />
                 <div className="p-3 space-y-2">
@@ -343,7 +347,7 @@ const DeliveryPage = () => {
           </div>
         ) : totalVisible === 0 ? (
           <div className="mt-10 text-center">
-            <p className="text-white/50 text-sm">
+            <p className="text-[0.82rem] text-light/50">
               {query.trim()
                 ? `No encontramos nada con "${query.trim()}".`
                 : "No hay productos disponibles por ahora."}
@@ -352,7 +356,7 @@ const DeliveryPage = () => {
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="mt-3 rounded-full bg-white/5 border border-white/10 px-4 py-2 text-xs font-bold text-white/70 hover:bg-white/10"
+                className="fb-pill mt-3 cursor-pointer"
               >
                 Limpiar búsqueda
               </button>
@@ -361,9 +365,9 @@ const DeliveryPage = () => {
         ) : (
           sections.map(({ category, products: catProducts }) => (
             <section key={category.slug} className="mt-5">
-              <h2 className="text-base font-black uppercase tracking-wide text-light mb-2.5">
+              <h2 className="font-display mb-2.5 text-[0.88rem] font-semibold uppercase tracking-[0.12em] text-light">
                 {category.name}
-                <span className="ml-2 text-[11px] font-semibold text-white/30 normal-case tracking-normal">
+                <span className="ml-2 text-[0.65rem] font-normal normal-case tracking-normal text-light/30">
                   {catProducts.length} producto
                   {catProducts.length === 1 ? "" : "s"}
                 </span>

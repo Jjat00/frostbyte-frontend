@@ -40,24 +40,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-primary/5 to-secondary/5 rounded-full blur-3xl" />
-      </div>
-
-      {/* Grid pattern overlay */}
-      <div 
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `linear-gradient(color-mix(in srgb, var(--color-primary) 10%, transparent) 1px, transparent 1px),
-                           linear-gradient(90deg, color-mix(in srgb, var(--color-secondary) 10%, transparent) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px',
-        }}
-      />
-
+    <div className="fb-screen flex min-h-screen items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -72,34 +55,34 @@ const LoginPage = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="inline-flex items-center justify-center mb-4"
           >
-            <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-16 h-16" />
+            <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="h-14 w-14" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-light tracking-wider">FROSTBYTE</h1>
-          <p className="text-gray mt-2">Acceso equipo</p>
+          <h1 className="font-display text-[1.35rem] font-semibold tracking-[0.16em] text-light">FROSTBYTE</h1>
+          <p className="fb-eyebrow mt-3">Acceso equipo</p>
         </div>
 
         {/* Login Card */}
-        <div className="liquid-glass backdrop-blur-xl bg-white/[0.09] border border-white/[0.15] rounded-2xl p-8 shadow-2xl shadow-primary/10">
+        <div className="fb-card p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error message */}
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400"
+                className="flex items-center gap-3 rounded-xl border border-red-500/25 p-3.5 text-red-300"
               >
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm">{error}</span>
+                <span className="text-[0.78rem]">{error}</span>
               </motion.div>
             )}
 
             {/* Username */}
             <div className="space-y-2">
-              <label htmlFor="username" className="text-sm text-gray font-medium">
+              <label htmlFor="username" className="fb-eyebrow">
                 Usuario
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray" />
+                <User className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-light/30" />
                 <input
                   type="text"
                   id="username"
@@ -108,7 +91,7 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   autoComplete="username"
-                  className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg pl-12 pr-4 py-3 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] pl-12 pr-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   placeholder="Ingresa tu usuario"
                 />
               </div>
@@ -116,11 +99,11 @@ const LoginPage = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm text-gray font-medium">
+              <label htmlFor="password" className="fb-eyebrow">
                 Contraseña
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray" />
+                <Lock className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-light/30" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="password"
@@ -129,15 +112,15 @@ const LoginPage = () => {
                   onChange={handleChange}
                   required
                   autoComplete="current-password"
-                  className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg pl-12 pr-12 py-3 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] pl-12 pr-12 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   placeholder="Ingresa tu contraseña"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray hover:text-light transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-light/35 transition-colors hover:text-light"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -148,15 +131,15 @@ const LoginPage = () => {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold py-3 rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="fb-btn fb-btn--accent w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Iniciando sesión...
                 </>
               ) : (
-                'Iniciar Sesión'
+                'Iniciar sesión'
               )}
             </motion.button>
           </form>
@@ -165,7 +148,7 @@ const LoginPage = () => {
           <div className="mt-6 text-center">
             <a
               href="/"
-              className="text-sm text-gray hover:text-primary transition-colors"
+              className="text-[0.78rem] text-light/45 transition-colors hover:text-light"
             >
               ← Volver a la carta
             </a>
@@ -174,12 +157,12 @@ const LoginPage = () => {
           {/* Rescate: este formulario es solo del equipo. El cliente que llega
               aquí por error no tiene usuario ni contraseña que poner, y antes
               se quedaba sin salida. */}
-          <div className="mt-5 pt-5 border-t border-white/[0.08] text-center">
-            <p className="text-sm text-gray">
+          <div className="mt-5 border-t border-white/[0.07] pt-5 text-center">
+            <p className="text-[0.78rem] text-light/50">
               ¿Eres cliente?{" "}
               <Link
                 to="/mi-cuenta"
-                className="text-gold font-semibold hover:underline underline-offset-4"
+                className="text-light underline-offset-4 hover:underline"
               >
                 Tu cuenta se crea con Google →
               </Link>
@@ -188,7 +171,7 @@ const LoginPage = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray/50 text-xs mt-6">
+        <p className="mt-6 text-center text-[0.7rem] text-light/30">
           © 2026 Frostbyte. Todos los derechos reservados.
         </p>
       </motion.div>

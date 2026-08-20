@@ -79,12 +79,7 @@ const GameInstructionsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-dark p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen min-h-screen p-4">
 
       <div className="max-w-3xl mx-auto relative z-10 py-8">
         {/* Back Button */}
@@ -126,7 +121,7 @@ const GameInstructionsPage = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6"
+              className="fb-card p-6"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary">
@@ -155,7 +150,7 @@ const GameInstructionsPage = () => {
           <Button
             onClick={() => navigate(game.playPath || `/game/${gameId}/play`)}
             size="lg"
-            className="bg-gradient-to-r from-primary to-secondary text-dark font-bold text-lg py-6 px-8"
+            className="fb-btn fb-btn--accent px-8 bg-transparent text-light hover:bg-transparent"
           >
             <Play className="w-5 h-5 mr-2" />
             ¡Empezar a jugar!

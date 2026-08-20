@@ -32,12 +32,7 @@ const GamesListPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen min-h-screen p-4">
 
       <div className="max-w-lg mx-auto relative z-10 py-8">
         {/* Back */}
@@ -63,7 +58,7 @@ const GamesListPage = () => {
           className="text-center mb-10"
         >
           <Gamepad2 className="w-10 h-10 text-secondary mx-auto mb-3" />
-          <h1 className="text-3xl font-bold text-light tracking-wider mb-2">
+          <h1 className="font-display text-[1.2rem] font-semibold uppercase tracking-[0.14em] text-light">
             Frostbyte Play
           </h1>
           <p className="text-gray/60">
@@ -83,29 +78,29 @@ const GamesListPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => game.available && navigate(`/game/${game.id}/instrucciones`)}
-                className={`relative rounded-2xl border backdrop-blur-xl overflow-hidden transition-all ${
+                className={`fb-card overflow-hidden transition-all ${
                   game.available
-                    ? 'bg-white/5 border-white/10 hover:border-white/20 cursor-pointer active:scale-[0.98]'
-                    : 'bg-white/[0.02] border-white/5 opacity-50 cursor-not-allowed'
+                    ? 'fb-card--link cursor-pointer active:scale-[0.98]'
+                    : 'cursor-not-allowed opacity-50'
                 }`}
               >
                 <div className="flex items-center gap-4 p-4">
                   {/* Icon */}
-                  <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <Icon className="w-7 h-7 text-secondary" />
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[13px] border border-white/[0.1] bg-white/[0.03]">
+                    <Icon className="h-5 w-5 text-light/70" strokeWidth={1.6} />
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-bold text-light mb-0.5">
+                    <h3 className="font-display text-[0.88rem] font-semibold uppercase tracking-[0.12em] text-light">
                       {game.name}
                     </h3>
-                    <p className="text-sm text-gray/50 leading-snug">
+                    <p className="mt-2 text-[0.75rem] leading-relaxed text-light/50">
                       {game.description}
                     </p>
                     <div className="flex items-center gap-1 mt-1.5">
-                      <Users className="w-3.5 h-3.5 text-gray/40" />
-                      <span className="text-xs text-gray/40">
+                      <Users className="h-3 w-3 text-light/30" />
+                      <span className="text-[0.68rem] text-light/40">
                         {game.minPlayers}+ jugadores
                       </span>
                     </div>
@@ -118,7 +113,7 @@ const GamesListPage = () => {
                         <Play className="w-4 h-4 text-secondary ml-0.5" />
                       </div>
                     ) : (
-                      <span className="text-xs text-gray/40">Pronto</span>
+                      <span className="text-[0.68rem] text-light/40">Pronto</span>
                     )}
                   </div>
                 </div>

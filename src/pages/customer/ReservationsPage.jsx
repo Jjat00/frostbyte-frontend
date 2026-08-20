@@ -45,9 +45,9 @@ const toISO = (d) =>
   ).padStart(2, "0")}`;
 
 const inputCls =
-  "w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] " +
-  "text-light text-sm placeholder:text-white/25 outline-none " +
-  "focus:border-gold/40 transition-colors";
+  "w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 " +
+  "text-[0.85rem] text-light outline-none placeholder:text-light/25 " +
+  "transition-colors focus:border-white/30";
 
 const ReservationsPage = () => {
   const { customer, isAuthenticated } = useCustomerAuthStore();
@@ -181,25 +181,25 @@ const ReservationsPage = () => {
   const canContinueStep2 = date && (isVip ? !!vipSlot : !!time);
 
   return (
-    <div className="min-h-screen bg-dark text-light pb-24">
+    <div className="fb-screen fb-screen--plain min-h-screen pb-24 text-light">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-dark/90 backdrop-blur-md border-b border-white/5">
+      <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-dark/95">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center gap-3">
           <Link
             to="/"
-            className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10"
+            className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.09] text-light/60 transition-colors hover:text-light"
             aria-label="Volver a la carta"
           >
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <h1 className="font-black uppercase tracking-wide flex-1">
-            Reservas <span className="text-gold">Frostbyte</span>
+          <h1 className="font-display flex-1 text-[0.95rem] font-semibold uppercase tracking-[0.14em] text-light">
+            Reservas
           </h1>
           {isAuthenticated && (
             <Link
               to="/mi-cuenta"
               aria-label="Mi cuenta"
-              className="grid place-items-center rounded-full ring-2 ring-gold/40 hover:ring-gold transition-all"
+              className="grid place-items-center rounded-full ring-1 ring-white/15 transition-all hover:ring-white/35"
             >
               <CustomerAvatar
                 customer={customer}
@@ -213,7 +213,7 @@ const ReservationsPage = () => {
       <main className="max-w-lg mx-auto px-4 pt-5">
         {configLoading ? (
           <div className="py-24 grid place-items-center">
-            <Loader2 className="w-8 h-8 animate-spin text-gold" />
+            <Loader2 className="h-7 w-7 animate-spin text-light/45" />
           </div>
         ) : !enabled ? (
           <DisabledNotice />
@@ -228,7 +228,7 @@ const ReservationsPage = () => {
                   key={s}
                   className={cn(
                     "h-1.5 flex-1 rounded-full transition-colors",
-                    s <= step ? "bg-gold" : "bg-white/10"
+                    s <= step ? "bg-secondary/70" : "bg-white/10"
                   )}
                 />
               ))}
@@ -240,8 +240,8 @@ const ReservationsPage = () => {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <h2 className="text-lg font-black mb-1">¿Qué quieres reservar?</h2>
-                <p className="text-sm text-white/50 mb-4">
+                <h2 className="font-display mb-2 text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">¿Qué quieres reservar?</h2>
+                <p className="mb-5 text-[0.8rem] leading-relaxed text-light/50">
                   Sin filas ni sorpresas: tu puesto te espera.
                 </p>
                 <div className="grid gap-3">
@@ -256,7 +256,7 @@ const ReservationsPage = () => {
                     active={type === "vip_room"}
                     onClick={() => setType("vip_room")}
                     icon={Crown}
-                    gold
+                    duo
                     title="Sala VIP · Piso 3"
                     subtitle={`El salón completo solo para ustedes (hasta ${
                       config?.vip_capacity ?? 15
@@ -280,8 +280,8 @@ const ReservationsPage = () => {
                 animate={{ opacity: 1, y: 0 }}
               >
                 <BackLink onClick={() => setStep(1)} />
-                <h2 className="text-lg font-black mb-4 flex items-center gap-2">
-                  <CalendarDays className="w-5 h-5 text-gold" />
+                <h2 className="font-display mb-4 flex items-center gap-2 text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
+                  <CalendarDays className="h-4 w-4 text-light/45" />
                   {isVip ? "¿Cuándo es la celebración?" : "¿Cuándo vienes?"}
                 </h2>
 
@@ -297,7 +297,7 @@ const ReservationsPage = () => {
                         className={cn(
                           "flex flex-col items-center min-w-[3.5rem] px-2 py-2 rounded-xl border snap-start transition-colors",
                           active
-                            ? "bg-gold text-dark border-gold font-black"
+                            ? "border-secondary/45 bg-secondary/[0.1] text-light"
                             : "bg-white/[0.04] border-white/10 text-white/70"
                         )}
                       >
@@ -316,9 +316,9 @@ const ReservationsPage = () => {
                 </div>
 
                 {/* Personas */}
-                <div className="mt-4 flex items-center justify-between p-4 rounded-xl bg-white/[0.04] border border-white/10">
+                <div className="fb-card mt-4 flex items-center justify-between p-4">
                   <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-gold" />
+                    <Users className="h-4 w-4 text-light/45" />
                     <span className="text-sm font-semibold">Personas</span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -328,7 +328,7 @@ const ReservationsPage = () => {
                     >
                       <Minus className="w-4 h-4" />
                     </Stepper>
-                    <span className="w-8 text-center text-lg font-black">
+                    <span className="w-8 text-center text-[1.05rem] font-medium text-light">
                       {partySize}
                     </span>
                     <Stepper
@@ -344,7 +344,7 @@ const ReservationsPage = () => {
 
                 {/* Aviso grupo grande */}
                 {isGroup && (
-                  <p className="mt-2 text-xs text-amber-300/90 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
+                  <p className="fb-inset mt-2 p-3 text-[0.72rem] leading-relaxed text-light/60">
                     Los grupos de más de {config.table_max_party} ocupan varias
                     mesas juntas: pedimos un anticipo de{" "}
                     <strong>{money(config.group_deposit)}</strong> que se abona
@@ -360,10 +360,10 @@ const ReservationsPage = () => {
                         key={f}
                         onClick={() => setFloor(f)}
                         className={cn(
-                          "py-3 rounded-xl border text-sm font-bold transition-colors",
+                          "rounded-xl border py-3 text-[0.8rem] font-medium transition-colors",
                           floor === f
-                            ? "bg-gold/15 border-gold/50 text-gold"
-                            : "bg-white/[0.04] border-white/10 text-white/60"
+                            ? "border-secondary/45 bg-secondary/[0.1] text-light"
+                            : "border-white/[0.1] bg-white/[0.03] text-light/55"
                         )}
                       >
                         Piso {f}
@@ -375,11 +375,11 @@ const ReservationsPage = () => {
                 {/* Hora / turno */}
                 {date && (
                   <div className="mt-5">
-                    <h3 className="text-sm font-bold text-white/70 mb-2 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gold" />
+                    <h3 className="fb-eyebrow mb-2.5 flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-light/45" />
                       {isVip ? "Elige el turno" : "Hora de llegada"}
                       {availLoading && (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-white/40" />
+                        <Loader2 className="h-3 w-3 animate-spin text-light/40" />
                       )}
                     </h3>
 
@@ -395,12 +395,12 @@ const ReservationsPage = () => {
                               !s.available
                                 ? "bg-white/[0.02] border-white/5 opacity-40"
                                 : vipSlot === s.slot
-                                ? "bg-gold/15 border-gold/60"
-                                : "bg-white/[0.04] border-white/10"
+                                ? "border-secondary/45 bg-secondary/[0.07]"
+                                : "border-white/[0.1] bg-white/[0.03]"
                             )}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-black uppercase text-sm">
+                              <span className="text-[0.8rem] font-medium text-light">
                                 {s.label}
                               </span>
                               <span className="text-xs text-white/60">
@@ -410,14 +410,14 @@ const ReservationsPage = () => {
                             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/60">
                               <span>
                                 Anticipo{" "}
-                                <strong className="text-gold">
+                                <strong className="font-medium text-light">
                                   {money(s.deposit)}
                                 </strong>{" "}
                                 (se abona)
                               </span>
                               <span>
                                 Consumo mínimo{" "}
-                                <strong className="text-gold">
+                                <strong className="font-medium text-light">
                                   {money(s.min_consumption)}
                                 </strong>
                               </span>
@@ -444,12 +444,12 @@ const ReservationsPage = () => {
                             disabled={!s.available}
                             onClick={() => setTime(s.time)}
                             className={cn(
-                              "py-2.5 rounded-xl border text-sm font-bold transition-colors",
+                              "rounded-xl border py-2.5 text-[0.8rem] font-medium transition-colors",
                               !s.available
-                                ? "bg-white/[0.02] border-white/5 text-white/20 line-through"
+                                ? "border-white/5 bg-white/[0.02] text-light/20 line-through"
                                 : time === s.time
-                                ? "bg-gold text-dark border-gold"
-                                : "bg-white/[0.04] border-white/10 text-white/80"
+                                ? "border-secondary/45 bg-secondary/[0.1] text-light"
+                                : "border-white/[0.1] bg-white/[0.03] text-light/75"
                             )}
                           >
                             {s.time}
@@ -458,7 +458,7 @@ const ReservationsPage = () => {
                         {!availLoading &&
                           availability &&
                           !availability.slots?.some((s) => s.available) && (
-                            <p className="col-span-4 text-xs text-white/50 bg-white/[0.04] border border-white/10 rounded-xl p-3">
+                            <p className="fb-inset col-span-4 p-3 text-[0.72rem] leading-relaxed text-light/55">
                               No quedan mesas reservables para ese día en este
                               piso. Prueba otra fecha u otro piso — también
                               puedes llegar directamente: siempre guardamos
@@ -487,7 +487,7 @@ const ReservationsPage = () => {
                 animate={{ opacity: 1, y: 0 }}
               >
                 <BackLink onClick={() => setStep(2)} />
-                <h2 className="text-lg font-black mb-4">Tus datos</h2>
+                <h2 className="font-display mb-4 text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">Tus datos</h2>
 
                 <div className="grid gap-3">
                   <input
@@ -520,8 +520,8 @@ const ReservationsPage = () => {
                 </div>
 
                 {/* Resumen */}
-                <div className="mt-4 p-4 rounded-xl bg-linear-to-br from-gold/10 via-dark-secondary to-transparent border border-gold/25">
-                  <h3 className="text-sm font-black uppercase text-gold mb-2 flex items-center gap-2">
+                <div className="fb-card mt-4 p-4">
+                  <h3 className="fb-eyebrow mb-2.5 flex items-center gap-2">
                     {isVip ? (
                       <Crown className="w-4 h-4" />
                     ) : (
@@ -553,12 +553,12 @@ const ReservationsPage = () => {
                         <SummaryRow
                           label="Anticipo (se abona)"
                           value={money(selectedVip.deposit)}
-                          gold
+                          destacado
                         />
                         <SummaryRow
                           label="Consumo mínimo"
                           value={money(selectedVip.min_consumption)}
-                          gold
+                          destacado
                         />
                       </>
                     )}
@@ -566,24 +566,24 @@ const ReservationsPage = () => {
                       <SummaryRow
                         label="Anticipo (se abona)"
                         value={money(config.group_deposit)}
-                        gold
+                        destacado
                       />
                     )}
                   </dl>
                   {!isVip && !isGroup && (
-                    <p className="mt-2 text-xs text-white/40">
+                    <p className="mt-2 text-[0.7rem] text-light/40">
                       Guardamos tu mesa {config?.table_hold_minutes ?? 15}{" "}
                       minutos después de tu hora de llegada.
                     </p>
                   )}
-                  <p className="mt-2 text-xs text-white/40">
+                  <p className="mt-2 text-[0.7rem] text-light/40">
                     Enviarás una solicitud de reserva: nuestro equipo la
                     confirma por WhatsApp.
                   </p>
                 </div>
 
                 {error && (
-                  <p className="mt-3 text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                  <p className="mt-3 rounded-xl border border-red-500/20 p-3 text-[0.78rem] text-red-300">
                     {error}
                   </p>
                 )}
@@ -606,12 +606,12 @@ const ReservationsPage = () => {
             {isAuthenticated && step === 1 && (
               <section className="mt-10">
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-black uppercase text-white/50">
+                  <h2 className="fb-eyebrow">
                     Tus reservas
                   </h2>
                   <Link
                     to="/mis-reservas"
-                    className="text-xs font-bold text-gold"
+                    className="text-[0.72rem] text-light/60 transition-colors hover:text-light"
                   >
                     Ver todas
                   </Link>
@@ -646,29 +646,29 @@ const ReservationsPage = () => {
 
 /* ------------------------------------------------------- subcomponentes -- */
 
-const TypeCard = ({ active, onClick, icon: Icon, title, subtitle, gold }) => (
+const TypeCard = ({ active, onClick, icon: Icon, title, subtitle, duo }) => (
   <button
     onClick={onClick}
     className={cn(
       "text-left p-4 rounded-2xl border transition-all flex items-start gap-3",
       active
-        ? "bg-gold/15 border-gold/60 shadow-[0_0_24px_rgba(242,197,61,0.15)]"
-        : "bg-white/[0.04] border-white/10 hover:border-white/20"
+        ? "border-secondary/45 bg-secondary/[0.07]"
+        : "hover:border-white/20"
     )}
   >
     <span
       className={cn(
         "grid place-items-center w-11 h-11 rounded-xl flex-shrink-0",
-        gold
-          ? "bg-linear-to-br from-gold to-amber-600 text-dark"
-          : "bg-white/10 text-gold"
+        duo
+          ? "border border-white/[0.12] bg-linear-to-br from-primary/15 to-secondary/15 text-light/75"
+          : "border border-white/[0.1] bg-white/[0.03] text-light/70"
       )}
     >
       <Icon className="w-5 h-5" />
     </span>
     <span>
-      <span className="block font-black uppercase text-sm">{title}</span>
-      <span className="block text-xs text-white/50 mt-1 leading-relaxed">
+      <span className="font-display block text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-light">{title}</span>
+      <span className="mt-1.5 block text-[0.72rem] leading-relaxed text-light/50">
         {subtitle}
       </span>
     </span>
@@ -678,7 +678,7 @@ const TypeCard = ({ active, onClick, icon: Icon, title, subtitle, gold }) => (
 const Stepper = ({ children, ...props }) => (
   <button
     {...props}
-    className="grid place-items-center w-9 h-9 rounded-full bg-white/10 disabled:opacity-30 active:scale-95 transition-transform"
+    className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.1] text-light/70 transition-transform active:scale-95 disabled:opacity-30"
   >
     {children}
   </button>
@@ -688,9 +688,8 @@ const PrimaryButton = ({ className, ...props }) => (
   <button
     {...props}
     className={cn(
-      "w-full py-3.5 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark",
-      "font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2",
-      "active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100",
+      "fb-btn fb-btn--accent w-full",
+      "active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100",
       className
     )}
   />
@@ -705,10 +704,12 @@ const BackLink = ({ onClick }) => (
   </button>
 );
 
-const SummaryRow = ({ label, value, gold }) => (
+// `destacado` (antes `gold`, por el dorado que ya no existe) marca las filas de dinero del resumen: son las
+// que el cliente tiene que ver sí o sí, pero ya no llevan color propio.
+const SummaryRow = ({ label, value, destacado }) => (
   <div className="flex justify-between gap-4">
-    <dt className="text-white/40">{label}</dt>
-    <dd className={cn("font-bold text-right", gold && "text-gold")}>
+    <dt className="text-light/40">{label}</dt>
+    <dd className={cn("text-right", destacado ? "font-medium text-light" : "text-light/75")}>
       {value ?? "—"}
     </dd>
   </div>
@@ -728,11 +729,11 @@ const formatLongDate = (iso) => {
 // grupo o Sala VIP) se hace escribiendo o llamando a la línea de reservas.
 const DisabledNotice = () => (
   <div className="py-16 text-center px-4">
-    <PartyPopper className="w-10 h-10 text-gold mx-auto mb-4" />
-    <h2 className="text-lg font-black mb-2">Reserva con nosotros</h2>
+    <PartyPopper className="mx-auto mb-4 h-8 w-8 text-light/45" strokeWidth={1.6} />
+    <h2 className="font-display mb-3 text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">Reserva con nosotros</h2>
     <p className="text-sm text-white/50 mb-6 max-w-xs mx-auto">
       Las reservas en línea aún no están activas. Escríbenos o llámanos al{" "}
-      <span className="text-gold font-bold">{RESERVATIONS_PHONE.display}</span> y
+      <span className="font-medium text-light">{RESERVATIONS_PHONE.display}</span> y
       te guardamos el puesto, sea mesa, grupo o la Sala VIP.
     </p>
     <div className="flex flex-wrap items-center justify-center gap-2">
@@ -740,13 +741,13 @@ const DisabledNotice = () => (
         href={reservationsWaLink()}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase"
+        className="fb-btn fb-btn--accent"
       >
         <MessageCircle className="w-4 h-4" /> Escribir por WhatsApp
       </a>
       <a
         href={reservationsTelLink}
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gold/10 border border-gold/30 text-gold font-bold text-sm uppercase hover:bg-gold/20 transition-colors"
+        className="fb-btn"
       >
         <Phone className="w-4 h-4" /> Llamar
       </a>
@@ -762,23 +763,23 @@ const SuccessScreen = ({ reservation, onNew }) => {
       animate={{ opacity: 1, scale: 1 }}
       className="py-8 text-center"
     >
-      <span className="mx-auto mb-4 grid place-items-center w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-300">
+      <span className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full border border-secondary/25 bg-secondary/10 text-secondary">
         <CheckCircle2 className="w-8 h-8" />
       </span>
-      <h2 className="text-xl font-black mb-1">¡Solicitud enviada!</h2>
+      <h2 className="font-display mb-2 text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Solicitud enviada</h2>
       <p className="text-sm text-white/60 mb-5">
         {reservation.type_display} · {formatLongDate(reservation.date)} ·{" "}
         {String(reservation.start_time).slice(0, 5)}
       </p>
 
-      <p className="text-left text-xs text-violet-200/90 bg-violet-500/10 border border-violet-500/25 rounded-xl p-4 mb-4">
+      <p className="fb-inset mb-4 p-4 text-left text-[0.72rem] leading-relaxed text-light/60">
         Nuestro equipo revisará tu solicitud y te escribirá por WhatsApp para
         confirmarla. También puedes ver el estado aquí, en "Tus reservas".
       </p>
 
       {hasDeposit && (
-        <div className="text-left p-4 rounded-xl bg-amber-500/10 border border-amber-500/25 mb-4">
-          <h3 className="text-sm font-black text-amber-300 mb-1 flex items-center gap-2">
+        <div className="fb-inset mb-4 p-4 text-left">
+          <h3 className="fb-eyebrow mb-2 flex items-center gap-2">
             <Wallet className="w-4 h-4" /> Anticipo:{" "}
             {money(reservation.deposit_amount)}
           </h3>
@@ -794,11 +795,11 @@ const SuccessScreen = ({ reservation, onNew }) => {
       <div className="grid gap-2">
         <Link
           to="/"
-          className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold"
+          className="fb-btn w-full"
         >
           Volver a la carta
         </Link>
-        <button onClick={onNew} className="text-xs text-white/40 py-2">
+        <button onClick={onNew} className="py-2 text-[0.72rem] text-light/40">
           Hacer otra reserva
         </button>
       </div>

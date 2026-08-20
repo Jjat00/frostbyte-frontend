@@ -342,12 +342,7 @@ const GameRoomPage = () => {
 
   // Estado: waiting o configuring (lobby)
   return (
-    <div className="min-h-screen bg-dark p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen min-h-screen p-4">
 
       <div className="max-w-2xl mx-auto relative z-10">
         {/* Header */}
@@ -363,14 +358,14 @@ const GameRoomPage = () => {
               />
             )}
           </div>
-          <p className="text-gray">Sala: {room.room_code}</p>
+          <p className="mt-3 text-[0.8rem] text-light/50">Sala: {room.room_code}</p>
           {room.table_number != null && (
             <p className="text-sm text-gray/70">Mesa {room.table_number}</p>
           )}
         </div>
 
         {/* Room Info Card */}
-        <div className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6 mb-6 shadow-2xl shadow-primary/10">
+        <div className="fb-card mb-6 p-6">
           {/* Share Link Section */}
           <div className="mb-6">
             <label className="text-sm text-gray font-medium mb-2 block">
@@ -512,7 +507,7 @@ const GameRoomPage = () => {
               <Button
                 onClick={handleConfigureRounds}
                 disabled={configureMutation.isPending || !selectedRounds}
-                className="w-full mt-4 bg-gradient-to-r from-primary to-secondary text-dark font-bold"
+                className="fb-btn fb-btn--accent w-full mt-4 bg-transparent text-light hover:bg-transparent"
               >
                 {configureMutation.isPending ? (
                   <>
@@ -555,7 +550,7 @@ const GameRoomPage = () => {
             <Button
               onClick={handleStartGame}
               disabled={startMutation.isPending}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold text-lg py-6"
+              className="fb-btn fb-btn--accent w-full bg-transparent text-light hover:bg-transparent"
               size="lg"
             >
               {startMutation.isPending ? (

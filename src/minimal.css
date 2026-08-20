@@ -43,14 +43,27 @@
 @layer components {
   /* ── Sección: fondo de degradado con velos de acento y grano ────────
      El contenido de la sección debe ir en un contenedor con `relative`
-     (y z-index si hace falta) porque los velos son ::before/::after. */
+     (y z-index si hace falta) porque los velos son ::before/::after.
+
+     `fb-screen` es la misma pintura para la raíz de una PANTALLA entera.
+     Existe por una razón concreta: `fb-section` lleva `overflow: hidden`
+     (para que las decoraciones de una sección no se escapen), y eso rompe
+     cualquier `position: sticky` de dentro — las cabeceras fijas de la
+     cuenta, las reservas y los chips de categoría de domicilios dejarían
+     de pegarse. En una raíz de pantalla no hay nada que recortar. */
   .fb-section {
     position: relative;
     overflow: hidden;
     background-color: var(--color-dark);
   }
 
-  .fb-section::before {
+  .fb-screen {
+    position: relative;
+    background-color: var(--color-dark);
+  }
+
+  .fb-section::before,
+  .fb-screen::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -80,7 +93,8 @@
       );
   }
 
-  .fb-section::after {
+  .fb-section::after,
+  .fb-screen::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -91,7 +105,8 @@
 
   /* Variante lisa: mismo negro y mismo grano, sin velos de color. Para
      secciones seguidas que si no encadenarían tres degradados. */
-  .fb-section--plain::before {
+  .fb-section--plain::before,
+  .fb-screen--plain::before {
     background-image: linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.015) 0%,

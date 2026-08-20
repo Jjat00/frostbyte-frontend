@@ -66,11 +66,7 @@ const ImpostorGamePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary p-4 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-red-500/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen min-h-screen p-4">
 
       <div className="max-w-lg mx-auto relative z-10">
         {/* Header con botón de salir */}
@@ -108,7 +104,7 @@ const ImpostorGamePage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4"
             onClick={() => setShowExitConfirm(false)}
           >
             <motion.div

@@ -52,12 +52,7 @@ const JoinRoomPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen flex min-h-screen items-center justify-center p-4">
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -91,14 +86,14 @@ const JoinRoomPage = () => {
           >
             <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-16 h-16" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-light tracking-wider mb-2">
+          <h1 className="font-display text-[1.2rem] font-semibold uppercase tracking-[0.14em] text-light">
             Unirse a Duelo Frostbyte
           </h1>
-          <p className="text-gray">Ingresa tu nombre para entrar</p>
+          <p className="mt-3 text-[0.8rem] text-light/50">Ingresa tu nombre para entrar</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-8 shadow-2xl shadow-primary/10">
+        <div className="fb-card p-6 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error message */}
             {error && (
@@ -138,7 +133,7 @@ const JoinRoomPage = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
+              className="fb-btn fb-btn--accent w-full bg-transparent text-light hover:bg-transparent"
               size="lg"
             >
               {isLoading ? (

@@ -18,23 +18,23 @@ const MyReservationsPage = () => {
   if (!isAuthenticated) return <Navigate to="/mi-cuenta" replace />;
 
   return (
-    <div className={`min-h-screen bg-dark text-light ${tabBarSpacing}`}>
-      <header className="sticky top-0 z-40 bg-dark/90 backdrop-blur-md border-b border-white/5">
+    <div className={`fb-screen fb-screen--plain min-h-screen text-light ${tabBarSpacing}`}>
+      <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-dark/95">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center gap-3">
           <Link
             to="/mi-cuenta"
             aria-label="Volver a mi cuenta"
-            className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10"
+            className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.09] text-light/60 transition-colors hover:text-light"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="font-black uppercase tracking-wide flex-1">
-            Mis <span className="text-gold">reservas</span>
+          <h1 className="font-display flex-1 text-[0.95rem] font-semibold uppercase tracking-[0.14em] text-light">
+            Mis reservas
           </h1>
           {reservationsEnabled && (
             <Link
               to="/reservas"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-linear-to-r from-gold to-amber-600 text-dark text-xs font-black uppercase"
+              className="fb-pill"
             >
               <Plus className="w-3.5 h-3.5" /> Nueva
             </Link>
@@ -47,14 +47,14 @@ const MyReservationsPage = () => {
           mode="full"
           emptyState={
             <div className="flex flex-col items-center text-center py-16 gap-3">
-              <span className="grid place-items-center w-14 h-14 rounded-full bg-white/5 text-white/40">
-                <CalendarDays className="w-7 h-7" />
+              <span className="grid h-14 w-14 place-items-center rounded-full border border-white/[0.09] text-light/35">
+                <CalendarDays className="h-6 w-6" strokeWidth={1.6} />
               </span>
-              <p className="text-white/50">Aún no has hecho reservas.</p>
+              <p className="text-[0.82rem] text-light/50">Aún no has hecho reservas.</p>
               {reservationsEnabled && (
                 <Link
                   to="/reservas"
-                  className="rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold px-5 py-2.5 text-sm"
+                  className="fb-btn fb-btn--accent"
                 >
                   Reservar mesa o Sala VIP
                 </Link>

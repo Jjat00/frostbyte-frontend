@@ -70,12 +70,7 @@ const QRScanPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen flex min-h-screen items-center justify-center p-4">
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -109,14 +104,14 @@ const QRScanPage = () => {
           >
             <img loading="lazy" decoding="async" src="/logo.png" alt="Frostbyte" className="w-16 h-16" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-light tracking-wider mb-2">
+          <h1 className="font-display text-[1.2rem] font-semibold uppercase tracking-[0.14em] text-light">
             Duelo Frostbyte
           </h1>
-          <p className="text-gray">Crea una sala o únete con un código</p>
+          <p className="mt-3 text-[0.8rem] text-light/50">Crea una sala o únete con un código</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-8 shadow-2xl shadow-primary/10">
+        <div className="fb-card p-6 sm:p-8">
           {/* Mode toggle */}
           <div className="grid grid-cols-2 gap-2 mb-6 p-1 bg-dark rounded-xl border border-gray/20">
             <button
@@ -124,7 +119,7 @@ const QRScanPage = () => {
               onClick={() => { setMode('create'); setError(''); }}
               className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 mode === 'create'
-                  ? 'bg-gradient-to-r from-primary to-secondary text-dark shadow-lg'
+                  ? 'border border-primary/40 bg-primary/10 text-light'
                   : 'text-gray hover:text-light'
               }`}
             >
@@ -136,7 +131,7 @@ const QRScanPage = () => {
               onClick={() => { setMode('join'); setError(''); }}
               className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 mode === 'join'
-                  ? 'bg-gradient-to-r from-primary to-secondary text-dark shadow-lg'
+                  ? 'border border-primary/40 bg-primary/10 text-light'
                   : 'text-gray hover:text-light'
               }`}
             >
@@ -212,7 +207,7 @@ const QRScanPage = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-dark font-bold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
+              className="fb-btn fb-btn--accent w-full bg-transparent text-light hover:bg-transparent"
               size="lg"
             >
               {isLoading ? (

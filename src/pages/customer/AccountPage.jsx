@@ -44,9 +44,9 @@ const formatCOP = (v) =>
   }).format(v || 0);
 
 const inputCls =
-  "w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] " +
-  "text-light text-sm placeholder:text-white/25 outline-none " +
-  "focus:border-gold/40 transition-colors";
+  "w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 " +
+  "text-[0.85rem] text-light outline-none placeholder:text-light/25 " +
+  "transition-colors focus:border-white/30";
 
 /* ---------------------------------------------------------------- login -- */
 
@@ -65,18 +65,18 @@ const LoginHero = () => {
       className="py-10"
     >
       <div className="text-center mb-6">
-        <span className="mx-auto mb-4 grid place-items-center w-16 h-16 rounded-2xl bg-linear-to-br from-gold to-amber-600 text-dark">
-          <UserCircle2 className="w-8 h-8" />
+        <span className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-[16px] border border-white/[0.1] bg-white/[0.03]">
+          <UserCircle2 className="h-6 w-6 text-light/70" />
         </span>
-        <h2 className="text-xl font-black">Tu cuenta Frostbyte</h2>
-        <p className="text-sm text-white/50 mt-1 max-w-xs mx-auto">
+        <h2 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.14em] text-light">Tu cuenta Frostbyte</h2>
+        <p className="mx-auto mt-3 max-w-xs text-[0.8rem] leading-relaxed text-light/50">
           Entra con Google y maneja todo desde un solo lugar.
         </p>
       </div>
 
       {/* Lo que promete la cuenta es lo que de verdad hace por el cliente:
           pedir, seguir el pedido y no volver a escribir sus datos. */}
-      <ul className="grid gap-2 mb-6 max-w-xs mx-auto text-sm text-white/60">
+      <ul className="mx-auto mb-6 grid max-w-xs gap-2 text-[0.78rem] text-light/60">
         {[
           ...(orderingEnabled
             ? [
@@ -93,7 +93,7 @@ const LoginHero = () => {
             : []),
         ].map(([Icon, text]) => (
           <li key={text} className="flex items-start gap-2.5">
-            <Icon className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+            <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-light/45" />
             {text}
           </li>
         ))}
@@ -101,7 +101,7 @@ const LoginHero = () => {
 
       <GoogleSignInButton onError={setError} />
       {error && (
-        <p className="mt-3 text-sm text-red-300 text-center">{error}</p>
+        <p className="mt-3 text-center text-[0.78rem] text-red-300">{error}</p>
       )}
     </motion.div>
   );
@@ -136,22 +136,22 @@ const ProfileCard = () => {
   };
 
   return (
-    <section className="p-4 rounded-2xl bg-linear-to-br from-gold/10 via-dark-secondary to-transparent border border-gold/25">
+    <section className="fb-card p-4">
       <div className="flex items-center gap-3">
         <CustomerAvatar customer={customer} className="w-14 h-14 text-xl" />
         <div className="min-w-0 flex-1">
-          <p className="font-black truncate">
+          <p className="truncate text-[0.88rem] font-medium text-light">
             {customer?.full_name || customer?.first_name || "Cliente"}
           </p>
-          <p className="text-xs text-white/40 truncate">{customer?.email}</p>
+          <p className="truncate text-[0.7rem] text-light/40">{customer?.email}</p>
           {customer?.phone && (
-            <p className="text-xs text-white/40">{customer.phone}</p>
+            <p className="text-[0.7rem] text-light/40">{customer.phone}</p>
           )}
         </div>
         <button
           onClick={editing ? () => setEditing(false) : startEditing}
           aria-label={editing ? "Cerrar edición" : "Editar perfil"}
-          className="grid place-items-center w-9 h-9 rounded-full bg-white/10 hover:bg-white/15 flex-shrink-0"
+          className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-full border border-white/[0.09] text-light/60 transition-colors hover:text-light"
         >
           {editing ? (
             <X className="w-4 h-4" />
@@ -198,8 +198,8 @@ const ProfileCard = () => {
                 setForm((f) => ({ ...f, phone: e.target.value }))
               }
             />
-            <label className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] text-sm cursor-pointer">
-              <span className="text-white/70">
+            <label className="fb-inset flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-[0.8rem]">
+              <span className="text-light/65">
                 Recibir correos de Frostbyte
               </span>
               <input
@@ -208,14 +208,14 @@ const ProfileCard = () => {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, email_opt_out: !e.target.checked }))
                 }
-                className="w-4 h-4 accent-gold"
+                className="h-4 w-4 accent-[var(--color-secondary)]"
               />
             </label>
-            {error && <p className="text-xs text-red-300">{error}</p>}
+            {error && <p className="text-[0.72rem] text-red-300">{error}</p>}
             <button
               onClick={save}
               disabled={saving}
-              className="w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-40"
+              className="fb-btn fb-btn--accent w-full disabled:opacity-40"
             >
               {saving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -235,24 +235,24 @@ const ProfileCard = () => {
 const QuickAction = ({ to, icon: Icon, label, sub, dot }) => (
   <Link
     to={to}
-    className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-white/20 transition-colors"
+    className="fb-card fb-card--link p-4"
   >
-    <span className="relative grid place-items-center w-10 h-10 rounded-xl bg-white/10 text-gold mb-2.5">
-      <Icon className="w-5 h-5" />
+    <span className="relative mb-2.5 grid h-10 w-10 place-items-center rounded-[12px] border border-white/[0.1] bg-white/[0.03] text-light/70">
+      <Icon className="h-[18px] w-[18px]" strokeWidth={1.6} />
       {dot && (
         <span
           aria-hidden
-          className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-dark"
+          className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-secondary ring-2 ring-dark"
         />
       )}
     </span>
-    <span className="block text-sm font-black leading-tight">{label}</span>
-    {sub && <span className="block text-xs text-white/40 mt-0.5">{sub}</span>}
+    <span className="block text-[0.82rem] font-medium leading-tight text-light">{label}</span>
+    {sub && <span className="mt-1 block text-[0.68rem] text-light/40">{sub}</span>}
   </Link>
 );
 
 const SectionTitle = ({ children }) => (
-  <h2 className="text-xs uppercase tracking-wider text-white/50 font-black">
+  <h2 className="fb-eyebrow">
     {children}
   </h2>
 );
@@ -288,18 +288,18 @@ const AccountPage = () => {
   const showOrders = orderingEnabled || orders.length > 0;
 
   return (
-    <div className={`min-h-screen bg-dark text-light ${tabBarSpacing}`}>
-      <header className="sticky top-0 z-40 bg-dark/90 backdrop-blur-md border-b border-white/5">
+    <div className={`fb-screen fb-screen--plain min-h-screen text-light ${tabBarSpacing}`}>
+      <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-dark/95">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center gap-3">
           <Link
             to={cartaPath}
             aria-label="Volver a la carta"
-            className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10"
+            className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.09] text-light/60 transition-colors hover:text-light"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="font-black uppercase tracking-wide">
-            Mi <span className="text-gold">cuenta</span>
+          <h1 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.14em] text-light">
+            Mi cuenta
           </h1>
         </div>
       </header>
@@ -322,7 +322,7 @@ const AccountPage = () => {
                   <SectionTitle>Pedidos en curso</SectionTitle>
                   <Link
                     to="/mis-pedidos"
-                    className="text-xs font-bold text-gold"
+                    className="text-[0.72rem] text-light/60 transition-colors hover:text-light"
                   >
                     Ver todos
                   </Link>
@@ -332,13 +332,13 @@ const AccountPage = () => {
                     <Link
                       key={o.id}
                       to="/mis-pedidos"
-                      className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] flex items-center justify-between gap-3"
+                      className="fb-card fb-card--link flex items-center justify-between gap-3 p-3.5"
                     >
                       <div className="min-w-0">
                         <OrderStatusBadge status={o.status} />
-                        <p className="text-sm font-semibold mt-1.5">
+                        <p className="mt-1.5 text-[0.8rem] font-medium text-light">
                           #{o.order_number}
-                          <span className="text-white/40 font-normal">
+                          <span className="font-normal text-light/40">
                             {" "}
                             · {o.items_count} producto
                             {o.items_count === 1 ? "" : "s"}
@@ -346,10 +346,10 @@ const AccountPage = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
-                        <span className="text-gold font-black text-sm">
+                        <span className="text-[0.82rem] font-medium text-light">
                           {formatCOP(o.total)}
                         </span>
-                        <ChevronRight className="w-4 h-4 text-white/30" />
+                        <ChevronRight className="h-4 w-4 text-light/30" />
                       </div>
                     </Link>
                   ))}
@@ -364,7 +364,7 @@ const AccountPage = () => {
                   <SectionTitle>Próximas reservas</SectionTitle>
                   <Link
                     to="/mis-reservas"
-                    className="text-xs font-bold text-gold"
+                    className="text-[0.72rem] text-light/60 transition-colors hover:text-light"
                   >
                     Ver todas
                   </Link>
@@ -373,14 +373,14 @@ const AccountPage = () => {
                   mode="upcoming"
                   limit={3}
                   emptyState={
-                    <p className="text-xs text-white/40">
+                    <p className="text-[0.7rem] text-light/40">
                       No tienes reservas próximas.
                       {reservationsEnabled && (
                         <>
                           {" "}
                           <Link
                             to="/reservas"
-                            className="text-gold font-bold underline underline-offset-2"
+                            className="text-light underline underline-offset-2"
                           >
                             Reserva aquí
                           </Link>

@@ -36,27 +36,27 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
         >
           {/* Overlay */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70"
             onClick={onClose}
           />
 
           {/* Panel */}
           <motion.div
-            className="relative w-full max-w-md bg-dark border-t border-white/10 rounded-t-2xl shadow-2xl flex flex-col max-h-[88vh]"
+            className="relative flex max-h-[88vh] w-full max-w-md flex-col rounded-t-2xl border-t border-white/[0.08] bg-dark"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 360, damping: 34 }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.07]">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-secondary" />
-                <h2 className="text-base font-black uppercase tracking-wide text-light">
+                <h2 className="font-display text-[0.88rem] font-semibold uppercase tracking-[0.12em] text-light">
                   Tu pedido
                 </h2>
                 {count > 0 && (
-                  <span className="text-xs text-white/40">
+                  <span className="text-[0.7rem] text-light/40">
                     ({count} producto{count === 1 ? "" : "s"})
                   </span>
                 )}
@@ -131,7 +131,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <span className="text-sm font-extrabold text-light">
+                    <span className="text-[0.82rem] font-medium text-light">
                       {formatCOP(it.price * it.quantity)}
                     </span>
                   </div>
@@ -145,7 +145,7 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                     }
                     placeholder="Nota (ej: sin azúcar, extra hielo)"
                     maxLength={200}
-                    className="mt-2 w-full rounded-lg bg-white/[0.04] border border-white/[0.08] px-3 py-1.5 text-xs text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/40"
+                    className="mt-2 w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-[0.72rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
               ))}
@@ -153,18 +153,18 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t border-white/10 px-4 py-3 space-y-3">
+              <div className="border-t border-white/[0.07] px-4 py-3 space-y-3">
                 <div className="flex items-center justify-between">
                   <button
                     type="button"
                     onClick={clear}
-                    className="text-xs text-white/40 hover:text-red-400 transition-colors"
+                    className="text-[0.7rem] text-light/40 transition-colors hover:text-red-400"
                   >
                     Vaciar carrito
                   </button>
                   <div className="text-right">
-                    <span className="text-xs text-white/40">Subtotal</span>
-                    <p className="text-lg font-black text-secondary leading-none">
+                    <span className="text-[0.7rem] text-light/40">Subtotal</span>
+                    <p className="text-[1.05rem] font-medium leading-none text-light">
                       {formatCOP(subtotal)}
                     </p>
                   </div>
@@ -172,11 +172,12 @@ const CartDrawer = ({ open, onClose, onCheckout }) => {
                 <button
                   type="button"
                   onClick={onCheckout}
-                  className="w-full rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-extrabold py-3 active:scale-[0.98] transition-transform"
+                  style={{ "--fb-accent": "var(--color-secondary)" }}
+                  className="fb-btn fb-btn--accent w-full active:scale-[0.98]"
                 >
                   Pedir a domicilio
                 </button>
-                <p className="text-[11px] text-center text-white/30">
+                <p className="text-center text-[0.65rem] text-light/30">
                   El costo del envío se suma en el siguiente paso.
                 </p>
               </div>

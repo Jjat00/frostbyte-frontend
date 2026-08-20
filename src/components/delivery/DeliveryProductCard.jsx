@@ -25,7 +25,7 @@ const DeliveryProductCard = ({ product, canOrder, onAdd }) => {
   const showAdd = canOrder && !comingSoon && variants.length > 0;
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-2xl bg-white/[0.04] border border-white/[0.08]">
+    <div className="fb-card fb-card--link flex flex-col overflow-hidden">
       <div
         className={`relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br ${styles.gradient}`}
       >
@@ -38,29 +38,29 @@ const DeliveryProductCard = ({ product, canOrder, onAdd }) => {
           />
         ) : (
           <div className="absolute inset-0 grid place-items-center">
-            <Icon className="w-10 h-10 text-white/70" />
+            <Icon className="h-9 w-9 text-white/70" />
           </div>
         )}
         {comingSoon && (
-          <span className="absolute top-2 left-2 rounded-full bg-dark/80 border border-white/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/80">
+          <span className="fb-pill absolute left-2 top-2 bg-dark/80 text-[0.6rem] uppercase tracking-[0.16em]">
             Próximamente
           </span>
         )}
       </div>
 
       <div className="flex flex-1 flex-col gap-0.5 p-3">
-        <p className="text-sm font-bold text-light leading-snug line-clamp-2">
+        <p className="line-clamp-2 text-[0.8rem] font-medium leading-snug text-light">
           {product.name}
         </p>
         {multi && (
-          <p className="text-[11px] text-white/40">
+          <p className="text-[0.65rem] text-light/40">
             {variants.length} tamaños
           </p>
         )}
         <div className="mt-auto flex items-center justify-between gap-2 pt-1.5">
-          <p className="text-sm font-extrabold text-secondary">
+          <p className="text-[0.85rem] font-medium text-light">
             {multi && (
-              <span className="text-[10px] font-semibold text-white/40 mr-1">
+              <span className="mr-1 text-[0.6rem] font-normal text-light/40">
                 Desde
               </span>
             )}
@@ -71,9 +71,9 @@ const DeliveryProductCard = ({ product, canOrder, onAdd }) => {
               type="button"
               onClick={() => onAdd(product)}
               aria-label={`Agregar ${product.name} al pedido`}
-              className="grid place-items-center w-10 h-10 -m-1 rounded-full bg-gradient-to-r from-primary to-secondary text-dark shadow-md shadow-secondary/25 active:scale-90 transition-transform cursor-pointer"
+              className="-m-1 grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-secondary/35 bg-secondary/10 text-secondary transition-transform active:scale-90"
             >
-              <Plus className="w-5 h-5" strokeWidth={3} />
+              <Plus className="h-4 w-4" strokeWidth={2.2} />
             </button>
           )}
         </div>

@@ -194,7 +194,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
             exit={{ opacity: 0 }}
           >
             <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/70"
               onClick={onBack}
             />
             <motion.div
@@ -205,7 +205,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
               transition={{ type: "spring", stiffness: 360, damping: 34 }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.07]">
                 <button
                   type="button"
                   onClick={onBack}
@@ -214,7 +214,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
-                <h2 className="text-base font-black uppercase tracking-wide text-light flex items-center gap-2">
+                <h2 className="font-display flex items-center gap-2 text-[0.88rem] font-semibold uppercase tracking-[0.12em] text-light">
                   <Bike className="w-4 h-4 text-secondary" />
                   Pedir a domicilio
                 </h2>
@@ -374,7 +374,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-bold text-light">Total</span>
-                    <span className="text-xl font-black text-secondary">
+                    <span className="text-[1.05rem] font-medium text-light">
                       {formatCOP(total)}
                     </span>
                   </div>
@@ -383,7 +383,8 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                   type="button"
                   onClick={handleConfirm}
                   disabled={submitting || items.length === 0 || orderingDisabled}
-                  className="w-full md:w-auto md:px-10 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-extrabold py-3 active:scale-[0.98] transition-transform disabled:opacity-60"
+                  style={{ "--fb-accent": "var(--color-secondary)" }}
+                  className="fb-btn fb-btn--accent w-full active:scale-[0.98] disabled:opacity-60 md:w-auto md:px-10"
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   {submitting ? "Enviando…" : "Confirmar domicilio"}

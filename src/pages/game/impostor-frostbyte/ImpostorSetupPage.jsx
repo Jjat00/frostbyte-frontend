@@ -130,11 +130,7 @@ const ImpostorSetupPage = () => {
   // Pantalla de partida en progreso
   if (hasGameInProgress && !showSetup) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary p-4 relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 -left-20 w-96 h-96 bg-red-500/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-        </div>
+      <div className="fb-screen min-h-screen p-4">
 
         <div className="max-w-lg mx-auto relative z-10 py-8">
           <motion.div
@@ -155,11 +151,11 @@ const ImpostorSetupPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-dark-secondary/80 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-8 text-center space-y-6"
+            className="fb-card space-y-6 p-6 text-center sm:p-8"
           >
             <div className="text-5xl">🕵️</div>
-            <h2 className="text-2xl font-bold text-light">Partida en curso</h2>
-            <p className="text-gray/60">
+            <h2 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Partida en curso</h2>
+            <p className="text-[0.8rem] leading-relaxed text-light/55">
               Hay una partida sin terminar con {players.length} jugadores.
             </p>
 
@@ -204,12 +200,7 @@ const ImpostorSetupPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-secondary via-dark to-dark-secondary p-4 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-red-500/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-      </div>
+    <div className="fb-screen min-h-screen p-4">
 
       <div className="max-w-lg mx-auto relative z-10 py-8">
         {/* Back */}
@@ -238,7 +229,7 @@ const ImpostorSetupPage = () => {
           className="text-center mb-8"
         >
           <div className="text-5xl mb-3">🕵️</div>
-          <h1 className="text-3xl font-bold text-light tracking-wider">
+          <h1 className="font-display text-[1.2rem] font-semibold uppercase tracking-[0.14em] text-light">
             Impostor Frostbyte
           </h1>
           <p className="text-gray/60 mt-2">Configura tu partida</p>
@@ -249,7 +240,7 @@ const ImpostorSetupPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6"
+            className="fb-card p-6"
           >
             <PlayerSetup
               players={players}
@@ -262,7 +253,7 @@ const ImpostorSetupPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-dark-secondary/80 backdrop-blur-xl border border-gray/20 rounded-2xl p-6"
+            className="fb-card p-6"
           >
             <GameConfig
               config={config}
@@ -281,7 +272,7 @@ const ImpostorSetupPage = () => {
               onClick={handleStartGame}
               disabled={!canStart || isLoading}
               size="lg"
-              className="w-full bg-gradient-to-r from-primary to-secondary text-white font-bold text-lg py-6 disabled:opacity-40"
+              className="fb-btn fb-btn--accent w-full disabled:opacity-40 bg-transparent text-light hover:bg-transparent"
             >
               {isLoading ? (
                 <span className="animate-pulse">Generando palabras...</span>

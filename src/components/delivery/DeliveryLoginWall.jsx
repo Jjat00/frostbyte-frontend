@@ -43,35 +43,37 @@ const DeliveryLoginWall = ({ storeClosed, onError }) => {
       animate={{ opacity: 1, y: 0 }}
       className="mx-auto max-w-sm py-8 text-center"
     >
-      <span className="mx-auto mb-5 grid place-items-center w-16 h-16 rounded-2xl bg-linear-to-br from-emerald-400 to-emerald-600 text-dark">
-        <Bike className="w-8 h-8" />
+      <span className="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-[16px] border border-secondary/20 bg-secondary/10">
+        <Bike className="h-6 w-6 text-secondary" />
       </span>
 
-      <h2 className="text-2xl font-black uppercase leading-tight">
-        Entra para <span className="text-emerald-400">pedir</span>
+      <span className="fb-eyebrow block">Domicilios</span>
+      <h2 className="font-display m-0 mt-2.5 text-[1.15rem] font-semibold uppercase leading-tight tracking-[0.14em] text-light">
+        Entra para pedir
       </h2>
-      <p className="text-white/50 text-sm mt-2">
+      <span aria-hidden className="fb-rule mx-auto mt-4" />
+      <p className="mt-4 text-[0.8rem] leading-relaxed text-light/50">
         Los domicilios van con tu cuenta de Google. Es un toque y no vuelves a
         escribir tus datos.
       </p>
 
-      <ul className="grid gap-2.5 my-6 text-left text-sm text-white/60">
+      <ul className="my-6 grid gap-2.5 text-left text-[0.78rem] text-light/60">
         {[
           [Bike, "Te lo llevamos hasta tu puerta"],
           [ClipboardList, "Sigues tu pedido en vivo y queda en tu historial"],
           [UserCircle2, "Tu nombre y teléfono, listos en cada pedido"],
         ].map(([Icon, text]) => (
           <li key={text} className="flex items-start gap-2.5">
-            <Icon className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+            <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-secondary" />
             {text}
           </li>
         ))}
       </ul>
 
       {storeClosed && (
-        <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-red-400/25 bg-red-500/10 p-3 text-left">
+        <div className="fb-inset mb-4 flex items-start gap-2.5 p-3 text-left">
           <Lock className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-white/60 text-xs">
+          <p className="text-[0.72rem] leading-relaxed text-light/55">
             Ahora mismo estamos cerrados: puedes entrar y dejar tu cuenta
             lista, pero no recibimos pedidos hasta que el badge diga Abierto.
           </p>
@@ -79,11 +81,11 @@ const DeliveryLoginWall = ({ storeClosed, onError }) => {
       )}
 
       <GoogleSignInButton onError={handleError} />
-      {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
+      {error && <p className="mt-3 text-[0.78rem] text-red-300">{error}</p>}
 
       {/* Sin cuenta también se pide: la línea de WhatsApp recibe igual */}
-      <div className="mt-6 pt-5 border-t border-white/10">
-        <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-2.5">
+      <div className="mt-6 border-t border-white/[0.07] pt-5">
+        <p className="fb-eyebrow mb-2.5">
           ¿Prefieres pedir por WhatsApp?
         </p>
         <div className="grid grid-cols-1 gap-2">
@@ -93,7 +95,7 @@ const DeliveryLoginWall = ({ storeClosed, onError }) => {
               href={waLink(line.number)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-bold text-sm hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
+              className="fb-btn w-full"
             >
               <MessageCircle className="w-4 h-4 flex-shrink-0" />
               {line.display}
@@ -105,7 +107,7 @@ const DeliveryLoginWall = ({ storeClosed, onError }) => {
       {/* Salida para quien solo quería mirar: la carta no pide nada */}
       <Link
         to={cartaPath}
-        className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-white/50 hover:text-white/80 transition-colors"
+        className="mt-6 inline-flex items-center gap-2 text-[0.78rem] text-light/45 transition-colors hover:text-light"
       >
         <UtensilsCrossed className="w-4 h-4" />
         Ver la carta sin entrar

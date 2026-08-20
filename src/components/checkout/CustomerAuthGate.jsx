@@ -29,7 +29,7 @@ const CustomerAuthGate = ({
           exit={{ opacity: 0 }}
         >
           <div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/75"
             onClick={onClose}
           />
           <motion.div
@@ -51,7 +51,7 @@ const CustomerAuthGate = ({
               <span className="grid place-items-center w-12 h-12 rounded-full bg-secondary/15 text-secondary">
                 <ShieldCheck className="w-6 h-6" />
               </span>
-              <h2 className="text-lg font-black text-light">
+              <h2 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
                 {title}
               </h2>
               <p className="text-sm text-white/50">

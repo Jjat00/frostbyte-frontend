@@ -58,9 +58,9 @@ const ReservationCard = ({ reservation: r }) => {
   const [confirming, setConfirming] = useState(false);
 
   return (
-    <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08]">
+    <div className="fb-card p-3.5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-bold">
+        <span className="text-[0.82rem] font-medium text-light">
           {r.type_display} · {formatLongDate(r.date)}
         </span>
         <span
@@ -72,19 +72,19 @@ const ReservationCard = ({ reservation: r }) => {
           {r.status_display}
         </span>
       </div>
-      <p className="text-xs text-white/50 mt-1">
+      <p className="mt-1.5 text-[0.72rem] text-light/50">
         {String(r.start_time).slice(0, 5)} · {r.party_size} personas
         {r.floor ? ` · Piso ${r.floor}` : ""}
         {Number(r.deposit_amount) > 0 &&
           ` · Anticipo ${money(r.deposit_amount)}`}
       </p>
       {r.status === "pending_review" && (
-        <p className="mt-2 text-xs text-violet-200/80 bg-violet-500/10 border border-violet-500/20 rounded-lg p-2.5">
+        <p className="fb-inset mt-2 p-2.5 text-[0.72rem] leading-relaxed text-light/60">
           Estamos revisando tu solicitud; te confirmamos por WhatsApp.
         </p>
       )}
       {r.status === "pending_payment" && config?.payment_instructions && (
-        <p className="mt-2 text-xs text-amber-200/90 bg-amber-500/10 border border-amber-500/20 rounded-lg p-2.5 whitespace-pre-line leading-relaxed">
+        <p className="fb-inset mt-2 whitespace-pre-line p-2.5 text-[0.72rem] leading-relaxed text-light/60">
           ¡Solicitud aprobada! Para confirmarla falta el anticipo de{" "}
           <strong>{money(r.deposit_amount)}</strong>.{" "}
           {config.payment_instructions}
@@ -98,13 +98,13 @@ const ReservationCard = ({ reservation: r }) => {
                 cancelReservation.mutate(r.id);
                 setConfirming(false);
               }}
-              className="text-xs font-bold text-red-300 bg-red-500/10 border border-red-500/25 rounded-lg px-3 py-1.5"
+              className="rounded-lg border border-red-500/25 px-3 py-1.5 text-[0.72rem] text-red-300"
             >
               Sí, cancelar
             </button>
             <button
               onClick={() => setConfirming(false)}
-              className="text-xs text-white/50 px-3 py-1.5"
+              className="px-3 py-1.5 text-[0.72rem] text-light/50"
             >
               No
             </button>
@@ -112,7 +112,7 @@ const ReservationCard = ({ reservation: r }) => {
         ) : (
           <button
             onClick={() => setConfirming(true)}
-            className="mt-2 text-xs text-white/40 underline underline-offset-2"
+            className="mt-2 text-[0.72rem] text-light/40 underline underline-offset-2"
           >
             Cancelar reserva
           </button>
@@ -152,7 +152,7 @@ const MyReservationsList = ({ mode = "full", limit, emptyState = null }) => {
     <div className="grid gap-6">
       {upcoming.length > 0 && (
         <section>
-          <h2 className="text-xs uppercase tracking-wider text-gold/80 mb-3">
+          <h2 className="fb-eyebrow mb-3 block">
             Próximas
           </h2>
           <div className="grid gap-2">
@@ -164,7 +164,7 @@ const MyReservationsList = ({ mode = "full", limit, emptyState = null }) => {
       )}
       {past.length > 0 && (
         <section>
-          <h2 className="text-xs uppercase tracking-wider text-white/40 mb-3">
+          <h2 className="fb-eyebrow mb-3 block">
             Anteriores
           </h2>
           <div className="grid gap-2">

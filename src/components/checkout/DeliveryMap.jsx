@@ -252,14 +252,14 @@ const DeliveryMap = ({ value, onChange, radiusKm }) => {
           onClick={() =>
             setStyleKey((k) => (k === "satellite" ? "dark" : "satellite"))
           }
-          className="absolute top-2 left-2 flex items-center gap-1.5 rounded-full bg-dark/80 backdrop-blur-sm border border-white/15 px-2.5 py-1.5 text-[11px] font-bold text-white/80 hover:bg-dark/95 transition-colors cursor-pointer"
+          className="fb-pill absolute left-2 top-2 cursor-pointer bg-dark/85"
         >
           <Layers className="w-3.5 h-3.5" />
           {styleKey === "satellite" ? "Mapa" : "Satélite"}
         </button>
 
         {!hasCoords && (
-          <div className="absolute inset-x-0 bottom-0 bg-dark/80 backdrop-blur-sm px-3 py-2 text-center">
+          <div className="absolute inset-x-0 bottom-0 bg-dark/85 px-3 py-2 text-center">
             <p className="text-[11px] text-white/70">
               Toca el mapa o usa el botón de ubicación para marcar tu entrega
             </p>

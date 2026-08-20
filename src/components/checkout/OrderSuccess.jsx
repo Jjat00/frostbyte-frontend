@@ -26,7 +26,7 @@ const OrderSuccess = ({ order, onClose }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/75" />
           <motion.div
             className="relative w-full max-w-md bg-dark border border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 text-center"
             initial={{ y: 60, opacity: 0 }}
@@ -37,7 +37,7 @@ const OrderSuccess = ({ order, onClose }) => {
               <CheckCircle2 className="w-9 h-9" />
             </span>
 
-            <h2 className="text-xl font-black text-light">¡Domicilio confirmado!</h2>
+            <h2 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Domicilio confirmado</h2>
             <p className="text-sm text-white/50 mt-1">
               Tu pedido entró a la cola. Sigue su estado en "Mis pedidos".
             </p>
@@ -59,7 +59,7 @@ const OrderSuccess = ({ order, onClose }) => {
               )}
               <div className="flex items-center justify-between">
                 <span className="text-white/50 text-sm">Total</span>
-                <span className="text-secondary font-black text-lg">
+                <span className="text-[1.05rem] font-medium text-light">
                   {formatCOP(order.total)}
                 </span>
               </div>
@@ -67,7 +67,7 @@ const OrderSuccess = ({ order, onClose }) => {
                 <p className="text-[11px] uppercase tracking-wider text-white/40">
                   Código de tu pedido
                 </p>
-                <p className="text-3xl font-black tracking-[0.3em] text-secondary mt-1">
+                <p className="font-display mt-1.5 text-2xl font-semibold tracking-[0.3em] text-light">
                   {order.access_code}
                 </p>
               </div>
@@ -80,7 +80,8 @@ const OrderSuccess = ({ order, onClose }) => {
                   onClose?.();
                   navigate("/mis-pedidos");
                 }}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-extrabold py-3 active:scale-[0.98] transition-transform"
+                style={{ "--fb-accent": "var(--color-secondary)" }}
+                className="fb-btn fb-btn--accent w-full active:scale-[0.98]"
               >
                 <ClipboardList className="w-4 h-4" />
                 Ver mis pedidos
