@@ -394,7 +394,7 @@ const OrderDetailPage = () => {
       </motion.div>
 
       {/* Información del cliente */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="fb-card p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-light flex items-center gap-2">
             <User className="w-5 h-5 text-secondary" />
@@ -450,7 +450,7 @@ const OrderDetailPage = () => {
                   type="text"
                   value={editedCustomerName}
                   onChange={(e) => setEditedCustomerName(e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light focus:border-white/30 focus:outline-none"
                   placeholder="Nombre del cliente"
                 />
               </div>
@@ -460,7 +460,7 @@ const OrderDetailPage = () => {
                   tables={tablesData}
                   value={editedTableId}
                   onChange={(e) => setEditedTableId(e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light focus:border-secondary/50 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light focus:border-white/30 focus:outline-none"
                 />
               </div>
             </>
@@ -512,10 +512,10 @@ const OrderDetailPage = () => {
 
       {/* Resumen de pagos y entregas */}
       {order.items?.length > 0 && (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4">
+        <div className="fb-card p-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-              <p className="text-xs text-gray mb-1">Pagado</p>
+              <p className="fb-eyebrow mb-1.5 block">Pagado</p>
               <p className="text-lg font-bold text-green-400">
                 {formatCurrency(order.paid_total)}
               </p>
@@ -524,7 +524,7 @@ const OrderDetailPage = () => {
               </p>
             </div>
             <div className="text-center p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-              <p className="text-xs text-gray mb-1">Por Pagar</p>
+              <p className="fb-eyebrow mb-1.5 block">Por Pagar</p>
               <p className="text-lg font-bold text-yellow-400">
                 {formatCurrency(order.pending_total)}
               </p>
@@ -533,14 +533,14 @@ const OrderDetailPage = () => {
               </p>
             </div>
             <div className="text-center p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-              <p className="text-xs text-gray mb-1">Entregados</p>
+              <p className="fb-eyebrow mb-1.5 block">Entregados</p>
               <p className="text-lg font-bold text-emerald-400">
                 {order.delivered_items_count || 0}
               </p>
               <p className="text-xs text-gray">items</p>
             </div>
             <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-              <p className="text-xs text-gray mb-1">Por Entregar</p>
+              <p className="fb-eyebrow mb-1.5 block">Por Entregar</p>
               <p className="text-lg font-bold text-blue-400">
                 {order.undelivered_items_count || 0}
               </p>
@@ -551,7 +551,7 @@ const OrderDetailPage = () => {
       )}
 
       {/* Items del pedido con pago individual */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="fb-card p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-light">
             Productos ({order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0})
@@ -736,7 +736,7 @@ const OrderDetailPage = () => {
                         setDiscountPercent(val);
                       }
                     }}
-                    className="w-full pl-2.5 pr-7 py-1.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-sm text-light text-right focus:border-primary/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full pl-2.5 pr-7 py-1.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light text-right focus:border-white/30 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray text-sm">%</span>
                 </div>
@@ -788,7 +788,7 @@ const OrderDetailPage = () => {
                   ? "bg-blue-500 hover:bg-blue-600 text-white"
                   : order.status === "preparing"
                   ? "bg-green-500 hover:bg-green-600 text-white"
-                  : "bg-gradient-to-r from-secondary to-primary text-dark"
+                  : "border border-white/[0.12] bg-white/[0.04] text-dark"
               }`}
             >
               {updateStatusMutation.isPending ? (
@@ -900,14 +900,14 @@ const OrderDetailPage = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-xl p-6 w-full max-w-md"
+              className="fb-card p-6 w-full max-w-md"
             >
               <h3 className="text-xl font-bold text-light mb-2">
                 {selectedItemForPayment.is_paid
                   ? "Cambiar Método de Pago"
                   : "Pagar Item"}
               </h3>
-              <div className="mb-4 p-3 backdrop-blur-sm bg-white/[0.08] border border-white/[0.08] rounded-lg">
+              <div className="mb-4 p-3 fb-inset">
                 <p className="text-light font-medium">
                   {selectedItemForPayment.product_name}
                 </p>
@@ -963,7 +963,7 @@ const OrderDetailPage = () => {
                             markItemPaidMutation.isPending ||
                             changePaymentMethodMutation.isPending
                           }
-                          className={`flex flex-col items-center gap-2 p-4 backdrop-blur-sm bg-white/[0.03] border rounded-xl transition-all ${
+                          className={`flex flex-col items-center gap-2 p-4 fb-card border transition-all ${
                             isCurrentMethod
                               ? "border-green-500 bg-green-500/10"
                               : "border-white/[0.08] hover:border-green-500/50 hover:bg-green-500/5"
@@ -1015,14 +1015,14 @@ const OrderDetailPage = () => {
                     <Banknote className="w-4 h-4 text-green-400" />
                     Pago en efectivo
                   </div>
-                  <div className="p-3 backdrop-blur-sm bg-white/[0.08] border border-white/[0.08] rounded-lg">
-                    <p className="text-xs text-gray mb-1">A cobrar</p>
+                  <div className="p-3 fb-inset">
+                    <p className="fb-eyebrow mb-1.5 block">A cobrar</p>
                     <p className="text-2xl font-bold text-secondary">
                       {formatCurrency(selectedItemForPayment.subtotal)}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm text-gray mb-2">
+                    <label className="fb-eyebrow mb-2 block">
                       ¿Con cuánto paga?
                     </label>
                     <div className="relative">
@@ -1034,7 +1034,7 @@ const OrderDetailPage = () => {
                         onChange={(e) => setCashAmount(e.target.value)}
                         placeholder="0"
                         autoFocus
-                        className="w-full pl-8 pr-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-full pl-8 pr-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03] text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                   </div>
@@ -1046,14 +1046,14 @@ const OrderDetailPage = () => {
                     }`}>
                       {Number(cashAmount) >= selectedItemForPayment.subtotal ? (
                         <>
-                          <p className="text-xs text-gray mb-1">Vuelto a entregar</p>
+                          <p className="fb-eyebrow mb-1.5 block">Vuelto a entregar</p>
                           <p className="text-3xl font-bold text-green-400">
                             {formatCurrency(Number(cashAmount) - selectedItemForPayment.subtotal)}
                           </p>
                         </>
                       ) : (
                         <>
-                          <p className="text-xs text-gray mb-1">Falta</p>
+                          <p className="fb-eyebrow mb-1.5 block">Falta</p>
                           <p className="text-3xl font-bold text-red-400">
                             {formatCurrency(selectedItemForPayment.subtotal - Number(cashAmount))}
                           </p>
@@ -1119,7 +1119,7 @@ const OrderDetailPage = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-dark-secondary border border-gray/20 rounded-xl p-6 w-full max-w-md"
+            className="fb-card w-full max-w-md p-6"
           >
             <h3 className="text-xl font-bold text-light mb-4">Pagar Todo</h3>
             <p className="text-gray text-sm mb-4">
@@ -1147,7 +1147,7 @@ const OrderDetailPage = () => {
                         markPaidMutation.mutate(method.id);
                       }}
                       disabled={markPaidMutation.isPending}
-                      className="flex flex-col items-center gap-2 p-4 backdrop-blur-sm bg-white/[0.03] border border-white/[0.08] rounded-xl hover:border-green-500/50 hover:bg-green-500/5 transition-all"
+                      className="flex flex-col items-center gap-2 p-4 fb-card hover:border-green-500/50 hover:bg-green-500/5 transition-all"
                     >
                       <method.icon className="w-6 h-6 text-gray" />
                       <span className="text-sm text-light font-medium">
@@ -1164,14 +1164,14 @@ const OrderDetailPage = () => {
                   <Banknote className="w-4 h-4 text-green-400" />
                   Pago en efectivo
                 </div>
-                <div className="p-3 backdrop-blur-sm bg-white/[0.08] border border-white/[0.08] rounded-lg">
-                  <p className="text-xs text-gray mb-1">Total a cobrar</p>
+                <div className="p-3 fb-inset">
+                  <p className="fb-eyebrow mb-1.5 block">Total a cobrar</p>
                   <p className="text-2xl font-bold text-secondary">
                     {formatCurrency(order.pending_total)}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm text-gray mb-2">
+                  <label className="fb-eyebrow mb-2 block">
                     ¿Con cuánto paga?
                   </label>
                   <div className="relative">
@@ -1183,7 +1183,7 @@ const OrderDetailPage = () => {
                       onChange={(e) => setCashAmountFull(e.target.value)}
                       placeholder="0"
                       autoFocus
-                      className="w-full pl-8 pr-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full pl-8 pr-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03] text-xl text-light text-right font-bold focus:border-green-500/50 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   </div>
                 </div>
@@ -1195,14 +1195,14 @@ const OrderDetailPage = () => {
                   }`}>
                     {Number(cashAmountFull) >= order.pending_total ? (
                       <>
-                        <p className="text-xs text-gray mb-1">Vuelto a entregar</p>
+                        <p className="fb-eyebrow mb-1.5 block">Vuelto a entregar</p>
                         <p className="text-3xl font-bold text-green-400">
                           {formatCurrency(Number(cashAmountFull) - order.pending_total)}
                         </p>
                       </>
                     ) : (
                       <>
-                        <p className="text-xs text-gray mb-1">Falta</p>
+                        <p className="fb-eyebrow mb-1.5 block">Falta</p>
                         <p className="text-3xl font-bold text-red-400">
                           {formatCurrency(order.pending_total - Number(cashAmountFull))}
                         </p>
@@ -1255,12 +1255,12 @@ const OrderDetailPage = () => {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 100 }}
-              className="backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[85vh] flex flex-col"
+              className="bg-white/[0.06] border border-white/[0.15] rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[85vh] flex flex-col"
             >
               {/* Header */}
-              <div className="p-4 border-b border-white/[0.1]">
+              <div className="p-4 border-b border-white/[0.07]">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-bold text-light">
+                  <h3 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
                     Añadir Producto
                   </h3>
                   <button
@@ -1284,7 +1284,7 @@ const OrderDetailPage = () => {
                     placeholder="Buscar producto..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
               </div>
@@ -1299,7 +1299,7 @@ const OrderDetailPage = () => {
                   filteredProducts.map((product) => (
                     <div
                       key={product.id}
-                      className="backdrop-blur-sm bg-white/[0.03] rounded-xl p-3 border border-white/[0.06]"
+                      className="bg-white/[0.03] rounded-xl p-3 border border-white/[0.06]"
                     >
                       <p className="font-medium text-light mb-2">
                         {product.name}
@@ -1355,7 +1355,7 @@ const OrderDetailPage = () => {
                             Math.max(1, parseInt(e.target.value) || 1)
                           )
                         }
-                        className="flex-1 text-center text-lg font-bold text-light bg-dark border border-gray/20 rounded-lg px-4 py-2 focus:border-secondary/50 focus:outline-none"
+                        className="flex-1 text-center text-lg font-bold text-light bg-dark border border-gray/20 rounded-lg px-4 py-2 focus:border-white/30 focus:outline-none"
                       />
                       <button
                         onClick={() => setQuantity(quantity + 1)}
@@ -1366,7 +1366,7 @@ const OrderDetailPage = () => {
                     </div>
                   </div>
                   <div className="mb-3 p-3 bg-secondary/10 border border-secondary/20 rounded-lg">
-                    <p className="text-xs text-gray mb-1">
+                    <p className="fb-eyebrow mb-1.5 block">
                       Producto seleccionado:
                     </p>
                     <p className="text-light font-medium">
@@ -1390,7 +1390,7 @@ const OrderDetailPage = () => {
                     <button
                       onClick={handleConfirmAdd}
                       disabled={addItemMutation.isPending || quantity < 1}
-                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="flex-1 px-4 py-2.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {addItemMutation.isPending ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -1415,7 +1415,7 @@ const OrderDetailPage = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-dark-secondary border border-gray/20 rounded-xl p-6 w-full max-w-md"
+            className="fb-card w-full max-w-md p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="p-3 bg-red-500/20 rounded-xl">
@@ -1462,7 +1462,7 @@ const OrderDetailPage = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-dark-secondary border border-gray/20 rounded-xl p-6 w-full max-w-md"
+            className="fb-card w-full max-w-md p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="p-3 bg-red-500/20 rounded-xl">

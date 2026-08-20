@@ -82,7 +82,7 @@ export default function ModifierGroupsPage() {
       {/* Crear grupo */}
       <form
         onSubmit={handleCreate}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5 space-y-4"
+        className="fb-card p-5 space-y-4"
       >
         <h2 className="text-lg font-bold text-light flex items-center gap-2">
           <Plus className="w-5 h-5 text-secondary" /> Nuevo grupo
@@ -94,7 +94,7 @@ export default function ModifierGroupsPage() {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="Ej: Carnes"
-              className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+              className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
             />
           </label>
           {!selectedBusinessSlug && (
@@ -103,7 +103,7 @@ export default function ModifierGroupsPage() {
               <select
                 value={form.business}
                 onChange={(e) => setForm({ ...form, business: e.target.value })}
-                className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+                className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
               >
                 {businesses.map((b) => (
                   <option key={b.id} value={b.id} className="bg-dark">
@@ -120,7 +120,7 @@ export default function ModifierGroupsPage() {
               min="0"
               value={form.min_select}
               onChange={(e) => setForm({ ...form, min_select: e.target.value })}
-              className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+              className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
             />
           </label>
           <label className="text-sm text-gray">
@@ -130,7 +130,7 @@ export default function ModifierGroupsPage() {
               min="0"
               value={form.max_select}
               onChange={(e) => setForm({ ...form, max_select: e.target.value })}
-              className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+              className="mt-1 w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
             />
           </label>
         </div>
@@ -138,7 +138,7 @@ export default function ModifierGroupsPage() {
         <button
           type="submit"
           disabled={!form.name.trim() || !form.business || createGroup.isPending}
-          className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-5 py-2 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50"
         >
           {createGroup.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
           Crear grupo

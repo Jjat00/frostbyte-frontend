@@ -80,7 +80,7 @@ export function ProductSelectorModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => !isLoading && onClose()}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/70 z-50"
           />
 
           {/* Modal */}
@@ -88,10 +88,7 @@ export function ProductSelectorModal({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2
-                       md:w-full md:max-w-2xl md:max-h-[80vh]
-                       bg-dark-secondary border border-gray/20 rounded-xl shadow-2xl z-50
-                       flex flex-col overflow-hidden"
+            className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-2xl md:max-h-[80vh] bg-dark-secondary border border-gray/20 rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray/20">
@@ -152,8 +149,7 @@ export function ProductSelectorModal({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Buscar producto por nombre o categoría..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-dark border border-gray/20 rounded-lg
-                           text-light placeholder:text-gray focus:outline-none focus:border-secondary/50"
+                  className="w-full pl-10 pr-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light placeholder:text-light/25 focus:outline-none focus:border-white/30"
                 />
               </div>
             </div>

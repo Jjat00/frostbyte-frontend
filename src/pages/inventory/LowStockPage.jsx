@@ -144,7 +144,7 @@ const LowStockPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`backdrop-blur-xl bg-white/[0.08] border rounded-xl p-4 overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
+        className={`fb-card border p-4 overflow-hidden ${
           isSelected
             ? material.stock_status === 'sin_stock'
               ? 'border-red-500/50'
@@ -264,7 +264,7 @@ const LowStockPage = () => {
           <button
             onClick={handleGenerateOrder}
             disabled={createOrderMutation.isPending || selectedCount === 0}
-            className="flex items-center gap-2 px-3 md:px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
+            className="flex items-center gap-2 px-3 md:px-4 py-2 border border-primary/35 bg-primary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
           >
             {createOrderMutation.isPending ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -279,7 +279,7 @@ const LowStockPage = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-2 md:gap-4">
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
+        <div className="fb-card p-3 md:p-6">
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <Package className="w-4 h-4 md:w-5 md:h-5 text-yellow-500" />
             <p className="text-xs md:text-sm text-gray">Seleccionados</p>
@@ -290,7 +290,7 @@ const LowStockPage = () => {
           </p>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
+        <div className="fb-card p-3 md:p-6">
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
             <p className="text-xs md:text-sm text-gray">Sin stock</p>
@@ -300,7 +300,7 @@ const LowStockPage = () => {
           </p>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3 md:p-6">
+        <div className="fb-card p-3 md:p-6">
           <div className="flex items-center gap-2 mb-1 md:mb-2">
             <DollarSign className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
             <p className="text-xs md:text-sm text-gray">Costo Est.</p>
@@ -313,7 +313,7 @@ const LowStockPage = () => {
 
       {/* Content */}
       {materials.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-8 md:p-12 text-center">
+        <div className="fb-card p-8 md:p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-green-500" />
           </div>
@@ -325,7 +325,7 @@ const LowStockPage = () => {
           {/* Vista móvil - Cards */}
           <div className="md:hidden space-y-3">
             {/* Botón seleccionar todos en móvil */}
-            <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-3">
+            <div className="flex items-center justify-between fb-card p-3">
               <button
                 onClick={toggleSelectAll}
                 className="flex items-center gap-2 text-sm"
@@ -356,11 +356,11 @@ const LowStockPage = () => {
           </div>
 
           {/* Vista desktop - Tabla */}
-          <div className="hidden md:block backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
+          <div className="hidden md:block fb-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.1]">
+                  <tr className="border-b border-white/[0.07]">
                     <th className="text-left py-4 px-4 text-sm font-medium text-gray">
                       <button
                         onClick={toggleSelectAll}
@@ -461,7 +461,7 @@ const LowStockPage = () => {
                             min="0"
                             value={quantity}
                             onChange={(e) => handleQuantityChange(material.id, e.target.value)}
-                            className="w-24 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-1.5 text-right text-yellow-400 font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                            className="w-24 rounded-xl border border-white/[0.1] bg-white/[0.03] px-3 py-1.5 text-right text-yellow-400 font-medium focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-primary transition-colors"
                           />
                         </td>
                         <td className="py-4 px-4 text-right text-light">

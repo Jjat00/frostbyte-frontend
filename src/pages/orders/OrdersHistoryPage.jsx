@@ -55,7 +55,7 @@ const OrderHistoryCard = ({ order, getStatusBadge, formatDateTime }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 hover:border-white/[0.2] transition-all"
+      className="fb-card p-4 hover:border-white/[0.2] transition-all"
     >
       <Link to={`/pedidos/${order.id}`} className="block group">
         <div className="flex items-center justify-between">
@@ -257,7 +257,7 @@ const OrdersHistoryPage = () => {
             placeholder="Buscar por # pedido, nombre o teléfono..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+            className="w-full pl-10 pr-4 py-3 fb-card text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
           />
         </div>
 
@@ -266,7 +266,7 @@ const OrdersHistoryPage = () => {
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="px-4 py-3 backdrop-blur-xl bg-[#1a1a2e] border border-white/[0.1] rounded-xl text-light focus:border-secondary/50 focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+            className="px-4 py-3 bg-[#1a1a2e] border border-white/[0.1] rounded-xl text-light focus:border-white/30 focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-light"
           >
             <option value="today">Hoy</option>
             <option value="yesterday">Ayer</option>
@@ -282,7 +282,7 @@ const OrdersHistoryPage = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-3 backdrop-blur-xl bg-[#1a1a2e] border border-white/[0.1] rounded-xl text-light focus:border-secondary/50 focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+            className="px-4 py-3 bg-[#1a1a2e] border border-white/[0.1] rounded-xl text-light focus:border-white/30 focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-light"
           >
             <option value="">Todos</option>
             <option value="pending">Pendiente</option>
@@ -296,7 +296,7 @@ const OrdersHistoryPage = () => {
 
       {/* Resumen */}
       {!isLoading && filteredOrders.length > 0 && (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4">
+        <div className="fb-card p-4">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray">
               {filteredOrders.length} pedido{filteredOrders.length !== 1 ? 's' : ''} encontrado

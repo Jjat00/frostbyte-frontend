@@ -85,17 +85,17 @@ const QrCodeModal = ({ table, onClose }) => {
         exit={{ opacity: 0, y: 40 }}
         className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-md z-50 p-4"
       >
-        {/* relative: contiene el reflejo (::before/::after) dentro de la card.
-            backgroundColor inline: opaco real; el fondo translúcido de
-            .liquid-glass gana la cascada al bg-dark de utilidad y transparentaba. */}
+        {/* backgroundColor inline: la hoja flota sobre la pantalla, así que
+                  necesita fondo opaco de verdad — el vidrio de `fb-card` solo no
+                  basta para que el texto se lea encima. */}
         <div
-          className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto"
+          className="fb-card max-h-[90vh] space-y-4 overflow-y-auto p-5"
           style={{ backgroundColor: 'rgba(18, 20, 31, 0.96)' }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <QrCodeIcon className="w-5 h-5 text-secondary" />
-              <h3 className="text-lg font-bold text-light">
+              <h3 className="font-display text-[0.9rem] font-semibold uppercase tracking-[0.12em] text-light">
                 QR · {table.table_name} · Piso {table.floor}
               </h3>
             </div>
@@ -138,7 +138,7 @@ const QrCodeModal = ({ table, onClose }) => {
             type="button"
             onClick={handleDownload}
             disabled={downloading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity active:scale-95 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:opacity-90 transition-opacity active:scale-95 disabled:opacity-50"
           >
             {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             Descargar PNG

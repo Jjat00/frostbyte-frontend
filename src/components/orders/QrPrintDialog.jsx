@@ -227,17 +227,17 @@ const QrPrintDialog = ({ tables, onClose }) => {
         exit={{ opacity: 0, y: 40 }}
         className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-lg z-50 p-4"
       >
-        {/* relative: contiene el reflejo (::before/::after) dentro de la card.
-            backgroundColor inline: opaco real; el fondo translúcido de
-            .liquid-glass gana la cascada al bg-dark de utilidad y transparentaba. */}
+        {/* backgroundColor inline: la hoja flota sobre la pantalla, así que
+            necesita fondo opaco de verdad — el vidrio de `fb-card` solo no
+            basta para que el texto se lea encima de lo que haya debajo. */}
         <div
-          className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto"
+          className="fb-card max-h-[90vh] space-y-4 overflow-y-auto p-5"
           style={{ backgroundColor: 'rgba(18, 20, 31, 0.96)' }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Printer className="w-5 h-5 text-secondary" />
-              <h3 className="text-lg font-bold text-light">Imprimir QR de mesas</h3>
+              <h3 className="font-display text-[0.9rem] font-semibold uppercase tracking-[0.12em] text-light">Imprimir QR de mesas</h3>
             </div>
             <button type="button" onClick={onClose} className="p-2 text-gray hover:text-light rounded-lg">
               <X className="w-5 h-5" />
@@ -286,7 +286,7 @@ const QrPrintDialog = ({ tables, onClose }) => {
                 const list = (tables || []).filter((t) => (t.floor ?? 0) === f);
                 return (
                   <div key={f}>
-                    <div className="sticky top-0 z-10 bg-dark/95 backdrop-blur px-3 py-1 flex items-center justify-between">
+                    <div className="sticky top-0 z-10 bg-dark/95 px-3 py-1 flex items-center justify-between">
                       <span className="text-[11px] font-bold text-secondary uppercase tracking-wider">
                         {floorLabel(f)}
                       </span>
@@ -446,7 +446,7 @@ const QrPrintDialog = ({ tables, onClose }) => {
             type="button"
             onClick={handlePrint}
             disabled={generating || expanded.length === 0}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity active:scale-95 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:opacity-90 transition-opacity active:scale-95 disabled:opacity-50"
           >
             <Printer className="w-4 h-4" />
             Imprimir {expanded.length ? `(${expanded.length})` : ''}

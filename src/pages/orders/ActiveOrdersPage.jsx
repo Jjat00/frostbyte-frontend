@@ -163,7 +163,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className={`liquid-glass-interactive relative border rounded-xl p-4 ${status.bgClass} transition-all`}
+      className={`relative border rounded-xl p-4 ${status.bgClass} transition-all`}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3 gap-2">
@@ -216,7 +216,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
       </div>
 
       {/* Customer */}
-      <div className="mb-3 pb-3 border-b border-white/[0.1]">
+      <div className="mb-3 pb-3 border-b border-white/[0.07]">
         <div className="flex items-center gap-2 text-sm">
           <User className="w-4 h-4 text-gray" />
           <span className="text-light font-medium">
@@ -354,7 +354,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
                 ? "bg-blue-500 hover:bg-blue-600 text-white"
                 : order.status === "preparing"
                 ? "bg-green-500 hover:bg-green-600 text-white"
-                : "bg-gradient-to-r from-secondary to-primary text-dark hover:shadow-lg"
+                : "border border-white/[0.12] bg-white/[0.04] text-dark hover:shadow-lg"
             }`}
           >
             {nextStatusLabel[order.status]}
@@ -560,7 +560,7 @@ const ActiveOrdersPage = () => {
           </button>
           <Link
             to="/pedidos/nuevo"
-            className="flex items-center gap-2 px-3 md:px-4 py-2 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all text-sm"
+            className="flex items-center gap-2 px-3 md:px-4 py-2 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all text-sm"
           >
             <PlusCircle className="w-5 h-5" />
             <span className="hidden sm:inline">Nuevo Pedido</span>
@@ -581,7 +581,7 @@ const ActiveOrdersPage = () => {
           <button
             key={item.key}
             onClick={() => setFilter(item.key)}
-            className={`liquid-glass-pill flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
               filter === item.key
                 ? item.color === "yellow"
                   ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
@@ -653,7 +653,7 @@ const ActiveOrdersPage = () => {
           </div>
 
           {/* Selector de fecha para pedidos entregados */}
-          <div className="flex items-center justify-center gap-3 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg">
+          <div className="flex items-center justify-center gap-3 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03]">
             <button
               onClick={() => setDeliveredDate("yesterday")}
               disabled={deliveredDate === "yesterday"}
@@ -662,7 +662,7 @@ const ActiveOrdersPage = () => {
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2 px-4 py-2 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-lg">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/[0.08] border border-white/[0.1] rounded-lg">
               <Calendar className="w-4 h-4 text-secondary" />
               <span className="text-sm font-medium text-light">
                 {deliveredDate === "today" ? "Hoy" : "Ayer"}
@@ -760,7 +760,7 @@ const ActiveOrdersPage = () => {
               </p>
               <Link
                 to="/pedidos/nuevo"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-xl hover:shadow-lg transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-secondary/35 bg-secondary/[0.1] text-light rounded-xl hover:shadow-lg transition-all"
               >
                 <PlusCircle className="w-5 h-5" />
                 Crear Pedido

@@ -15,7 +15,7 @@ export function GenerationProgress({
 
   const wrapperClass = inline
     ? "min-h-[280px] flex items-center justify-center rounded-xl border border-gray/20 bg-dark/40 overflow-hidden"
-    : "fixed inset-0 z-50 flex items-center justify-center bg-dark/90 backdrop-blur-sm";
+    : "fixed inset-0 z-50 flex items-center justify-center bg-dark/95";
 
   const contentClass = inline
     ? "flex flex-col items-center justify-center gap-5 w-full max-w-sm px-6 py-10"
@@ -90,7 +90,7 @@ export function GenerationProgress({
           <div className="w-full space-y-1.5">
             <div className="h-1.5 bg-dark rounded-full overflow-hidden">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-secondary to-primary"
+                className="h-full rounded-full border border-white/[0.12] bg-white/[0.04]"
                 initial={{ width: 0 }}
                 animate={{ width: `${uploadProgress}%` }}
                 transition={{ duration: 0.3 }}

@@ -6,8 +6,9 @@ import { cn } from "@/lib/utils";
 /**
  * Diálogo de confirmación reutilizable (mobile-first).
  *
- * Bottom-sheet en móvil, tarjeta centrada en desktop. Estética liquid-glass del
- * proyecto. Pensado para acciones que requieren confirmación explícita
+ * Bottom-sheet en móvil, tarjeta centrada en desktop. Usa la superficie del
+ * sistema (`fb-card`, ver minimal.css) sobre un fondo casi opaco: al flotar
+ * encima de cualquier pantalla, el vidrio a secas dejaría el texto ilegible. Pensado para acciones que requieren confirmación explícita
  * (abrir/cerrar el local, activar/desactivar domicilios, etc.).
  *
  * @param {boolean} open
@@ -76,7 +77,7 @@ const ConfirmDialog = ({
             aria-label={title}
           >
             <div
-              className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4 max-h-[85vh] overflow-y-auto"
+              className="fb-card max-h-[85vh] space-y-4 overflow-y-auto p-5"
               style={{ backgroundColor: "rgba(18, 20, 31, 0.96)" }}
             >
               <div className="flex items-start gap-3">
@@ -86,9 +87,9 @@ const ConfirmDialog = ({
                   </div>
                 )}
                 <div className="min-w-0">
-                  <h3 className="text-lg font-bold text-light">{title}</h3>
+                  <h3 className="font-display text-[0.9rem] font-semibold uppercase tracking-[0.12em] text-light">{title}</h3>
                   {message && (
-                    <div className="text-sm text-gray mt-1 leading-relaxed">{message}</div>
+                    <div className="mt-2 text-[0.8rem] leading-relaxed text-light/55">{message}</div>
                   )}
                 </div>
               </div>

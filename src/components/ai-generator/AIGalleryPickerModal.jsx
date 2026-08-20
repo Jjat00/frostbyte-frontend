@@ -52,7 +52,7 @@ export function AIGalleryPickerModal({ isOpen, onClose, onSelect }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark/80"
           onClick={handleClose}
         >
           <motion.div
@@ -189,7 +189,7 @@ export function AIGalleryPickerModal({ isOpen, onClose, onSelect }) {
                 type="button"
                 onClick={handleSelect}
                 disabled={!selectedUrl}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gradient-to-r from-secondary to-primary text-dark rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-white/[0.12] bg-white/[0.04] text-dark rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Check className="w-4 h-4" />
                 Seleccionar

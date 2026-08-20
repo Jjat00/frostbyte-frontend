@@ -314,7 +314,7 @@ const ProductFormPage = () => {
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Información básica */}
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4">
+        <div className="fb-card space-y-4 p-6">
           <h2 className="text-xl font-bold text-light flex items-center gap-2">
             <Package className="w-5 h-5 text-secondary" />
             Información Básica
@@ -331,7 +331,7 @@ const ProductFormPage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
+                className={`w-full px-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none ${
                   errors.name ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
                 placeholder="Ej: Mango Biche"
@@ -350,7 +350,7 @@ const ProductFormPage = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light focus:border-secondary/50 focus:outline-none ${
+                className={`w-full px-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-light focus:border-white/30 focus:outline-none ${
                   errors.category ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
               >
@@ -424,7 +424,7 @@ const ProductFormPage = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
-                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none ${
+                className={`w-full px-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none resize-none ${
                   errors.description ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
                 placeholder="Describe el producto..."
@@ -464,7 +464,7 @@ const ProductFormPage = () => {
                 value={formData.history}
                 onChange={handleInputChange}
                 rows={3}
-                className={`w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none resize-none ${
+                className={`w-full px-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none resize-none ${
                   errors.history ? 'border-red-500' : 'border-white/[0.12]'
                 }`}
                 placeholder="Breve historia u origen del cóctel. Se mostrará en el menú digital (opcional)."
@@ -501,7 +501,7 @@ const ProductFormPage = () => {
         </div>
 
         {/* Variantes */}
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4">
+        <div className="fb-card space-y-4 p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-light flex items-center gap-2">
               <Package className="w-5 h-5 text-secondary" />
@@ -530,7 +530,7 @@ const ProductFormPage = () => {
                 key={index}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg p-4 space-y-3"
+                className="rounded-xl border border-white/[0.1] bg-white/[0.03] p-4 space-y-3"
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray">
@@ -559,7 +559,7 @@ const ProductFormPage = () => {
                       onChange={(e) =>
                         handleVariantChange(index, 'name', e.target.value)
                       }
-                      className={`w-full px-4 py-2 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
+                      className={`w-full rounded-xl border bg-white/[0.03] px-4 py-2 text-[0.85rem] text-light placeholder:text-light/25 transition-colors focus:border-white/30 focus:outline-none ${
                         errors[`variant_${index}_name`]
                           ? 'border-red-500'
                           : 'border-white/[0.12]'
@@ -586,7 +586,7 @@ const ProductFormPage = () => {
                       onChange={(e) =>
                         handleVariantChange(index, 'price', e.target.value)
                       }
-                      className={`w-full px-4 py-2 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
+                      className={`w-full rounded-xl border bg-white/[0.03] px-4 py-2 text-[0.85rem] text-light placeholder:text-light/25 transition-colors focus:border-white/30 focus:outline-none ${
                         errors[`variant_${index}_price`]
                           ? 'border-red-500'
                           : 'border-white/[0.12]'
@@ -648,7 +648,7 @@ const ProductFormPage = () => {
         {isEditing && productData ? (
           <ProductModifiersSection product={productData} />
         ) : (
-          <div className="backdrop-blur-xl bg-white/[0.05] border border-white/[0.1] rounded-xl p-6">
+          <div className="fb-card p-6">
             <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-2">
               <Package className="w-5 h-5 text-secondary" />
               Grupos de opciones
@@ -672,7 +672,7 @@ const ProductFormPage = () => {
           <button
             type="submit"
             disabled={saveProductMutation.isPending}
-            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-2.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saveProductMutation.isPending ? (
               <>

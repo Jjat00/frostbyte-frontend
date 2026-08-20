@@ -56,7 +56,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-2.5 text-left text-sm focus:outline-none focus:border-primary flex items-center justify-between"
+        className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-3 py-2.5 text-left text-sm focus:outline-none focus:border-white/30 flex items-center justify-between"
       >
         <span className={selectedOption ? 'text-light' : 'text-gray'}>
           {selectedOption ? `${selectedOption.name} (${selectedOption.unit_abbreviation})` : placeholder}
@@ -80,7 +80,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute z-50 w-full mt-1 backdrop-blur-xl bg-dark-secondary border border-white/[0.15] rounded-lg shadow-xl overflow-hidden"
+              className="absolute z-50 w-full mt-1 bg-dark-secondary border border-white/[0.15] rounded-lg shadow-xl overflow-hidden"
             >
               {/* Input de búsqueda */}
               <div className="p-2 border-b border-white/[0.08]">
@@ -91,7 +91,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Buscar material..."
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg pl-9 pr-3 py-2 text-sm text-light placeholder-gray/50 focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] pl-9 pr-3 py-2 text-sm text-light placeholder-gray/50 focus:outline-none focus:border-white/30"
                     autoFocus
                   />
                 </div>
@@ -524,7 +524,7 @@ const PurchaseOrdersPage = () => {
 
   // Order Item Card for Mobile
   const OrderItemCard = ({ item, order }) => (
-    <div className="backdrop-blur-sm bg-white/[0.03] border border-white/[0.06] rounded-lg p-3 mb-2">
+    <div className="fb-inset p-3 mb-2">
       <div className="flex items-start justify-between mb-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -625,7 +625,7 @@ const PurchaseOrdersPage = () => {
           </div>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-1 px-3 py-2 bg-linear-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm"
+            className="flex items-center gap-1 px-3 py-2 border border-primary/35 bg-primary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Nueva Orden</span>
@@ -633,7 +633,7 @@ const PurchaseOrdersPage = () => {
         </div>
 
         {/* Navegación de mes */}
-        <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-3">
+        <div className="flex items-center justify-between fb-card p-3">
           <button
             onClick={goToPreviousMonth}
             className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
@@ -681,7 +681,7 @@ const PurchaseOrdersPage = () => {
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray mb-1">Total invertido</p>
+              <p className="fb-eyebrow mb-1.5 block">Total invertido</p>
               <p className="text-2xl md:text-3xl font-bold text-green-400">
                 {formatCurrency(completedOrdersTotal)}
               </p>
@@ -696,7 +696,7 @@ const PurchaseOrdersPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : orders.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 md:p-12 text-center">
+        <div className="fb-card p-8 md:p-12 text-center">
           <ShoppingCart className="w-12 h-12 text-gray/50 mx-auto mb-4" />
           <h3 className="text-lg md:text-xl font-bold text-light mb-2">Sin órdenes</h3>
           <p className="text-gray text-sm mb-4">No hay órdenes de compra registradas</p>
@@ -720,7 +720,7 @@ const PurchaseOrdersPage = () => {
               key={order.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden"
+              className="fb-card overflow-hidden"
             >
               {/* Order Header */}
               <div
@@ -999,7 +999,7 @@ const PurchaseOrdersPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-2xl md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-2xl md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -1019,9 +1019,9 @@ const PurchaseOrdersPage = () => {
                 {/* Negocio destino de la orden */}
                 {multiBusiness && (
                   <div>
-                    <label className="text-sm text-gray mb-1.5 block">Negocio</label>
+                    <label className="fb-eyebrow mb-2 block">Negocio</label>
                     {activeBusiness ? (
-                      <div className="flex items-center gap-2 px-4 py-3 backdrop-blur-sm bg-white/[0.03] border border-white/[0.08] rounded-lg">
+                      <div className="flex items-center gap-2 px-4 py-3 fb-inset">
                         <span className={`w-2.5 h-2.5 rounded-full ${businessDot(activeBusiness.color)}`} />
                         <span className="text-light text-sm font-medium">{activeBusiness.name}</span>
                         <span className="text-xs text-gray ml-auto">La orden se registra aquí</span>
@@ -1030,7 +1030,7 @@ const PurchaseOrdersPage = () => {
                       <select
                         value={newOrderBusinessId}
                         onChange={(e) => setNewOrderBusinessId(e.target.value)}
-                        className="w-full bg-dark border border-white/[0.12] rounded-lg px-4 py-3 text-sm text-light focus:outline-none focus:border-primary"
+                        className="w-full bg-dark border border-white/[0.12] rounded-lg px-4 py-3 text-sm text-light focus:outline-none focus:border-white/30"
                       >
                         <option value="">Selecciona el negocio…</option>
                         {businesses.map((b) => (
@@ -1042,13 +1042,13 @@ const PurchaseOrdersPage = () => {
                 )}
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Notas (opcional)</label>
+                  <label className="fb-eyebrow mb-2 block">Notas (opcional)</label>
                   <input
                     type="text"
                     value={newOrderNotes}
                     onChange={(e) => setNewOrderNotes(e.target.value)}
                     placeholder="Ej: Compra semanal"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
@@ -1065,7 +1065,7 @@ const PurchaseOrdersPage = () => {
 
                   <div className="space-y-3">
                     {newOrderItems.map((item, index) => (
-                      <div key={index} className="backdrop-blur-sm bg-white/[0.03] border border-white/[0.06] rounded-lg p-3">
+                      <div key={index} className="fb-inset p-3">
                         <div className="grid grid-cols-12 gap-2">
                           <div className="col-span-12 sm:col-span-5">
                             <SearchableSelect
@@ -1083,7 +1083,7 @@ const PurchaseOrdersPage = () => {
                               placeholder="Cantidad"
                               value={item.quantity_needed}
                               onChange={(e) => updateNewOrderItem(index, 'quantity_needed', e.target.value)}
-                              className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-2.5 text-light focus:outline-none focus:border-primary text-sm"
+                              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-3 py-2.5 text-light focus:outline-none focus:border-white/30 text-sm"
                             />
                           </div>
                           <div className="col-span-5 sm:col-span-3">
@@ -1094,7 +1094,7 @@ const PurchaseOrdersPage = () => {
                               placeholder="Precio"
                               value={item.estimated_unit_price}
                               onChange={(e) => updateNewOrderItem(index, 'estimated_unit_price', e.target.value)}
-                              className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-3 py-2.5 text-light focus:outline-none focus:border-primary text-sm"
+                              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-3 py-2.5 text-light focus:outline-none focus:border-white/30 text-sm"
                             />
                           </div>
                           <div className="col-span-2 sm:col-span-1 flex items-center justify-center">
@@ -1119,7 +1119,7 @@ const PurchaseOrdersPage = () => {
                 {newOrderItems.some(i => i.raw_material && i.quantity_needed) && (
                   <div className="bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/20 rounded-lg p-4">
                     <p className="text-sm text-gray">Total estimado</p>
-                    <p className="text-2xl font-bold text-light">
+                    <p className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
                       {formatCurrency(
                         newOrderItems.reduce((sum, item) => {
                           if (item.quantity_needed && item.estimated_unit_price) {
@@ -1147,7 +1147,7 @@ const PurchaseOrdersPage = () => {
                     !newOrderItems.some(i => i.raw_material && i.quantity_needed) ||
                     (multiBusiness && !activeBusiness && !newOrderBusinessId)
                   }
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="fb-btn fb-btn--accent flex-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {createOrderMutation.isPending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -1177,7 +1177,7 @@ const PurchaseOrdersPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -1190,14 +1190,14 @@ const PurchaseOrdersPage = () => {
                 </button>
               </div>
 
-              <div className="mb-4 p-3 backdrop-blur-sm bg-white/[0.03] border border-white/[0.06] rounded-lg">
+              <div className="fb-inset mb-4 p-3">
                 <p className="font-bold text-light">{purchaseModal.item.raw_material_name}</p>
                 <p className="text-sm text-gray">{purchaseModal.item.unit_abbreviation}</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Cantidad comprada</label>
+                  <label className="fb-eyebrow mb-2 block">Cantidad comprada</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1206,12 +1206,12 @@ const PurchaseOrdersPage = () => {
                     onChange={(e) =>
                       setPurchaseData({ ...purchaseData, quantity_purchased: e.target.value })
                     }
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Precio unitario real (COP)</label>
+                  <label className="fb-eyebrow mb-2 block">Precio unitario real (COP)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1220,12 +1220,12 @@ const PurchaseOrdersPage = () => {
                     onChange={(e) =>
                       setPurchaseData({ ...purchaseData, actual_unit_price: e.target.value })
                     }
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Proveedor</label>
+                  <label className="fb-eyebrow mb-2 block">Proveedor</label>
                   <input
                     type="text"
                     value={purchaseData.supplier}
@@ -1233,13 +1233,13 @@ const PurchaseOrdersPage = () => {
                       setPurchaseData({ ...purchaseData, supplier: e.target.value })
                     }
                     placeholder="Nombre del proveedor"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 <div className="bg-gradient-to-r from-green-500/10 to-green-500/5 border border-green-500/20 rounded-lg p-4">
                   <p className="text-sm text-gray">Subtotal</p>
-                  <p className="text-2xl font-bold text-light">
+                  <p className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
                     {formatCurrency(
                       (purchaseData.quantity_purchased || 0) *
                         (purchaseData.actual_unit_price || 0)
@@ -1258,7 +1258,7 @@ const PurchaseOrdersPage = () => {
                 <button
                   onClick={handlePurchaseItem}
                   disabled={purchaseItemMutation.isPending}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50"
+                  className="fb-btn fb-btn--accent flex-1 disabled:opacity-50"
                 >
                   {purchaseItemMutation.isPending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -1288,7 +1288,7 @@ const PurchaseOrdersPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-4 mb-4">
@@ -1346,7 +1346,7 @@ const PurchaseOrdersPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -1362,14 +1362,14 @@ const PurchaseOrdersPage = () => {
                 </button>
               </div>
 
-              <div className="mb-4 p-3 backdrop-blur-sm bg-white/[0.03] border border-white/[0.06] rounded-lg">
+              <div className="fb-inset mb-4 p-3">
                 <p className="text-sm text-gray">Orden</p>
                 <p className="font-bold text-light">{addItemModal.order_number}</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Material *</label>
+                  <label className="fb-eyebrow mb-2 block">Material *</label>
                   <SearchableSelect
                     value={newItem.raw_material}
                     onChange={(value) => {
@@ -1386,7 +1386,7 @@ const PurchaseOrdersPage = () => {
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Cantidad *</label>
+                  <label className="fb-eyebrow mb-2 block">Cantidad *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1394,12 +1394,12 @@ const PurchaseOrdersPage = () => {
                     value={newItem.quantity_needed}
                     onChange={(e) => setNewItem({ ...newItem, quantity_needed: e.target.value })}
                     placeholder="Cantidad a pedir"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Precio unitario estimado (COP)</label>
+                  <label className="fb-eyebrow mb-2 block">Precio unitario estimado (COP)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -1407,14 +1407,14 @@ const PurchaseOrdersPage = () => {
                     value={newItem.estimated_unit_price}
                     onChange={(e) => setNewItem({ ...newItem, estimated_unit_price: e.target.value })}
                     placeholder="Precio por unidad"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 {newItem.quantity_needed && newItem.estimated_unit_price && (
                   <div className="bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/20 rounded-lg p-4">
                     <p className="text-sm text-gray">Subtotal estimado</p>
-                    <p className="text-xl font-bold text-light">
+                    <p className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
                       {formatCurrency(parseFloat(newItem.quantity_needed) * parseFloat(newItem.estimated_unit_price))}
                     </p>
                   </div>
@@ -1431,7 +1431,7 @@ const PurchaseOrdersPage = () => {
                 <button
                   onClick={handleAddItemToOrder}
                   disabled={addItemMutation.isPending || !newItem.raw_material || !newItem.quantity_needed}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="fb-btn fb-btn--accent flex-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {addItemMutation.isPending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -1461,7 +1461,7 @@ const PurchaseOrdersPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -1477,7 +1477,7 @@ const PurchaseOrdersPage = () => {
                 </button>
               </div>
 
-              <div className="mb-4 p-3 backdrop-blur-sm bg-white/[0.03] border border-white/[0.06] rounded-lg">
+              <div className="fb-inset mb-4 p-3">
                 <p className="font-bold text-light">{editItemModal.item.raw_material_name}</p>
                 <p className="text-sm text-gray">
                   {editItemModal.item.unit_abbreviation} • 
@@ -1507,7 +1507,7 @@ const PurchaseOrdersPage = () => {
                 )}
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">
+                  <label className="fb-eyebrow mb-2 block">
                     {editItemModal.item.is_purchased ? 'Cantidad comprada' : 'Cantidad necesaria'}
                   </label>
                   <input
@@ -1516,13 +1516,13 @@ const PurchaseOrdersPage = () => {
                     inputMode="decimal"
                     value={editItemData.quantity}
                     onChange={(e) => setEditItemData({ ...editItemData, quantity: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     placeholder={editItemModal.item.is_purchased ? 'Cantidad comprada' : 'Cantidad necesaria'}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">
+                  <label className="fb-eyebrow mb-2 block">
                     {editItemModal.item.is_purchased ? 'Precio real (COP)' : 'Precio estimado (COP)'}
                   </label>
                   <input
@@ -1531,19 +1531,19 @@ const PurchaseOrdersPage = () => {
                     inputMode="decimal"
                     value={editItemData.unit_price}
                     onChange={(e) => setEditItemData({ ...editItemData, unit_price: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     placeholder={editItemModal.item.is_purchased ? 'Precio real por unidad' : 'Precio estimado por unidad'}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Proveedor</label>
+                  <label className="fb-eyebrow mb-2 block">Proveedor</label>
                   <input
                     type="text"
                     value={editItemData.supplier}
                     onChange={(e) => setEditItemData({ ...editItemData, supplier: e.target.value })}
                     placeholder="Nombre del proveedor"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
@@ -1553,7 +1553,7 @@ const PurchaseOrdersPage = () => {
                     <p className="text-sm text-gray">
                       Subtotal {editItemModal.item.is_purchased ? '' : '(estimado)'}
                     </p>
-                    <p className="text-xl font-bold text-light">
+                    <p className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
                       {formatCurrency(parseFloat(editItemData.quantity) * parseFloat(editItemData.unit_price))}
                     </p>
                   </div>
@@ -1570,7 +1570,7 @@ const PurchaseOrdersPage = () => {
                 <button
                   onClick={handleUpdateItem}
                   disabled={updateItemMutation.isPending}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50"
+                  className="fb-btn fb-btn--accent flex-1 disabled:opacity-50"
                 >
                   {updateItemMutation.isPending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />

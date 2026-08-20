@@ -80,7 +80,7 @@ export function TransparencyToggle({ value, onChange, disabled = false }) {
             )}
           >
             <div className="h-full flex items-center justify-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg" />
+              <div className="w-12 h-12 border border-white/[0.12] bg-white/[0.04] rounded-lg" />
             </div>
           </div>
           <span className="text-xs text-gray">Con fondo</span>
@@ -98,7 +98,7 @@ export function TransparencyToggle({ value, onChange, disabled = false }) {
             )}
           >
             <div className="h-full flex items-center justify-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg" />
+              <div className="w-12 h-12 border border-white/[0.12] bg-white/[0.04] rounded-lg" />
             </div>
           </div>
           <span className="text-xs text-gray">Transparente</span>

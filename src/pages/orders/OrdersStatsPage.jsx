@@ -538,7 +538,7 @@ const OrdersStatsPage = () => {
       </div>
 
       {/* Gráfica de Ingresos por Día */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="fb-card p-4 md:p-6">
         <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-green-400" />
           Ingresos por Día
@@ -600,7 +600,7 @@ const OrdersStatsPage = () => {
       </div>
 
       {/* Ventas por Producto */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="fb-card p-4 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
           <h2 className="text-lg font-bold text-light flex items-center gap-2">
             <Package className="w-5 h-5 text-blue-400" />
@@ -643,7 +643,7 @@ const OrdersStatsPage = () => {
 
       {/* Gráfica de Mesas Más Frecuentadas */}
       {tableStats?.tables && tableStats.tables.length > 0 && (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+        <div className="fb-card p-4 md:p-6">
           <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
             <Armchair className="w-5 h-5 text-purple-400" />
             Mesas Más Frecuentadas
@@ -701,7 +701,7 @@ const OrdersStatsPage = () => {
       )}
 
       {/* Desglose por estado */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="fb-card p-4 md:p-6">
         <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-secondary" />
           Desglose por Estado
@@ -796,7 +796,7 @@ const OrdersStatsPage = () => {
       </div>
 
       {/* Desglose por Método de Pago */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+      <div className="fb-card p-4 md:p-6">
         <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
           <Wallet className="w-5 h-5 text-green-400" />
           Ingresos por Método de Pago
@@ -867,7 +867,7 @@ const OrdersStatsPage = () => {
       {/* Resumen */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Tasa de completado */}
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+        <div className="fb-card p-4 md:p-6">
           <h3 className="text-sm text-gray mb-2">Tasa de Completado</h3>
           <div className="flex items-end gap-3">
             <span className="text-4xl font-bold text-green-400">
@@ -883,7 +883,7 @@ const OrdersStatsPage = () => {
         </div>
 
         {/* Tasa de cancelación */}
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 md:p-6">
+        <div className="fb-card p-4 md:p-6">
           <h3 className="text-sm text-gray mb-2">Tasa de Cancelación</h3>
           <div className="flex items-end gap-3">
             <span className="text-4xl font-bold text-red-400">
@@ -928,7 +928,7 @@ const OrdersStatsPage = () => {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 100 }}
-              className="backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[90vh] overflow-y-auto"
+              className="bg-white/[0.06] border border-white/[0.15] rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
               <div className="p-4 md:p-6 border-b border-white/[0.1] flex items-center justify-between">
@@ -981,7 +981,7 @@ const OrdersStatsPage = () => {
                         value={customStartDate}
                         onChange={(e) => setCustomStartDate(e.target.value)}
                         max={customEndDate || new Date().toISOString().split('T')[0]}
-                        className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
+                        className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-light focus:outline-none focus:border-white/30"
                       />
                     </div>
                     <div>
@@ -992,20 +992,20 @@ const OrdersStatsPage = () => {
                         onChange={(e) => setCustomEndDate(e.target.value)}
                         min={customStartDate || undefined}
                         max={new Date().toISOString().split('T')[0]}
-                        className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-2.5 text-light focus:outline-none focus:border-secondary"
+                        className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-light focus:outline-none focus:border-white/30"
                       />
                     </div>
                     <button
                       onClick={handleCustomRange}
                       disabled={!customStartDate || !customEndDate || customStartDate > customEndDate}
-                      className="w-full px-4 py-3 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full px-4 py-3 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       <Calendar className="w-5 h-5" />
                       Aplicar rango personalizado
                     </button>
                     {useCustomRange && customStartDate && customEndDate && (
                       <div className="p-3 bg-secondary/10 border border-secondary/20 rounded-lg">
-                        <p className="text-xs text-gray mb-1">Rango activo:</p>
+                        <p className="fb-eyebrow mb-1.5 block">Rango activo:</p>
                         <p className="text-sm text-light font-medium">
                           {new Date(customStartDate).toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })} - {new Date(customEndDate).toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })}
                         </p>

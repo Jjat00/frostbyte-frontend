@@ -45,7 +45,7 @@ export default function BusinessComparison({ data, formatCurrency, formatCurrenc
   const tooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
     return (
-      <div className="backdrop-blur-xl bg-white/[0.06] border border-secondary/30 rounded-xl p-3">
+      <div className="bg-white/[0.06] border border-secondary/30 rounded-xl p-3">
         <p className="text-xs text-secondary font-bold mb-1.5">{label}</p>
         {payload.map((e, i) => (
           <div key={i} className="flex items-center justify-between gap-6 text-xs">
@@ -60,7 +60,7 @@ export default function BusinessComparison({ data, formatCurrency, formatCurrenc
   return (
     <section>
       <div className="flex items-center gap-3 mb-5">
-        <div className="p-2 rounded-xl bg-secondary/10 border border-secondary/20">
+        <div className="rounded-[12px] border border-secondary/20 bg-secondary/10 p-2">
           <Building2 className="w-5 h-5 text-secondary" />
         </div>
         <div>
@@ -77,7 +77,7 @@ export default function BusinessComparison({ data, formatCurrency, formatCurrenc
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: idx * 0.05 }}
-            className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-2xl p-4 md:p-5"
+            className="fb-card p-4 md:p-5"
             style={{ borderTopColor: hexFor(b.color), borderTopWidth: 3 }}
           >
             <div className="flex items-center gap-2 mb-3">
@@ -138,7 +138,7 @@ export default function BusinessComparison({ data, formatCurrency, formatCurrenc
       </div>
 
       {/* Barras comparativas */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-2xl p-4 md:p-6">
+      <div className="fb-card p-4 md:p-6">
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>

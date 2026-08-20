@@ -78,14 +78,14 @@ export default function ModifierGroupCard({ group, onChanged }) {
   };
 
   return (
-    <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5 space-y-4">
+    <div className="fb-card p-5 space-y-4">
       {/* Encabezado del grupo */}
       {editing ? (
         <div className="space-y-3">
           <input
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+            className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
             placeholder="Nombre del grupo"
           />
           <div className="grid grid-cols-2 gap-3">
@@ -199,14 +199,14 @@ export default function ModifierGroupCard({ group, onChanged }) {
           value={newOption.name}
           onChange={(e) => setNewOption({ ...newOption, name: e.target.value })}
           placeholder="Nueva opción (ej: Pollo)"
-          className="flex-1 min-w-[140px] px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none"
+          className="flex-1 min-w-[140px] px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-white/30 focus:outline-none"
         />
         <input
           type="number"
           value={newOption.price_delta}
           onChange={(e) => setNewOption({ ...newOption, price_delta: e.target.value })}
           placeholder="$ extra"
-          className="w-24 px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none"
+          className="w-24 px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-white/30 focus:outline-none"
         />
         <label className="flex items-center gap-1.5 text-xs text-gray cursor-pointer">
           <input

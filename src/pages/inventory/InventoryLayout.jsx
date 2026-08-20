@@ -92,9 +92,9 @@ const InventoryLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark flex flex-col md:flex-row">
+    <div className="fb-screen fb-screen--plain flex min-h-screen flex-col md:flex-row">
       {/* Mobile Header */}
-      <header className="md:hidden h-14 backdrop-blur-xl bg-white/[0.08] border-b border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex items-center justify-between px-4 sticky top-0 z-30">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/[0.07] bg-dark/95 px-4 md:hidden">
         <NavLink
           to="/home"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity active:scale-95"
@@ -127,7 +127,7 @@ const InventoryLayout = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="liquid-glass fixed right-0 top-0 bottom-0 w-72 backdrop-blur-xl bg-white/[0.08] border-l border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] z-50 flex flex-col md:hidden"
+              className="fixed bottom-0 right-0 top-0 z-50 flex w-72 flex-col border-l border-white/[0.07] bg-dark md:hidden"
             >
               <div className="p-4 border-b border-white/[0.1] flex items-center justify-between">
                 <span className="font-bold text-light">Menú</span>
@@ -140,9 +140,9 @@ const InventoryLayout = () => {
               </div>
 
               {/* User info */}
-              <div className="p-4 border-b border-white/[0.1]">
+              <div className="p-4 border-b border-white/[0.07]">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold text-lg">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.12] bg-white/[0.04] text-[0.85rem] font-medium text-light">
                     {user?.first_name?.charAt(0) ||
                       user?.username?.charAt(0) ||
                       "U"}
@@ -157,7 +157,7 @@ const InventoryLayout = () => {
               </div>
 
               {/* Selector de negocio */}
-              <div className="p-4 border-b border-white/[0.1]">
+              <div className="p-4 border-b border-white/[0.07]">
                 <BusinessContextBadge />
               </div>
 
@@ -190,7 +190,7 @@ const InventoryLayout = () => {
                       className={({ isActive }) =>
                         `${baseClasses} ${
                           isActive
-                            ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30"
+                            ? "border border-primary/30 bg-primary/[0.08] text-light"
                             : ""
                         }`
                       }
@@ -216,7 +216,7 @@ const InventoryLayout = () => {
               <div className="p-4 border-t border-white/[0.1]">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-red-500/10 text-red-400 rounded-xl hover:bg-red-500/20 transition-colors"
+                  className="fb-btn w-full border-red-500/25 text-red-400 hover:border-red-500/45 hover:text-red-300"
                 >
                   <LogOut className="w-5 h-5" />
                   <span className="font-medium">Cerrar sesión</span>
@@ -228,9 +228,9 @@ const InventoryLayout = () => {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="liquid-glass hidden md:flex w-64 h-screen backdrop-blur-xl bg-white/[0.08] border-r border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] flex-col fixed left-0 top-0">
+      <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-white/[0.07] bg-dark md:flex">
         {/* Logo */}
-        <div className="p-5 border-b border-white/[0.1]">
+        <div className="p-5 border-b border-white/[0.07]">
           <NavLink
             to="/home"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity group"
@@ -242,7 +242,7 @@ const InventoryLayout = () => {
               className="w-10 h-10 group-hover:scale-105 transition-transform"
             />
             <div>
-              <h1 className="text-lg font-bold text-light tracking-wider group-hover:text-primary transition-colors">
+              <h1 className="font-display text-[0.88rem] font-semibold tracking-[0.16em] text-light transition-colors group-hover:text-light/70">
                 FROSTBYTE
               </h1>
               <p className="text-xs text-gray">Inventario</p>
@@ -251,7 +251,7 @@ const InventoryLayout = () => {
         </div>
 
         {/* Selector de negocio */}
-        <div className="p-3 border-b border-white/[0.1]">
+        <div className="p-3 border-b border-white/[0.07]">
           <BusinessContextBadge />
         </div>
 
@@ -278,7 +278,7 @@ const InventoryLayout = () => {
                 className={({ isActive }) =>
                   `${baseClasses} ${
                     isActive
-                      ? "bg-gradient-to-r from-primary/20 to-secondary/20 text-light border border-primary/30"
+                      ? "border border-primary/30 bg-primary/[0.08] text-light"
                       : ""
                   }`
                 }
@@ -303,7 +303,7 @@ const InventoryLayout = () => {
         {/* User section */}
         <div className="p-3 border-t border-white/[0.1]">
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-dark font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.12] bg-white/[0.04] text-[0.8rem] font-medium text-light">
               {user?.first_name?.charAt(0) || user?.username?.charAt(0) || "U"}
             </div>
             <div className="flex-1 min-w-0">
@@ -332,7 +332,7 @@ const InventoryLayout = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="liquid-glass-pill md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-white/[0.03] border-t border-white/[0.1] z-30 safe-area-pb">
+      <nav className="safe-area-pb fixed bottom-0 left-0 right-0 z-30 border-t border-white/[0.07] bg-dark/95 md:hidden">
         <div className="flex items-center justify-around py-2">
           {navItems
             .filter((item) => item.path !== "/home" && item.path !== "/")

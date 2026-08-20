@@ -159,7 +159,7 @@ const TablesManagementPage = () => {
         <div className="flex items-center gap-2">
           <LayoutGrid className="w-6 h-6 text-secondary" />
           <div>
-            <h1 className="text-xl font-bold text-light">Mesas y Barras</h1>
+            <h1 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">Mesas y Barras</h1>
             <p className="text-xs text-gray">Gestiona los puntos de atención por piso</p>
           </div>
         </div>
@@ -175,7 +175,7 @@ const TablesManagementPage = () => {
           </button>
           <button
             onClick={openCreate}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity active:scale-95"
+            className="flex items-center gap-2 px-4 py-2.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:opacity-90 transition-opacity active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Nueva mesa</span>
@@ -206,7 +206,7 @@ const TablesManagementPage = () => {
                 {floorTables.map((table) => (
                   <div
                     key={table.id}
-                    className={`liquid-glass flex items-center justify-between gap-2 p-3 rounded-xl border ${
+                    className={`fb-card flex items-center justify-between gap-2 p-3 rounded-xl border ${
                       table.is_active
                         ? 'border-white/[0.1] bg-white/[0.04]'
                         : 'border-white/[0.06] bg-white/[0.02] opacity-60'
@@ -281,16 +281,16 @@ const TablesManagementPage = () => {
               exit={{ opacity: 0, y: 40 }}
               className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-md z-50 p-4"
             >
-              {/* relative: contiene el reflejo (::before/::after) dentro de la card.
-                  backgroundColor inline: opaco real; el fondo translúcido de
-                  .liquid-glass gana la cascada al bg-dark de utilidad y transparentaba. */}
+              {/* backgroundColor inline: la hoja flota sobre la pantalla, así que
+                  necesita fondo opaco de verdad — el vidrio de `fb-card` solo no
+                  basta para que el texto se lea encima. */}
               <form
                 onSubmit={handleSubmit}
-                className="liquid-glass relative border border-white/[0.12] rounded-2xl p-5 space-y-4"
+                className="fb-card space-y-4 p-5"
                 style={{ backgroundColor: 'rgba(18, 20, 31, 0.96)' }}
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-light">
+                  <h3 className="font-display text-[0.9rem] font-semibold uppercase tracking-[0.12em] text-light">
                     {form.id ? 'Editar mesa' : 'Nueva mesa'}
                   </h3>
                   <button
@@ -310,7 +310,7 @@ const TablesManagementPage = () => {
                       min="1"
                       value={form.floor}
                       onChange={(e) => setForm((p) => ({ ...p, floor: e.target.value }))}
-                      className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+                      className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -320,7 +320,7 @@ const TablesManagementPage = () => {
                       min="0"
                       value={form.table_number}
                       onChange={(e) => handleNumberChange(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+                      className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -332,7 +332,7 @@ const TablesManagementPage = () => {
                     value={form.table_name}
                     onChange={(e) => setForm((p) => ({ ...p, table_name: e.target.value }))}
                     placeholder="Ej: Mesa 1, Barra, Terraza"
-                    className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+                    className="w-full px-3 py-2.5 bg-white/[0.06] border border-white/[0.12] rounded-lg text-light focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
@@ -364,7 +364,7 @@ const TablesManagementPage = () => {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
                     {isSaving ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

@@ -163,7 +163,7 @@ const CategoriesPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-light">Categorias de Gastos</h1>
+          <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Categorias de Gastos</h1>
           <p className="text-gray text-sm mt-1">
             Administra las categorias de gastos operativos
           </p>
@@ -292,20 +292,20 @@ const CategoriesPage = () => {
 
               <form onSubmit={handleSubmit} className="p-4 space-y-4">
                 <div>
-                  <label className="block text-sm text-gray mb-2">Nombre *</label>
+                  <label className="fb-eyebrow mb-2 block">Nombre *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
                     placeholder="Nombre de la categoria"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray mb-2">Descripcion</label>
+                  <label className="fb-eyebrow mb-2 block">Descripcion</label>
                   <input
                     type="text"
                     value={formData.description}
@@ -315,20 +315,20 @@ const CategoriesPage = () => {
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
                     placeholder="Descripcion opcional"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray mb-2">Icono</label>
+                    <label className="fb-eyebrow mb-2 block">Icono</label>
                     <select
                       value={formData.icon}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, icon: e.target.value }))
                       }
-                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
                     >
                       {ICON_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -339,13 +339,13 @@ const CategoriesPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm text-gray mb-2">Color</label>
+                    <label className="fb-eyebrow mb-2 block">Color</label>
                     <select
                       value={formData.color}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, color: e.target.value }))
                       }
-                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                      className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
                     >
                       {COLOR_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -357,13 +357,13 @@ const CategoriesPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray mb-2">Tipo</label>
+                  <label className="fb-eyebrow mb-2 block">Tipo</label>
                   <select
                     value={formData.kind}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, kind: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
                   >
                     {KIND_LIST.map((k) => (
                       <option key={k.value} value={k.value}>

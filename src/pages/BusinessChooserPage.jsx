@@ -72,8 +72,6 @@ const BusinessChooserPage = () => {
     <div className="min-h-screen bg-dark relative overflow-hidden flex flex-col">
       {/* Fondos */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-secondary/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
       </div>
 
       {/* Header */}
@@ -125,7 +123,7 @@ const BusinessChooserPage = () => {
                   whileHover={{ y: -6 }}
                   onClick={() => enter(b.slug)}
                   className={cn(
-                    "liquid-glass-interactive group relative text-left rounded-2xl p-6 border border-white/[0.1] bg-white/[0.04] transition-all overflow-hidden",
+                    "fb-card fb-card--link fb-card--lift group relative overflow-hidden p-6 text-left",
                     p.ring,
                     p.glow,
                     selectedBusinessSlug === b.slug && "ring-2 ring-secondary/40"
@@ -147,7 +145,7 @@ const BusinessChooserPage = () => {
                       <Icon className="w-7 h-7 text-dark" />
                     </div>
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-xl font-bold text-light">{b.name}</h3>
+                      <h3 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">{b.name}</h3>
                       {floorLabel(b.floor) && (
                         <span className="text-[11px] px-2 py-0.5 rounded-full bg-white/[0.08] text-gray border border-white/[0.1]">
                           {floorLabel(b.floor)}
@@ -174,16 +172,16 @@ const BusinessChooserPage = () => {
               whileHover={{ y: -6 }}
               onClick={() => enter("")}
               className={cn(
-                "liquid-glass-interactive group relative text-left rounded-2xl p-6 border border-white/[0.12] bg-gradient-to-br from-primary/[0.06] to-secondary/[0.06] transition-all overflow-hidden hover:border-primary/40 group-hover:shadow-[0_0_40px_color-mix(in_srgb,var(--color-primary)_20%,transparent)]",
+                "fb-card fb-card--accent fb-card--link fb-card--lift group relative overflow-hidden p-6 text-left",
                 selectedBusinessSlug === "" && "ring-2 ring-primary/40"
               )}
             >
               <div className="relative z-10">
-                <div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-primary to-secondary mb-4 group-hover:scale-110 transition-transform">
+                <div className="inline-flex p-3 rounded-xl border border-white/[0.12] bg-white/[0.04] mb-4 group-hover:scale-110 transition-transform">
                   <Layers className="w-7 h-7 text-dark" />
                 </div>
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-xl font-bold text-light">Todos los negocios</h3>
+                  <h3 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">Todos los negocios</h3>
                 </div>
                 <p className="text-sm text-gray line-clamp-2 min-h-[2.5rem]">
                   {isAdmin()

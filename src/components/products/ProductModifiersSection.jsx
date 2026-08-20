@@ -77,7 +77,7 @@ export default function ProductModifiersSection({ product }) {
   // El producto debe estar guardado para asignarle grupos.
   if (!product?.id || !product?.slug) {
     return (
-      <div className="backdrop-blur-xl bg-white/[0.05] border border-white/[0.1] rounded-xl p-6">
+      <div className="fb-card p-6">
         <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-2">
           <Layers className="w-5 h-5 text-secondary" />
           Grupos de opciones
@@ -88,7 +88,7 @@ export default function ProductModifiersSection({ product }) {
   }
 
   return (
-    <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4">
+    <div className="fb-card space-y-4 p-6">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="text-xl font-bold text-light flex items-center gap-2">
           <Layers className="w-5 h-5 text-secondary" />
@@ -125,7 +125,7 @@ export default function ProductModifiersSection({ product }) {
                 return (
                   <div
                     key={pm.id}
-                    className="backdrop-blur-sm bg-white/[0.06] border border-white/[0.12] rounded-lg p-4"
+                    className="bg-white/[0.06] border border-white/[0.12] rounded-lg p-4"
                   >
                     <div className="flex items-start justify-between gap-3 flex-wrap">
                       <div className="min-w-0">
@@ -168,7 +168,7 @@ export default function ProductModifiersSection({ product }) {
                               overrideMutation.mutate({ id: pm.id, data: { min_select_override: v } });
                             }
                           }}
-                          className="mt-1 w-full px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none"
+                          className="mt-1 w-full px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-white/30 focus:outline-none"
                         />
                       </label>
                       <label className="text-xs text-gray">
@@ -185,7 +185,7 @@ export default function ProductModifiersSection({ product }) {
                               overrideMutation.mutate({ id: pm.id, data: { max_select_override: v } });
                             }
                           }}
-                          className="mt-1 w-full px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none"
+                          className="mt-1 w-full px-3 py-1.5 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-white/30 focus:outline-none"
                         />
                       </label>
                     </div>
@@ -205,7 +205,7 @@ export default function ProductModifiersSection({ product }) {
               <select
                 value={selectedGroupId}
                 onChange={(e) => setSelectedGroupId(e.target.value)}
-                className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-secondary/50 focus:outline-none"
+                className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light text-sm focus:border-white/30 focus:outline-none"
               >
                 <option value="" className="bg-dark">
                   Agregar grupo de opciones…

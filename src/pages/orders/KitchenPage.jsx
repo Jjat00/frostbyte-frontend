@@ -89,7 +89,7 @@ const KitchenOrderCard = ({ order, onSetPrep, onAllReady, pendingItemId, busyOrd
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       className={cn(
-        "liquid-glass relative rounded-xl border p-4 flex flex-col",
+        "fb-card flex flex-col p-4",
         allReady ? "border-green-500/40 bg-green-500/[0.08]" : "border-white/[0.1] bg-white/[0.04]"
       )}
     >
@@ -301,7 +301,7 @@ const KitchenPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-secondary to-primary">
+          <div className="rounded-[12px] border border-white/[0.1] bg-white/[0.03] p-2.5">
             <Utensils className="w-5 h-5 text-dark" />
           </div>
           <div>

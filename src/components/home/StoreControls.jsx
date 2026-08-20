@@ -42,7 +42,7 @@ const StoreControls = () => {
 
   if (isLoading || !settings) {
     return (
-      <div className="px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg backdrop-blur-sm flex items-center gap-2">
+      <div className="px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg flex items-center gap-2">
         <span className="w-2 h-2 bg-gray/40 rounded-full animate-pulse" />
         <span className="text-xs text-gray">Cargando estado…</span>
       </div>
@@ -251,7 +251,7 @@ const StoreControls = () => {
               value={radiusDraft}
               onChange={(e) => setRadiusDraft(e.target.value)}
               placeholder="1.5"
-              className="w-full rounded-xl bg-white/[0.04] border border-white/[0.12] px-3 py-2.5 text-base text-light placeholder:text-white/30 focus:outline-none focus:border-secondary/50"
+              className="w-full rounded-xl bg-white/[0.04] border border-white/[0.12] px-3 py-2.5 text-base text-light placeholder:text-white/30 focus:outline-none focus:border-white/30"
             />
             <span className="text-sm text-gray shrink-0">km</span>
           </div>

@@ -343,7 +343,7 @@ const YouTubeAdminPage = () => {
         )}
 
         {/* Now Playing */}
-        <div className="mb-8 liquid-glass backdrop-blur-xl bg-white/[0.06] border border-white/[0.1] rounded-2xl p-4 md:p-6">
+        <div className="mb-8 fb-card p-4 md:p-6">
           <h2 className="text-xs uppercase tracking-widest text-white/40 mb-3 font-semibold">
             Reproduciendo ahora
           </h2>
@@ -396,7 +396,7 @@ const YouTubeAdminPage = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar video en YouTube..."
-              className="w-full pl-12 pr-4 py-3 md:py-4 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 focus:outline-none text-white placeholder:text-white/30"
+              className="w-full pl-12 pr-4 py-3 md:py-4 rounded-xl bg-white/5 border border-white/10 focus:border-white/30 focus:outline-none text-white placeholder:text-white/30"
             />
             {isSearching && (
               <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 animate-spin" />

@@ -59,7 +59,7 @@ const buildCyberpunkColors = () => [
 // ─── Skeleton Components ────────────────────────────────────────
 
 const KPICardSkeleton = () => (
-  <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.08] rounded-2xl p-5 animate-pulse relative overflow-hidden">
+  <div className="fb-card p-5 animate-pulse relative overflow-hidden">
     <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
     <div className="flex items-start justify-between">
       <div className="space-y-3 flex-1">
@@ -73,7 +73,7 @@ const KPICardSkeleton = () => (
 );
 
 const ChartSkeleton = ({ height = 'h-72' }) => (
-  <div className={`backdrop-blur-xl bg-white/[0.08] border border-white/[0.08] rounded-2xl p-6 ${height} relative overflow-hidden`}>
+  <div className={`fb-card p-6 ${height} relative overflow-hidden`}>
     <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-gray/5 to-transparent" />
     <div className="h-4 bg-gray/15 rounded w-40 mb-2" />
     <div className="h-3 bg-gray/10 rounded w-56 mb-6" />
@@ -94,7 +94,7 @@ const ChartSkeleton = ({ height = 'h-72' }) => (
 const SectionHeader = ({ icon: Icon, title, subtitle, action }) => (
   <div className="flex items-center justify-between mb-5">
     <div className="flex items-center gap-3">
-      <div className="p-2 rounded-xl bg-secondary/10 border border-secondary/20">
+      <div className="rounded-[12px] border border-secondary/20 bg-secondary/10 p-2">
         <Icon className="w-5 h-5 text-secondary" />
       </div>
       <div>
@@ -111,7 +111,7 @@ const SectionHeader = ({ icon: Icon, title, subtitle, action }) => (
 const CustomChartTooltip = ({ active, payload, label, formatter }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="backdrop-blur-xl bg-white/[0.06] border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_color-mix(in_srgb,var(--color-secondary)_15%,transparent)]">
+    <div className="bg-white/[0.06] border border-secondary/30 rounded-xl p-4 shadow-[0_0_20px_color-mix(in_srgb,var(--color-secondary)_15%,transparent)]">
       <p className="text-xs text-secondary font-bold mb-2">{label}</p>
       {payload.map((entry, index) => (
         <div key={index} className="flex items-center justify-between gap-6 mb-1 last:mb-0">
@@ -381,7 +381,7 @@ const MonthSelector = ({ anchor, onChange, isCurrentMonth }) => {
         type="button"
         onClick={() => onChange(shiftMonth(anchor, -1))}
         aria-label="Mes anterior"
-        className="p-2 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.08] text-gray hover:text-secondary hover:border-secondary/30 transition-all"
+        className="p-2 rounded-xl bg-white/[0.06] border border-white/[0.08] text-gray hover:text-secondary hover:border-secondary/30 transition-all"
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
@@ -389,7 +389,7 @@ const MonthSelector = ({ anchor, onChange, isCurrentMonth }) => {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.08] text-light hover:border-secondary/30 transition-all min-w-[8.5rem] justify-center"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.06] border border-white/[0.08] text-light hover:border-secondary/30 transition-all min-w-[8.5rem] justify-center"
       >
         <Calendar className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
         <span className="text-xs md:text-sm font-semibold whitespace-nowrap">{formatMonthLabel(anchor)}</span>
@@ -401,7 +401,7 @@ const MonthSelector = ({ anchor, onChange, isCurrentMonth }) => {
         onClick={() => onChange(shiftMonth(anchor, 1))}
         disabled={isCurrentMonth}
         aria-label="Mes siguiente"
-        className="p-2 rounded-xl backdrop-blur-xl bg-white/[0.06] border border-white/[0.08] text-gray hover:text-secondary hover:border-secondary/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray disabled:hover:border-white/[0.08]"
+        className="p-2 rounded-xl bg-white/[0.06] border border-white/[0.08] text-gray hover:text-secondary hover:border-secondary/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray disabled:hover:border-white/[0.08]"
       >
         <ChevronRight className="w-4 h-4" />
       </button>
@@ -411,7 +411,7 @@ const MonthSelector = ({ anchor, onChange, isCurrentMonth }) => {
           type="button"
           onClick={() => onChange(currentMonth)}
           aria-label="Volver al mes actual"
-          className="p-2 rounded-xl backdrop-blur-xl bg-secondary/10 border border-secondary/25 text-secondary hover:bg-secondary/20 transition-all"
+          className="p-2 rounded-xl bg-secondary/10 border border-secondary/25 text-secondary hover:bg-secondary/20 transition-all"
           title="Mes actual"
         >
           <RotateCcw className="w-4 h-4" />
@@ -421,7 +421,7 @@ const MonthSelector = ({ anchor, onChange, isCurrentMonth }) => {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full right-0 mt-2 z-50 w-52 max-h-72 overflow-y-auto backdrop-blur-xl bg-dark/95 border border-white/[0.1] rounded-2xl p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+          <div className="absolute top-full right-0 mt-2 z-50 w-52 max-h-72 overflow-y-auto bg-dark/95 border border-white/[0.1] rounded-2xl p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
             {recentMonths.map((m) => {
               const active = m.year === anchor.year && m.month === anchor.month;
               return (
@@ -574,11 +574,11 @@ const FinancialDashboard = () => {
 
   // ── Render helpers ──
 
-  const chartContainerClass = 'liquid-glass-light backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-2xl p-4 md:p-6';
+  const chartContainerClass = 'fb-card p-4 md:p-6';
 
   const ViewModeToggle = () => (
     <div className="flex flex-wrap gap-2">
-      <div className="flex backdrop-blur-xl bg-white/[0.08] rounded-xl p-1 border border-white/[0.08]">
+      <div className="flex bg-white/[0.08] rounded-xl p-1 border border-white/[0.08]">
         {[
           { key: 'daily', label: 'Este Mes', icon: Calendar },
           { key: 'monthly', label: 'Tendencia', icon: CalendarRange },
@@ -632,7 +632,7 @@ const FinancialDashboard = () => {
       >
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-light flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-secondary/10 border border-secondary/20">
+            <div className="rounded-[12px] border border-secondary/20 bg-secondary/10 p-2">
               <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-secondary drop-shadow-[0_0_8px_color-mix(in_srgb,var(--color-secondary)_60%,transparent)]" />
             </div>
             Dashboard Financiero
@@ -1222,7 +1222,7 @@ const FinancialDashboard = () => {
                       { label: 'Ganancia', val: comparison.changes.profit, yoy: comparison.changes.profit_yoy, good: comparison.changes.profit >= 0 },
                     ].map(({ label, val, yoy, good }) => (
                       <div key={label} className="text-center p-2.5 bg-dark/50 rounded-xl border border-gray/10">
-                        <p className="text-xs text-gray mb-1">{label}</p>
+                        <p className="fb-eyebrow mb-1.5 block">{label}</p>
                         <p className={`text-sm font-bold ${good ? 'text-green-400' : 'text-red-400'}`}>
                           {val >= 0 ? '+' : ''}{val}%
                         </p>

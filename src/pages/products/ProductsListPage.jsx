@@ -149,14 +149,14 @@ const ProductsListPage = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/productos/generador-ia')}
-              className="flex items-center gap-2 px-4 py-2.5 backdrop-blur-xl bg-white/[0.08] border border-secondary/30 text-secondary font-semibold rounded-lg hover:bg-secondary/10 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.08] border border-secondary/30 text-secondary font-semibold rounded-lg hover:bg-secondary/10 transition-all"
             >
               <Sparkles className="w-5 h-5" />
               Generador IA
             </button>
             <button
               onClick={() => navigate('/productos/nuevo')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-secondary to-primary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-secondary/30 transition-all"
             >
               <Plus className="w-5 h-5" />
               Nuevo Producto
@@ -170,15 +170,15 @@ const ProductsListPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/20 rounded-lg">
               <Package className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-xs text-gray mb-1">Total</p>
-              <p className="text-xl font-bold text-light">{stats.total}</p>
+              <p className="fb-eyebrow mb-1.5 block">Total</p>
+              <p className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">{stats.total}</p>
             </div>
           </div>
         </motion.div>
@@ -187,14 +187,14 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-500/20 rounded-lg">
               <CheckCircle className="w-5 h-5 text-green-400" />
             </div>
             <div>
-              <p className="text-xs text-gray mb-1">Activos</p>
+              <p className="fb-eyebrow mb-1.5 block">Activos</p>
               <p className="text-xl font-bold text-green-400">{stats.active}</p>
             </div>
           </div>
@@ -204,14 +204,14 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-red-500/20 rounded-lg">
               <XCircle className="w-5 h-5 text-red-400" />
             </div>
             <div>
-              <p className="text-xs text-gray mb-1">Inactivos</p>
+              <p className="fb-eyebrow mb-1.5 block">Inactivos</p>
               <p className="text-xl font-bold text-red-400">{stats.inactive}</p>
             </div>
           </div>
@@ -221,14 +221,14 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-yellow-500/20 rounded-lg">
               <AlertCircle className="w-5 h-5 text-yellow-400" />
             </div>
             <div>
-              <p className="text-xs text-gray mb-1">Próximamente</p>
+              <p className="fb-eyebrow mb-1.5 block">Próximamente</p>
               <p className="text-xl font-bold text-yellow-400">{stats.comingSoon}</p>
             </div>
           </div>
@@ -238,14 +238,14 @@ const ProductsListPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 col-span-2 md:col-span-1"
+          className="fb-card p-4 col-span-2 md:col-span-1"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-secondary/20 rounded-lg">
               <Package className="w-5 h-5 text-secondary" />
             </div>
             <div>
-              <p className="text-xs text-gray mb-1">Variantes</p>
+              <p className="fb-eyebrow mb-1.5 block">Variantes</p>
               <p className="text-xl font-bold text-secondary">{stats.totalVariants}</p>
             </div>
           </div>
@@ -253,7 +253,7 @@ const ProductsListPage = () => {
       </div>
 
       {/* Filtros */}
-      <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 space-y-4">
+      <div className="fb-card p-4 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Búsqueda */}
           <div className="flex-1 relative">
@@ -263,7 +263,7 @@ const ProductsListPage = () => {
               placeholder="Buscar productos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="liquid-glass-light w-full pl-10 pr-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
             />
           </div>
 
@@ -271,7 +271,7 @@ const ProductsListPage = () => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:border-secondary/50 focus:outline-none"
+            className="px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:border-white/30 focus:outline-none"
           >
             <option value="all">Todas las categorías</option>
             {categories.map((cat) => (
@@ -287,7 +287,7 @@ const ProductsListPage = () => {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-colors ${
               showInactive
                 ? 'bg-secondary/20 border-secondary/30 text-secondary'
-                : 'backdrop-blur-sm bg-white/[0.09] border-white/[0.12] text-gray hover:text-light'
+              : 'bg-white/[0.09] border-white/[0.12] text-gray hover:text-light'
             }`}
           >
             {showInactive ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
@@ -297,7 +297,7 @@ const ProductsListPage = () => {
       </div>
 
       {/* Tabla de productos */}
-      <div className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
+      <div className="fb-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-white/[0.03] border-b border-white/[0.08]">

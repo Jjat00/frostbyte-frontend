@@ -71,7 +71,7 @@ const ImageField = ({ value, onChange, label, compact = false }) => {
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="URL imagen (opcional)"
-            className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+            className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none text-sm"
           />
           <input
             ref={fileInputRef}
@@ -219,7 +219,7 @@ const ImageField = ({ value, onChange, label, compact = false }) => {
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="https://..."
-            className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none"
+            className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
           />
           {value && (
             <img loading="lazy" decoding="async"
@@ -468,12 +468,12 @@ const RecetarioFormPage = () => {
   }
 
   const inputClass = (field) =>
-    `w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none ${
+    `w-full rounded-xl border bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light placeholder:text-light/25 transition-colors focus:border-white/30 focus:outline-none ${
       errors[field] ? "border-red-500" : "border-white/[0.12]"
     }`;
 
   const selectClass =
-    "w-full px-4 py-2.5 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-secondary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light";
+    "w-full rounded-xl border border-white/[0.1] bg-dark-secondary px-4 py-2.5 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none [&>option]:bg-dark-secondary [&>option]:text-light";
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-6">
@@ -487,7 +487,7 @@ const RecetarioFormPage = () => {
           <ArrowLeft className="w-5 h-5" />
           <span>Volver</span>
         </button>
-        <h1 className="text-xl font-bold text-light">
+        <h1 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
           {isEditing ? "Editar Recetario" : "Nuevo Recetario"}
         </h1>
       </div>
@@ -496,7 +496,7 @@ const RecetarioFormPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4"
+        className="fb-card space-y-4 p-6"
       >
         <h2 className="text-lg font-bold text-light">Informacion Basica</h2>
 
@@ -674,7 +674,7 @@ const RecetarioFormPage = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4"
+        className="fb-card space-y-4 p-6"
       >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-light flex items-center gap-2">
@@ -705,7 +705,7 @@ const RecetarioFormPage = () => {
                 value={ingredient.name}
                 onChange={(e) => updateIngredient(index, "name", e.target.value)}
                 placeholder="Nombre *"
-                className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                className="flex-1 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none text-sm"
               />
               <input
                 value={ingredient.quantity}
@@ -713,13 +713,13 @@ const RecetarioFormPage = () => {
                   updateIngredient(index, "quantity", e.target.value)
                 }
                 placeholder="Cantidad"
-                className="w-full sm:w-28 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                className="w-full sm:w-28 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none text-sm"
               />
               <input
                 value={ingredient.unit}
                 onChange={(e) => updateIngredient(index, "unit", e.target.value)}
                 placeholder="Unidad"
-                className="w-full sm:w-24 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                className="w-full sm:w-24 px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none text-sm"
               />
               <label className="flex items-center gap-1 text-xs text-gray whitespace-nowrap">
                 <input
@@ -751,7 +751,7 @@ const RecetarioFormPage = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4"
+        className="fb-card space-y-4 p-6"
       >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-light flex items-center gap-2">
@@ -803,14 +803,14 @@ const RecetarioFormPage = () => {
                 }
                 placeholder="Instruccion del paso *"
                 rows={2}
-                className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none text-sm"
               />
 
               <input
                 value={step.tip}
                 onChange={(e) => updateStep(index, "tip", e.target.value)}
                 placeholder="Tip (opcional)"
-                className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none text-sm"
               />
 
               <ImageField
@@ -828,7 +828,7 @@ const RecetarioFormPage = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-4"
+        className="fb-card space-y-4 p-6"
       >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-light flex items-center gap-2">
@@ -881,7 +881,7 @@ const RecetarioFormPage = () => {
                     updateImage(index, "caption", e.target.value)
                   }
                   placeholder="Descripcion (opcional)"
-                  className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:border-secondary/50 focus:outline-none text-sm"
+                  className="w-full px-3 py-2 bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none text-sm"
                 />
               </div>
             ))}

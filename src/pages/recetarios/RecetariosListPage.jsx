@@ -105,7 +105,7 @@ const RecetariosListPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-light">Recetarios</h1>
+          <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Recetarios</h1>
           <p className="text-gray text-sm mt-1">
             {filteredRecipes.length} recetas disponibles
           </p>
@@ -129,14 +129,14 @@ const RecetariosListPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar recetas..."
-            className="w-full pl-10 pr-4 py-2.5 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/[0.08] border border-white/[0.1] rounded-lg text-light placeholder:text-light/25 focus:outline-none focus:border-white/30"
           />
         </div>
 
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="px-3 py-2.5 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+          className="px-3 py-2.5 bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-white/30 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
         >
           <option value="">Todas las categorias</option>
           {categories.map((cat) => (
@@ -149,7 +149,7 @@ const RecetariosListPage = () => {
         <select
           value={difficultyFilter}
           onChange={(e) => setDifficultyFilter(e.target.value)}
-          className="px-3 py-2.5 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+          className="px-3 py-2.5 bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-white/30 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
         >
           <option value="">Todas las dificultades</option>
           <option value="easy">Facil</option>
@@ -164,7 +164,7 @@ const RecetariosListPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : filteredRecipes.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 text-center">
+        <div className="fb-card p-8 text-center">
           <BookOpen className="w-12 h-12 text-gray mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-light mb-2">
             Sin recetas encontradas
@@ -185,7 +185,7 @@ const RecetariosListPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => navigate(`/recetarios/${recipe.slug}`)}
-                className="cursor-pointer backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden hover:bg-white/[0.12] hover:border-primary/30 transition-all group"
+                className="cursor-pointer fb-card overflow-hidden hover:bg-white/[0.12] hover:border-primary/30 transition-all group"
               >
                 {/* Image */}
                 {recipe.image_url ? (

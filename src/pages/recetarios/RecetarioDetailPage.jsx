@@ -119,7 +119,7 @@ const RecetarioDetailPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden"
+        className="fb-card overflow-hidden"
       >
         {recipe.image_url && (
           <div className="h-48 sm:h-64 overflow-hidden">
@@ -181,7 +181,7 @@ const RecetarioDetailPage = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
+        className="fb-card p-6"
       >
         <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-4">
           <UtensilsCrossed className="w-5 h-5 text-secondary" />
@@ -218,7 +218,7 @@ const RecetarioDetailPage = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
+        className="fb-card p-6"
       >
         <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-4">
           <ChefHat className="w-5 h-5 text-secondary" />
@@ -262,7 +262,7 @@ const RecetarioDetailPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
+          className="fb-card p-6"
         >
           <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-4">
             <Lightbulb className="w-5 h-5 text-yellow-400" />
@@ -280,7 +280,7 @@ const RecetarioDetailPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
+          className="fb-card p-6"
         >
           <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-4">
             <Play className="w-5 h-5 text-secondary" />
@@ -303,7 +303,7 @@ const RecetarioDetailPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6"
+          className="fb-card p-6"
         >
           <h2 className="text-xl font-bold text-light flex items-center gap-2 mb-4">
             <ImageIcon className="w-5 h-5 text-secondary" />

@@ -95,7 +95,7 @@ const ExpensesDashboard = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-light">Gastos Operativos</h1>
+          <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Gastos Operativos</h1>
           <p className="text-gray text-sm mt-1">
             Control de gastos del negocio
           </p>
@@ -111,7 +111,7 @@ const ExpensesDashboard = () => {
       </div>
 
       {/* Month Navigation */}
-      <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl px-4 py-3">
+      <div className="flex items-center justify-between fb-card px-4 py-3">
         <button
           onClick={() => navigateMonth(-1)}
           className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
@@ -139,7 +139,7 @@ const ExpensesDashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-green-500/20 rounded-lg">
@@ -147,7 +147,7 @@ const ExpensesDashboard = () => {
             </div>
             <span className="text-sm text-gray">Pagados</span>
           </div>
-          <p className="text-2xl font-bold text-light">
+          <p className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
             {formatCurrency(stats?.total_paid)}
           </p>
           <p className="text-xs text-gray mt-1">
@@ -165,7 +165,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-yellow-500/20 rounded-lg">
@@ -173,7 +173,7 @@ const ExpensesDashboard = () => {
             </div>
             <span className="text-sm text-gray">Pendientes</span>
           </div>
-          <p className="text-2xl font-bold text-light">
+          <p className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
             {formatCurrency(stats?.total_pending)}
           </p>
           <p className="text-xs text-gray mt-1">
@@ -185,7 +185,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-red-500/20 rounded-lg">
@@ -193,7 +193,7 @@ const ExpensesDashboard = () => {
             </div>
             <span className="text-sm text-gray">Cancelados</span>
           </div>
-          <p className="text-2xl font-bold text-light">
+          <p className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
             {stats?.cancelled_count || 0}
           </p>
           <p className="text-xs text-gray mt-1">gastos cancelados</p>
@@ -203,7 +203,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+          className="fb-card p-4"
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-primary/20 rounded-lg">
@@ -211,7 +211,7 @@ const ExpensesDashboard = () => {
             </div>
             <span className="text-sm text-gray">Total Gastos</span>
           </div>
-          <p className="text-2xl font-bold text-light">
+          <p className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
             {stats?.expenses_count || 0}
           </p>
           <p className="text-xs text-gray mt-1">en el periodo</p>
@@ -224,7 +224,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5"
+          className="fb-card p-5"
         >
           <h2 className="text-lg font-semibold text-light mb-4">
             Gastos por Categoria
@@ -270,7 +270,7 @@ const ExpensesDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-5"
+          className="fb-card p-5"
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-light">
@@ -292,7 +292,7 @@ const ExpensesDashboard = () => {
                 <Link
                   key={expense.id}
                   to={`/gastos/${expense.id}`}
-                  className="flex items-center gap-4 p-3 backdrop-blur-sm bg-white/[0.03] border border-white/[0.06] rounded-lg hover:bg-white/[0.06] transition-colors"
+                  className="flex items-center gap-4 p-3 fb-inset hover:bg-white/[0.06] transition-colors"
                 >
                   <div className={`p-2 rounded-lg border ${colorClass}`}>
                     <IconComponent className="w-4 h-4" />
@@ -324,7 +324,7 @@ const ExpensesDashboard = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-8 text-center"
+            className="fb-card p-8 text-center"
           >
             <AlertCircle className="w-12 h-12 text-gray mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-light mb-2">

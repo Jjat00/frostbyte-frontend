@@ -191,7 +191,7 @@ const RecurringPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-light">Gastos Recurrentes</h1>
+          <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Gastos Recurrentes</h1>
           <p className="text-gray text-sm mt-1">
             Plantillas para gastos que se repiten periodicamente
           </p>
@@ -227,7 +227,7 @@ const RecurringPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : templatesList.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 text-center">
+        <div className="fb-card p-8 text-center">
           <RefreshCw className="w-12 h-12 text-gray mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-light mb-2">
             Sin plantillas recurrentes
@@ -255,7 +255,7 @@ const RecurringPage = () => {
                 key={template.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`backdrop-blur-xl bg-white/[0.08] rounded-xl p-5 border transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
+                className={`fb-card p-5 border transition-colors ${
                   due ? "border-yellow-500/50" : "border-white/[0.1]"
                 }`}
               >
@@ -284,7 +284,7 @@ const RecurringPage = () => {
                   </div>
 
                   <div className="w-full sm:w-auto sm:text-right">
-                    <p className="text-xl font-bold text-light">
+                    <p className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
                       {formatCurrency(template.amount)}
                     </p>
                     <p className="text-sm text-gray">
@@ -352,9 +352,9 @@ const RecurringPage = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md backdrop-blur-xl bg-white/[0.06] border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-xl z-50 overflow-hidden max-h-[90vh] overflow-y-auto"
+              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md fb-card z-50 overflow-hidden max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between p-4 border-b border-white/[0.08] sticky top-0 backdrop-blur-xl bg-white/[0.06]">
+              <div className="flex items-center justify-between p-4 border-b border-white/[0.08] sticky top-0 bg-white/[0.06]">
                 <h2 className="text-lg font-semibold text-light">
                   {editingTemplate ? "Editar Plantilla" : "Nueva Plantilla"}
                 </h2>
@@ -368,20 +368,20 @@ const RecurringPage = () => {
 
               <form onSubmit={handleSubmit} className="p-4 space-y-4">
                 <div>
-                  <label className="block text-sm text-gray mb-2">Nombre *</label>
+                  <label className="fb-eyebrow mb-2 block">Nombre *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                     placeholder="Ej: Nomina mensual"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray mb-2">Categoria *</label>
+                  <label className="fb-eyebrow mb-2 block">Categoria *</label>
                   <select
                     value={formData.category_id}
                     onChange={(e) =>
@@ -390,7 +390,7 @@ const RecurringPage = () => {
                         category_id: parseInt(e.target.value),
                       }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                   >
                     <option value="">Seleccionar categoria</option>
                     {categoriesList.map((cat) => (
@@ -402,7 +402,7 @@ const RecurringPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray mb-2">Descripcion</label>
+                  <label className="fb-eyebrow mb-2 block">Descripcion</label>
                   <input
                     type="text"
                     value={formData.description}
@@ -412,20 +412,20 @@ const RecurringPage = () => {
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                     placeholder="Descripcion del gasto"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray mb-2">Monto (COP) *</label>
+                  <label className="fb-eyebrow mb-2 block">Monto (COP) *</label>
                   <input
                     type="number"
                     value={formData.amount}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, amount: e.target.value }))
                     }
-                    className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                     placeholder="0"
                     min="0"
                   />
@@ -433,7 +433,7 @@ const RecurringPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-gray mb-2">Recurrencia</label>
+                    <label className="fb-eyebrow mb-2 block">Recurrencia</label>
                     <select
                       value={formData.recurrence_type}
                       onChange={(e) =>
@@ -442,7 +442,7 @@ const RecurringPage = () => {
                           recurrence_type: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                      className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                     >
                       {RECURRENCE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -454,7 +454,7 @@ const RecurringPage = () => {
 
                   {formData.recurrence_type === "monthly" && (
                     <div>
-                      <label className="block text-sm text-gray mb-2">
+                      <label className="fb-eyebrow mb-2 block">
                         Dia del mes
                       </label>
                       <input
@@ -466,7 +466,7 @@ const RecurringPage = () => {
                             day_of_month: parseInt(e.target.value),
                           }))
                         }
-                        className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50"
+                        className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                         min="1"
                         max="31"
                       />

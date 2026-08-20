@@ -148,7 +148,7 @@ export function GenerationDetailModal({ generation, isOpen, onClose }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => !isProcessing && onClose()}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/80 z-50"
           />
 
           {/* Modal */}

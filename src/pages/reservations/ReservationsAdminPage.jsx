@@ -120,7 +120,7 @@ const ReservationsAdminPage = () => {
   return (
     <div className="min-h-screen bg-dark text-light pb-16">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-dark/90 backdrop-blur-md border-b border-white/5">
+      <header className="sticky top-0 z-40 bg-dark/90 border-b border-white/5">
         <div className="max-w-[1100px] mx-auto px-4 h-14 flex items-center gap-3">
           <Link
             to="/home"
@@ -129,7 +129,7 @@ const ReservationsAdminPage = () => {
           >
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <h1 className="font-black uppercase tracking-wide flex-1">
+          <h1 className="font-display flex-1 text-[0.95rem] font-semibold uppercase tracking-[0.14em] text-light">
             Reservas
           </h1>
           <span
@@ -145,7 +145,7 @@ const ReservationsAdminPage = () => {
             onClick={() => setShowSettings((s) => !s)}
             className={cn(
               "grid place-items-center w-9 h-9 rounded-full",
-              showSettings ? "bg-gold/20 text-gold" : "bg-white/5 hover:bg-white/10"
+              showSettings ? "bg-white/20 text-light" : "bg-white/5 hover:bg-white/10"
             )}
             aria-label="Configuración"
           >
@@ -158,12 +158,12 @@ const ReservationsAdminPage = () => {
         {/* Columna izquierda: calendario + KPIs + config */}
         <div className="grid gap-4">
           {/* Calendario */}
-          <section className="liquid-glass rounded-2xl p-4">
+          <section className="fb-card rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <button onClick={() => shiftMonth(-1)} className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <h2 className="font-black text-sm uppercase tracking-wide">
+              <h2 className="font-semibold text-sm uppercase tracking-wide">
                 {MONTH_NAMES[viewMonth - 1]} {viewYear}
               </h2>
               <button onClick={() => shiftMonth(1)} className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10">
@@ -179,13 +179,13 @@ const ReservationsAdminPage = () => {
             />
             <div className="mt-3 flex gap-4 text-[10px] text-white/40">
               <span className="flex items-center gap-1">
-                <i className="w-2 h-2 rounded-full bg-gold inline-block" /> Con reservas
+                <i className="w-2 h-2 rounded-full bg-white inline-block" /> Con reservas
               </span>
               <span className="flex items-center gap-1">
                 <i className="w-2 h-2 rounded-full bg-violet-400 inline-block" /> Pendientes
               </span>
               <span className="flex items-center gap-1">
-                <Crown className="w-3 h-3 text-gold" /> Sala VIP
+                <Crown className="w-3 h-3 text-light" /> Sala VIP
               </span>
             </div>
           </section>
@@ -194,7 +194,7 @@ const ReservationsAdminPage = () => {
           <section className="grid grid-cols-3 gap-2">
             <Kpi label="Activas" value={kpis.total} />
             <Kpi label="Pendientes" value={kpis.pending} accent={kpis.pending > 0} />
-            <Kpi label="Sala VIP" value={kpis.vip} gold={kpis.vip > 0} />
+            <Kpi label="Sala VIP" value={kpis.vip} destacado={kpis.vip > 0} />
           </section>
 
           {/* Contexto de ocupación */}
@@ -216,13 +216,13 @@ const ReservationsAdminPage = () => {
         {/* Columna derecha: reservas del día */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-black uppercase text-sm tracking-wide flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-gold" />
+            <h2 className="font-semibold uppercase text-sm tracking-wide flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-light" />
               {formatLongDate(selectedDate)}
             </h2>
             <button
               onClick={() => setShowCreate(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gold/15 border border-gold/30 text-gold text-xs font-bold uppercase"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/15 border border-white/30 text-light text-xs font-bold uppercase"
             >
               <Plus className="w-3.5 h-3.5" /> Nueva
             </button>
@@ -230,7 +230,7 @@ const ReservationsAdminPage = () => {
 
           {dayLoading ? (
             <div className="py-16 grid place-items-center">
-              <Loader2 className="w-6 h-6 animate-spin text-gold" />
+              <Loader2 className="w-6 h-6 animate-spin text-light" />
             </div>
           ) : reservations.length === 0 ? (
             <p className="py-16 text-center text-sm text-white/40">
@@ -295,21 +295,21 @@ const MonthGrid = ({ year, month, days, selected, onSelect }) => {
             className={cn(
               "relative aspect-square rounded-lg text-sm font-semibold grid place-items-center transition-colors",
               isSelected
-                ? "bg-gold text-dark font-black"
+                ? "bg-white text-dark font-black"
                 : isToday
-                ? "bg-white/10 text-gold"
+                ? "bg-white/10 text-light"
                 : "hover:bg-white/5 text-white/70"
             )}
           >
             {d}
             {info && info.total > 0 && !isSelected && (
               <span className="absolute bottom-1 flex gap-0.5">
-                <i className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
+                <i className="w-1.5 h-1.5 rounded-full bg-white inline-block" />
                 {info.pending > 0 && (
                   <i className="w-1.5 h-1.5 rounded-full bg-violet-400 inline-block" />
                 )}
                 {info.vip > 0 && (
-                  <Crown className="w-2 h-2 text-gold" />
+                  <Crown className="w-2 h-2 text-light" />
                 )}
               </span>
             )}
@@ -320,12 +320,12 @@ const MonthGrid = ({ year, month, days, selected, onSelect }) => {
   );
 };
 
-const Kpi = ({ label, value, accent, gold }) => (
-  <div className="liquid-glass rounded-xl p-3 text-center">
+const Kpi = ({ label, value, accent, destacado }) => (
+  <div className="fb-card rounded-xl p-3 text-center">
     <p
       className={cn(
         "text-2xl font-black",
-        gold ? "text-gold" : accent ? "text-violet-300" : "text-light"
+        destacado || accent ? "text-light" : "text-light/70"
       )}
     >
       {value}
@@ -357,7 +357,7 @@ const ReservationCard = ({ reservation: r }) => {
       className={cn(
         "rounded-xl border p-3.5",
         isVip
-          ? "bg-linear-to-br from-gold/10 via-dark-secondary to-transparent border-gold/30"
+          ? "border-white/25 bg-white/[0.05]"
           : "bg-white/[0.03] border-white/[0.08]"
       )}
     >
@@ -366,7 +366,7 @@ const ReservationCard = ({ reservation: r }) => {
           <span
             className={cn(
               "grid place-items-center w-9 h-9 rounded-lg flex-shrink-0",
-              isVip ? "bg-gold/20 text-gold" : "bg-white/10 text-white/60"
+              isVip ? "bg-white/20 text-light" : "bg-white/10 text-white/60"
             )}
           >
             {isVip ? <Crown className="w-4 h-4" /> : <UtensilsCrossed className="w-4 h-4" />}
@@ -383,7 +383,7 @@ const ReservationCard = ({ reservation: r }) => {
               {!isVip && r.tables_needed > 1 && (
                 <span>{r.tables_needed} mesas</span>
               )}
-              {r.table_label && <span className="text-gold">{r.table_label}</span>}
+              {r.table_label && <span className="text-light">{r.table_label}</span>}
             </p>
           </div>
         </div>
@@ -400,10 +400,10 @@ const ReservationCard = ({ reservation: r }) => {
       {(Number(r.deposit_amount) > 0 || Number(r.min_consumption) > 0) && (
         <p className="mt-2 text-xs text-white/50">
           {Number(r.deposit_amount) > 0 && (
-            <>Anticipo <strong className="text-gold">{money(r.deposit_amount)}</strong></>
+            <>Anticipo <strong className="text-light">{money(r.deposit_amount)}</strong></>
           )}
           {Number(r.min_consumption) > 0 && (
-            <> · Consumo mínimo <strong className="text-gold">{money(r.min_consumption)}</strong></>
+            <> · Consumo mínimo <strong className="text-light">{money(r.min_consumption)}</strong></>
           )}
         </p>
       )}
@@ -496,7 +496,7 @@ const ConfirmDeleteDialog = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/70"
         onClick={onCancel}
       >
         <motion.div
@@ -513,7 +513,7 @@ const ConfirmDeleteDialog = ({
               <AlertTriangle className="w-5 h-5" />
             </span>
             <div className="min-w-0">
-              <h3 className="font-black text-sm">¿Eliminar esta reserva?</h3>
+              <h3 className="font-semibold text-sm">¿Eliminar esta reserva?</h3>
               <p className="mt-1 text-xs text-white/60 leading-relaxed">
                 {r.customer_name} · {String(r.start_time).slice(0, 5)} ·{" "}
                 {r.party_size} personas. Se borra definitivamente y no se
@@ -593,12 +593,12 @@ const SettingsPanel = ({ onClose }) => {
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
-      className="liquid-glass rounded-2xl overflow-hidden"
+      className="fb-card rounded-2xl overflow-hidden"
     >
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-black text-sm uppercase flex items-center gap-2">
-            <Settings2 className="w-4 h-4 text-gold" /> Configuración
+          <h3 className="font-semibold text-sm uppercase flex items-center gap-2">
+            <Settings2 className="w-4 h-4 text-light" /> Configuración
           </h3>
           <button onClick={onClose} className="p-1 text-white/40 hover:text-white">
             <X className="w-4 h-4" />
@@ -606,7 +606,7 @@ const SettingsPanel = ({ onClose }) => {
         </div>
 
         {isLoading ? (
-          <Loader2 className="w-5 h-5 animate-spin text-gold mx-auto my-6" />
+          <Loader2 className="w-5 h-5 animate-spin text-light mx-auto my-6" />
         ) : (
           <>
             {/* Interruptor general */}
@@ -618,7 +618,7 @@ const SettingsPanel = ({ onClose }) => {
                 onChange={(e) =>
                   setDraft((d) => ({ ...d, reservations_enabled: e.target.checked }))
                 }
-                className="w-5 h-5 accent-gold"
+                className="h-4 w-4 accent-[var(--color-secondary)]"
               />
             </label>
 
@@ -636,7 +636,7 @@ const SettingsPanel = ({ onClose }) => {
                     onChange={(e) =>
                       setDraft((d) => ({ ...d, [f.key]: e.target.value }))
                     }
-                    className="mt-1 w-full px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-light text-sm font-normal outline-none focus:border-gold/40"
+                    className="mt-1 w-full px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-light text-sm font-normal outline-none focus:border-white/40"
                   />
                 </label>
               ))}
@@ -650,14 +650,14 @@ const SettingsPanel = ({ onClose }) => {
                 onChange={(e) =>
                   setDraft((d) => ({ ...d, payment_instructions: e.target.value }))
                 }
-                className="mt-1 w-full px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-light text-sm font-normal outline-none focus:border-gold/40 resize-none"
+                className="mt-1 w-full px-2.5 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-light text-sm font-normal outline-none focus:border-white/40 resize-none"
               />
             </label>
 
             <button
               onClick={save}
               disabled={!Object.keys(draft).length || updateSettings.isPending}
-              className="mt-3 w-full py-2.5 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark text-sm font-black uppercase disabled:opacity-40 flex items-center justify-center gap-2"
+              className="fb-btn fb-btn--accent mt-3 w-full disabled:opacity-40 flex items-center justify-center gap-2"
             >
               {updateSettings.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -723,7 +723,7 @@ const CreateModal = ({ date, onClose }) => {
   };
 
   const fieldCls =
-    "w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.1] text-light text-sm outline-none focus:border-gold/40";
+    "w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.1] text-light text-sm outline-none focus:border-white/40";
 
   return (
     <motion.div
@@ -732,7 +732,7 @@ const CreateModal = ({ date, onClose }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
       <motion.div
         className="relative w-full max-w-md bg-dark border border-white/10 rounded-2xl p-5 max-h-[85vh] overflow-y-auto"
         initial={{ y: 24 }}
@@ -740,7 +740,7 @@ const CreateModal = ({ date, onClose }) => {
         exit={{ y: 24 }}
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-black uppercase text-sm">Nueva reserva (staff)</h3>
+          <h3 className="font-semibold uppercase text-sm">Nueva reserva (staff)</h3>
           <button onClick={onClose} className="p-1 text-white/40 hover:text-white">
             <X className="w-4 h-4" />
           </button>
@@ -758,7 +758,7 @@ const CreateModal = ({ date, onClose }) => {
                 className={cn(
                   "py-2.5 rounded-xl border text-sm font-bold",
                   form.reservation_type === o.v
-                    ? "bg-gold/15 border-gold/50 text-gold"
+                    ? "bg-white/15 border-white/50 text-light"
                     : "bg-white/[0.04] border-white/10 text-white/60"
                 )}
               >
@@ -815,7 +815,7 @@ const CreateModal = ({ date, onClose }) => {
                   className={cn(
                     "py-2.5 rounded-xl border text-sm font-bold",
                     Number(form.vip_slot) === o.v
-                      ? "bg-gold/15 border-gold/50 text-gold"
+                      ? "bg-white/15 border-white/50 text-light"
                       : "bg-white/[0.04] border-white/10 text-white/60"
                   )}
                 >
@@ -865,7 +865,7 @@ const CreateModal = ({ date, onClose }) => {
           <button
             onClick={submit}
             disabled={createReservation.isPending}
-            className="w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-black text-sm uppercase disabled:opacity-40 flex items-center justify-center"
+            className="fb-btn fb-btn--accent w-full disabled:opacity-40 flex items-center justify-center"
           >
             {createReservation.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

@@ -113,7 +113,7 @@ const ExpenseDetailPage = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-light">Detalle del Gasto</h1>
+            <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Detalle del Gasto</h1>
             <p className="text-gray text-sm mt-1 font-mono">
               {expense.expense_number}
             </p>
@@ -144,7 +144,7 @@ const ExpenseDetailPage = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden"
+        className="fb-card overflow-hidden"
       >
         {/* Header */}
         <div className="p-6 border-b border-white/[0.08]">
@@ -154,7 +154,7 @@ const ExpenseDetailPage = () => {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-2">
-                <h2 className="text-xl font-bold text-light">
+                <h2 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
                   {expense.description}
                 </h2>
                 <span
@@ -235,7 +235,7 @@ const ExpenseDetailPage = () => {
 
           {expense.notes && (
             <div className="pt-4 border-t border-white/[0.06]">
-              <p className="text-xs text-gray mb-1">Notas</p>
+              <p className="fb-eyebrow mb-1.5 block">Notas</p>
               <p className="text-light">{expense.notes}</p>
             </div>
           )}

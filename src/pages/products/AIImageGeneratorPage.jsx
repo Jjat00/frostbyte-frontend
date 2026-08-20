@@ -348,7 +348,7 @@ const AIImageGeneratorPage = () => {
           className="space-y-6"
         >
           <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-6">
-            <h2 className="text-xl font-bold text-light">
+            <h2 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
               1. Selecciona las Imágenes
             </h2>
             <DualImageUploader
@@ -360,8 +360,8 @@ const AIImageGeneratorPage = () => {
             />
           </div>
 
-          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
-            <h2 className="text-xl font-bold text-light">
+          <div className="fb-card space-y-4 p-6">
+            <h2 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
               2. Describe el Resultado Deseado
             </h2>
             <PromptBuilder
@@ -372,8 +372,8 @@ const AIImageGeneratorPage = () => {
             />
           </div>
 
-          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
-            <h2 className="text-xl font-bold text-light">
+          <div className="fb-card space-y-4 p-6">
+            <h2 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
               3. Modelo de IA
             </h2>
             <ModelSelector
@@ -383,8 +383,8 @@ const AIImageGeneratorPage = () => {
             />
           </div>
 
-          <div className="bg-dark-secondary border border-gray/20 rounded-xl p-6 space-y-4">
-            <h2 className="text-xl font-bold text-light">
+          <div className="fb-card space-y-4 p-6">
+            <h2 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
               4. Opciones Adicionales
             </h2>
             <TransparencyToggle

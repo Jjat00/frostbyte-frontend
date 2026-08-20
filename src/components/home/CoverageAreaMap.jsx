@@ -125,7 +125,7 @@ const CoverageAreaMap = ({ radiusKm }) => {
       <button
         type="button"
         onClick={() => setStyleKey((k) => (k === "satellite" ? "dark" : "satellite"))}
-        className="absolute top-2 left-2 flex items-center gap-1.5 rounded-full bg-dark/80 backdrop-blur-sm border border-white/15 px-2.5 py-1.5 text-[11px] font-bold text-white/80 hover:bg-dark/95 transition-colors cursor-pointer"
+        className="absolute top-2 left-2 flex items-center gap-1.5 rounded-full bg-dark/80 border border-white/15 px-2.5 py-1.5 text-[11px] font-bold text-white/80 hover:bg-dark/95 transition-colors cursor-pointer"
       >
         <Layers className="w-3.5 h-3.5" />
         {styleKey === "satellite" ? "Mapa" : "Satélite"}

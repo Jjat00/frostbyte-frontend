@@ -164,7 +164,7 @@ const ExpensesListPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-light">Lista de Gastos</h1>
+          <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">Lista de Gastos</h1>
           <p className="text-gray text-sm mt-1">
             {expenses.length} gastos encontrados
           </p>
@@ -187,16 +187,16 @@ const ExpensesListPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar gastos..."
-            className="w-full pl-10 pr-4 py-2.5 backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/[0.08] border border-white/[0.1] rounded-lg text-light placeholder:text-light/25 focus:outline-none focus:border-white/30"
           />
         </div>
 
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`liquid-glass-pill flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-colors w-full sm:w-auto ${
+          className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-colors w-full sm:w-auto ${
             showFilters || statusFilter || categoryFilter
               ? "bg-primary/20 border-primary/50 text-primary"
-              : "backdrop-blur-xl bg-white/[0.08] border-white/[0.1] text-gray hover:text-light"
+            : "bg-white/[0.08] border-white/[0.1] text-gray hover:text-light"
           }`}
         >
           <Filter className="w-5 h-5" />
@@ -205,7 +205,7 @@ const ExpensesListPage = () => {
       </div>
 
       {/* Month Navigation */}
-      <div className="flex items-center justify-between backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl px-4 py-3">
+      <div className="flex items-center justify-between fb-card px-4 py-3">
         <button
           onClick={() => navigateMonth(-1)}
           className="p-2 text-gray hover:text-light hover:bg-white/[0.06] rounded-lg transition-colors"
@@ -235,15 +235,15 @@ const ExpensesListPage = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+            className="fb-card p-4"
           >
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm text-gray mb-2">Tipo</label>
+                <label className="fb-eyebrow mb-2 block">Tipo</label>
                 <select
                   value={kindFilter}
                   onChange={(e) => handleFilterChange("kind", e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+                  className="w-full rounded-xl border border-white/[0.1] bg-dark-secondary px-3 py-2 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none [&>option]:bg-dark-secondary [&>option]:text-light"
                 >
                   <option value="">Todos</option>
                   <option value={KINDS.operational.value}>{KINDS.operational.label}</option>
@@ -252,11 +252,11 @@ const ExpensesListPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm text-gray mb-2">Estado</label>
+                <label className="fb-eyebrow mb-2 block">Estado</label>
                 <select
                   value={statusFilter}
                   onChange={(e) => handleFilterChange("status", e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+                  className="w-full rounded-xl border border-white/[0.1] bg-dark-secondary px-3 py-2 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none [&>option]:bg-dark-secondary [&>option]:text-light"
                 >
                   <option value="">Todos</option>
                   <option value="pending">Pendiente</option>
@@ -266,11 +266,11 @@ const ExpensesListPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm text-gray mb-2">Categoria</label>
+                <label className="fb-eyebrow mb-2 block">Categoria</label>
                 <select
                   value={categoryFilter}
                   onChange={(e) => handleFilterChange("category", e.target.value)}
-                  className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+                  className="w-full rounded-xl border border-white/[0.1] bg-dark-secondary px-3 py-2 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none [&>option]:bg-dark-secondary [&>option]:text-light"
                 >
                   <option value="">Todas</option>
                   {categories?.results?.map((cat) => (
@@ -296,7 +296,7 @@ const ExpensesListPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : expenses.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-8 text-center">
+        <div className="fb-card p-8 text-center">
           <Wallet className="w-12 h-12 text-gray mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-light mb-2">
             Sin gastos encontrados
@@ -317,7 +317,7 @@ const ExpensesListPage = () => {
                 key={expense.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4 hover:bg-white/[0.06] transition-colors"
+                className="relative fb-card p-4 hover:bg-white/[0.06] transition-colors"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div className={`p-3 rounded-lg border ${colorClass}`}>
@@ -393,7 +393,7 @@ const ExpensesListPage = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="fixed sm:absolute right-4 sm:right-0 bottom-20 sm:bottom-full sm:mb-1 w-[calc(100%-2rem)] sm:w-48 backdrop-blur-xl bg-[#1a1a2e]/95 border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-lg shadow-2xl z-50 overflow-hidden"
+                            className="fixed sm:absolute right-4 sm:right-0 bottom-20 sm:bottom-full sm:mb-1 w-[calc(100%-2rem)] sm:w-48 bg-[#1a1a2e]/95 border border-white/[0.15] rounded-lg shadow-2xl z-50 overflow-hidden"
                           >
                             <Link
                               to={`/gastos/${expense.id}`}

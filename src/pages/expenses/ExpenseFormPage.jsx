@@ -198,7 +198,7 @@ const ExpenseFormPage = () => {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-light">
+          <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
             {isEditing ? "Editar Gasto" : "Nuevo Gasto"}
           </h1>
           <p className="text-gray text-sm mt-1">
@@ -214,7 +214,7 @@ const ExpenseFormPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         onSubmit={handleSubmit}
-        className="liquid-glass backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-6 space-y-6"
+        className="fb-card p-6 space-y-6"
       >
         {/* Negocio: solo en Consolidado. Dentro de un negocio se asigna solo. */}
         {!isEditing && !selectedBusinessSlug && businesses.length > 1 && (
@@ -224,7 +224,7 @@ const ExpenseFormPage = () => {
               name="business"
               value={formData.business}
               onChange={(e) => setFormData((f) => ({ ...f, business: Number(e.target.value) }))}
-              className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+              className="w-full rounded-xl border border-white/[0.1] bg-dark-secondary px-3 py-2 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none [&>option]:bg-dark-secondary [&>option]:text-light"
             >
               {businesses.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -337,7 +337,7 @@ const ExpenseFormPage = () => {
             value={formData.description}
             onChange={handleChange}
             placeholder="Ej: Pago nomina enero, Factura luz diciembre..."
-            className="w-full px-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50"
+            className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
           />
         </div>
 
@@ -355,7 +355,7 @@ const ExpenseFormPage = () => {
               placeholder="0"
               min="0"
               step="100"
-              className="w-full px-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50"
+              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
             />
           </div>
 
@@ -368,7 +368,7 @@ const ExpenseFormPage = () => {
               name="expense_date"
               value={formData.expense_date}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
             />
           </div>
         </div>
@@ -383,7 +383,7 @@ const ExpenseFormPage = () => {
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
             >
               <option value="pending">Pendiente</option>
               <option value="paid">Pagado</option>
@@ -399,7 +399,7 @@ const ExpenseFormPage = () => {
               name="payment_method"
               value={formData.payment_method}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
             >
               <option value="">Sin especificar</option>
               {PAYMENT_METHODS.map((method) => (
@@ -422,7 +422,7 @@ const ExpenseFormPage = () => {
             value={formData.reference_number}
             onChange={handleChange}
             placeholder="Numero de factura, recibo, etc."
-            className="w-full px-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50"
+            className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
           />
         </div>
 
@@ -437,7 +437,7 @@ const ExpenseFormPage = () => {
             onChange={handleChange}
             rows={3}
             placeholder="Notas o comentarios adicionales..."
-            className="w-full px-4 py-3 backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg text-light placeholder:text-gray focus:outline-none focus:border-primary/50 resize-none"
+            className="w-full px-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03] text-light placeholder:text-light/25 focus:outline-none focus:border-white/30 resize-none"
           />
         </div>
 
@@ -465,7 +465,7 @@ const ExpenseFormPage = () => {
               name="recurrence_period"
               value={formData.recurrence_period}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+              className="w-full px-4 py-3 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-white/30"
             >
               <option value="none">No recurrente</option>
               <option value="daily">Diario</option>

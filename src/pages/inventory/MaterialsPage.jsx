@@ -169,7 +169,7 @@ const MaterialsPage = () => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
+      className="fb-card p-4"
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -186,19 +186,19 @@ const MaterialsPage = () => {
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-dark/50 rounded-lg p-3">
-          <p className="text-xs text-gray mb-1">Stock Actual</p>
+          <p className="fb-eyebrow mb-1.5 block">Stock Actual</p>
           <p className="font-bold text-light">{material.current_stock}</p>
         </div>
         <div className="bg-dark/50 rounded-lg p-3">
-          <p className="text-xs text-gray mb-1">Stock Mín</p>
+          <p className="fb-eyebrow mb-1.5 block">Stock Mín</p>
           <p className="font-bold text-gray">{material.minimum_stock}</p>
         </div>
         <div className="bg-dark/50 rounded-lg p-3">
-          <p className="text-xs text-gray mb-1">Precio/Unidad</p>
+          <p className="fb-eyebrow mb-1.5 block">Precio/Unidad</p>
           <p className="font-bold text-light text-sm">{formatCurrency(material.cost_per_unit)}</p>
         </div>
         <div className="bg-dark/50 rounded-lg p-3">
-          <p className="text-xs text-gray mb-1">Proveedor</p>
+          <p className="fb-eyebrow mb-1.5 block">Proveedor</p>
           <p className="font-bold text-gray text-sm truncate">{material.supplier || '-'}</p>
         </div>
       </div>
@@ -232,7 +232,7 @@ const MaterialsPage = () => {
           </div>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-3 md:px-4 py-2 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm md:text-base"
+            className="flex items-center gap-2 px-3 md:px-4 py-2 border border-primary/35 bg-primary/[0.1] text-light rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all text-sm md:text-base"
           >
             <Plus className="w-5 h-5" />
             <span className="hidden sm:inline">Agregar</span>
@@ -247,7 +247,7 @@ const MaterialsPage = () => {
             placeholder="Buscar materiales..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-lg pl-10 pr-4 py-2.5 text-light placeholder-gray/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm"
+            className="w-full bg-white/[0.08] border border-white/[0.1] rounded-lg pl-10 pr-4 py-2.5 text-light placeholder-gray/50 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-primary transition-colors text-sm"
           />
         </div>
       </div>
@@ -258,7 +258,7 @@ const MaterialsPage = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : materials.length === 0 ? (
-        <div className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] rounded-xl p-8 text-center">
+        <div className="fb-card p-8 text-center">
           <Package className="w-12 h-12 text-gray/50 mx-auto mb-4" />
           <p className="text-gray">No se encontraron materiales</p>
         </div>
@@ -272,11 +272,11 @@ const MaterialsPage = () => {
           </div>
 
           {/* Vista desktop - Tabla */}
-          <div className="hidden md:block backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl overflow-hidden">
+          <div className="hidden md:block fb-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.1]">
+                  <tr className="border-b border-white/[0.07]">
                     <th className="text-left py-4 px-4 text-sm font-medium text-gray">Material</th>
                     <th className="text-center py-4 px-4 text-sm font-medium text-gray">Unidad</th>
                     <th className="text-right py-4 px-4 text-sm font-medium text-gray">Stock</th>
@@ -351,7 +351,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -369,22 +369,22 @@ const MaterialsPage = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Nombre del Material</label>
+                  <label className="fb-eyebrow mb-2 block">Nombre del Material</label>
                   <input
                     type="text"
                     value={editData.name || ''}
                     onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     placeholder="Nombre del material"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Unidad de Medida</label>
+                  <label className="fb-eyebrow mb-2 block">Unidad de Medida</label>
                   <select
                     value={editData.unit_id}
                     onChange={(e) => setEditData({ ...editData, unit_id: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-dark-secondary border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                   >
                     {units.map((unit) => (
                       <option key={unit.id} value={unit.id} className="bg-dark-secondary text-light">
@@ -396,49 +396,49 @@ const MaterialsPage = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-sm text-gray mb-1.5 block">Stock Actual</label>
+                    <label className="fb-eyebrow mb-2 block">Stock Actual</label>
                     <input
                       type="number"
                       step="0.01"
                       inputMode="decimal"
                       value={editData.current_stock}
                       onChange={(e) => setEditData({ ...editData, current_stock: e.target.value })}
-                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-gray mb-1.5 block">Stock Mínimo</label>
+                    <label className="fb-eyebrow mb-2 block">Stock Mínimo</label>
                     <input
                       type="number"
                       step="0.01"
                       inputMode="decimal"
                       value={editData.minimum_stock}
                       onChange={(e) => setEditData({ ...editData, minimum_stock: e.target.value })}
-                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Precio por Unidad (COP)</label>
+                  <label className="fb-eyebrow mb-2 block">Precio por Unidad (COP)</label>
                   <input
                     type="number"
                     step="0.01"
                     inputMode="decimal"
                     value={editData.cost_per_unit}
                     onChange={(e) => setEditData({ ...editData, cost_per_unit: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Proveedor</label>
+                  <label className="fb-eyebrow mb-2 block">Proveedor</label>
                   <input
                     type="text"
                     value={editData.supplier}
                     onChange={(e) => setEditData({ ...editData, supplier: e.target.value })}
                     placeholder="Nombre del proveedor"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
               </div>
@@ -453,7 +453,7 @@ const MaterialsPage = () => {
                 <button
                   onClick={handleSave}
                   disabled={updateMutation.isPending}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50"
+                  className="fb-btn fb-btn--accent flex-1 disabled:opacity-50"
                 >
                   {updateMutation.isPending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -483,7 +483,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -502,11 +502,11 @@ const MaterialsPage = () => {
               <div className="space-y-4">
                 {!selectedBusinessSlug && businesses.length > 1 && (
                   <div>
-                    <label className="text-sm text-gray mb-1.5 block">Negocio *</label>
+                    <label className="fb-eyebrow mb-2 block">Negocio *</label>
                     <select
                       value={createData.business}
                       onChange={(e) => setCreateData({ ...createData, business: Number(e.target.value) })}
-                      className="w-full backdrop-blur-sm bg-dark-secondary border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                     >
                       {businesses.map((b) => (
                         <option key={b.id} value={b.id} className="bg-dark-secondary text-light">
@@ -518,22 +518,22 @@ const MaterialsPage = () => {
                 )}
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Nombre *</label>
+                  <label className="fb-eyebrow mb-2 block">Nombre *</label>
                   <input
                     type="text"
                     value={createData.name}
                     onChange={(e) => setCreateData({ ...createData, name: e.target.value })}
                     placeholder="Ej: Pulpa de Mango"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Unidad de Medida *</label>
+                  <label className="fb-eyebrow mb-2 block">Unidad de Medida *</label>
                   <select
                     value={createData.unit_id}
                     onChange={(e) => setCreateData({ ...createData, unit_id: e.target.value })}
-                    className="w-full backdrop-blur-sm bg-dark-secondary border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors focus:border-white/30 focus:outline-none"
                   >
                     <option value="" className="bg-dark-secondary text-light">Seleccionar...</option>
                     {units.map((unit) => (
@@ -546,7 +546,7 @@ const MaterialsPage = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-sm text-gray mb-1.5 block">Stock Actual</label>
+                    <label className="fb-eyebrow mb-2 block">Stock Actual</label>
                     <input
                       type="number"
                       step="0.01"
@@ -554,11 +554,11 @@ const MaterialsPage = () => {
                       value={createData.current_stock}
                       onChange={(e) => setCreateData({ ...createData, current_stock: e.target.value })}
                       placeholder="0"
-                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-gray mb-1.5 block">Stock Mínimo</label>
+                    <label className="fb-eyebrow mb-2 block">Stock Mínimo</label>
                     <input
                       type="number"
                       step="0.01"
@@ -566,13 +566,13 @@ const MaterialsPage = () => {
                       value={createData.minimum_stock}
                       onChange={(e) => setCreateData({ ...createData, minimum_stock: e.target.value })}
                       placeholder="0"
-                      className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                      className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Precio por Unidad (COP)</label>
+                  <label className="fb-eyebrow mb-2 block">Precio por Unidad (COP)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -580,18 +580,18 @@ const MaterialsPage = () => {
                     value={createData.cost_per_unit}
                     onChange={(e) => setCreateData({ ...createData, cost_per_unit: e.target.value })}
                     placeholder="0"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray mb-1.5 block">Proveedor</label>
+                  <label className="fb-eyebrow mb-2 block">Proveedor</label>
                   <input
                     type="text"
                     value={createData.supplier}
                     onChange={(e) => setCreateData({ ...createData, supplier: e.target.value })}
                     placeholder="Ej: Fruver Local"
-                    className="w-full backdrop-blur-sm bg-white/[0.09] border border-white/[0.12] rounded-lg px-4 py-3 text-light focus:outline-none focus:border-primary"
+                    className="w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-[0.85rem] text-light transition-colors placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                   />
                 </div>
               </div>
@@ -606,7 +606,7 @@ const MaterialsPage = () => {
                 <button
                   onClick={handleCreate}
                   disabled={createMutation.isPending || !createData.name || !createData.unit_id}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-secondary text-dark font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="fb-btn fb-btn--accent flex-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {createMutation.isPending ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -636,7 +636,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="backdrop-blur-xl bg-white/[0.06] border-t md:border border-white/[0.15] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
+              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-4 mb-4">

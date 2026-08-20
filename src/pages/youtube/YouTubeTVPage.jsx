@@ -313,7 +313,7 @@ const YouTubeTVPage = () => {
             <div ref={playerContainerRef} className="w-full h-full" />
           </div>
           {current.mode === "mix" && (
-            <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 text-white/80 text-xs font-bold flex items-center gap-2">
+            <div className="absolute top-4 right-4 z-10 px-3 py-1.5 rounded-full bg-black/60 border border-white/10 text-white/80 text-xs font-bold flex items-center gap-2">
               <span className="flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-red-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
