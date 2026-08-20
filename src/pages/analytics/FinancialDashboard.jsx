@@ -40,6 +40,7 @@ import {
   RotateCcw,
   ShoppingCart,
   Receipt,
+  Building2,
 } from 'lucide-react';
 import { analyticsService } from '@/services/analytics.service';
 import { ordersService } from '@/services/orders.service';
@@ -209,6 +210,101 @@ const StatCard = ({ title, value, subtitle, change, changeYoy, icon: Icon, color
 };
 
 // ─── Smart Insight Generator ────────────────────────────────────
+
+/* ══════════════════════════════════════════════════════════
+   Resultado del mes: el margen leido de arriba abajo, sin SQL.
+   La inversion va DEBAJO del margen operativo a proposito: comprar
+   una nevera o montar un piso consume caja pero no es costo del mes,
+   y sumarla al gasto hace ver en perdida un mes que fue rentable.
+   ══════════════════════════════════════════════════════════ */
+
+const ResultRow = ({ label, value, percent, sign = '', tone = 'neutral', total = false, hint }) => {
+  const toneClass = {
+    neutral: 'text-light',
+    negative: 'text-red-400',
+    positive: 'text-green-400',
+    muted: 'text-gray',
+  }[tone] || 'text-light';
+
+  return (
+    <div className={`py-2 ${total ? 'border-t border-white/[0.12] mt-1 pt-3' : ''}`}>
+      <div className="flex items-baseline justify-between gap-3">
+        <span className={`text-xs md:text-sm ${total ? 'font-bold text-light' : 'text-gray'} truncate`}>
+          {label}
+        </span>
+        <span className="flex items-baseline gap-2 md:gap-3 flex-shrink-0">
+          <span className={`tabular-nums ${total ? 'text-base md:text-lg font-bold' : 'text-sm md:text-base font-semibold'} ${toneClass}`}>
+            {sign}{value}
+          </span>
+          <span className="tabular-nums text-[10px] md:text-xs text-gray w-12 md:w-14 text-right">
+            {percent}
+          </span>
+        </span>
+      </div>
+      {hint && <p className="text-[10px] md:text-xs text-gray/70 mt-0.5">{hint}</p>}
+    </div>
+  );
+};
+
+const MonthlyResult = ({ summary, formatCurrencyFull, containerClass }) => {
+  if (!summary) return null;
+
+  const revenue = summary.revenue?.value ?? 0;
+  const inventory = summary.inventory_expenses?.value ?? 0;
+  const operational = summary.operational_expenses?.value ?? 0;
+  const profit = summary.net_profit?.value ?? 0;
+  const investment = summary.investment?.value ?? 0;
+  const cash = summary.cash_after_investment?.value ?? (profit - investment);
+
+  const pct = (v) => (revenue > 0 ? `${((v / revenue) * 100).toFixed(1)}%` : '--');
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.25 }}
+      className={containerClass}
+    >
+      <h3 className="text-base font-bold text-light mb-1 flex items-center gap-2">
+        <Receipt className="w-4 h-4 text-secondary" />
+        Resultado del mes
+      </h3>
+      <p className="text-xs text-gray mb-3">
+        De la venta a la caja, en orden. La inversion va aparte del margen.
+      </p>
+
+      <div className="divide-y divide-white/[0.05]">
+        <ResultRow label="Ventas" value={formatCurrencyFull(revenue)} percent="100%" />
+        <ResultRow label="Materia prima" value={formatCurrencyFull(inventory)} percent={pct(inventory)} sign="-" tone="negative" />
+        <ResultRow label="Gasto corriente" value={formatCurrencyFull(operational)} percent={pct(operational)} sign="-" tone="negative" />
+        <ResultRow
+          label="Margen operativo"
+          value={formatCurrencyFull(profit)}
+          percent={pct(profit)}
+          tone={profit >= 0 ? 'positive' : 'negative'}
+          total
+        />
+        <ResultRow
+          label="Inversion del mes"
+          value={formatCurrencyFull(investment)}
+          percent={pct(investment)}
+          sign={investment > 0 ? '-' : ''}
+          tone={investment > 0 ? 'neutral' : 'muted'}
+          hint={investment > 0
+            ? 'Equipos, mobiliario o montaje: compra algo que dura, no es costo del mes.'
+            : 'Ningun gasto del mes esta marcado como inversion.'}
+        />
+        <ResultRow
+          label="Caja tras invertir"
+          value={formatCurrencyFull(cash)}
+          percent={pct(cash)}
+          tone={cash >= 0 ? 'positive' : 'negative'}
+          total
+        />
+      </div>
+    </motion.div>
+  );
+};
 
 const generateInsight = (summary) => {
   if (!summary) return '';
@@ -585,6 +681,17 @@ const FinancialDashboard = () => {
                   {formatCurrencyFull(summary?.net_profit?.value)}
                 </span>
                 {' '}({summary?.profit_margin?.value}% margen).
+                {summary?.investment?.value > 0 && (
+                  <>
+                    {' '}Ademas se invirtieron{' '}
+                    <span className="text-light font-semibold">{formatCurrencyFull(summary.investment.value)}</span>
+                    {' '}en equipos, mobiliario o montaje, que no restan del margen pero si de la caja:
+                    quedan{' '}
+                    <span className={`font-semibold ${summary?.cash_after_investment?.value >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {formatCurrencyFull(summary.cash_after_investment?.value)}
+                    </span>.
+                  </>
+                )}
                 {' '}{generateInsight(summary)}
               </p>
             </div>
@@ -613,6 +720,7 @@ const FinancialDashboard = () => {
           <StatCard
             title="Gastos Totales"
             value={formatCurrency(summary?.total_expenses?.value)}
+            subtitle="Sin inversion"
             change={summary?.total_expenses?.change}
             changeYoy={summary?.total_expenses?.change_yoy}
             icon={Wallet}
@@ -660,6 +768,15 @@ const FinancialDashboard = () => {
             delay={0.25}
           />
         </div>
+      )}
+
+      {/* ── Resultado del mes: el margen sin tener que interpretarlo ── */}
+      {!isLoadingSummary && (
+        <MonthlyResult
+          summary={summary}
+          formatCurrencyFull={formatCurrencyFull}
+          containerClass={chartContainerClass}
+        />
       )}
 
       {/* ══════════════════════════════════════════════════════════

@@ -14,24 +14,12 @@ import {
   Zap,
   Home,
   Wrench,
-  TrendingUp,
-  CheckCircle,
 } from "lucide-react";
 import { expensesService } from "@/services/expenses.service";
 import { useBusinessStore } from "@/stores/useBusinessStore";
 import toast from "react-hot-toast";
+import { ICON_MAP, COLOR_MAP, KINDS, KIND_LIST, kindMeta } from "./categoryStyles";
 
-const ICON_MAP = {
-  Users: Users,
-  Zap: Zap,
-  Home: Home,
-  Wrench: Wrench,
-  Megaphone: TrendingUp,
-  Shield: CheckCircle,
-  FileText: Wallet,
-  Package: Wallet,
-  MoreHorizontal: Wallet,
-};
 
 const ICON_OPTIONS = [
   { value: "Users", label: "Personas" },
@@ -43,6 +31,9 @@ const ICON_OPTIONS = [
   { value: "FileText", label: "Documento" },
   { value: "Package", label: "Paquete" },
   { value: "MoreHorizontal", label: "Otro" },
+  { value: "Monitor", label: "Pantalla" },
+  { value: "Armchair", label: "Silla" },
+  { value: "HardHat", label: "Obra" },
 ];
 
 const COLOR_OPTIONS = [
@@ -55,19 +46,11 @@ const COLOR_OPTIONS = [
   { value: "red", label: "Rojo" },
   { value: "cyan", label: "Cyan" },
   { value: "gray", label: "Gris" },
+  { value: "indigo", label: "Indigo" },
+  { value: "amber", label: "Ambar" },
+  { value: "teal", label: "Verde azulado" },
 ];
 
-const COLOR_MAP = {
-  blue: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  yellow: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  purple: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  orange: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  pink: "bg-pink-500/20 text-pink-400 border-pink-500/30",
-  green: "bg-green-500/20 text-green-400 border-green-500/30",
-  red: "bg-red-500/20 text-red-400 border-red-500/30",
-  cyan: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
-  gray: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-};
 
 const CategoriesPage = () => {
   const queryClient = useQueryClient();
@@ -78,6 +61,7 @@ const CategoriesPage = () => {
     description: "",
     icon: "MoreHorizontal",
     color: "gray",
+    kind: KINDS.operational.value,
     is_recurring_default: false,
   });
 
@@ -126,6 +110,7 @@ const CategoriesPage = () => {
         description: category.description || "",
         icon: category.icon || "MoreHorizontal",
         color: category.color || "gray",
+        kind: category.kind || KINDS.operational.value,
         is_recurring_default: category.is_recurring_default || false,
       });
     } else {
@@ -135,6 +120,7 @@ const CategoriesPage = () => {
         description: "",
         icon: "MoreHorizontal",
         color: "gray",
+        kind: KINDS.operational.value,
         is_recurring_default: false,
       });
     }
@@ -368,6 +354,26 @@ const CategoriesPage = () => {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray mb-2">Tipo</label>
+                  <select
+                    value={formData.kind}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, kind: e.target.value }))
+                    }
+                    className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-light focus:outline-none focus:border-primary/50"
+                  >
+                    {KIND_LIST.map((k) => (
+                      <option key={k.value} value={k.value}>
+                        {k.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray mt-1">
+                    {kindMeta(formData.kind).description}
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-3">

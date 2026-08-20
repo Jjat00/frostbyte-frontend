@@ -8,11 +8,6 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
-  Users,
-  Zap,
-  Home,
-  Wrench,
-  TrendingUp,
   MoreVertical,
   Trash2,
   Eye,
@@ -23,30 +18,9 @@ import { Link, useSearchParams } from "react-router-dom";
 import { expensesService } from "@/services/expenses.service";
 import { useBusinessStore } from "@/stores/useBusinessStore";
 import toast from "react-hot-toast";
+import { ICON_MAP, COLOR_MAP, KINDS, kindMeta } from "./categoryStyles";
 
-const ICON_MAP = {
-  Users: Users,
-  Zap: Zap,
-  Home: Home,
-  Wrench: Wrench,
-  Megaphone: TrendingUp,
-  Shield: CheckCircle,
-  FileText: Wallet,
-  Package: Wallet,
-  MoreHorizontal: Wallet,
-};
 
-const COLOR_MAP = {
-  blue: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  yellow: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  purple: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  orange: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  pink: "bg-pink-500/20 text-pink-400 border-pink-500/30",
-  green: "bg-green-500/20 text-green-400 border-green-500/30",
-  red: "bg-red-500/20 text-red-400 border-red-500/30",
-  cyan: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
-  gray: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-};
 
 const STATUS_STYLES = {
   pending: { bg: "bg-yellow-500/20", text: "text-yellow-400", label: "Pendiente" },
@@ -65,6 +39,7 @@ const ExpensesListPage = () => {
 
   const statusFilter = searchParams.get("status") || "";
   const categoryFilter = searchParams.get("category") || "";
+  const kindFilter = searchParams.get("kind") || "";
 
   const now = new Date();
   const currentMonth = searchParams.get("month")
@@ -108,11 +83,12 @@ const ExpensesListPage = () => {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["expenses", { status: statusFilter, category: categoryFilter, startDate, endDate, search, business: selectedBusinessSlug }],
+    queryKey: ["expenses", { status: statusFilter, category: categoryFilter, kind: kindFilter, startDate, endDate, search, business: selectedBusinessSlug }],
     queryFn: () =>
       expensesService.getExpenses({
         status: statusFilter || undefined,
         category: categoryFilter || undefined,
+        kind: kindFilter || undefined,
         start_date: startDate,
         end_date: endDate,
         search: search || undefined,
@@ -261,7 +237,20 @@ const ExpensesListPage = () => {
             exit={{ opacity: 0, height: 0 }}
             className="backdrop-blur-xl bg-white/[0.08] border border-white/[0.1] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] rounded-xl p-4"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm text-gray mb-2">Tipo</label>
+                <select
+                  value={kindFilter}
+                  onChange={(e) => handleFilterChange("kind", e.target.value)}
+                  className="w-full px-3 py-2 backdrop-blur-sm bg-[#1a1a2e] border border-white/[0.12] rounded-lg text-light focus:outline-none focus:border-primary/50 [&>option]:bg-[#1a1a2e] [&>option]:text-light"
+                >
+                  <option value="">Todos</option>
+                  <option value={KINDS.operational.value}>{KINDS.operational.label}</option>
+                  <option value={KINDS.investment.value}>{KINDS.investment.label}</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm text-gray mb-2">Estado</label>
                 <select
@@ -345,6 +334,14 @@ const ExpensesListPage = () => {
                       >
                         {statusStyle.label}
                       </span>
+                      {expense.kind === KINDS.investment.value && (
+                        <span
+                          className={`px-2 py-0.5 text-xs font-medium rounded-full border ${kindMeta(expense.kind).badge}`}
+                          title="No resta del margen del mes"
+                        >
+                          {KINDS.investment.short}
+                        </span>
+                      )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray">
                       <span>{expense.category_name}</span>

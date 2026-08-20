@@ -3,14 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Wallet,
-  TrendingUp,
   Clock,
   CheckCircle,
   XCircle,
-  Users,
-  Zap,
-  Home,
-  Wrench,
   Loader2,
   AlertCircle,
   PlusCircle,
@@ -20,30 +15,9 @@ import {
 import { Link, useSearchParams } from "react-router-dom";
 import { expensesService } from "@/services/expenses.service";
 import { useBusinessStore } from "@/stores/useBusinessStore";
+import { ICON_MAP, COLOR_MAP } from "./categoryStyles";
 
-const ICON_MAP = {
-  Users: Users,
-  Zap: Zap,
-  Home: Home,
-  Wrench: Wrench,
-  Megaphone: TrendingUp,
-  Shield: CheckCircle,
-  FileText: Wallet,
-  Package: Wallet,
-  MoreHorizontal: Wallet,
-};
 
-const COLOR_MAP = {
-  blue: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  yellow: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  purple: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  orange: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  pink: "bg-pink-500/20 text-pink-400 border-pink-500/30",
-  green: "bg-green-500/20 text-green-400 border-green-500/30",
-  red: "bg-red-500/20 text-red-400 border-red-500/30",
-  cyan: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
-  gray: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-};
 
 const ExpensesDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -179,6 +153,12 @@ const ExpensesDashboard = () => {
           <p className="text-xs text-gray mt-1">
             {stats?.paid_count || 0} gastos
           </p>
+          {parseFloat(stats?.total_investment || 0) > 0 && (
+            <p className="text-xs text-indigo-300 mt-1">
+              {formatCurrency(stats.total_investment)} es inversion
+              {stats?.investment_count ? ` (${stats.investment_count})` : ""}
+            </p>
+          )}
         </motion.div>
 
         <motion.div

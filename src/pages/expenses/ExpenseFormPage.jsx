@@ -9,39 +9,12 @@ import {
   Loader2,
   Save,
   Wallet,
-  Users,
-  Zap,
-  Home,
-  Wrench,
-  TrendingUp,
-  CheckCircle,
 } from "lucide-react";
 import { expensesService } from "@/services/expenses.service";
 import toast from "react-hot-toast";
+import { ICON_MAP, COLOR_MAP, KINDS, kindMeta } from "./categoryStyles";
 
-const ICON_MAP = {
-  Users: Users,
-  Zap: Zap,
-  Home: Home,
-  Wrench: Wrench,
-  Megaphone: TrendingUp,
-  Shield: CheckCircle,
-  FileText: Wallet,
-  Package: Wallet,
-  MoreHorizontal: Wallet,
-};
 
-const COLOR_MAP = {
-  blue: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  yellow: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-  purple: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  orange: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-  pink: "bg-pink-500/20 text-pink-400 border-pink-500/30",
-  green: "bg-green-500/20 text-green-400 border-green-500/30",
-  red: "bg-red-500/20 text-red-400 border-red-500/30",
-  cyan: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
-  gray: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-};
 
 const PAYMENT_METHODS = [
   { value: "cash", label: "Efectivo" },
@@ -81,6 +54,7 @@ const ExpenseFormPage = () => {
 
   const [formData, setFormData] = useState({
     category_id: "",
+    kind: KINDS.operational.value,
     business: "",
     description: "",
     amount: "",
@@ -108,6 +82,7 @@ const ExpenseFormPage = () => {
     if (expense) {
       setFormData({
         category_id: expense.category?.id || "",
+        kind: expense.kind || expense.category?.kind || KINDS.operational.value,
         description: expense.description || "",
         amount: expense.amount || "",
         expense_date: expense.expense_date || new Date().toISOString().split("T")[0],
@@ -194,6 +169,16 @@ const ExpenseFormPage = () => {
 
   const categoriesList = categories?.results || categories || [];
 
+  // Las categorias se muestran en dos grupos: lo que se consume en el mes y
+  // lo que compra algo que dura. Elegir la categoria ya fija el tipo, y el
+  // interruptor de abajo permite corregirlo cuando el caso no encaja.
+  const categoryGroups = [
+    { kind: KINDS.operational, items: categoriesList.filter((c) => c.kind !== KINDS.investment.value) },
+    { kind: KINDS.investment, items: categoriesList.filter((c) => c.kind === KINDS.investment.value) },
+  ].filter((g) => g.items.length > 0);
+
+  const selectedKind = kindMeta(formData.kind);
+
   if (loadingCategories || (isEditing && loadingExpense)) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -255,32 +240,89 @@ const ExpenseFormPage = () => {
           <label className="block text-sm font-medium text-light mb-3">
             Categoria *
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {categoriesList.map((cat) => {
-              const IconComponent = ICON_MAP[cat.icon] || Wallet;
-              const colorClass = COLOR_MAP[cat.color] || COLOR_MAP.gray;
-              const isSelected = formData.category_id === cat.id;
+          <div className="space-y-4">
+            {categoryGroups.map((group) => (
+              <div key={group.kind.value}>
+                <p className="text-xs font-semibold text-gray uppercase tracking-wide mb-2">
+                  {group.kind.label}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {group.items.map((cat) => {
+                    const IconComponent = ICON_MAP[cat.icon] || Wallet;
+                    const colorClass = COLOR_MAP[cat.color] || COLOR_MAP.gray;
+                    const isSelected = formData.category_id === cat.id;
 
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, category_id: cat.id }))
-                  }
-                  className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                    isSelected
-                      ? `${colorClass} border-2`
-                      : "border-white/[0.1] hover:border-white/[0.2]"
-                  }`}
-                >
-                  <IconComponent className="w-5 h-5" />
-                  <span className="text-sm font-medium text-light">
-                    {cat.name}
-                  </span>
-                </button>
-              );
-            })}
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            category_id: cat.id,
+                            // Elegir categoria refija el tipo; el interruptor
+                            // de abajo lo puede corregir despues.
+                            kind: cat.kind || KINDS.operational.value,
+                          }))
+                        }
+                        className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                          isSelected
+                            ? `${colorClass} border-2`
+                            : "border-white/[0.1] hover:border-white/[0.2]"
+                        }`}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                        <span className="text-sm font-medium text-light">
+                          {cat.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tipo: gasto corriente o inversion */}
+        <div className="rounded-lg border border-white/[0.1] p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-light">Es una inversion</p>
+              <p className="text-xs text-gray mt-1">
+                {selectedKind.description}
+              </p>
+              <p className="text-xs text-gray/70 mt-1">
+                La inversion no resta del margen del mes, pero si de la caja.
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={formData.kind === KINDS.investment.value}
+              onClick={() =>
+                setFormData((prev) => ({
+                  ...prev,
+                  kind:
+                    prev.kind === KINDS.investment.value
+                      ? KINDS.operational.value
+                      : KINDS.investment.value,
+                }))
+              }
+              className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${
+                formData.kind === KINDS.investment.value
+                  ? "bg-indigo-500/60"
+                  : "bg-white/[0.12]"
+              }`}
+            >
+              <span
+                className={`absolute top-1 w-5 h-5 rounded-full bg-light transition-transform ${
+                  formData.kind === KINDS.investment.value
+                    ? "translate-x-6"
+                    : "translate-x-1"
+                }`}
+              />
+            </button>
           </div>
         </div>
 
