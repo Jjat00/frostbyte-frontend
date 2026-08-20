@@ -93,6 +93,8 @@ Use `@/` for imports from `src/` directory (configured in vite.config.js)
 - Known exceptions that intentionally don't follow the theme: product-identity gradients in menu sections, data-viz series palettes, `FrostbyteTVPage`, `impostorAvatars.js`, `qrStyling.js`.
 - **The public menu (`/` and `/mesa/*`) has its own visual layer in `src/minimal.css`** (imported after `theme.css`): `fb-section`, `fb-card`, `fb-inset`, `fb-eyebrow`, `fb-rule`, `fb-hairline`, `fb-btn`, `fb-pill`, `fb-reveal`. Build customer-facing sections with those instead of `liquid-glass` + `backdrop-blur` + gradient headings. Per-section content color goes in the `--fb-accent` / `--fb-accent-2` CSS variables on the section element. Everything there lives in `@layer components` on purpose: in Tailwind v4 unlayered CSS beats every utility, so without the layer a `px-4` next to `fb-btn` would do nothing.
 - Section headings use `SectionHeading.jsx`; the "extras" blocks at the foot of a menu section use `CartaExtras.jsx`.
+- Use `fb-screen` (not `fb-section`) on the ROOT of a full screen: `fb-section` sets `overflow: hidden`, which disables any `position: sticky` inside it — several customer screens have sticky headers or sticky category chips.
+- Putting `fb-btn` on a shadcn `<Button>` paints two backgrounds: the component already carries `bg-primary`, and `fb-btn` is not a Tailwind utility so tailwind-merge does not dedupe it. Add `bg-transparent text-light hover:bg-transparent`, or use a plain `<button>`.
 - Use `cn()` utility from `@/lib/utils` for merging Tailwind classes
 
 ### Commit Format
