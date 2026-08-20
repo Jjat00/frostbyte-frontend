@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import {
   ArrowLeft,
   Bike,
@@ -7,7 +7,6 @@ import {
   ChevronRight,
   ClipboardList,
   Lock,
-  MessageCircle,
   Search,
   X,
 } from "lucide-react";
@@ -21,7 +20,6 @@ import {
 } from "@/hooks";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { getProductStyles } from "@/lib/productStyles";
-import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
 import StoreStatusBadge from "@/components/StoreStatusBadge";
 import CartLayer from "@/components/cart/CartLayer";
 import CustomerTabBar from "@/components/CustomerTabBar";
@@ -66,8 +64,9 @@ const StepPill = ({ done, children }) => (
  *
  * Estados:
  * - Local cerrado (is_open=false): aviso claro y catálogo sin botones.
- * - Domicilios en la app apagados (customer_ordering_enabled=false): modo
- *   WhatsApp — catálogo visible y pedidos por las líneas de siempre.
+ * - Domicilios apagados (customer_ordering_enabled=false): la vista no existe
+ *   y devuelve a la carta. Con el servicio en pausa no se nombra en ninguna
+ *   parte (decisión de Jaime, 2026-08-20), así que tampoco por URL directa.
  */
 const DeliveryPage = () => {
   const { data: config } = useStoreConfig();
@@ -79,9 +78,8 @@ const DeliveryPage = () => {
   const inAppOrdering = !!config?.customer_ordering_enabled;
   const storeClosed = config?.is_open === false;
   // Pedir a domicilio exige cuenta desde el primer paso: sin sesión la tienda
-  // no se abre. Con los pedidos en la app apagados no hay nada que proteger
-  // (se pide por WhatsApp), así que ahí el catálogo sigue abierto.
-  const requiresLogin = inAppOrdering && !isCustomerAuthenticated;
+  // no se abre (la vitrina no se pierde, la carta pública la muestra entera).
+  const requiresLogin = !isCustomerAuthenticated;
 
   const { data: categoriesData } = useActiveCategories();
   // Sin sesión no se pinta el catálogo: tampoco se trae (son ~300 productos)
@@ -181,7 +179,7 @@ const DeliveryPage = () => {
           Domicilios
         </h1>
         <StoreStatusBadge isOpen={config?.is_open} />
-        {isCustomerAuthenticated && inAppOrdering && (
+        {isCustomerAuthenticated && (
           <Link
             to="/mis-pedidos"
             className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 text-xs font-bold text-secondary flex-shrink-0"
@@ -193,6 +191,12 @@ const DeliveryPage = () => {
       </div>
     </header>
   );
+
+  // Servicio en pausa: aquí no hay nada que ver. Se espera a que llegue la
+  // config para no rebotar a quien sí puede pedir.
+  if (config && !inAppOrdering) {
+    return <Navigate to={cartaPath} replace />;
+  }
 
   // Muro: sin sesión la tienda no se abre (ni se carga el catálogo)
   if (requiresLogin) {
@@ -229,7 +233,7 @@ const DeliveryPage = () => {
               </p>
             </div>
           </section>
-        ) : inAppOrdering ? (
+        ) : (
           <section className="rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-500/[0.12] via-dark-secondary to-dark-secondary p-4 lg:p-5 lg:flex lg:items-center lg:justify-between lg:gap-8">
             <div>
               <h2 className="text-xl font-black uppercase leading-tight">
@@ -261,30 +265,6 @@ const DeliveryPage = () => {
                 <StepPill>3. Te lo llevamos</StepPill>
               </li>
             </ol>
-          </section>
-        ) : (
-          <section className="rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-500/[0.12] via-dark-secondary to-dark-secondary p-4">
-            <h2 className="text-xl font-black uppercase leading-tight">
-              Domicilios <span className="text-emerald-400">por WhatsApp</span>
-            </h2>
-            <p className="text-white/60 text-sm mt-1">
-              Muy pronto podrás pedir directo aquí en la app. Por ahora, mira el
-              catálogo y pide por nuestra línea de WhatsApp:
-            </p>
-            <div className="mt-3 grid grid-cols-1 gap-2">
-              {WHATSAPP_LINES.map((line) => (
-                <a
-                  key={line.number}
-                  href={waLink(line.number)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-bold text-sm hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
-                >
-                  <MessageCircle className="w-4 h-4 flex-shrink-0" />
-                  {line.display}
-                </a>
-              ))}
-            </div>
           </section>
         )}
 

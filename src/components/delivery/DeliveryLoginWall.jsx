@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Bike, ClipboardList, Lock, UserCircle2, UtensilsCrossed } from "lucide-react";
+import {
+  Bike,
+  ClipboardList,
+  Lock,
+  MessageCircle,
+  UserCircle2,
+  UtensilsCrossed,
+} from "lucide-react";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 import { useCartaPath } from "@/hooks";
+import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
 
 /**
  * Muro de /domicilios: sin sesión de cliente no se entra a la tienda.
@@ -13,8 +21,12 @@ import { useCartaPath } from "@/hooks";
  * `/` sigue mostrando todos los productos y precios sin sesión —, así que
  * aquí el muro solo protege el acto de pedir.
  *
- * Solo se muestra con los pedidos en la app encendidos: si el local pide por
- * WhatsApp (`customer_ordering_enabled=false`) no hay nada que proteger.
+ * Solo se muestra con los pedidos en la app encendidos: apagados, /domicilios
+ * no existe y devuelve a la carta.
+ *
+ * El muro no es una puerta en la cara: junto al botón de Google ofrece pedir
+ * por WhatsApp, que sigue siendo un canal de pedidos de primera y no exige
+ * cuenta.
  */
 const DeliveryLoginWall = ({ storeClosed, onError }) => {
   const [error, setError] = useState("");
@@ -68,6 +80,27 @@ const DeliveryLoginWall = ({ storeClosed, onError }) => {
 
       <GoogleSignInButton onError={handleError} />
       {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
+
+      {/* Sin cuenta también se pide: la línea de WhatsApp recibe igual */}
+      <div className="mt-6 pt-5 border-t border-white/10">
+        <p className="text-white/60 text-xs font-bold uppercase tracking-wider mb-2.5">
+          ¿Prefieres pedir por WhatsApp?
+        </p>
+        <div className="grid grid-cols-1 gap-2">
+          {WHATSAPP_LINES.map((line) => (
+            <a
+              key={line.number}
+              href={waLink(line.number)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-bold text-sm hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
+            >
+              <MessageCircle className="w-4 h-4 flex-shrink-0" />
+              {line.display}
+            </a>
+          ))}
+        </div>
+      </div>
 
       {/* Salida para quien solo quería mirar: la carta no pide nada */}
       <Link

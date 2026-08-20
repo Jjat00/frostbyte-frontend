@@ -53,7 +53,11 @@ const inputCls =
 const LoginHero = () => {
   const [error, setError] = useState("");
   const { data: reservationsConfig } = useReservationsConfig();
+  const { data: storeConfig } = useStoreConfig();
   const reservationsEnabled = !!reservationsConfig?.reservations_enabled;
+  // Con los domicilios en pausa la cuenta no los promete: el servicio no se
+  // nombra en ninguna parte mientras esté apagado.
+  const orderingEnabled = !!storeConfig?.customer_ordering_enabled;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -74,8 +78,15 @@ const LoginHero = () => {
           pedir, seguir el pedido y no volver a escribir sus datos. */}
       <ul className="grid gap-2 mb-6 max-w-xs mx-auto text-sm text-white/60">
         {[
-          [Bike, "Pide a domicilio y sigue tu pedido en vivo hasta tu puerta"],
-          [ClipboardList, "Tu historial de pedidos, siempre a mano"],
+          ...(orderingEnabled
+            ? [
+                [
+                  Bike,
+                  "Pide a domicilio y sigue tu pedido en vivo hasta tu puerta",
+                ],
+                [ClipboardList, "Tu historial de pedidos, siempre a mano"],
+              ]
+            : []),
           [UserCircle2, "Tus datos listos: no los escribes en cada pedido"],
           ...(reservationsEnabled
             ? [[CalendarDays, "Reserva mesa o la Sala VIP en segundos"]]
@@ -272,6 +283,9 @@ const AccountPage = () => {
   // Con las reservas en línea apagadas (solo staff) el cliente no ve nada de
   // reservas, salvo que el staff le haya creado alguna a su nombre
   const showReservations = reservationsEnabled || reservations?.length > 0;
+  // Mismo criterio para los pedidos: apagados no se nombran, salvo que el
+  // cliente tenga historial que consultar.
+  const showOrders = orderingEnabled || orders.length > 0;
 
   return (
     <div className={`min-h-screen bg-dark text-light ${tabBarSpacing}`}>
@@ -399,19 +413,21 @@ const AccountPage = () => {
                     sub="Mesa o Sala VIP"
                   />
                 )}
-                <QuickAction
-                  to="/mis-pedidos"
-                  icon={ClipboardList}
-                  label="Mis pedidos"
-                  dot={activeOrders.length > 0}
-                  sub={
-                    activeOrders.length
-                      ? `${activeOrders.length} en curso`
-                      : orders.length
-                        ? `${orders.length} en total`
-                        : "Tu historial"
-                  }
-                />
+                {showOrders && (
+                  <QuickAction
+                    to="/mis-pedidos"
+                    icon={ClipboardList}
+                    label="Mis pedidos"
+                    dot={activeOrders.length > 0}
+                    sub={
+                      activeOrders.length
+                        ? `${activeOrders.length} en curso`
+                        : orders.length
+                          ? `${orders.length} en total`
+                          : "Tu historial"
+                    }
+                  />
+                )}
                 {showReservations && (
                   <QuickAction
                     to="/mis-reservas"

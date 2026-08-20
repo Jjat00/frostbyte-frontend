@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { useActiveCategories } from "@/hooks";
+import { useActiveCategories, useStoreConfig } from "@/hooks";
 
 /**
  * Configuración de navegación para cada sección
@@ -59,6 +59,10 @@ const QuickNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: categoriesData } = useActiveCategories();
+  const { data: storeConfig } = useStoreConfig();
+  // Con los domicilios apagados el servicio no se nombra en ninguna parte,
+  // tampoco como atajo de la carta.
+  const inAppOrdering = !!storeConfig?.customer_ordering_enabled;
 
   // Detectar si estamos en una ruta de mesa
   const isTableRoute = location.pathname.startsWith('/mesa/');
@@ -97,7 +101,9 @@ const QuickNav = () => {
   };
 
   const visibleSections = sections.filter(
-    (s) => isTableRoute || s.name !== "Frostbyte Play"
+    (s) =>
+      (isTableRoute || s.name !== "Frostbyte Play") &&
+      (inAppOrdering || s.name !== "Domicilios")
   );
 
   return (

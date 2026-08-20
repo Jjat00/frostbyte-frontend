@@ -15,6 +15,7 @@ import {
   useMyOrdersLive,
   useMediaQuery,
   useCartaPath,
+  useStoreConfig,
 } from "@/hooks";
 import OrderStatusBadge from "@/components/order-tracker/OrderStatusBadge";
 import OrderTracker, {
@@ -94,6 +95,9 @@ const MyOrdersPage = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
   const { data: selectedOrder, isLoading: isLoadingOrder } =
     useMyOrder(selectedId);
+
+  const { data: storeConfig } = useStoreConfig();
+  const orderingEnabled = !!storeConfig?.customer_ordering_enabled;
 
   const orders = data?.results || [];
   const active = orders.filter((o) => ACTIVE.includes(o.status));
@@ -189,12 +193,15 @@ const MyOrdersPage = () => {
               <ClipboardList className="w-7 h-7" />
             </span>
             <p className="text-white/50">Aún no has hecho pedidos.</p>
-            <Link
-              to="/domicilios"
-              className="rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold px-5 py-2.5"
-            >
-              Pedir a domicilio
-            </Link>
+            {/* Con los domicilios en pausa el servicio no se nombra */}
+            {orderingEnabled && (
+              <Link
+                to="/domicilios"
+                className="rounded-xl bg-gradient-to-r from-primary to-secondary text-dark font-bold px-5 py-2.5"
+              >
+                Pedir a domicilio
+              </Link>
+            )}
           </div>
         )}
 

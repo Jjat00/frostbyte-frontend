@@ -4,8 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft, Crown, UtensilsCrossed, Users, Minus, Plus, Clock,
   MessageCircle, CheckCircle2, Loader2, CalendarDays, Wallet, PartyPopper,
+  Phone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  RESERVATIONS_PHONE,
+  reservationsTelLink,
+  reservationsWaLink,
+} from "@/lib/reservas";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import CustomerAuthGate from "@/components/checkout/CustomerAuthGate";
 import CustomerAvatar from "@/components/auth/CustomerAvatar";
@@ -718,22 +724,33 @@ const formatLongDate = (iso) => {
   });
 };
 
+// Mientras el módulo lo opere solo el staff, la reserva del cliente (mesa,
+// grupo o Sala VIP) se hace escribiendo o llamando a la línea de reservas.
 const DisabledNotice = () => (
   <div className="py-16 text-center px-4">
     <PartyPopper className="w-10 h-10 text-gold mx-auto mb-4" />
-    <h2 className="text-lg font-black mb-2">Muy pronto</h2>
+    <h2 className="text-lg font-black mb-2">Reserva con nosotros</h2>
     <p className="text-sm text-white/50 mb-6 max-w-xs mx-auto">
-      Las reservas en línea aún no están activas. Mientras tanto escríbenos por
-      WhatsApp y te guardamos el puesto.
+      Las reservas en línea aún no están activas. Escríbenos o llámanos al{" "}
+      <span className="text-gold font-bold">{RESERVATIONS_PHONE.display}</span> y
+      te guardamos el puesto, sea mesa, grupo o la Sala VIP.
     </p>
-    <a
-      href="https://wa.me/573164277879?text=Hola%2C%20quiero%20hacer%20una%20reserva"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase"
-    >
-      <MessageCircle className="w-4 h-4" /> Reservar por WhatsApp
-    </a>
+    <div className="flex flex-wrap items-center justify-center gap-2">
+      <a
+        href={reservationsWaLink()}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase"
+      >
+        <MessageCircle className="w-4 h-4" /> Escribir por WhatsApp
+      </a>
+      <a
+        href={reservationsTelLink}
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gold/10 border border-gold/30 text-gold font-bold text-sm uppercase hover:bg-gold/20 transition-colors"
+      >
+        <Phone className="w-4 h-4" /> Llamar
+      </a>
+    </div>
   </div>
 );
 

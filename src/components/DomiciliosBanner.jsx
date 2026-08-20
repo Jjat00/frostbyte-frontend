@@ -1,13 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import {
-  Bike,
-  MessageCircle,
-  Clock,
-  MapPin,
-  ClipboardList,
-} from "lucide-react";
+import { Bike, MessageCircle, MapPin, ClipboardList } from "lucide-react";
 import { useStoreConfig } from "@/hooks";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
@@ -15,11 +9,12 @@ import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
 /**
  * Banner de domicilios.
  *
- * Tiene dos modos según `StoreSettings.customer_ordering_enabled`:
- * - Apagado: anuncia el servicio con las líneas de WhatsApp (modo actual de prod).
- * - Encendido: invita a pedir DENTRO de la app, con o sin sesión — el login
- *   con Google salta una sola vez, al confirmar el pedido. Con sesión suma el
- *   acceso al estado del pedido (/mis-pedidos). WhatsApp queda de respaldo.
+ * Manda `StoreSettings.customer_ordering_enabled`: **apagado no se pinta nada**
+ * (decisión de Jaime del 2026-08-20 — con el servicio en pausa no se nombra en
+ * ninguna parte de la carta, ni como anuncio ni como línea de WhatsApp).
+ * Encendido invita a pedir DENTRO de la app, con o sin sesión: el login con
+ * Google salta una sola vez, al confirmar el pedido. Con sesión suma el acceso
+ * al estado del pedido (/mis-pedidos). WhatsApp queda de respaldo.
  *
  * Variantes (mismo patrón que el banner de la Polla Mundialista para repetir sin saturar):
  * - "feature": tarjeta completa, encabeza la carta (lleva el id #domicilios)
@@ -36,6 +31,9 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
   const firstName =
     customer?.first_name || customer?.full_name?.split(" ")[0] || "";
 
+  // Servicio en pausa: el banner no existe, en ninguna de sus variantes.
+  if (!inAppOrdering) return null;
+
   if (variant === "strip") {
     return (
       <section className="py-6 bg-dark relative overflow-hidden">
@@ -50,66 +48,40 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
             <div className="flex items-center gap-2.5">
               <Bike size={20} className="text-emerald-400 flex-shrink-0" />
               <p className="text-white/75 text-sm font-semibold">
-                {inAppOrdering ? (
-                  <>
-                    ¿Antojado? Pide tu domicilio{" "}
-                    <span className="text-emerald-300">aquí en la app</span>
-                  </>
-                ) : (
-                  <>
-                    ¿Antojado? Te lo llevamos{" "}
-                    <span className="text-emerald-300">a tu casa</span>
-                  </>
-                )}
+                ¿Antojado? Pide tu domicilio{" "}
+                <span className="text-emerald-300">aquí en la app</span>
               </p>
             </div>
-            {inAppOrdering ? (
-              <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
+              <Link
+                to="/domicilios"
+                className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 text-dark px-3.5 py-1.5 text-xs font-bold hover:opacity-90 transition-opacity"
+              >
+                <Bike size={13} />
+                Pedir en la app
+              </Link>
+              {isCustomerAuthenticated && (
                 <Link
-                  to="/domicilios"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 text-dark px-3.5 py-1.5 text-xs font-bold hover:opacity-90 transition-opacity"
+                  to="/mis-pedidos"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
                 >
-                  <Bike size={13} />
-                  Pedir en la app
+                  <ClipboardList size={13} />
+                  Estado de mi pedido
                 </Link>
-                {isCustomerAuthenticated && (
-                  <Link
-                    to="/mis-pedidos"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
-                  >
-                    <ClipboardList size={13} />
-                    Estado de mi pedido
-                  </Link>
-                )}
-                {WHATSAPP_LINES.map((line) => (
-                  <a
-                    key={line.number}
-                    href={waLink(line.number)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
-                  >
-                    <MessageCircle size={13} />
-                    {line.display}
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-wrap justify-center gap-2">
-                {WHATSAPP_LINES.map((line) => (
-                  <a
-                    key={line.number}
-                    href={waLink(line.number)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
-                  >
-                    <MessageCircle size={13} />
-                    {line.display}
-                  </a>
-                ))}
-              </div>
-            )}
+              )}
+              {WHATSAPP_LINES.map((line) => (
+                <a
+                  key={line.number}
+                  href={waLink(line.number)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 px-3.5 py-1.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors"
+                >
+                  <MessageCircle size={13} />
+                  {line.display}
+                </a>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
@@ -145,116 +117,73 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
               </div>
             </div>
 
-            {inAppOrdering ? (
-              <>
-                {/* Descripción del pedido en la app */}
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-                  <MapPin
-                    size={20}
-                    className="text-emerald-300 flex-shrink-0 mt-0.5"
-                  />
-                  <p className="text-white/70 text-sm leading-relaxed">
-                    ¡Pide tu domicilio{" "}
-                    <span className="text-emerald-300 font-bold">
-                      directo en la app
-                    </span>
-                    ! Escoge tus productos con fotos y precios, marca tu
-                    ubicación en el mapa y sigue tu pedido en vivo hasta tu
-                    puerta.
-                  </p>
-                </div>
+            {/* Descripción del pedido en la app */}
+            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
+              <MapPin
+                size={20}
+                className="text-emerald-300 flex-shrink-0 mt-0.5"
+              />
+              <p className="text-white/70 text-sm leading-relaxed">
+                ¡Pide tu domicilio{" "}
+                <span className="text-emerald-300 font-bold">
+                  directo en la app
+                </span>
+                ! Escoge tus productos con fotos y precios, marca tu ubicación
+                en el mapa y sigue tu pedido en vivo hasta tu puerta.
+              </p>
+            </div>
 
-                {/* El login no se pide aquí sino en /domicilios, que es un
-                    muro: una sola puerta para pedir, no tres copys sueltos. */}
-                {isCustomerAuthenticated && (
-                  <p className="text-center text-emerald-300/90 text-sm font-semibold mb-3">
-                    {firstName ? `¡Listo, ${firstName}!` : "¡Listo!"} Tu cuenta
-                    está conectada, solo falta escoger.
-                  </p>
-                )}
-                <div className="space-y-2">
-                  <Link
-                    to="/domicilios"
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-                  >
-                    <Bike size={18} />
-                    {/* Sin sesión el siguiente paso es entrar: decirlo evita
-                        que el muro se sienta una puerta en la cara */}
-                    {isCustomerAuthenticated
-                      ? "Pedir a domicilio"
-                      : "Entrar y pedir a domicilio"}
-                  </Link>
-                  {isCustomerAuthenticated && (
-                    <Link
-                      to="/mis-pedidos"
-                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
-                    >
-                      <ClipboardList size={18} />
-                      Ver el estado de mi pedido
-                    </Link>
-                  )}
-                </div>
-
-                {/* WhatsApp sigue siendo un canal de pedidos de primera, no letra pequeña */}
-                <div className="mt-4 pt-4 border-t border-white/10">
-                  <p className="text-center text-white/60 text-xs font-bold uppercase tracking-wider mb-2.5">
-                    ¿Prefieres pedir por WhatsApp?
-                  </p>
-                  <div className="grid grid-cols-1 gap-2">
-                    {WHATSAPP_LINES.map((line) => (
-                      <a
-                        key={line.number}
-                        href={waLink(line.number)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-bold text-sm hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
-                      >
-                        <MessageCircle size={17} className="flex-shrink-0" />
-                        {line.display}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Descripción */}
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 mb-4">
-                  <Clock
-                    size={20}
-                    className="text-emerald-300 flex-shrink-0 mt-0.5"
-                  />
-                  <p className="text-white/70 text-sm leading-relaxed">
-                    ¡Ahora llevamos Frostbyte hasta tu casa! Escoge de la carta
-                    lo que se te antoje y{" "}
-                    <span className="text-emerald-300 font-bold">
-                      ordena por WhatsApp
-                    </span>{" "}
-                    a nuestra línea de domicilios.
-                  </p>
-                </div>
-
-                {/* Líneas de WhatsApp */}
-                <div className="space-y-2">
-                  {WHATSAPP_LINES.map((line) => (
-                    <a
-                      key={line.number}
-                      href={waLink(line.number)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-                    >
-                      <MessageCircle size={18} />
-                      Pedir al {line.display}
-                    </a>
-                  ))}
-                </div>
-
-                <p className="text-center text-white/30 text-[10px] mt-3">
-                  Toca el número para abrir el chat y hacer tu pedido
-                </p>
-              </>
+            {/* El login no se pide aquí sino en /domicilios, que es un
+                  muro: una sola puerta para pedir, no tres copys sueltos. */}
+            {isCustomerAuthenticated && (
+              <p className="text-center text-emerald-300/90 text-sm font-semibold mb-3">
+                {firstName ? `¡Listo, ${firstName}!` : "¡Listo!"} Tu cuenta está
+                conectada, solo falta escoger.
+              </p>
             )}
+            <div className="space-y-2">
+              <Link
+                to="/domicilios"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-emerald-400 to-emerald-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+              >
+                <Bike size={18} />
+                {/* Sin sesión el siguiente paso es entrar: decirlo evita
+                      que el muro se sienta una puerta en la cara */}
+                {isCustomerAuthenticated
+                  ? "Pedir a domicilio"
+                  : "Entrar y pedir a domicilio"}
+              </Link>
+              {isCustomerAuthenticated && (
+                <Link
+                  to="/mis-pedidos"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-emerald-400/30 text-emerald-300 font-bold text-sm uppercase tracking-wide hover:bg-emerald-500/10 transition-colors"
+                >
+                  <ClipboardList size={18} />
+                  Ver el estado de mi pedido
+                </Link>
+              )}
+            </div>
+
+            {/* WhatsApp sigue siendo un canal de pedidos de primera, no letra pequeña */}
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <p className="text-center text-white/60 text-xs font-bold uppercase tracking-wider mb-2.5">
+                ¿Prefieres pedir por WhatsApp?
+              </p>
+              <div className="grid grid-cols-1 gap-2">
+                {WHATSAPP_LINES.map((line) => (
+                  <a
+                    key={line.number}
+                    href={waLink(line.number)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-bold text-sm hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
+                  >
+                    <MessageCircle size={17} className="flex-shrink-0" />
+                    {line.display}
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>

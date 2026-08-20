@@ -1,15 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Crown, Cake, PartyPopper, Users, UtensilsCrossed, MessageCircle, CalendarDays } from "lucide-react";
+import { Crown, Cake, PartyPopper, Users, UtensilsCrossed, MessageCircle, CalendarDays, Phone } from "lucide-react";
 import { useReservationsConfig } from "@/hooks/useReservations";
+import {
+  RESERVATIONS_PHONE,
+  reservationsTelLink,
+  reservationsWaLink,
+} from "@/lib/reservas";
 
 /**
  * Banner promocional de la Sala VIP (piso 3).
  *
  * Promociona la sala para cumpleaños, celebraciones y eventos de grupos
  * (hasta ~15 personas). Con las reservas en línea activas el CTA lleva a
- * /reservas; apagadas, mantiene el flujo de expectativa por WhatsApp.
+ * /reservas; apagadas (estado de hoy: el módulo lo opera el staff), la sala se
+ * aparta escribiendo o llamando a la línea de reservas.
  */
 const SalaVipBanner = () => {
   const { data: reservationsConfig } = useReservationsConfig();
@@ -95,19 +101,30 @@ const SalaVipBanner = () => {
             ) : (
               <>
                 <p className="text-center text-white/70 text-sm font-semibold mb-3">
-                  ¿Te interesa?{" "}
-                  <span className="text-gold">Pregunta a nuestro personal</span> y
-                  te contamos todo.
+                  ¿Te interesa? Escríbenos o llámanos al{" "}
+                  <span className="text-gold">{RESERVATIONS_PHONE.display}</span>{" "}
+                  y te contamos todo.
                 </p>
-                <a
-                  href="https://wa.me/573164277879?text=Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20Sala%20VIP%20del%20piso%203"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
-                >
-                  <MessageCircle size={18} />
-                  Pedir información por WhatsApp
-                </a>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <a
+                    href={reservationsWaLink(
+                      "Hola, quiero más información sobre la Sala VIP del piso 3"
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-linear-to-r from-gold to-amber-600 text-dark font-bold text-sm uppercase tracking-wide hover:opacity-90 transition-opacity"
+                  >
+                    <MessageCircle size={18} />
+                    Escribir por WhatsApp
+                  </a>
+                  <a
+                    href={reservationsTelLink}
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gold/10 border border-gold/30 text-gold font-bold text-sm uppercase tracking-wide hover:bg-gold/20 transition-colors"
+                  >
+                    <Phone size={18} />
+                    Llamar
+                  </a>
+                </div>
               </>
             )}
 
