@@ -1,15 +1,55 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ChevronDown, Instagram } from "lucide-react";
-import { env } from "@/config/env";
-import { useInViewport, useIsMobile } from "@/hooks";
-import { themeColorChannels } from "@/lib/themeColors";
+import { Link } from "react-router-dom";
+import { Instagram } from "lucide-react";
+import { useCartaPath, useStoreConfig } from "@/hooks";
+import { reservationsWaLink } from "@/lib/reservas";
+import { useReservationsConfig } from "@/hooks/useReservations";
+import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import {
+  ArrowIcon,
+  BagIcon,
+  CalendarIcon,
+  CupIcon,
+  DiamondIcon,
+  DiceIcon,
+  EqualizerIcon,
+  UserIcon,
+} from "@/components/HeroIcons";
 
 gsap.registerPlugin(useGSAP);
 
+/**
+ * Hero de servicios de la carta pública (`/`) y de la vista de mesa
+ * (`/mesa/*`).
+ *
+ * Es un hero FUNCIONAL: quien entra por el QR o por el enlace descubre de un
+ * vistazo todo lo que Frostbyte hace, no solo que existe la carta. Antes vendía
+ * ambiente (saludo, día, tira de fechas, frase generada por IA) y escondía
+ * domicilios, reservas, Sala VIP, música y juegos detrás de un scroll largo.
+ *
+ * Dos direcciones de diseño, una por tamaño de pantalla (elegidas el
+ * 2026-08-20 sobre el canvas de maquetas):
+ * - Móvil, "vitrina": marca compacta y los tres servicios que mueven dinero
+ *   como tarjetas grandes; los otros cuatro, más tenues, bajo "TAMBIÉN".
+ * - Escritorio, "marca primero": el titular grande manda y los siete accesos
+ *   van en rejilla numerada; ahí sí caben las redes sociales.
+ * Un solo árbol de DOM sirve a las dos (misma rejilla con `col-span`
+ * distintos), así que hay un único h1 y el contenido no se duplica.
+ *
+ * Siete accesos, no ocho: Frostbyte Food no lleva uno propio porque su comida
+ * ya abre la carta (`CartaList`); dos puertas al mismo sitio confunden.
+ *
+ * Reglas del lenguaje visual (ver la nota del vault "Tres direcciones para el
+ * hero de servicios de Frostbyte"): fondo de degradado con grano, tarjetas de
+ * vidrio rebajado SIN `backdrop-filter` (es lo que castigaba las GPU de gama
+ * baja) y color de marca con oficio — magenta la carta, cyan domicilios, el
+ * degradado de ambos reservar, el resto neutro.
+ */
+
 const TikTokIcon = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
   </svg>
 );
@@ -27,345 +67,361 @@ const socialLinks = [
   },
 ];
 
-const DAY_NAMES = [
-  "DOMINGO",
-  "LUNES",
-  "MARTES",
-  "MIÉRCOLES",
-  "JUEVES",
-  "VIERNES",
-  "SÁBADO",
-];
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return "BUENOS DIAS";
-  if (hour >= 12 && hour < 18) return "BUENAS TARDES";
-  return "BUENAS NOCHES";
+// Fondo del hero: dos velos de marca sobre el degradado oscuro, más una
+// textura de grano. Todo CSS, sin imágenes: no pesa ni retrasa la pintura.
+const BACKDROP = {
+  backgroundImage: [
+    "radial-gradient(115% 75% at 8% -5%, color-mix(in srgb, var(--color-primary) 13%, transparent) 0%, transparent 58%)",
+    "radial-gradient(105% 70% at 100% 105%, color-mix(in srgb, var(--color-secondary) 11%, transparent) 0%, transparent 58%)",
+    "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 45%, rgba(0,0,0,0.28) 100%)",
+  ].join(", "),
 };
 
-const getDateStrip = () => {
-  const today = new Date();
-  const dates = [];
-  for (let i = -2; i <= 2; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    dates.push({ day: d.getDate(), isCurrent: i === 0 });
+const GRAIN = {
+  backgroundImage:
+    "url(\"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
+  opacity: 0.05,
+};
+
+// Vidrio rebajado: la mitad del liquid-glass de la app y sin blur.
+const CARD_SURFACE =
+  "linear-gradient(155deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 48%, rgba(255,255,255,0.038) 100%)";
+
+const ACCENT_VEIL = {
+  primary:
+    "radial-gradient(85% 120% at 0% 0%, color-mix(in srgb, var(--color-primary) 11%, transparent) 0%, transparent 62%)",
+  secondary:
+    "radial-gradient(85% 120% at 0% 0%, color-mix(in srgb, var(--color-secondary) 11%, transparent) 0%, transparent 62%)",
+  duo: [
+    "radial-gradient(85% 120% at 0% 0%, color-mix(in srgb, var(--color-primary) 9%, transparent) 0%, transparent 55%)",
+    "radial-gradient(85% 120% at 100% 100%, color-mix(in srgb, var(--color-secondary) 9%, transparent) 0%, transparent 55%)",
+  ].join(", "),
+};
+
+// El borde va por clase (no en el `style`) para que el hover pueda pisarlo:
+// un estilo en línea le gana a cualquier utilidad.
+const ACCENT_BORDER = {
+  primary: "border-primary/20 hover:border-primary/45",
+  secondary: "border-secondary/20 hover:border-secondary/45",
+  duo: "border-white/[0.14] hover:border-white/30",
+};
+const NEUTRAL_BORDER = "border-white/[0.085] hover:border-white/20";
+
+// Caja del icono en móvil. En escritorio se disuelve: el icono queda suelto
+// arriba a la derecha, junto al número del acceso.
+const ICON_BOX_ACCENT = {
+  primary: "bg-primary/10 border-primary/20",
+  secondary: "bg-secondary/10 border-secondary/20",
+  duo: "bg-linear-to-br from-primary/15 to-secondary/15 border-white/[0.14]",
+};
+
+const ICON_COLOR = {
+  primary: "text-primary",
+  secondary: "text-secondary",
+  duo: "text-light/75",
+};
+
+const cardStyle = (accent) => ({
+  backgroundImage: accent
+    ? `${ACCENT_VEIL[accent]}, ${CARD_SURFACE}`
+    : CARD_SURFACE,
+});
+
+const ServiceCard = ({ service, index, onAnchorClick }) => {
+  const { name, subtitle, Icon, accent, featured, wide, duo } = service;
+
+  const className = [
+    "group flex items-center rounded-[18px] border shadow-[0_18px_40px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.07)]",
+    "transition-[transform,border-color] duration-200 hover:-translate-y-0.5",
+    ACCENT_BORDER[accent] ?? NEUTRAL_BORDER,
+    featured ? "col-span-2 gap-3.5 p-4 md:col-span-1" : "min-h-16 gap-3 p-3.5",
+    wide === 2 ? "md:col-span-2" : "",
+    // Escritorio: todas iguales, en columna — número e icono arriba, nombre abajo
+    "md:min-h-[5.75rem] md:flex-col md:items-stretch md:justify-between md:gap-3 md:rounded-[15px] md:p-3.5",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const content = (
+    <>
+      <span
+        className={[
+          "flex flex-shrink-0 items-center justify-center border",
+          featured
+            ? `h-11 w-11 rounded-[13px] ${ICON_BOX_ACCENT[accent] ?? ""}`
+            : "border-transparent",
+          "md:h-auto md:w-full md:justify-between md:rounded-none md:border-0 md:bg-transparent md:bg-none md:p-0",
+          ICON_COLOR[accent] ?? "text-light/75",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        <span className="hidden text-[0.56rem] font-medium tracking-[0.14em] text-light/45 md:inline">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <Icon size={featured ? 20 : 18} duo={duo} />
+      </span>
+
+      <span className="flex flex-grow flex-col gap-1 md:flex-grow-0 md:gap-0.5">
+        <span
+          className={
+            featured
+              ? "text-[0.95rem] font-semibold text-light md:text-[0.8rem] md:font-medium"
+              : "text-[0.78rem] font-medium text-light md:text-[0.8rem]"
+          }
+        >
+          {name}
+        </span>
+        <span
+          className={
+            featured
+              ? "text-[0.7rem] text-light/55 md:text-[0.62rem] md:text-light/45"
+              : "text-[0.62rem] text-light/45"
+          }
+        >
+          {subtitle}
+        </span>
+      </span>
+
+      {featured && (
+        <ArrowIcon className="flex-shrink-0 text-light/30 transition-colors group-hover:text-light/60 md:hidden" />
+      )}
+    </>
+  );
+
+  if (service.to) {
+    return (
+      <Link
+        to={service.to}
+        className={`hero-reveal ${className}`}
+        style={cardStyle(accent)}
+      >
+        {content}
+      </Link>
+    );
   }
-  return dates;
+
+  return (
+    <a
+      href={service.href}
+      onClick={service.external ? undefined : onAnchorClick}
+      {...(service.external
+        ? { target: "_blank", rel: "noopener noreferrer" }
+        : {})}
+      className={`hero-reveal ${className}`}
+      style={cardStyle(accent)}
+    >
+      {content}
+    </a>
+  );
 };
-
-// Cache local de la frase: válida 30 min (alineado con el caché del backend,
-// que rota la frase cada media hora).
-const PHRASE_STORAGE_KEY = "frostbyte_motivational_phrase";
-const PHRASE_TTL_MS = 30 * 60 * 1000;
-
-// "Byte" in binary: B=01000010 y=01111001 t=01110100 e=01100101
-const BYTE_BINARY = "01000010011110010111010001100101";
 
 const Hero = () => {
-  const [motivationalPhrase, setMotivationalPhrase] = useState("");
-  const [isLoadingPhrase, setIsLoadingPhrase] = useState(true);
-  const sectionRef = useRef(null);
-  const canvasRef = useRef(null);
-  const isInView = useInViewport(sectionRef);
-  const isMobile = useIsMobile();
-  const greeting = getGreeting();
-  const dayName = DAY_NAMES[new Date().getDay()];
-  const dateStrip = getDateStrip();
+  const sectionRef = React.useRef(null);
+  const { data: storeConfig } = useStoreConfig();
+  const { data: reservationsConfig } = useReservationsConfig();
+  const isCustomerAuthenticated = useCustomerAuthStore((s) => s.isAuthenticated);
+  // En la mesa, "Juegos" es la sección de Frostbyte Play de esta misma página;
+  // fuera de ella, las salas libres con código de /game.
+  const { isTableRoute } = useCartaPath();
 
-  // Grid binario interactivo (sensible al hover del mouse). Solo desktop:
-  // en móvil ni se monta el canvas ni corre el rAF (rendimiento), y se pausa
-  // cuando la sección sale del viewport.
-  useEffect(() => {
-    if (!isInView || isMobile) return;
-    const canvas = canvasRef.current;
-    const section = sectionRef.current;
-    if (!canvas || !section) return;
-    const ctx = canvas.getContext("2d");
-    let rafId;
-    const mouse = { x: -9999, y: -9999 };
-    const COL_W = 22;
-    const ROW_H = 20;
-    const FONT_SIZE = 12;
-    const HOVER_RADIUS = 140;
-    // El color del halo del hover sigue al tema activo (canvas no resuelve
-    // var(): se leen los canales del token una sola vez al montar).
-    const [pr, pg, pb] = themeColorChannels("--color-primary") ?? [255, 0, 212];
-    let flickerPhases = [];
-    let cols = 0;
-    let rows = 0;
-    const buildGrid = () => {
-      cols = Math.ceil(canvas.width / COL_W) + 1;
-      rows = Math.ceil(canvas.height / ROW_H) + 1;
-      const total = cols * rows;
-      flickerPhases = new Float32Array(total);
-      for (let i = 0; i < total; i++) {
-        flickerPhases[i] = Math.random() * Math.PI * 2;
-      }
-    };
-    const resize = () => {
-      canvas.width = section.offsetWidth;
-      canvas.height = section.offsetHeight;
-      buildGrid();
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    const handleMouseMove = (e) => {
-      const rect = section.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-    };
-    const handleMouseLeave = () => {
-      mouse.x = -9999;
-      mouse.y = -9999;
-    };
-    section.addEventListener("mousemove", handleMouseMove);
-    section.addEventListener("mouseleave", handleMouseLeave);
-    ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const t = Date.now() * 0.001;
-      for (let col = 0; col < cols; col++) {
-        for (let row = 0; row < rows; row++) {
-          const idx = col * rows + row;
-          const x = col * COL_W + COL_W / 2;
-          const y = row * ROW_H + ROW_H / 2;
-          const digit = BYTE_BINARY[idx % BYTE_BINARY.length];
-          const phase = flickerPhases[idx];
-          const flicker = 0.5 + 0.5 * Math.sin(t * 0.8 + phase);
-          let alpha = 0.06 + flicker * 0.12;
-          let r = 255,
-            g = 255,
-            b = 255;
-          const colorCycle = Math.sin(t * 0.5 + phase * 1.5);
-          if (colorCycle > 0.3) {
-            r = 180;
-            g = 240;
-            b = 255;
-          } else if (colorCycle < -0.3) {
-            r = 255;
-            g = 180;
-            b = 240;
-          }
-          const dx = x - mouse.x;
-          const dy = y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          let drawX = x;
-          let drawY = y;
-          if (dist < HOVER_RADIUS) {
-            const intensity = 1 - dist / HOVER_RADIUS;
-            const ease = intensity * intensity;
-            const waveFreq = 0.06;
-            const waveAmp = 8;
-            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
-            const angle = Math.atan2(dy, dx);
-            drawX += Math.cos(angle) * wave;
-            drawY += Math.sin(angle) * wave;
-            alpha = Math.min(1, alpha + ease * 0.85);
-            r = Math.round(r * (1 - ease) + pr * ease);
-            g = Math.round(g * (1 - ease) + pg * ease);
-            b = Math.round(b * (1 - ease) + pb * ease);
-            const scale = 1 + ease * 0.5;
-            ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Courier New', monospace`;
-            ctx.shadowColor = `rgba(${pr}, ${pg}, ${pb}, ${ease * 0.7})`;
-            ctx.shadowBlur = ease * 16;
-          }
-          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-          ctx.fillText(digit, drawX, drawY);
-          if (dist < HOVER_RADIUS) {
-            ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
-            ctx.shadowColor = "transparent";
-            ctx.shadowBlur = 0;
-          }
-        }
-      }
-      rafId = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => {
-      section.removeEventListener("mousemove", handleMouseMove);
-      section.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(rafId);
-    };
-  }, [isInView, isMobile]);
+  const inAppOrdering = !!storeConfig?.customer_ordering_enabled;
+  const onlineReservations = !!reservationsConfig?.reservations_enabled;
 
-  useEffect(() => {
-    // 1) Si la frase en cache local sigue fresca (< 30 min), la usamos al
-    //    instante: sin red ni parpadeo de carga.
-    try {
-      const raw = localStorage.getItem(PHRASE_STORAGE_KEY);
-      if (raw) {
-        const cached = JSON.parse(raw);
-        if (cached?.phrase && cached?.ts && Date.now() - cached.ts < PHRASE_TTL_MS) {
-          setMotivationalPhrase(cached.phrase);
-          setIsLoadingPhrase(false);
-          return;
-        }
-      }
-    } catch {
-      // localStorage no disponible o JSON inválido: continuamos al fetch.
-    }
+  const services = [
+    {
+      key: "carta",
+      name: "Carta",
+      subtitle: "Bebidas y comida",
+      href: "#carta",
+      Icon: CupIcon,
+      accent: "primary",
+      featured: true,
+    },
+    // Con los domicilios apagados no se nombran en ninguna parte: ni acceso,
+    // ni banner, ni pestaña. El servicio no existe hasta que se encienda.
+    inAppOrdering && {
+      key: "domicilios",
+      name: "Domicilios",
+      subtitle: "A tu casa",
+      to: "/domicilios",
+      Icon: BagIcon,
+      accent: "secondary",
+      featured: true,
+    },
+    {
+      key: "reservar",
+      name: "Reservar",
+      // Las reservas en línea siguen siendo cosa del staff: mientras tanto se
+      // reserva escribiendo o llamando (mesa, grupo y Sala VIP por igual).
+      subtitle: onlineReservations
+        ? "Mesa, grupo o Sala VIP"
+        : "Escríbenos o llámanos",
+      ...(onlineReservations
+        ? { to: "/reservas" }
+        : {
+            href: reservationsWaLink(
+              "Hola, quiero hacer una reserva en Frostbyte"
+            ),
+            external: true,
+          }),
+      Icon: CalendarIcon,
+      accent: "duo",
+      duo: true,
+      featured: true,
+    },
+    {
+      key: "sala-vip",
+      name: "Sala VIP",
+      subtitle: "Piso 3",
+      href: "#sala-vip",
+      Icon: DiamondIcon,
+    },
+    {
+      key: "cancion",
+      name: "Pedir canción",
+      subtitle: "Tu piso",
+      href: "#solicitar-cancion",
+      Icon: EqualizerIcon,
+    },
+    {
+      key: "juegos",
+      name: "Juegos",
+      subtitle: isTableRoute ? "En tu mesa" : "Salas con código",
+      ...(isTableRoute ? { href: "#frostbyte-play" } : { to: "/game" }),
+      Icon: DiceIcon,
+    },
+    {
+      key: "cuenta",
+      name: isCustomerAuthenticated ? "Mi cuenta" : "Crear cuenta",
+      // El subtítulo no promete lo que esté en pausa
+      subtitle:
+        inAppOrdering && onlineReservations
+          ? "Pedidos y reservas"
+          : inAppOrdering
+            ? "Tus pedidos"
+            : "Tus datos",
+      to: "/mi-cuenta",
+      Icon: UserIcon,
+    },
+  ].filter(Boolean);
 
-    // 2) Sin cache fresca: pedimos al backend (que también cachea por franja de 30 min).
-    const fetchMotivationalPhrase = async () => {
-      try {
-        const response = await fetch(
-          `${env.API_BASE_URL}/motivational/phrase/`,
-        );
-        const data = await response.json();
-        if (response.ok && data.phrase) {
-          setMotivationalPhrase(data.phrase);
-          try {
-            localStorage.setItem(
-              PHRASE_STORAGE_KEY,
-              JSON.stringify({ phrase: data.phrase, ts: Date.now() }),
-            );
-          } catch {
-            // Si no se puede escribir en localStorage, no es crítico.
-          }
-        }
-      } catch (error) {
-        console.error("Error al obtener la frase motivacional:", error);
-      } finally {
-        setIsLoadingPhrase(false);
-      }
-    };
-    fetchMotivationalPhrase();
-  }, []);
+  // La rejilla de escritorio es de cuatro columnas y los accesos no siempre
+  // son siete (domicilios puede faltar): los últimos se ensanchan para que la
+  // fila cierre sin huecos — sobran tres, el último ocupa dos; sobran dos,
+  // ambos ocupan dos.
+  const remainder = services.length % 4;
+  const wideCount = remainder === 3 ? 1 : remainder === 2 ? 2 : 0;
+  services.forEach((service, index) => {
+    if (wideCount && index >= services.length - wideCount) service.wide = 2;
+  });
 
-  // Rebote sutil del indicador de scroll.
+  const featuredCount = services.filter((service) => service.featured).length;
+
+  // Los anclas son enlaces reales (los necesita el rastreador y el clic
+  // derecho), pero el salto se hace suave como en el resto de la carta.
+  const handleAnchorClick = (event) => {
+    const href = event.currentTarget.getAttribute("href");
+    if (!href?.startsWith("#")) return;
+    const target = document.querySelector(href);
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth" });
+  };
+
   useGSAP(
     () => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const scrollIndicator = section.querySelector(".hero-scroll-indicator");
-      if (scrollIndicator) {
-        gsap.to(scrollIndicator, {
-          y: 10,
-          duration: 1,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from(".hero-reveal", {
+          opacity: 0,
+          y: 14,
+          duration: 0.5,
+          stagger: 0.04,
+          ease: "power2.out",
         });
-      }
+      });
     },
-    { scope: sectionRef },
+    { scope: sectionRef }
   );
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+      className="relative flex min-h-[100svh] items-center overflow-hidden bg-dark pt-20 pb-10 md:pt-24 md:pb-14"
     >
-      <div className="absolute inset-0 backdrop-blur-xl bg-black/[0.3]" />
-      <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
-      {!isMobile && (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 pointer-events-none"
-        />
-      )}
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={BACKDROP} />
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={GRAIN} />
 
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse"></div>
-        <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px] animate-pulse"
-          style={{ animationDelay: "1s" }}
-        ></div>
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center space-y-7 pb-16">
-          {/* Badge */}
-          <div>
-            <span className="hero-badge inline-block px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider whitespace-nowrap">
-              BEBIDAS HELADAS · CUMBAL, NARIÑO
-            </span>
-          </div>
-
-          {/* Greeting, Day & Date strip */}
-          <div className="hero-greeting flex flex-col items-center gap-1">
-            <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-white/70">
-              {greeting}
-            </span>
-            <span className="text-base sm:text-lg font-bold tracking-wider uppercase text-primary">
-              {dayName}
-            </span>
-            <div className="hero-subtitle flex items-center gap-4">
-              {dateStrip.map((d, i) => (
+      <div className="container relative z-10 mx-auto px-5 md:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-7 md:gap-12">
+          {/* Marca */}
+          <div className="hero-reveal flex flex-col gap-4 md:gap-5">
+            <h1 className="m-0 flex flex-col gap-2.5 md:flex-row md:items-end md:justify-between md:gap-14">
+              <span className="font-display text-[clamp(1.75rem,8.5vw,2.35rem)] font-semibold leading-none tracking-[0.16em] text-light md:text-[clamp(3.25rem,7.5vw,6rem)] md:tracking-[0.015em]">
+                FROSTBYTE
+              </span>
+              <span className="flex items-center gap-3 md:pb-3">
                 <span
-                  key={i}
-                  className={`text-xs sm:text-sm font-medium ${
-                    d.isCurrent ? "text-primary" : "text-white/30"
-                  }`}
-                >
-                  {String(d.day).padStart(2, "0")}
+                  aria-hidden
+                  className="hidden h-px w-8 bg-linear-to-r from-primary to-secondary md:block"
+                />
+                <span className="text-[0.53rem] font-medium tracking-[0.42em] text-light/45 md:text-[0.6rem]">
+                  CUMBAL · NARIÑO
                 </span>
+              </span>
+            </h1>
+
+            <span
+              aria-hidden
+              className="h-px w-13 bg-linear-to-r from-primary to-secondary md:hidden"
+            />
+
+            <p className="max-w-[19rem] text-xs leading-relaxed text-light/55 md:ml-auto md:max-w-[21rem] md:text-[0.84rem]">
+              Granizados, frappés, cócteles, micheladas y shots en Cumbal,
+              Nariño.
+            </p>
+
+            {/* Redes: en escritorio, bajo la ficha de marca. En móvil se ceden
+                los 44 px a los servicios (las redes vuelven en su banner). */}
+            <div className="hidden md:ml-auto md:flex md:w-[21rem] md:items-center md:gap-2.5">
+              <span className="text-[0.53rem] font-medium tracking-[0.4em] text-light/40">
+                SÍGUENOS
+              </span>
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-[0.68rem] font-medium text-light/60 transition-colors hover:border-secondary/40 hover:text-secondary"
+                >
+                  <social.icon size={14} />
+                  {social.label}
+                </a>
               ))}
             </div>
           </div>
 
-          {/* Headline */}
-          <h1 className="w-full text-center font-black text-light leading-none tracking-tight">
-            {/* flex + justify-center centra aunque el texto sea más ancho que el
-                contenedor (text-align no lo hace); el clamp lo mantiene dentro del viewport */}
-            <span className="flex w-full justify-center whitespace-nowrap text-[clamp(2rem,9vw,7.5rem)]">
-              FROSTBYTE
-            </span>
-            <span className="mt-2 block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-widest">
-              CUMBAL, NARIÑO
-            </span>
-          </h1>
-
-          {/* Frase motivacional */}
-          {!isLoadingPhrase && motivationalPhrase && (
-            <div className="hero-phrase max-w-2xl mx-auto text-center">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-semibold">
-                Para hoy
-              </p>
-              <div className="w-16 h-[2px] bg-linear-to-r from-primary to-secondary mx-auto mt-2 mb-4" />
-              <p className="text-secondary text-base sm:text-lg md:text-xl leading-relaxed font-medium italic">
-                &ldquo;{motivationalPhrase}&rdquo;
-              </p>
-            </div>
-          )}
-
-          {/* Descripción */}
-          <p className="hero-description text-gray text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-            Granizados, frappés, cocteles, shots y micheladas con amigos o en
-            familia. Bebidas heladas premium con un estilo único en Cumbal,
-            Nariño.
-          </p>
-
-          {/* Redes sociales */}
-          <div className="flex items-center justify-center gap-4">
-            <span className="text-gray text-sm">Síguenos:</span>
-            {socialLinks.map((social, index) => (
-              <a
-                key={index}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={social.label}
-                className="hero-social-link flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/40 rounded-full text-primary hover:from-primary hover:to-secondary hover:text-dark hover:border-transparent hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-300"
-              >
-                <social.icon size={20} />
-                <span className="text-sm font-semibold">{social.label}</span>
-              </a>
+          {/* Servicios. Móvil: tres tarjetas grandes y cuatro fichas bajo
+              "TAMBIÉN". Escritorio: los siete en rejilla de cuatro columnas. */}
+          <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4 md:gap-3">
+            {services.map((service, index) => (
+              <React.Fragment key={service.key}>
+                {index === featuredCount && (
+                  <span className="col-span-2 mt-1 text-[0.55rem] font-medium tracking-[0.4em] text-light/45 md:hidden">
+                    TAMBIÉN
+                  </span>
+                )}
+                <ServiceCard
+                  service={service}
+                  index={index}
+                  onAnchorClick={handleAnchorClick}
+                />
+              </React.Fragment>
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="hero-scroll-indicator absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <ChevronDown className="text-primary" size={40} />
       </div>
     </section>
   );
