@@ -79,8 +79,8 @@ const BirthdayDiscountBanner = () => {
           </p>
 
           <p className="mt-3 text-center text-[0.62rem] text-light/30">
-            No acumulable con otras promociones. No incluye la jarra de mojito
-            ni botellas de vino.
+            No acumulable con otras promociones. No incluye la jarra de mojito,
+            botellas de vino ni salchipapas.
           </p>
         </div>
       </div>
