@@ -1,13 +1,27 @@
 import React, { lazy, Suspense, useState } from "react";
-import { DoorOpen, DoorClosed, Bike, Ruler, Loader2 } from "lucide-react";
+import {
+  DoorOpen,
+  DoorClosed,
+  Bike,
+  Ruler,
+  Hexagon,
+  Loader2,
+  MapPinned,
+} from "lucide-react";
 import { useStoreSettings, useUpdateStoreSettings } from "@/hooks";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useToast } from "@/components/ui/use-toast";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
-import { coverageAreaKm2 } from "@/lib/deliveryArea";
+import {
+  COVERAGE_LIMITS,
+  circleToPolygonPoints,
+  coverageAreaKm2,
+  coverageReachKm,
+  resolveCoverage,
+} from "@/lib/deliveryArea";
 import { cn } from "@/lib/utils";
 
-// Mapbox pesa: solo se carga al abrir el diálogo del radio, no con el dashboard
+// Mapbox pesa: solo se carga al abrir el diálogo de la zona, no con el dashboard
 const CoverageAreaMap = lazy(() => import("./CoverageAreaMap"));
 
 const formatKm2 = (value) =>
@@ -26,7 +40,9 @@ const RADIUS_PRESETS = [1, 1.5, 2, 3];
  * Tres controles independientes, cada uno con su diálogo:
  *  1. Abierto/Cerrado  -> is_open (cerrado = el cliente no puede pedir).
  *  2. Domicilios        -> customer_ordering_enabled.
- *  3. Radio de entrega  -> delivery_radius_km (solo admin; los empleados lo ven).
+ *  3. Zona de entrega   -> delivery_area / delivery_radius_km (solo admin; los
+ *     empleados la ven). La zona se dibuja como polígono; el círculo por radio
+ *     queda como respaldo para volver atrás rápido.
  */
 const StoreControls = () => {
   const { data: settings, isLoading } = useStoreSettings();
@@ -35,8 +51,12 @@ const StoreControls = () => {
   const isAdminUser = isAdmin();
   const { toast } = useToast();
 
-  // Qué confirmación está abierta: null | "store" | "delivery" | "radius"
+  // Qué confirmación está abierta: null | "store" | "delivery" | "area"
   const [confirm, setConfirm] = useState(null);
+  // Cómo se define la zona en el diálogo: "polygon" (dibujada) | "circle" (radio)
+  const [mode, setMode] = useState("polygon");
+  // Figura en edición: lista de puntos [lng, lat]
+  const [draftPoints, setDraftPoints] = useState([]);
   // Valor en edición del radio (texto: el usuario puede escribir "1,5")
   const [radiusDraft, setRadiusDraft] = useState("");
 
@@ -51,8 +71,15 @@ const StoreControls = () => {
 
   const isOpen = !!settings.is_open;
   const deliveryOn = !!settings.customer_ordering_enabled;
-  const radiusKm = Number(settings.delivery_radius_km ?? 0);
-  const radiusLabel = `${Number(radiusKm.toFixed(2))} km`;
+
+  // Zona vigente (la que ya ve el cliente)
+  const coverage = resolveCoverage(settings);
+  // Figuras extra: la UI edita una sola, pero el dato admite varias y no se
+  // pierden por pasar por aquí.
+  const extraPolygons = coverage.polygons.slice(1);
+  const savedAreaLabel = coverage.isPolygon
+    ? `${formatKm2(coverageAreaKm2(coverage))} km²`
+    : `${Number(coverage.radiusKm.toFixed(2))} km`;
 
   // Se acepta coma decimal: en el celular es lo que sale del teclado en es-CO
   const radiusValue = Number(String(radiusDraft).replace(",", "."));
@@ -63,9 +90,45 @@ const StoreControls = () => {
   const radiusRounded = radiusValid ? Number(radiusValue.toFixed(2)) : null;
   // El mapa previsualiza el último valor utilizable: mientras se escribe "1,"
   // no tiene sentido saltar al radio mínimo.
-  const radiusPreview = radiusRounded ?? radiusKm;
-  // Para el empleado el radio es informativo: se muestra sin acción.
-  const RadiusTag = isAdminUser ? "button" : "div";
+  const radiusPreview = radiusRounded ?? coverage.radiusKm;
+
+  const drawingPolygon = mode === "polygon";
+  const pointsValid =
+    draftPoints.length >= COVERAGE_LIMITS.minPoints &&
+    draftPoints.length <= COVERAGE_LIMITS.maxPoints;
+  // Lo que se está evaluando en el diálogo, en el mismo formato que el mapa
+  // espera. Con menos de 3 puntos aún no hay área, pero sí hay que pintarlos.
+  const draftCoverage = drawingPolygon
+    ? {
+        polygons: [draftPoints, ...extraPolygons],
+        radiusKm: coverage.radiusKm,
+        isPolygon: true,
+      }
+    : { polygons: [], radiusKm: radiusPreview, isPolygon: false };
+
+  const draftAreaKm2 = pointsValid
+    ? coverageAreaKm2({
+        polygons: [draftPoints, ...extraPolygons],
+        radiusKm: coverage.radiusKm,
+        isPolygon: true,
+      })
+    : 0;
+
+  const areaChanged = drawingPolygon
+    ? JSON.stringify(draftPoints) !== JSON.stringify(coverage.polygons[0] || [])
+    : !coverage.isPolygon
+    ? radiusRounded !== Number(coverage.radiusKm.toFixed(2))
+    : true; // pasar de polígono a círculo siempre es un cambio
+
+  // Para el empleado la zona es informativa: se muestra sin acción.
+  const AreaTag = isAdminUser ? "button" : "div";
+
+  const openAreaDialog = () => {
+    setMode(coverage.isPolygon ? "polygon" : "circle");
+    setDraftPoints(coverage.polygons[0] || []);
+    setRadiusDraft(String(Number(coverage.radiusKm.toFixed(2))));
+    setConfirm("area");
+  };
 
   const apply = (data, successMsg) => {
     updateMutation.mutate(data, {
@@ -78,12 +141,29 @@ const StoreControls = () => {
           title: "Error",
           description:
             error.response?.data?.detail ||
+            error.response?.data?.delivery_area ||
+            error.response?.data?.delivery_radius_km ||
             error.response?.data?.error ||
             "No se pudo actualizar el estado.",
           variant: "destructive",
         });
       },
     });
+  };
+
+  const saveArea = () => {
+    if (drawingPolygon) {
+      apply(
+        { delivery_area: [draftPoints, ...extraPolygons] },
+        `Zona de domicilios: ${formatKm2(draftAreaKm2)} km²`
+      );
+    } else {
+      // Lista vacía = se borra el polígono y vuelve a mandar el círculo
+      apply(
+        { delivery_radius_km: radiusRounded, delivery_area: [] },
+        `Zona de domicilios: ${radiusRounded} km a la redonda`
+      );
+    }
   };
 
   return (
@@ -149,26 +229,29 @@ const StoreControls = () => {
         </span>
       </button>
 
-      {/* Chip: radio de cobertura de domicilios (lo cambia solo el admin) */}
-      <RadiusTag
+      {/* Chip: zona de cobertura de domicilios (la cambia solo el admin) */}
+      <AreaTag
         {...(isAdminUser
           ? {
-              onClick: () => {
-                setRadiusDraft(String(radiusKm));
-                setConfirm("radius");
-              },
-              title: "Cambiar el radio de domicilios",
+              onClick: openAreaDialog,
+              title: "Cambiar la zona de domicilios",
             }
-          : { title: "Solo un administrador puede cambiar el radio" })}
+          : { title: "Solo un administrador puede cambiar la zona" })}
         className={cn(
           "flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 transition-colors",
           isAdminUser && "hover:bg-white/[0.08] cursor-pointer"
         )}
       >
-        <Ruler className="w-4 h-4 text-secondary" />
-        <span className="text-xs text-gray">Radio</span>
-        <span className="text-xs font-semibold text-light">{radiusLabel}</span>
-      </RadiusTag>
+        {coverage.isPolygon ? (
+          <Hexagon className="w-4 h-4 text-secondary" />
+        ) : (
+          <Ruler className="w-4 h-4 text-secondary" />
+        )}
+        <span className="text-xs text-gray">
+          {coverage.isPolygon ? "Zona" : "Radio"}
+        </span>
+        <span className="text-xs font-semibold text-light">{savedAreaLabel}</span>
+      </AreaTag>
 
       {/* Confirmación: abrir/cerrar local */}
       <ConfirmDialog
@@ -214,75 +297,155 @@ const StoreControls = () => {
         }
       />
 
-      {/* Edición del radio de cobertura */}
+      {/* Edición de la zona de cobertura */}
       <ConfirmDialog
-        open={confirm === "radius"}
+        open={confirm === "area"}
         tone="default"
-        icon={Ruler}
-        title="Radio de domicilios"
-        message="Hasta dónde entregamos, medido desde el local. Afecta el mapa del checkout, el bloqueo de pedidos fuera de zona y lo que responde el agente de WhatsApp."
+        size="lg"
+        icon={MapPinned}
+        title="Zona de domicilios"
+        message="Hasta dónde entregamos. Afecta el mapa del checkout, el bloqueo de pedidos fuera de zona y lo que responde el agente de WhatsApp."
         confirmLabel="Guardar"
         loading={updateMutation.isPending}
-        confirmDisabled={!radiusValid || radiusRounded === radiusKm}
-        onCancel={() => setConfirm(null)}
-        onConfirm={() =>
-          apply(
-            { delivery_radius_km: radiusRounded },
-            `Radio de domicilios: ${radiusRounded} km`
-          )
+        confirmDisabled={
+          !areaChanged ||
+          (drawingPolygon ? !pointsValid : !radiusValid)
         }
+        onCancel={() => setConfirm(null)}
+        onConfirm={saveArea}
       >
         <div className="space-y-3">
-          {/* La misma vista que ve el cliente al pedir: local + área cubierta */}
-          <Suspense
-            fallback={
-              <div className="h-44 sm:h-52 rounded-xl border border-white/10 bg-white/[0.04] grid place-items-center">
-                <Loader2 className="w-5 h-5 animate-spin text-white/40" />
-              </div>
-            }
-          >
-            <CoverageAreaMap radiusKm={radiusPreview} />
-          </Suspense>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              inputMode="decimal"
-              value={radiusDraft}
-              onChange={(e) => setRadiusDraft(e.target.value)}
-              placeholder="1.5"
-              className="w-full rounded-xl bg-white/[0.04] border border-white/[0.12] px-3 py-2.5 text-base text-light placeholder:text-white/30 focus:outline-none focus:border-white/30"
-            />
-            <span className="text-sm text-gray shrink-0">km</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {RADIUS_PRESETS.map((km) => (
+          {/* Cómo se define la zona */}
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { key: "polygon", icon: Hexagon, label: "Dibujar zona" },
+              { key: "circle", icon: Ruler, label: "Círculo por radio" },
+            ].map(({ key, icon: Icon, label }) => (
               <button
-                key={km}
+                key={key}
                 type="button"
-                onClick={() => setRadiusDraft(String(km))}
+                onClick={() => setMode(key)}
                 className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors",
-                  radiusRounded === km
+                  "flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors",
+                  mode === key
                     ? "border-secondary bg-secondary/15 text-secondary"
                     : "border-white/10 bg-white/[0.04] text-gray hover:bg-white/[0.08]"
                 )}
               >
-                {km} km
+                <Icon className="w-4 h-4" />
+                {label}
               </button>
             ))}
           </div>
-          {radiusValid ? (
-            <p className="text-xs text-gray">
-              Cubre ≈ {formatKm2(coverageAreaKm2(radiusRounded))} km² alrededor
-              del local.
-            </p>
+
+          {/* La misma vista que ve el cliente al pedir; editable si se dibuja */}
+          <Suspense
+            fallback={
+              <div className="h-56 sm:h-72 rounded-xl border border-white/10 bg-white/[0.04] grid place-items-center">
+                <Loader2 className="w-5 h-5 animate-spin text-white/40" />
+              </div>
+            }
+          >
+            <CoverageAreaMap
+              key={mode}
+              coverage={draftCoverage}
+              editable={drawingPolygon}
+              onChange={setDraftPoints}
+            />
+          </Suspense>
+
+          {drawingPolygon ? (
+            <>
+              {pointsValid ? (
+                <p className="text-xs text-gray">
+                  {draftPoints.length} puntos · cubre ≈ {formatKm2(draftAreaKm2)}{" "}
+                  km² y llega hasta{" "}
+                  {coverageReachKm({
+                    polygons: [draftPoints],
+                    radiusKm: coverage.radiusKm,
+                    isPolygon: true,
+                  }).toFixed(1)}{" "}
+                  km del local.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-xs text-amber-400">
+                    Marca al menos {COVERAGE_LIMITS.minPoints} puntos en el mapa
+                    para cerrar la zona. El círculo punteado es el radio de{" "}
+                    {Number(coverage.radiusKm.toFixed(2))} km, como referencia.
+                  </p>
+                  {draftPoints.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDraftPoints(circleToPolygonPoints(coverage.radiusKm))
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-gray hover:bg-white/[0.08] transition-colors"
+                    >
+                      Partir del círculo actual y ajustarlo
+                    </button>
+                  )}
+                </div>
+              )}
+              {extraPolygons.length > 0 && (
+                <p className="text-xs text-gray">
+                  Hay {extraPolygons.length} figura(s) adicional(es) guardadas:
+                  se conservan tal cual.
+                </p>
+              )}
+            </>
           ) : (
-            radiusDraft !== "" && (
-              <p className="text-xs text-red-400">
-                Ingresa un radio entre {RADIUS_MIN_KM} y {RADIUS_MAX_KM} km.
-              </p>
-            )
+            <>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={radiusDraft}
+                  onChange={(e) => setRadiusDraft(e.target.value)}
+                  placeholder="1.5"
+                  className="w-full rounded-xl bg-white/[0.04] border border-white/[0.12] px-3 py-2.5 text-base text-light placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                />
+                <span className="text-sm text-gray shrink-0">km</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {RADIUS_PRESETS.map((km) => (
+                  <button
+                    key={km}
+                    type="button"
+                    onClick={() => setRadiusDraft(String(km))}
+                    className={cn(
+                      "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors",
+                      radiusRounded === km
+                        ? "border-secondary bg-secondary/15 text-secondary"
+                        : "border-white/10 bg-white/[0.04] text-gray hover:bg-white/[0.08]"
+                    )}
+                  >
+                    {km} km
+                  </button>
+                ))}
+              </div>
+              {radiusValid ? (
+                <p className="text-xs text-gray">
+                  Cubre ≈{" "}
+                  {formatKm2(
+                    coverageAreaKm2({
+                      polygons: [],
+                      radiusKm: radiusRounded,
+                      isPolygon: false,
+                    })
+                  )}{" "}
+                  km² alrededor del local.
+                  {coverage.isPolygon &&
+                    " Al guardar se borra la zona dibujada."}
+                </p>
+              ) : (
+                radiusDraft !== "" && (
+                  <p className="text-xs text-red-400">
+                    Ingresa un radio entre {RADIUS_MIN_KM} y {RADIUS_MAX_KM} km.
+                  </p>
+                )
+              )}
+            </>
           )}
         </div>
       </ConfirmDialog>

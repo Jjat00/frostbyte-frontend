@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
  * @param {React.ComponentType} [icon] - Icono lucide opcional junto al título.
  * @param {boolean} [loading=false] - Deshabilita botones y muestra spinner.
  * @param {boolean} [confirmDisabled=false] - Bloquea el confirmar (ej: input inválido).
+ * @param {"md"|"lg"} [size="md"] - Ancho en desktop; "lg" para contenido que
+ *   necesita aire (un mapa, una tabla).
  * @param {React.ReactNode} [children] - Contenido extra entre el mensaje y los botones
  *   (ej: un campo para editar un valor antes de confirmar).
  * @param {() => void} onConfirm
@@ -50,6 +52,7 @@ const ConfirmDialog = ({
   icon: Icon = AlertTriangle,
   loading = false,
   confirmDisabled = false,
+  size = "md",
   children,
   onConfirm,
   onCancel,
@@ -71,7 +74,10 @@ const ConfirmDialog = ({
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
-            className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-md z-[71] p-4"
+            className={cn(
+              "fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit z-[71] p-4",
+              size === "lg" ? "sm:max-w-2xl" : "sm:max-w-md"
+            )}
             role="dialog"
             aria-modal="true"
             aria-label={title}

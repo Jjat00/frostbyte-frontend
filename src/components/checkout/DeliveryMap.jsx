@@ -8,14 +8,13 @@ import Map, {
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MapPin, LocateFixed, Loader2, Check, Layers } from "lucide-react";
-import circle from "@turf/circle";
 import { env } from "@/config";
 import {
   STORE_LOCATION,
-  isWithinDeliveryArea,
-  resolveDeliveryRadiusKm,
-  formatRadiusKm,
-  fitZoomForRadiusKm,
+  coverageGeoJson,
+  coverageLabel,
+  coverageViewport,
+  isWithinCoverage,
 } from "@/lib/deliveryArea";
 import { themeColorRaw } from "@/lib/themeColors";
 
@@ -38,33 +37,29 @@ const round7 = (n) => Number(Number(n).toFixed(7));
  *
  * value: { address, reference, lat, lng }
  * onChange: (partial) => void
- * radiusKm: radio de cobertura vigente (lo configura el admin; opcional)
+ * coverage: zona de cobertura vigente (polígono dibujado o círculo por radio;
+ *   la configura el admin y llega en la config pública). Memorízala en el
+ *   padre: se usa como dependencia del mapa.
  */
-const DeliveryMap = ({ value, onChange, radiusKm }) => {
+const DeliveryMap = ({ value, onChange, coverage }) => {
   const token = env.MAPBOX_TOKEN;
   const hasCoords = value?.lat != null && value?.lng != null;
   const lat = value?.lat ?? STORE_LOCATION.lat;
   const lng = value?.lng ?? STORE_LOCATION.lng;
-  const radius = resolveDeliveryRadiusKm(radiusKm);
-  const radiusLabel = formatRadiusKm(radius);
-  const outOfArea = hasCoords && !isWithinDeliveryArea(value.lat, value.lng, radius);
+  const areaLabel = coverageLabel(coverage);
+  // Con zona dibujada, decir "X km alrededor del local" sería mentira
+  const areaSuffix = coverage.isPolygon ? "" : ` (${areaLabel})`;
+  const outOfArea = hasCoords && !isWithinCoverage(value.lat, value.lng, coverage);
 
-  // Radio de cobertura como capa GeoJSON (se redibuja si el admin lo cambia)
-  const coverageGeoJson = useMemo(
-    () =>
-      circle([STORE_LOCATION.lng, STORE_LOCATION.lat], radius, {
-        steps: 64,
-        units: "kilometers",
-      }),
-    [radius]
+  // La zona como capa GeoJSON (se redibuja si el admin la cambia)
+  const coverageData = useMemo(() => coverageGeoJson(coverage), [coverage]);
+
+  const [viewState, setViewState] = useState(() =>
+    // Sin pin, se abre mostrando la zona de cobertura completa
+    hasCoords
+      ? { longitude: lng, latitude: lat, zoom: 16 }
+      : coverageViewport(coverage)
   );
-
-  const [viewState, setViewState] = useState({
-    longitude: lng,
-    latitude: lat,
-    // Sin pin, se abre mostrando el círculo de cobertura completo
-    zoom: hasCoords ? 16 : fitZoomForRadiusKm(radius),
-  });
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
   const [styleKey, setStyleKey] = useState("satellite");
@@ -137,7 +132,7 @@ const DeliveryMap = ({ value, onChange, radiusKm }) => {
                 : "Marca tu ubicación de entrega"}
             </span>
             <span className="text-[10px] text-white/30">
-              Entregamos hasta {radiusLabel} alrededor del local
+              Entregamos solo dentro de {areaLabel}
             </span>
           </div>
         </div>
@@ -159,8 +154,7 @@ const DeliveryMap = ({ value, onChange, radiusKm }) => {
         {geoError && <p className="text-xs text-red-400">{geoError}</p>}
         {outOfArea && (
           <p className="text-xs text-red-400">
-            Tu ubicación está fuera de nuestra zona de domicilios (
-            {radiusLabel} alrededor del local).
+            Tu ubicación está fuera de nuestra zona de domicilios ({areaLabel}).
           </p>
         )}
         {Inputs}
@@ -182,7 +176,7 @@ const DeliveryMap = ({ value, onChange, radiusKm }) => {
           attributionControl={false}
         >
           {/* Radio de cobertura de domicilios */}
-          <Source id="delivery-coverage" type="geojson" data={coverageGeoJson}>
+          <Source id="delivery-coverage" type="geojson" data={coverageData}>
             <Layer
               id="delivery-coverage-fill"
               type="fill"
@@ -264,8 +258,7 @@ const DeliveryMap = ({ value, onChange, radiusKm }) => {
               Toca el mapa o usa el botón de ubicación para marcar tu entrega
             </p>
             <p className="text-[11px] text-secondary/90 font-semibold">
-              Entregamos solo dentro del área cian ({radiusLabel} alrededor del
-              local)
+              Entregamos solo dentro del área cian{areaSuffix}
             </p>
           </div>
         )}
@@ -280,8 +273,8 @@ const DeliveryMap = ({ value, onChange, radiusKm }) => {
       {outOfArea && (
         <p className="text-[11px] text-red-400 flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 shrink-0" /> Tu ubicación está fuera de
-          nuestra zona de domicilios: mueve el pin dentro del área cian (
-          {radiusLabel} alrededor del local)
+          nuestra zona de domicilios: mueve el pin dentro del área cian
+          {areaSuffix}
         </p>
       )}
 

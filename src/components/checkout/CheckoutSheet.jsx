@@ -1,13 +1,13 @@
-import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowLeft, Bike, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/useCartStore";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { useStoreConfig, useCreateOrder } from "@/hooks";
 import {
-  isWithinDeliveryArea,
-  resolveDeliveryRadiusKm,
-  formatRadiusKm,
+  coverageLabel,
+  isWithinCoverage,
+  resolveCoverage,
 } from "@/lib/deliveryArea";
 import { ACTIVE_PAYMENT_METHODS } from "@/lib/paymentMethods";
 import CustomerAuthGate from "./CustomerAuthGate";
@@ -91,8 +91,9 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
     : "Los domicilios están pausados por el momento.";
   const deliveryFee = Number(config?.delivery_fee || 0);
   const total = subtotal + deliveryFee;
-  // Radio de cobertura vigente (lo configura el admin desde el dashboard)
-  const deliveryRadiusKm = resolveDeliveryRadiusKm(config?.delivery_radius_km);
+  // Zona de cobertura vigente (la configura el admin desde el dashboard):
+  // polígono dibujado si lo hay, y si no el círculo por radio.
+  const coverage = useMemo(() => resolveCoverage(config), [config]);
 
   // Prefijar datos del cliente cuando hay sesión
   useEffect(() => {
@@ -152,11 +153,11 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
       return setError("Ingresa la dirección de entrega.");
     if (delivery.lat == null || delivery.lng == null)
       return setError("Marca tu ubicación con el botón de ubicación.");
-    if (!isWithinDeliveryArea(delivery.lat, delivery.lng, deliveryRadiusKm))
+    if (!isWithinCoverage(delivery.lat, delivery.lng, coverage))
       return setError(
-        `Tu ubicación está fuera de nuestra zona de domicilios (${formatRadiusKm(
-          deliveryRadiusKm
-        )} alrededor del local).`
+        `Tu ubicación está fuera de nuestra zona de domicilios (${coverageLabel(
+          coverage
+        )}).`
       );
     if (!payment) return setError("Elige un método de pago.");
     if (payment === "cash") {
@@ -247,7 +248,7 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                         onChange={(partial) =>
                           setDelivery((d) => ({ ...d, ...partial }))
                         }
-                        radiusKm={deliveryRadiusKm}
+                        coverage={coverage}
                       />
                     </Suspense>
                   </section>
