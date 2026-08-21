@@ -47,6 +47,12 @@
    `px-4` o un `rounded-full` junto a `fb-btn` no haría nada. Dentro de la
    capa, la utilidad manda — que es lo que se espera al escribir el JSX. */
 
+@property --fb-halo-angle {
+  syntax: "<angle>";
+  initial-value: 135deg;
+  inherits: false;
+}
+
 @layer components {
   /* ── Sección: fondo de degradado con velos de acento y grano ────────
      El contenido de la sección debe ir en un contenedor con `relative`
@@ -182,6 +188,65 @@
       var(--fb-accent, var(--color-primary)) 45%,
       transparent
     );
+  }
+
+  /* ── Halo: el borde que gira ────────────────────────────────────────
+     Un hilo de 1 px con los dos colores de marca alrededor de la tarjeta.
+     Quieto cuando no pasa nada; al pasar el ratón, gira. Devuelve el color
+     a una superficie neutra sin pintarla: el color dice «esto se puede
+     tocar», que es justo lo que la regla del sistema pide.
+
+     Es el anillo el que HACE de borde (por eso el borde propio de la
+     tarjeta se vuelve transparente), así que no hay línea doble.
+
+     Tres detalles que cuestan si se olvidan:
+     - `@property` es obligatorio: sin registrar el ángulo, el navegador no
+       lo interpola y el gradiente no gira. Degrada a borde estático en
+       navegadores viejos, que es exactamente el estado de reposo.
+     - El shorthand `mask` resetea `mask-composite`: va declarado después.
+     - Solo se anima en hover, y una tarjeta a la vez: el coste es un
+       repintado del anillo, no de la página. */
+  .fb-card--halo {
+    border-color: transparent;
+  }
+
+  .fb-card--halo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--fb-halo-angle),
+      rgba(255, 255, 255, 0.1),
+      color-mix(in srgb, var(--fb-accent, var(--color-primary)) 38%, transparent),
+      rgba(255, 255, 255, 0.055),
+      color-mix(
+        in srgb,
+        var(--fb-accent-2, var(--color-secondary)) 34%,
+        transparent
+      ),
+      rgba(255, 255, 255, 0.1)
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .fb-card--halo:hover::after {
+    animation: fb-halo-rotate 3.2s linear infinite;
+  }
+
+  @keyframes fb-halo-rotate {
+    to {
+      --fb-halo-angle: 495deg; /* 135 + 360 */
+    }
   }
 
   /* Superficie interior (una nota dentro de una tarjeta): más tenue,

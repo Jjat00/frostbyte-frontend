@@ -75,7 +75,7 @@ const KpiCard = ({ icon: Icon, label, value, subtitle, isLoading, delay = 0, onC
       whileHover={onClick ? { y: -4 } : undefined}
       onClick={onClick}
       className={`fb-card group flex h-full min-w-0 flex-col p-4 md:p-5 ${
-        onClick ? 'fb-card--link cursor-pointer' : ''
+        onClick ? 'fb-card--halo cursor-pointer' : ''
       }`}
     >
 
@@ -541,7 +541,7 @@ const HomePage = () => {
                 transition={{ delay: index * 0.05, duration: 0.4 }}
                 whileHover={{ y: -8 }}
                 onClick={() => navigate(module.path)}
-                className="fb-card fb-card--link group relative cursor-pointer overflow-hidden p-5"
+                className="fb-card fb-card--halo group relative cursor-pointer overflow-hidden p-5"
               >
 
                 <div className="relative z-10">
