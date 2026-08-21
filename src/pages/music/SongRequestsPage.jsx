@@ -407,8 +407,17 @@ const SpotifyQueuePanel = ({ isConnected, floor }) => {
       </h3>
       <div className="space-y-2 max-h-60 overflow-y-auto">
         {queue.slice(0, 20).map((track, idx) => (
-          <div key={`${track.uri}-${idx}`} className={`flex items-center gap-3 p-2 rounded-lg hover:bg-white/[0.04] ${track.is_request ? 'border-l-2 border-primary/50' : ''}`}>
-            <span className="text-xs text-gray/50 w-5 text-right flex-shrink-0">{idx + 1}</span>
+          <div key={`${track.uri}-${idx}`} className="flex items-center gap-3 rounded-lg p-2 hover:bg-white/[0.04]">
+            <span className="flex w-5 flex-shrink-0 items-center justify-end gap-1.5 text-xs text-gray/50">
+              {track.is_request && (
+                <span
+                  aria-label="Pedida por un cliente"
+                  title="Pedida por un cliente"
+                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary"
+                />
+              )}
+              {idx + 1}
+            </span>
             {track.image ? (
               <img loading="lazy" decoding="async" src={track.image} alt={track.name} className="w-9 h-9 rounded object-cover flex-shrink-0" />
             ) : (

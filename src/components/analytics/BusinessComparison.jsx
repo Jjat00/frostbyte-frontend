@@ -64,8 +64,8 @@ export default function BusinessComparison({ data, formatCurrency, formatCurrenc
           <Building2 className="w-5 h-5 text-secondary" />
         </div>
         <div>
-          <h2 className="text-base md:text-lg font-bold text-light">Comparativa por negocio</h2>
-          <p className="text-xs text-gray mt-0.5">{data.period?.label || 'Mes actual'}</p>
+          <h2 className="font-display text-[0.9rem] font-semibold uppercase tracking-[0.12em] text-light">Comparativa por negocio</h2>
+          <p className="mt-1.5 text-[0.7rem] text-light/40">{data.period?.label || 'Mes actual'}</p>
         </div>
       </div>
 
@@ -78,11 +78,10 @@ export default function BusinessComparison({ data, formatCurrency, formatCurrenc
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: idx * 0.05 }}
             className="fb-card p-4 md:p-5"
-            style={{ borderTopColor: hexFor(b.color), borderTopWidth: 3 }}
           >
             <div className="flex items-center gap-2 mb-3">
               <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: hexFor(b.color) }} />
-              <h3 className="font-bold text-light">{b.name}</h3>
+              <h3 className="text-[0.88rem] font-medium text-light">{b.name}</h3>
               {b.floor ? <span className="text-xs text-gray ml-auto">Piso {b.floor}</span> : null}
             </div>
             <dl className="space-y-1.5 text-sm">
@@ -110,11 +109,11 @@ export default function BusinessComparison({ data, formatCurrency, formatCurrenc
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: businesses.length * 0.05 }}
-            className="bg-gradient-to-br from-secondary/15 to-primary/5 border-2 border-secondary/30 rounded-2xl p-4 md:p-5"
+            className="fb-card fb-card--accent p-4 md:p-5"
           >
             <div className="flex items-center gap-2 mb-3">
               <Store className="w-4 h-4 text-secondary" />
-              <h3 className="font-bold text-light">Consolidado</h3>
+              <h3 className="text-[0.88rem] font-medium text-light">Consolidado</h3>
             </div>
             <dl className="space-y-1.5 text-sm">
               <div className="flex justify-between">

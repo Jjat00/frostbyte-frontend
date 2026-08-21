@@ -15,6 +15,13 @@
       (los orbes de blur eran lo que fundía las GPU de gama baja).
    2. SUPERFICIE: el liquid glass de la app rebajado a la mitad y SIN
       `backdrop-filter`. Borde blanco al 8,5 %, radio 18.
+   3b. NUNCA UNA FRANJA DE COLOR EN EL BORDE de una tarjeta, ni arriba
+      ni al costado (`border-t-4 border-<color>`, `borderTopColor` en
+      línea, `border-l-2` para marcar una fila). Es adorno que grita sin
+      aportar. Para identificar una entidad por color, el color va en un
+      punto de 6-10 px junto al nombre, en el icono o en el dato; para
+      destacar una tarjeta entera está `fb-card--accent`, que tiñe el
+      borde completo de forma tenue.
    3. EL COLOR SIGNIFICA ALGO: magenta la carta, cyan los domicilios,
       el resto neutro. Las secciones de producto conservan el color de
       su contenido (ámbar el frappé, rojo el vino…) pero solo en el
