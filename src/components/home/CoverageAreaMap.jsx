@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Map, { Marker, Source, Layer, NavigationControl } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Layers, Undo2, Trash2, X } from "lucide-react";
+import { Layers, Undo2, Trash2, X, PenLine, Check } from "lucide-react";
 import circle from "@turf/circle";
 import { env } from "@/config";
 import {
@@ -47,11 +47,14 @@ const midpoint = ([lng1, lat1], [lng2, lat2]) => [
  * Mapa de la zona de domicilios: el local y el área cubierta, igual que la ve
  * el cliente al pedir.
  *
- * Con `editable` se convierte en el editor del polígono, pensado para el
- * pulgar: tocar el mapa agrega un vértice, los vértices se arrastran, el punto
- * medio de cada lado inserta uno nuevo y al tocar un vértice aparece el botón
- * de quitarlo. `onChange` recibe la lista de puntos [lng, lat] de la figura en
- * edición (la primera); las demás figuras se pintan de contexto.
+ * Con `editable` la zona se puede retocar, pero los puntos NO salen de una:
+ * una figura ya trazada se ve limpia, solo su línea, y los vértices aparecen
+ * al pulsar "Editar puntos" (una zona vacía entra a dibujar directo). En
+ * edición está pensado para el pulgar: tocar el mapa agrega un vértice, los
+ * vértices se arrastran, el punto medio de cada lado inserta uno nuevo y al
+ * tocar un vértice aparece el botón de quitarlo. `onChange` recibe la lista de
+ * puntos [lng, lat] de la figura en edición (la primera); las demás figuras se
+ * pintan de contexto.
  *
  * Carga Mapbox (bundle pesado), así que se importa en diferido desde el
  * diálogo y no desde el dashboard.
@@ -73,8 +76,12 @@ const CoverageAreaMap = ({
   // click la consume, así que no hace falta un temporizador.
   const draggedRef = useRef(false);
 
-  const points = editable ? coverage.polygons[0] || [] : [];
-  const extraPolygons = editable ? coverage.polygons.slice(1) : [];
+  const points = coverage.polygons?.[0] || [];
+  const extraPolygons = coverage.polygons?.slice(1) || [];
+  // Una figura ya cerrada se muestra limpia; hasta que no lo esté, no hay nada
+  // que mirar todavía y se sigue dibujando.
+  const [editing, setEditing] = useState(() => points.length < 3);
+  const drawing = editable && (editing || points.length < 3);
 
   const [viewState, setViewState] = useState(() =>
     coverageViewport(coverage, 12.6)
@@ -128,7 +135,7 @@ const CoverageAreaMap = ({
   // Lo que se pinta: en lectura, la zona vigente; editando, la figura en curso
   // (más las figuras extra, que no se tocan aquí).
   const geoJson = useMemo(() => {
-    if (!editable) return coverageGeoJson(coverage);
+    if (!drawing) return coverageGeoJson(coverage);
     const features = extraPolygons
       .filter((p) => p.length >= 3)
       .map(polygonFeature);
@@ -136,22 +143,22 @@ const CoverageAreaMap = ({
     else if (points.length === 2) features.push(lineFeature(points));
     return { type: "FeatureCollection", features };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editable, coverage, points]);
+  }, [drawing, coverage, points]);
 
   // Editando siempre se ve el círculo de respaldo como referencia de escala
   const referenceCircle = useMemo(
     () =>
-      editable
+      drawing
         ? circle([STORE_LOCATION.lng, STORE_LOCATION.lat], coverage.radiusKm, {
             steps: 64,
             units: "kilometers",
           })
         : null,
-    [editable, coverage.radiusKm]
+    [drawing, coverage.radiusKm]
   );
 
   const midpoints = useMemo(() => {
-    if (!editable || points.length < 2) return [];
+    if (!drawing || points.length < 2) return [];
     if (points.length > MAX_POINTS_WITH_MIDPOINTS) return [];
     // El último par cierra el anillo (último → primero); con solo dos puntos
     // ese cierre cae encima del primer punto medio, así que sobra.
@@ -160,7 +167,7 @@ const CoverageAreaMap = ({
       coords: midpoint(point, points[(i + 1) % points.length]),
     }));
     return points.length === 2 ? pairs.slice(0, 1) : pairs;
-  }, [editable, points]);
+  }, [drawing, points]);
 
   if (!token) {
     return (
@@ -191,7 +198,7 @@ const CoverageAreaMap = ({
         {...viewState}
         onMove={(e) => setViewState(e.viewState)}
         onClick={
-          editable ? (e) => addPoint(e.lngLat.lng, e.lngLat.lat) : undefined
+          drawing ? (e) => addPoint(e.lngLat.lng, e.lngLat.lat) : undefined
         }
         mapboxAccessToken={token}
         mapStyle={MAP_STYLES[styleKey]}
@@ -199,7 +206,7 @@ const CoverageAreaMap = ({
         attributionControl={false}
         dragRotate={false}
         touchPitch={false}
-        cursor={editable ? "crosshair" : "grab"}
+        cursor={drawing ? "crosshair" : "grab"}
       >
         {referenceCircle && (
           <Source id="coverage-reference" type="geojson" data={referenceCircle}>
@@ -275,7 +282,7 @@ const CoverageAreaMap = ({
         ))}
 
         {/* Vértices de la figura en edición */}
-        {editable &&
+        {drawing &&
           points.map((point, index) => (
             <Marker
               key={`vertex-${index}`}
@@ -331,8 +338,34 @@ const CoverageAreaMap = ({
           {styleKey === "satellite" ? "Mapa" : "Satélite"}
         </button>
 
-        {editable && points.length > 0 && (
+        {editable && !drawing && (
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="flex items-center gap-1.5 rounded-full bg-dark/80 border border-secondary/40 px-2.5 py-1.5 text-[11px] font-bold text-secondary hover:bg-dark/95 transition-colors cursor-pointer"
+            title="Mostrar los puntos para ajustar la zona"
+          >
+            <PenLine className="w-3.5 h-3.5" />
+            Editar puntos
+          </button>
+        )}
+
+        {drawing && points.length > 0 && (
           <>
+            {points.length >= COVERAGE_LIMITS.minPoints && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(false);
+                  setSelected(null);
+                }}
+                className="flex items-center gap-1.5 rounded-full bg-dark/80 border border-secondary/40 px-2.5 py-1.5 text-[11px] font-bold text-secondary hover:bg-dark/95 transition-colors cursor-pointer"
+                title="Ocultar los puntos y ver la zona limpia"
+              >
+                <Check className="w-3.5 h-3.5" />
+                Listo
+              </button>
+            )}
             <button
               type="button"
               onClick={() => {
@@ -362,7 +395,7 @@ const CoverageAreaMap = ({
       </div>
 
       {/* Pie: instrucción o el punto seleccionado */}
-      {editable && (
+      {drawing && (
         <div className="absolute inset-x-0 bottom-0 bg-dark/85 px-3 py-2">
           {selected != null ? (
             <div className="flex items-center justify-between gap-2">
