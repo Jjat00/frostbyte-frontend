@@ -19,7 +19,7 @@ const OrderItemsList = ({ items }) => {
           className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
             item.is_delivered
               ? "bg-green-500/5 border-green-500/20"
-              : "backdrop-blur-sm bg-white/[0.04] border-white/[0.08]"
+              : "bg-white/[0.03] border-white/[0.08]"
           }`}
         >
           {item.product_image ? (

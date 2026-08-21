@@ -35,7 +35,7 @@ const RecommendedProducts = ({ excludeProducts = [] }) => {
         {filtered.map((product, idx) => (
           <div
             key={idx}
-            className="backdrop-blur-sm bg-white/[0.04] border border-white/[0.08] rounded-lg overflow-hidden"
+            className="fb-card overflow-hidden"
           >
             {product.image_url ? (
               <img loading="lazy" decoding="async"

@@ -295,7 +295,7 @@ const MonthGrid = ({ year, month, days, selected, onSelect }) => {
             className={cn(
               "relative aspect-square rounded-lg text-sm font-semibold grid place-items-center transition-colors",
               isSelected
-                ? "bg-white text-dark font-black"
+                ? "bg-white text-dark font-semibold"
                 : isToday
                 ? "bg-white/10 text-light"
                 : "hover:bg-white/5 text-white/70"
@@ -324,7 +324,7 @@ const Kpi = ({ label, value, accent, destacado }) => (
   <div className="fb-card rounded-xl p-3 text-center">
     <p
       className={cn(
-        "text-2xl font-black",
+        "font-display text-[1.2rem] font-semibold tracking-[0.08em]",
         destacado || accent ? "text-light" : "text-light/70"
       )}
     >

@@ -66,7 +66,7 @@ const AuthModal = ({
         >
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-dark/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/75"
             onClick={onClose}
           />
 
@@ -79,17 +79,14 @@ const AuthModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="relative w-full max-w-md overflow-hidden rounded-3xl border border-primary/30 bg-dark-secondary/95 p-7 shadow-2xl shadow-primary/20"
+            className="fb-card relative w-full max-w-md overflow-hidden bg-dark-secondary/97 p-6 sm:p-7"
           >
-            {/* Glows decorativos */}
-            <div className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-secondary/20 blur-3xl" />
 
             {/* Cerrar */}
             <button
               onClick={onClose}
               aria-label="Cerrar"
-              className="absolute right-4 top-4 z-10 rounded-full p-1.5 text-gray transition-colors hover:bg-white/10 hover:text-light"
+              className="absolute right-4 top-4 z-10 rounded-full p-1.5 text-light/40 transition-colors hover:text-light"
             >
               <X size={20} />
             </button>
@@ -97,13 +94,13 @@ const AuthModal = ({
             <div className="relative">
               {/* Encabezado */}
               <div className="mb-6 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-secondary shadow-lg shadow-primary/40">
-                  <Sparkles className="h-7 w-7 text-dark" />
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[14px] border border-white/[0.12] bg-linear-to-br from-primary/15 to-secondary/15">
+                  <Sparkles className="h-5 w-5 text-light/75" strokeWidth={1.6} />
                 </div>
-                <h2 className="font-orbitron text-2xl font-black text-light">
+                <h2 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
                   {title}
                 </h2>
-                <p className="mt-1.5 text-sm text-gray">{subtitle}</p>
+                <p className="mt-3 text-[0.8rem] leading-relaxed text-light/50">{subtitle}</p>
               </div>
 
               {/* Beneficios */}
@@ -112,9 +109,9 @@ const AuthModal = ({
                   {benefits.map((b) => (
                     <li
                       key={b}
-                      className="flex items-center gap-2.5 text-sm text-light/90"
+                      className="flex items-center gap-2.5 text-[0.78rem] text-light/65"
                     >
-                      <ShieldCheck size={16} className="shrink-0 text-secondary" />
+                      <ShieldCheck size={15} className="shrink-0 text-secondary" />
                       {b}
                     </li>
                   ))}

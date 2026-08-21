@@ -92,7 +92,7 @@ const StoreControls = () => {
       <button
         onClick={() => setConfirm("store")}
         className={cn(
-          "px-3 py-2 rounded-lg backdrop-blur-sm flex items-center gap-2 border transition-colors",
+          "flex items-center gap-2 rounded-lg border px-3 py-2 transition-colors",
           isOpen
             ? "bg-green-500/10 border-green-500/30 hover:bg-green-500/20"
             : "bg-red-500/10 border-red-500/30 hover:bg-red-500/20"
@@ -130,7 +130,7 @@ const StoreControls = () => {
       <button
         onClick={() => setConfirm("delivery")}
         className={cn(
-          "px-3 py-2 rounded-lg backdrop-blur-sm flex items-center gap-2 border transition-colors",
+          "flex items-center gap-2 rounded-lg border px-3 py-2 transition-colors",
           deliveryOn
             ? "bg-secondary/10 border-secondary/30 hover:bg-secondary/20"
             : "bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.08]"
@@ -161,7 +161,7 @@ const StoreControls = () => {
             }
           : { title: "Solo un administrador puede cambiar el radio" })}
         className={cn(
-          "px-3 py-2 rounded-lg backdrop-blur-sm flex items-center gap-2 border transition-colors bg-white/[0.04] border-white/[0.08]",
+          "flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 transition-colors",
           isAdminUser && "hover:bg-white/[0.08] cursor-pointer"
         )}
       >

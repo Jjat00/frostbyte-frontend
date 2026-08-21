@@ -64,7 +64,7 @@ const GoogleSignInButton = ({ onSuccess, onError }) => {
       </div>
 
       {submitting && (
-        <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-dark/70 text-sm text-light backdrop-blur-sm">
+        <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-dark/85 text-[0.8rem] text-light">
           <Loader2 size={16} className="animate-spin" />
           Iniciando sesión…
         </div>

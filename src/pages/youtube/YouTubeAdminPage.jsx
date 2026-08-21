@@ -316,8 +316,8 @@ const YouTubeAdminPage = () => {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <Youtube className="w-8 h-8 text-red-500" />
-            <h1 className="text-2xl md:text-4xl font-black">
-              <span className="bg-linear-to-r from-red-500 via-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.14em] text-light md:text-[1.35rem]">
+              <span>
                 YOUTUBE
               </span>
             </h1>

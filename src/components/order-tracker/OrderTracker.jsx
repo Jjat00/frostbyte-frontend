@@ -52,7 +52,7 @@ export const OrderTrackerContent = ({ order }) => {
       )}
 
       {/* Delivery progress */}
-      <div className="flex items-center justify-between px-3 py-2 backdrop-blur-sm bg-white/[0.06] rounded-lg border border-white/[0.1]">
+      <div className="fb-inset flex items-center justify-between px-3 py-2">
         <span className="text-xs text-gray">Entregados</span>
         <span className="text-sm text-light font-medium">
           {order.delivered_items_count || 0} / {order.items_count || 0}
@@ -79,7 +79,7 @@ export const OrderTrackerContent = ({ order }) => {
               />
             </Suspense>
           )}
-          <div className="px-3 py-2 backdrop-blur-sm bg-white/[0.06] rounded-lg border border-white/[0.1] space-y-1">
+          <div className="fb-inset space-y-1 px-3 py-2">
             <div className="flex items-center gap-1.5 text-xs text-gray">
               <MapPin className="w-3.5 h-3.5" /> Entrega a domicilio
             </div>
@@ -134,7 +134,7 @@ const OrderTracker = ({ order, show, onClose, desktopPanel = true }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm ${
+          className={`fixed inset-0 z-50 bg-black/70 ${
             desktopPanel ? "" : "lg:hidden"
           }`}
           onClick={onClose}

@@ -16,7 +16,7 @@ const CustomerAvatar = ({ customer, className }) => {
     return (
       <span
         className={cn(
-          "grid place-items-center rounded-full bg-linear-to-br from-gold to-amber-600 text-dark font-black select-none",
+          "grid select-none place-items-center rounded-full border border-white/[0.14] bg-white/[0.06] font-medium text-light",
           className
         )}
       >
