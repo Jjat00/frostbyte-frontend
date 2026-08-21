@@ -67,7 +67,7 @@ const ConfirmDialog = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-[70]"
+            className="fixed inset-0 bg-black/75 z-[70]"
             onClick={loading ? undefined : onCancel}
           />
           <motion.div
@@ -82,9 +82,9 @@ const ConfirmDialog = ({
             aria-modal="true"
             aria-label={title}
           >
-            <div
-              className="fb-card max-h-[85vh] space-y-4 overflow-y-auto p-5"
-            >
+            {/* fb-sheet, nunca fb-card: lo que flota necesita fondo opaco o
+                se lee la pantalla de debajo a través del diálogo. */}
+            <div className="fb-sheet rounded-[18px] max-h-[85vh] space-y-4 overflow-y-auto p-5">
               <div className="flex items-start gap-3">
                 {Icon && (
                   <div className={cn("p-2.5 rounded-xl shrink-0", toneCfg.iconWrap)}>
