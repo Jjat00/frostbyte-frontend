@@ -56,8 +56,7 @@ const BirthdayDiscountBanner = () => {
               Si hoy es tu cumpleaños, tienes{" "}
               <span className="text-light">50% de descuento</span> en el
               producto que elijas. Aplica para{" "}
-              <span className="text-light">un solo producto</span> de cualquier
-              categoría.
+              <span className="text-light">un solo producto</span>.
             </p>
           </div>
 
