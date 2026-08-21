@@ -206,7 +206,7 @@ const TablesManagementPage = () => {
                 {floorTables.map((table) => (
                   <div
                     key={table.id}
-                    className={`fb-card flex items-center justify-between gap-2 p-3 rounded-xl border ${
+                    className={`fb-sheet flex items-center justify-between gap-2 p-3 rounded-xl border ${
                       table.is_active
                         ? 'border-white/[0.1] bg-white/[0.04]'
                         : 'border-white/[0.06] bg-white/[0.02] opacity-60'
@@ -281,13 +281,9 @@ const TablesManagementPage = () => {
               exit={{ opacity: 0, y: 40 }}
               className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-md z-50 p-4"
             >
-              {/* backgroundColor inline: la hoja flota sobre la pantalla, así que
-                  necesita fondo opaco de verdad — el vidrio de `fb-card` solo no
-                  basta para que el texto se lea encima. */}
               <form
                 onSubmit={handleSubmit}
                 className="fb-card space-y-4 p-5"
-                style={{ backgroundColor: 'rgba(18, 20, 31, 0.96)' }}
               >
                 <div className="flex items-center justify-between">
                   <h3 className="font-display text-[0.9rem] font-semibold uppercase tracking-[0.12em] text-light">

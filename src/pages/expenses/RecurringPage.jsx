@@ -352,7 +352,7 @@ const RecurringPage = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md fb-card z-50 overflow-hidden max-h-[90vh] overflow-y-auto"
+              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md fb-sheet z-50 overflow-hidden max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between p-4 border-b border-white/[0.08] sticky top-0 bg-white/[0.06]">
                 <h2 className="text-lg font-semibold text-light">

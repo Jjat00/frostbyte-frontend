@@ -326,7 +326,7 @@ const AnalyticsLayout = () => {
 
       {/* Main content */}
       <div
-        className="flex-1 flex flex-col min-h-screen md:transition-[margin-left] md:duration-[250ms] md:ease-in-out"
+        className="flex-1 flex flex-col min-h-screen min-w-0 md:transition-[margin-left] md:duration-[250ms] md:ease-in-out"
         style={{ '--sidebar-w': `${sidebarWidth}px` }}
       >
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto md:ml-[var(--sidebar-w)]">

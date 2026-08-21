@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  * Diálogo de confirmación reutilizable (mobile-first).
  *
  * Bottom-sheet en móvil, tarjeta centrada en desktop. Usa la superficie del
- * sistema (`fb-card`, ver minimal.css) sobre un fondo casi opaco: al flotar
+ * sistema (`fb-sheet`, ver minimal.css) sobre un fondo casi opaco: al flotar
  * encima de cualquier pantalla, el vidrio a secas dejaría el texto ilegible. Pensado para acciones que requieren confirmación explícita
  * (abrir/cerrar el local, activar/desactivar domicilios, etc.).
  *
@@ -78,7 +78,6 @@ const ConfirmDialog = ({
           >
             <div
               className="fb-card max-h-[85vh] space-y-4 overflow-y-auto p-5"
-              style={{ backgroundColor: "rgba(18, 20, 31, 0.96)" }}
             >
               <div className="flex items-start gap-3">
                 {Icon && (

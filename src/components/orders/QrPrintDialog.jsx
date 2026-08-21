@@ -228,11 +228,10 @@ const QrPrintDialog = ({ tables, onClose }) => {
         className="fixed inset-x-0 bottom-0 sm:inset-0 sm:m-auto sm:h-fit sm:max-w-lg z-50 p-4"
       >
         {/* backgroundColor inline: la hoja flota sobre la pantalla, así que
-            necesita fondo opaco de verdad — el vidrio de `fb-card` solo no
+            necesita fondo opaco de verdad — el vidrio de `fb-sheet` solo no
             basta para que el texto se lea encima de lo que haya debajo. */}
         <div
           className="fb-card max-h-[90vh] space-y-4 overflow-y-auto p-5"
-          style={{ backgroundColor: 'rgba(18, 20, 31, 0.96)' }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

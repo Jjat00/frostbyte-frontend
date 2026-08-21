@@ -258,7 +258,7 @@ const CategoriesPage = () => {
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="fb-card p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="fb-sheet p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-display text-[0.95rem] font-semibold uppercase tracking-[0.12em] text-light">
                     {editingCategory ? 'Editar Categoría' : 'Nueva Categoría'}

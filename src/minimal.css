@@ -249,6 +249,34 @@
     }
   }
 
+  /* ── Hoja: diálogos, modales y bottom-sheets ────────────────────────
+     Lo que FLOTA sobre la pantalla no puede ser de vidrio. `fb-card` está
+     pensada para apoyarse en el fondo de la página; encima de una tabla o
+     de un formulario, su 5,5 % de blanco deja ver todo lo de debajo y el
+     texto se vuelve ilegible. Por eso la hoja lleva fondo OPACO, con el
+     mismo brillo y el mismo borde para que se reconozca como del sistema.
+
+     Antes esto lo resolvía sin querer el `backdrop-blur`: al quitarlo, los
+     diálogos de inventario se volvieron transparentes. Si un modal se ve a
+     través, le falta esta clase. */
+  .fb-sheet {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: color-mix(
+      in srgb,
+      var(--color-dark-secondary) 97%,
+      var(--color-dark)
+    );
+    background-image: linear-gradient(
+      155deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.015) 100%
+    );
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
   /* Superficie interior (una nota dentro de una tarjeta): más tenue,
      para que no compita con la tarjeta que la contiene. */
   .fb-inset {

@@ -928,7 +928,7 @@ const OrdersStatsPage = () => {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 100 }}
-              className="bg-white/[0.06] border border-white/[0.15] rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[90vh] overflow-y-auto"
+              className="fb-sheet rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
               <div className="p-4 md:p-6 border-b border-white/[0.1] flex items-center justify-between">

@@ -324,7 +324,7 @@ const InventoryLayout = () => {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen md:ml-64">
+      <div className="flex-1 flex flex-col min-h-screen md:ml-64 min-w-0">
         {/* Page content */}
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto">
           <Outlet />

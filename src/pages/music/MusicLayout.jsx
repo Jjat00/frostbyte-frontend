@@ -305,7 +305,7 @@ const MusicLayout = () => {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen md:ml-64">
+      <div className="flex-1 flex flex-col min-h-screen md:ml-64 min-w-0">
         {/* Source selector - visible para admin */}
         {isAdmin() && (
           <div className="sticky top-0 md:top-0 z-20 bg-dark/80 border-b border-white/[0.08] px-4 md:px-6 py-3">

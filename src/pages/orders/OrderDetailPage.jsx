@@ -900,7 +900,7 @@ const OrderDetailPage = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="fb-card p-6 w-full max-w-md"
+              className="fb-sheet p-6 w-full max-w-md"
             >
               <h3 className="text-xl font-bold text-light mb-2">
                 {selectedItemForPayment.is_paid
@@ -1119,7 +1119,7 @@ const OrderDetailPage = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fb-card w-full max-w-md p-6"
+            className="fb-sheet w-full max-w-md p-6"
           >
             <h3 className="text-xl font-bold text-light mb-4">Pagar Todo</h3>
             <p className="text-gray text-sm mb-4">
@@ -1255,7 +1255,7 @@ const OrderDetailPage = () => {
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 100 }}
-              className="bg-white/[0.06] border border-white/[0.15] rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[85vh] flex flex-col"
+              className="fb-sheet rounded-t-2xl md:rounded-xl w-full md:max-w-lg max-h-[85vh] flex flex-col"
             >
               {/* Header */}
               <div className="p-4 border-b border-white/[0.07]">
@@ -1415,7 +1415,7 @@ const OrderDetailPage = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fb-card w-full max-w-md p-6"
+            className="fb-sheet w-full max-w-md p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="p-3 bg-red-500/20 rounded-xl">
@@ -1462,7 +1462,7 @@ const OrderDetailPage = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fb-card w-full max-w-md p-6"
+            className="fb-sheet w-full max-w-md p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="p-3 bg-red-500/20 rounded-xl">

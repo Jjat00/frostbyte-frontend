@@ -351,7 +351,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="fb-sheet rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -483,7 +483,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
+              className="fb-sheet rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-5">
@@ -636,7 +636,7 @@ const MaterialsPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white/[0.06] border-t md:border border-white/[0.15] rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
+              className="fb-sheet rounded-t-2xl md:rounded-xl p-5 md:p-6 w-full md:max-w-md md:mx-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-4 mb-4">
