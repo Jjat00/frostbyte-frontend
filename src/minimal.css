@@ -192,6 +192,20 @@
     background-color: rgba(255, 255, 255, 0.025);
   }
 
+  /* ── Iconos ─────────────────────────────────────────────────────────
+     El set propio del hero (`HeroIcons.jsx`) se dibujó con trazo de 1,3
+     sobre rejilla de 24. El resto de la app usa lucide, que viene con
+     trazo 2 por defecto y al lado se ve tosco. Esta regla iguala el peso
+     en toda la app de una vez: lucide emite `class="lucide lucide-<name>"`
+     en cada SVG, y una regla CSS gana a `stroke-width` como atributo de
+     presentación, así que no hace falta tocar cada icono.
+
+     Si un icono concreto necesita más cuerpo (una marca de verificación
+     pequeña, por ejemplo), se sube con `style`, no con la prop. */
+  svg.lucide {
+    stroke-width: 1.5;
+  }
+
   /* ── Micro-tipografía: la etiqueta de tracking largo del hero ──────── */
   .fb-eyebrow {
     font-size: 0.55rem;

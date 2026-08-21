@@ -66,32 +66,7 @@ const formatCurrencyCompact = (value) => {
   return formatCurrency(num);
 };
 
-const KpiCard = ({ icon: Icon, label, value, subtitle, accent = 'secondary', isLoading, delay = 0, onClick, badge }) => {
-  const palettes = {
-    secondary: {
-      gradient: 'from-secondary to-primary',
-      glow: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-secondary)_30%,transparent)]',
-    },
-    primary: {
-      gradient: 'from-primary to-secondary',
-      glow: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]',
-    },
-    green: {
-      gradient: 'from-emerald-400 to-teal-500',
-      glow: 'group-hover:shadow-[0_0_30px_rgba(16,185,129,0.25)]',
-    },
-    amber: {
-      gradient: 'from-amber-400 to-orange-500',
-      glow: 'group-hover:shadow-[0_0_30px_rgba(245,158,11,0.25)]',
-    },
-    purple: {
-      gradient: 'from-purple-400 to-pink-500',
-      glow: 'group-hover:shadow-[0_0_30px_rgba(168,85,247,0.25)]',
-    },
-  };
-
-  const c = palettes[accent] || palettes.secondary;
-
+const KpiCard = ({ icon: Icon, label, value, subtitle, isLoading, delay = 0, onClick, badge }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -99,34 +74,24 @@ const KpiCard = ({ icon: Icon, label, value, subtitle, accent = 'secondary', isL
       transition={{ duration: 0.4, delay }}
       whileHover={onClick ? { y: -4 } : undefined}
       onClick={onClick}
-      className={`
-        relative group
-        rounded-2xl p-4 md:p-5
-        flex flex-col h-full min-w-0
-        transition-all duration-300 ${c.glow}
-        ${onClick ? 'cursor-pointer' : ''}
-      `}
+      className={`fb-card group flex h-full min-w-0 flex-col p-4 md:p-5 ${
+        onClick ? 'fb-card--link cursor-pointer' : ''
+      }`}
     >
-      {/* Corner accent */}
-
-      {/* Subtle gradient wash tied to accent */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${c.gradient} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-500 rounded-2xl pointer-events-none`} />
 
       <div className="relative z-10 flex flex-col h-full min-w-0">
         <div className="flex items-start justify-between gap-2 mb-3">
-          <div className={`relative p-2.5 rounded-xl bg-gradient-to-br ${c.gradient} group-hover:scale-110 transition-transform duration-300 shadow-lg shrink-0`}>
-            <Icon className="w-5 h-5 text-dark" />
-          </div>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-white/[0.1] bg-white/[0.03]">
+            <Icon className="h-[18px] w-[18px] text-light/70" strokeWidth={1.6} />
+          </span>
           {badge && (
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 shrink-0">
+            <span className="fb-pill shrink-0 text-[0.6rem] uppercase tracking-[0.16em]">
               {badge}
             </span>
           )}
         </div>
 
-        <p className="text-[11px] text-gray font-medium uppercase tracking-wider mb-1.5 truncate">
-          {label}
-        </p>
+        <p className="fb-eyebrow mb-2 block truncate">{label}</p>
 
         {isLoading ? (
           <div className="space-y-2 mt-auto">
@@ -136,14 +101,14 @@ const KpiCard = ({ icon: Icon, label, value, subtitle, accent = 'secondary', isL
         ) : (
           <div className="mt-auto min-w-0">
             <p
-              className="font-bold text-light leading-tight truncate"
-              style={{ fontSize: 'clamp(1.125rem, 2.2vw, 1.75rem)' }}
+              className="truncate font-medium leading-tight text-light"
+              style={{ fontSize: 'clamp(1.05rem, 2vw, 1.5rem)' }}
               title={typeof value === 'string' ? value : undefined}
             >
               {value}
             </p>
             {subtitle && (
-              <p className="text-xs text-gray mt-1.5 truncate" title={subtitle}>
+              <p className="mt-1.5 truncate text-[0.7rem] text-light/40" title={subtitle}>
                 {subtitle}
               </p>
             )}
@@ -210,10 +175,6 @@ const HomePage = () => {
       description: 'Gestiona materiales, stock y órdenes de compra',
       icon: Package,
       path: '/inventario',
-      color: 'from-primary to-secondary',
-      bgColor: 'bg-primary/10',
-      borderColor: 'border-primary/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]',
       features: [
         { icon: BarChart3, text: 'Dashboard' },
         { icon: Package, text: 'Materiales' },
@@ -227,10 +188,6 @@ const HomePage = () => {
       description: 'Gestiona pedidos activos y crea nuevos',
       icon: ShoppingCart,
       path: '/pedidos',
-      color: 'from-secondary to-primary',
-      bgColor: 'bg-secondary/10',
-      borderColor: 'border-secondary/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-secondary)_30%,transparent)]',
       features: [
         { icon: ClipboardList, text: 'Activos' },
         { icon: ShoppingCart, text: 'Nuevo Pedido' },
@@ -243,10 +200,6 @@ const HomePage = () => {
       description: 'Mesas, grupos grandes y la Sala VIP del piso 3',
       icon: CalendarDays,
       path: '/reservas-admin',
-      color: 'from-amber-400 to-yellow-600',
-      bgColor: 'bg-amber-500/10',
-      borderColor: 'border-amber-500/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(242,197,61,0.3)]',
       features: [
         { icon: CalendarDays, text: 'Calendario' },
         { icon: Crown, text: 'Sala VIP' },
@@ -259,10 +212,6 @@ const HomePage = () => {
       description: 'Gestiona productos de la carta, categorías y variantes',
       icon: Store,
       path: '/productos',
-      color: 'from-primary to-secondary',
-      bgColor: 'bg-primary/10',
-      borderColor: 'border-primary/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_color-mix(in_srgb,var(--color-primary)_30%,transparent)]',
       features: [
         { icon: Store, text: 'Lista de Productos' },
         { icon: Package, text: 'Categorías' },
@@ -275,10 +224,6 @@ const HomePage = () => {
       description: 'Gestiona solicitudes de canciones de los clientes',
       icon: Music,
       path: '/musica',
-      color: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-500/10',
-      borderColor: 'border-purple-500/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]',
       features: [
         { icon: Music, text: 'Solicitudes' },
         { icon: ClipboardList, text: 'Gestionar Estados' },
@@ -291,10 +236,6 @@ const HomePage = () => {
       description: 'Gestiona comentarios y opiniones de los clientes',
       icon: MessageSquare,
       path: '/feedback',
-      color: 'from-teal-500 to-cyan-500',
-      bgColor: 'bg-teal-500/10',
-      borderColor: 'border-teal-500/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(20,184,166,0.3)]',
       features: [
         { icon: MessageSquare, text: 'Comentarios' },
         { icon: ClipboardList, text: 'Gestionar Estados' },
@@ -307,10 +248,6 @@ const HomePage = () => {
       description: 'Guias de preparacion paso a paso para cada bebida',
       icon: BookOpen,
       path: '/recetarios',
-      color: 'from-amber-500 to-orange-500',
-      bgColor: 'bg-amber-500/10',
-      borderColor: 'border-amber-500/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(245,158,11,0.3)]',
       features: [
         { icon: BookOpen, text: 'Recetas' },
         { icon: UtensilsCrossed, text: 'Ingredientes' },
@@ -323,10 +260,6 @@ const HomePage = () => {
       description: 'Administra salas de juego activas por mesa',
       icon: Gamepad2,
       path: '/juegos-admin',
-      color: 'from-violet-500 to-amber-500',
-      bgColor: 'bg-violet-500/10',
-      borderColor: 'border-violet-500/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(139,92,246,0.3)]',
       features: [
         { icon: Gamepad2, text: 'Salas Activas' },
         { icon: ClipboardList, text: 'Terminar Salas' },
@@ -339,10 +272,6 @@ const HomePage = () => {
       description: 'Registra gastos operativos: nomina, servicios, alquiler',
       icon: Wallet,
       path: '/gastos',
-      color: 'from-emerald-500 to-teal-500',
-      bgColor: 'bg-emerald-500/10',
-      borderColor: 'border-emerald-500/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]',
       features: [
         { icon: BarChart3, text: 'Dashboard' },
         { icon: ClipboardList, text: 'Lista de Gastos' },
@@ -355,10 +284,6 @@ const HomePage = () => {
       description: 'Dashboard ejecutivo con ingresos vs gastos y tendencias',
       icon: TrendingUp,
       path: '/analytics',
-      color: 'from-indigo-500 to-purple-500',
-      bgColor: 'bg-indigo-500/10',
-      borderColor: 'border-indigo-500/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(99,102,241,0.3)]',
       features: [
         { icon: DollarSign, text: 'Ingresos vs Gastos' },
         { icon: PieChart, text: 'Distribucion' },
@@ -371,10 +296,6 @@ const HomePage = () => {
       description: 'Monitorea el ranking y el avance de cada jugador del Mundial 2026',
       icon: Trophy,
       path: '/polla-admin',
-      color: 'from-amber-400 to-yellow-500',
-      bgColor: 'bg-amber-400/10',
-      borderColor: 'border-amber-400/30',
-      glowColor: 'group-hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]',
       features: [
         { icon: Trophy, text: 'Ranking' },
         { icon: Users, text: 'Jugadores' },
@@ -560,7 +481,6 @@ const HomePage = () => {
                   label="Ventas de hoy"
                   value={formatCurrencyCompact(ventasHoy)}
                   subtitle={`${todayStats?.total_paid_items || 0} items cobrados`}
-                  accent="green"
                   isLoading={isLoadingToday}
                   delay={0.05}
                   onClick={() => navigate('/analytics')}
@@ -570,7 +490,6 @@ const HomePage = () => {
                   label="Pedidos de hoy"
                   value={pedidosHoy}
                   subtitle={pedidosHoy === 1 ? '1 pedido registrado' : `${pedidosHoy} pedidos registrados`}
-                  accent="secondary"
                   isLoading={isLoadingToday}
                   delay={0.1}
                   onClick={() => navigate('/pedidos')}
@@ -580,7 +499,6 @@ const HomePage = () => {
                   label="Ticket promedio"
                   value={formatCurrencyCompact(ticketPromedio)}
                   subtitle="Por pedido de hoy"
-                  accent="primary"
                   isLoading={isLoadingToday}
                   delay={0.15}
                 />
@@ -589,7 +507,6 @@ const HomePage = () => {
                   label="Pagos pendientes"
                   value={formatCurrencyCompact(pagosPendientes)}
                   subtitle={`${itemsPendientes} items sin cobrar`}
-                  accent="amber"
                   isLoading={isLoadingToday}
                   delay={0.2}
                   onClick={() => navigate('/pedidos')}
@@ -604,7 +521,6 @@ const HomePage = () => {
                       ? `${topProducto.quantity_sold} vendidos · ${formatCurrencyCompact(topProducto.revenue)}`
                       : 'Aún no hay registros'
                   }
-                  accent="purple"
                   isLoading={isLoadingTopProducts}
                   delay={0.25}
                 />
@@ -625,34 +541,23 @@ const HomePage = () => {
                 transition={{ delay: index * 0.05, duration: 0.4 }}
                 whileHover={{ y: -8 }}
                 onClick={() => navigate(module.path)}
-                className={`relative group cursor-pointer ${module.bgColor} border ${module.borderColor} rounded-xl p-5 transition-all duration-300 overflow-hidden ${module.glowColor}`}
+                className="fb-card fb-card--link group relative cursor-pointer overflow-hidden p-5"
               >
-                {/* Animated gradient overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${module.color} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-
-                {/* Corner accent */}
 
                 <div className="relative z-10">
                   {/* Icon and badge */}
                   <div className="flex items-start justify-between mb-4">
-                    <div className={`relative p-3 rounded-lg bg-gradient-to-br ${module.color} group-hover:scale-110 transition-transform duration-300`}>
-                      <Icon className="w-7 h-7 text-dark" />
+                    <div className="relative flex h-11 w-11 items-center justify-center rounded-[13px] border border-white/[0.1] bg-white/[0.03]">
+                      <Icon className="h-5 w-5 text-light/70" strokeWidth={1.6} />
                       {module.id === 'music' && hasPendingRequests && (
                         <>
-                          <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-dark flex items-center justify-center text-[10px] font-bold text-dark">
+                          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-dark bg-secondary text-[0.6rem] font-semibold text-dark">
                             {pendingCount}
                           </span>
-                          <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500/50 rounded-full animate-ping" />
                         </>
                       )}
                     </div>
-                    <motion.div
-                      className="text-gray/50 group-hover:text-primary transition-colors"
-                      animate={{ rotate: [0, 90, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </motion.div>
+                    <ExternalLink className="h-4 w-4 text-light/25 transition-colors group-hover:text-light/60" />
                   </div>
 
                   {/* Title */}
@@ -682,8 +587,6 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                {/* Hover glow effect */}
-                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl bg-gradient-to-br ${module.color}`} style={{ zIndex: -1 }} />
               </motion.div>
             );
           })}
