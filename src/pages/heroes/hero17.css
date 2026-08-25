@@ -1,0 +1,202 @@
+/* Opción 17 — El mural (Anton + Schibsted Grotesk) */
+.hx17 {
+  --hx-mag: var(--color-primary);
+  --hx-cyan: var(--color-secondary);
+  --hx-bg: #0a0b12;
+  --hx-celda: #151824;
+  --hx-ink: #f1f6fb;
+  --hx-ink-soft: #8d96a9;
+  min-height: 100dvh;
+  background: var(--hx-bg);
+  color: var(--hx-ink);
+  font-family: "Schibsted Grotesk", system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 14px 92px;
+}
+
+.hx17 h1,
+.hx17 h2 {
+  font-family: "Anton", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+/* ── Mural: en móvil, dos columnas ── */
+.hx17-mural {
+  width: 100%;
+  max-width: 1240px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.hx17-celda {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--hx-celda);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 15px 15px 17px;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+a.hx17-celda:hover {
+  border-color: color-mix(in srgb, var(--hx-cyan) 55%, transparent);
+  background: #191d2c;
+}
+
+.hx17-dato {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hx-cyan);
+}
+.hx17-nombre {
+  font-size: clamp(19px, 5.4vw, 24px);
+  line-height: 1.02;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+.hx17-texto {
+  font-size: 12px;
+  line-height: 1.42;
+  color: var(--hx-ink-soft);
+  max-width: 40ch;
+}
+.hx17-flecha {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 17px;
+  color: var(--hx-ink-soft);
+}
+a.hx17-celda:hover .hx17-flecha {
+  color: var(--hx-cyan);
+}
+
+/* ── Celda del titular ── */
+.hx17-titular {
+  grid-column: 1 / -1;
+  background: var(--hx-mag);
+  border-color: transparent;
+  padding: 22px 20px 24px;
+}
+.hx17-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+.hx17-title {
+  font-size: clamp(34px, 10vw, 52px);
+  line-height: 0.94;
+  text-transform: uppercase;
+  color: #fff;
+  margin-top: 6px;
+}
+.hx17-sub {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 36ch;
+  margin-top: 8px;
+}
+
+/* La carta manda también en móvil */
+.hx17-c-carta {
+  grid-column: 1 / -1;
+  border-color: color-mix(in srgb, var(--hx-cyan) 45%, transparent);
+}
+.hx17-c-carta .hx17-nombre {
+  font-size: clamp(26px, 8vw, 34px);
+}
+
+.hx17 a:focus-visible {
+  outline: 2.5px solid var(--hx-cyan);
+  outline-offset: 2px;
+}
+
+/* ── Escritorio: retícula de 12 columnas, celdas de tamaños dispares ── */
+@media (min-width: 900px) {
+  .hx17 {
+    padding: 36px 30px 92px;
+  }
+  .hx17-mural {
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(126px, auto);
+    gap: 10px;
+  }
+
+  .hx17-titular {
+    grid-column: span 7;
+    grid-row: span 2;
+    justify-content: center;
+    padding: 34px 34px 36px;
+  }
+  .hx17-title {
+    font-size: clamp(52px, 5vw, 74px);
+  }
+  .hx17-sub {
+    font-size: 15px;
+    margin-top: 14px;
+  }
+
+  .hx17-c-carta {
+    grid-column: span 5;
+    grid-row: span 2;
+    justify-content: flex-end;
+  }
+  .hx17-c-carta .hx17-nombre {
+    font-size: 42px;
+  }
+  .hx17-c-carta .hx17-texto {
+    font-size: 14px;
+  }
+
+  .hx17-c-domicilios {
+    grid-column: span 4;
+  }
+  .hx17-c-cuenta {
+    grid-column: span 4;
+  }
+  .hx17-c-reservas {
+    grid-column: span 4;
+  }
+  .hx17-c-juegos {
+    grid-column: span 5;
+  }
+  .hx17-c-musica {
+    grid-column: span 3;
+  }
+  .hx17-c-provoca {
+    grid-column: span 2;
+  }
+  .hx17-c-descuentos {
+    grid-column: span 2;
+  }
+
+  .hx17-celda {
+    padding: 18px 20px 20px;
+  }
+  .hx17-nombre {
+    font-size: 26px;
+  }
+  .hx17-texto {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx17 * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

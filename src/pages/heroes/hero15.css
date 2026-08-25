@@ -1,0 +1,223 @@
+/* Opción 15 — El número (Newsreader + Epilogue) */
+.hx15 {
+  --hx-mag: var(--color-primary);
+  --hx-cyan: var(--color-secondary);
+  --hx-papel: #eff4f7;
+  --hx-tinta: #131a22;
+  --hx-tinta-suave: #5a6773;
+  min-height: 100dvh;
+  background: var(--hx-papel);
+  color: var(--hx-tinta);
+  font-family: "Epilogue", system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px 96px;
+}
+
+.hx15 h1,
+.hx15 h2 {
+  font-family: "Newsreader", serif;
+}
+
+.hx15-pliego {
+  width: 100%;
+  max-width: 1180px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ── Portada ── */
+.hx15-cabecera {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--hx-tinta);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hx15-masthead {
+  font-size: clamp(40px, 11vw, 62px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 20px 0 18px;
+}
+.hx15-masthead em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--hx-mag);
+}
+
+.hx15-lede {
+  font-family: "Newsreader", serif;
+  font-size: clamp(16px, 4.3vw, 19px);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+/* Capitular: dos líneas, como en una revista de verdad */
+.hx15-capitular {
+  float: left;
+  font-family: "Newsreader", serif;
+  font-size: 3.1em;
+  line-height: 0.82;
+  font-weight: 600;
+  padding: 0.06em 0.12em 0 0;
+  color: var(--hx-mag);
+}
+
+.hx15-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-top: 24px;
+}
+.hx15-cta {
+  font-size: 14.5px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--hx-papel);
+  background: var(--hx-tinta);
+  border-radius: 2px;
+  padding: 14px 24px;
+}
+.hx15-cta:hover {
+  background: var(--hx-mag);
+}
+.hx15-cta-soft {
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--hx-tinta);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--hx-cyan) 80%, #0f7f9b);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* ── Sumario ── */
+.hx15-sumario-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--hx-tinta);
+  margin-bottom: 4px;
+}
+
+.hx15-lista {
+  list-style: none;
+}
+.hx15-lista li + li {
+  border-top: 1px solid color-mix(in srgb, var(--hx-tinta) 18%, transparent);
+}
+
+.hx15-entrada {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "nombre dato"
+    "texto  texto";
+  gap: 3px 14px;
+  padding: 13px 0;
+  text-decoration: none;
+  color: inherit;
+}
+.hx15-entrada:hover .hx15-entrada-nombre {
+  color: var(--hx-mag);
+}
+.hx15-entrada-nombre {
+  grid-area: nombre;
+  font-family: "Newsreader", serif;
+  font-size: clamp(19px, 5vw, 23px);
+  font-weight: 600;
+  line-height: 1.15;
+}
+.hx15-entrada-texto {
+  grid-area: texto;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--hx-tinta-suave);
+  max-width: 48ch;
+}
+.hx15-entrada-dato {
+  grid-area: dato;
+  align-self: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hx-tinta-suave);
+  white-space: nowrap;
+}
+
+.hx15-folio {
+  margin-top: 16px;
+  padding-top: 10px;
+  border-top: 2px solid var(--hx-tinta);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hx-tinta-suave);
+}
+
+.hx15 a:focus-visible {
+  outline: 2.5px solid var(--hx-mag);
+  outline-offset: 3px;
+}
+
+/* ── Escritorio: pliego de dos páginas con medianil ── */
+@media (min-width: 900px) {
+  .hx15 {
+    padding: 44px 40px 96px;
+  }
+  .hx15-pliego {
+    flex-direction: row;
+    gap: 0;
+    align-items: stretch;
+  }
+  .hx15-portada {
+    flex: 1 1 52%;
+    padding-right: 52px;
+    display: flex;
+    flex-direction: column;
+  }
+  .hx15-sumario {
+    flex: 1 1 48%;
+    padding-left: 52px;
+    border-left: 1px solid color-mix(in srgb, var(--hx-tinta) 22%, transparent);
+  }
+  .hx15-masthead {
+    font-size: clamp(56px, 5.4vw, 78px);
+    margin: 28px 0 22px;
+  }
+  .hx15-acciones {
+    margin-top: auto;
+    padding-top: 28px;
+  }
+  .hx15-entrada {
+    grid-template-columns: minmax(180px, 1fr) 1.3fr auto;
+    grid-template-areas: "nombre texto dato";
+    align-items: baseline;
+    gap: 20px;
+    padding: 15px 0;
+  }
+  .hx15-entrada-texto {
+    align-self: baseline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx15 * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

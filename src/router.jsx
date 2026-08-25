@@ -96,6 +96,33 @@ const ImpostorSetupPage = lazyLoad(() => import("./pages/game/impostor-frostbyte
 const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/ImpostorGamePage"));
 
 const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
+
+// Rebranding: 20 opciones de hero en exploración (/hero1 … /hero20).
+// 1–10 exploran el tono de marca; 11–20 añaden layout propio de escritorio
+// y enseñan los servicios de la app dentro del propio hero.
+// Se retiran (páginas + rutas) cuando se elija una dirección.
+const HeroOptionPages = [
+  lazyLoad(() => import("./pages/heroes/Hero1Page")),
+  lazyLoad(() => import("./pages/heroes/Hero2Page")),
+  lazyLoad(() => import("./pages/heroes/Hero3Page")),
+  lazyLoad(() => import("./pages/heroes/Hero4Page")),
+  lazyLoad(() => import("./pages/heroes/Hero5Page")),
+  lazyLoad(() => import("./pages/heroes/Hero6Page")),
+  lazyLoad(() => import("./pages/heroes/Hero7Page")),
+  lazyLoad(() => import("./pages/heroes/Hero8Page")),
+  lazyLoad(() => import("./pages/heroes/Hero9Page")),
+  lazyLoad(() => import("./pages/heroes/Hero10Page")),
+  lazyLoad(() => import("./pages/heroes/Hero11Page")),
+  lazyLoad(() => import("./pages/heroes/Hero12Page")),
+  lazyLoad(() => import("./pages/heroes/Hero13Page")),
+  lazyLoad(() => import("./pages/heroes/Hero14Page")),
+  lazyLoad(() => import("./pages/heroes/Hero15Page")),
+  lazyLoad(() => import("./pages/heroes/Hero16Page")),
+  lazyLoad(() => import("./pages/heroes/Hero17Page")),
+  lazyLoad(() => import("./pages/heroes/Hero18Page")),
+  lazyLoad(() => import("./pages/heroes/Hero19Page")),
+  lazyLoad(() => import("./pages/heroes/Hero20Page")),
+];
 const PollaMundialPage = lazyLoad(() => import("./pages/PollaMundialPage"));
 const MundialPromoPage = lazyLoad(() => import("./pages/MundialPromoPage"));
 const PollaApp = lazyLoad(() => import("./pages/polla/PollaApp"));
@@ -222,6 +249,15 @@ export const router = createBrowserRouter([
       </Lazy>
     ),
   },
+  // Exploración de rebranding: una ruta por opción de hero
+  ...HeroOptionPages.map((HeroOption, i) => ({
+    path: `/hero${i + 1}`,
+    element: (
+      <Lazy>
+        <HeroOption />
+      </Lazy>
+    ),
+  })),
   // Polla Mundialista 2026 (pública)
   {
     path: "/polla-mundial",

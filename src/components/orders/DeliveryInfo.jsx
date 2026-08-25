@@ -1,10 +1,20 @@
 import React from "react";
-import { AlertTriangle, Bike, MapPin, MessageCircle, Navigation, Smartphone } from "lucide-react";
+import {
+  AlertTriangle,
+  Bike,
+  MapPin,
+  MessageCircle,
+  Navigation,
+  ShoppingBag,
+  Smartphone,
+} from "lucide-react";
 
 /**
  * Distintivos de domicilio para las vistas del staff.
  *
- * - <DeliveryBadge order /> chip "Domicilio" (solo si order_type === delivery).
+ * - <DeliveryBadge order /> chip "Domicilio" (order_type === delivery) o
+ *   "Para recoger" (order_type === pickup): un pedido para recoger no tiene
+ *   mesa ni dirección, así que sin chip se leería como un pedido suelto.
  * - <SourceBadge order />   chip con el origen del pedido: "App" (checkout web)
  *   o "WhatsApp" (agente de IA). Los pedidos del staff no llevan chip.
  * - <PaymentPendingBadge order /> chip ámbar "Pago por verificar" para pedidos
@@ -16,6 +26,7 @@ import { AlertTriangle, Bike, MapPin, MessageCircle, Navigation, Smartphone } fr
  */
 
 export const isDelivery = (order) => order?.order_type === "delivery";
+export const isPickup = (order) => order?.order_type === "pickup";
 
 export const SourceBadge = ({ order }) => {
   if (order?.source === "whatsapp") {
@@ -50,6 +61,14 @@ export const PaymentPendingBadge = ({ order }) => {
 };
 
 export const DeliveryBadge = ({ order }) => {
+  if (isPickup(order)) {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary/15 text-primary rounded-full text-xs font-bold border border-primary/25">
+        <ShoppingBag className="w-3 h-3" />
+        Para recoger
+      </span>
+    );
+  }
   if (!isDelivery(order)) return null;
   return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary/15 text-secondary rounded-full text-xs font-bold border border-secondary/25">

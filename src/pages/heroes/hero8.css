@@ -1,0 +1,198 @@
+/* Opción 8 — Turbo (Archivo itálica + Barlow, oscuro veloz) */
+.hx8 {
+  --hx-mag: var(--color-primary);
+  --hx-cyan: var(--color-secondary);
+  --hx-bg: #0a0c14;
+  --hx-ink: #eef5fb;
+  --hx-ink-soft: #8791a5;
+  position: relative;
+  min-height: 100dvh;
+  background: var(--hx-bg);
+  color: var(--hx-ink);
+  font-family: "Barlow", system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 32px 0 118px;
+}
+
+.hx8 h1 {
+  font-family: "Archivo", system-ui, sans-serif;
+}
+
+.hx8-main {
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hx8-badge {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--hx-bg);
+  background: var(--hx-cyan);
+  padding: 6px 12px;
+  transform: skewX(-8deg);
+}
+
+.hx8-title {
+  font-style: italic;
+  font-weight: 900;
+  font-size: clamp(38px, 11vw, 64px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.hx8-title-mag {
+  color: var(--hx-mag);
+}
+
+.hx8-tagline {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--hx-ink-soft);
+}
+
+/* ── Radar de cobertura ── */
+.hx8-radar {
+  position: relative;
+  align-self: center;
+  width: min(64vw, 260px);
+  aspect-ratio: 1;
+  margin: 10px 0 4px;
+}
+.hx8-anillo {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1.5px solid color-mix(in srgb, var(--hx-cyan) 35%, transparent);
+}
+.hx8-anillo-2 {
+  inset: 18%;
+  border-color: color-mix(in srgb, var(--hx-cyan) 25%, transparent);
+}
+.hx8-anillo-3 {
+  inset: 36%;
+  border-color: color-mix(in srgb, var(--hx-cyan) 18%, transparent);
+}
+.hx8-ping {
+  position: absolute;
+  inset: 44%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--hx-mag) 50%, transparent);
+  animation: hx8-ping 2.2s ease-out infinite;
+}
+@keyframes hx8-ping {
+  from {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+.hx8-centro {
+  position: absolute;
+  inset: 47%;
+  border-radius: 999px;
+  background: var(--hx-mag);
+}
+.hx8-radar-label {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hx-cyan);
+  background: var(--hx-bg);
+  padding: 2px 10px;
+}
+
+/* ── Acciones ── */
+.hx8-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hx8-cta {
+  font-family: "Archivo", sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 19px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--hx-bg);
+  background: var(--hx-mag);
+  padding: 14px 30px;
+  transform: skewX(-8deg);
+  transition: transform 0.15s ease;
+}
+.hx8-cta:hover {
+  transform: skewX(-8deg) translateY(-2px);
+}
+.hx8-cta-ghost {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hx-cyan);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ── Marquesina inferior ── */
+.hx8-marquee {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 64px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  padding: 10px 0;
+}
+.hx8-marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: hx8-corre 18s linear infinite;
+}
+.hx8-marquee-track em {
+  font-family: "Archivo", sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hx-ink-soft);
+}
+@keyframes hx8-corre {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
+.hx8 a:focus-visible {
+  outline: 2.5px solid var(--hx-cyan);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx8 * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

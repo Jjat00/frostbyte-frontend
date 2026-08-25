@@ -75,6 +75,8 @@ const KitchenOrderCard = ({ order, onSetPrep, onAllReady, pendingItemId, busyOrd
   const tableLabel =
     order.order_type === "delivery"
       ? "Domicilio"
+      : order.order_type === "pickup"
+      ? "Para recoger"
       : order.table_label ??
         (order.table_number === 0
           ? "Barra"

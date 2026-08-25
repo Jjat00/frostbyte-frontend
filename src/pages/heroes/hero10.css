@@ -1,0 +1,168 @@
+/* Opción 10 — Superapp bento (Bricolage Grotesque + Manrope) */
+.hx10 {
+  --hx-mag: var(--color-primary);
+  --hx-cyan: var(--color-secondary);
+  --hx-bg: #0b0d15;
+  --hx-card: #141827;
+  --hx-ink: #edf4fb;
+  --hx-ink-soft: #8b93a8;
+  min-height: 100dvh;
+  background: var(--hx-bg);
+  color: var(--hx-ink);
+  font-family: "Manrope", system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 18px 92px;
+}
+
+.hx10 h1 {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+.hx10-main {
+  max-width: 520px;
+  width: 100%;
+}
+
+.hx10-head {
+  margin-bottom: 20px;
+}
+.hx10-logo {
+  font-size: clamp(38px, 10vw, 54px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--hx-ink);
+}
+.hx10-punto {
+  color: var(--hx-mag);
+}
+.hx10-lema {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--hx-ink-soft);
+  margin-top: 8px;
+}
+
+/* ── Bento ── */
+.hx10-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.hx10-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 108px;
+  background: var(--hx-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 16px;
+  text-decoration: none;
+  color: var(--hx-ink);
+  transition:
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+a.hx10-tile:hover {
+  transform: translateY(-2px);
+}
+.hx10-tile strong {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.15;
+}
+.hx10-tile-nota {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--hx-ink-soft);
+}
+
+/* Tile principal: la carta */
+.hx10-tile-carta {
+  grid-column: 1 / -1;
+  min-height: 150px;
+  background:
+    radial-gradient(
+      130% 120% at 100% 0%,
+      color-mix(in srgb, var(--hx-mag) 26%, transparent),
+      transparent 55%
+    ),
+    var(--hx-card);
+  border-color: color-mix(in srgb, var(--hx-mag) 40%, transparent);
+}
+.hx10-tile-carta strong {
+  font-size: clamp(21px, 5.6vw, 26px);
+}
+.hx10-tile-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hx-mag);
+}
+.hx10-tile-cta {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--hx-cyan);
+}
+
+/* Acentos alternos */
+a.hx10-mag:hover {
+  border-color: color-mix(in srgb, var(--hx-mag) 55%, transparent);
+}
+a.hx10-cyan:hover {
+  border-color: color-mix(in srgb, var(--hx-cyan) 55%, transparent);
+}
+.hx10-mag strong {
+  color: color-mix(in srgb, var(--hx-mag) 70%, var(--hx-ink));
+}
+.hx10-cyan strong {
+  color: color-mix(in srgb, var(--hx-cyan) 70%, var(--hx-ink));
+}
+
+/* Tile vivo: reloj del local */
+.hx10-tile-vivo {
+  grid-column: 1 / -1;
+  min-height: 76px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--hx-ink);
+  color: var(--hx-bg);
+  border: none;
+}
+.hx10-reloj {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.hx10-fecha {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: right;
+  color: #4a5468;
+  max-width: 55%;
+  line-height: 1.5;
+}
+
+.hx10 a:focus-visible {
+  outline: 2.5px solid var(--hx-cyan);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx10 * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,250 @@
+/* Opción 14 — Wallet (Anybody + Figtree) */
+.hx14 {
+  --hx-mag: var(--color-primary);
+  --hx-cyan: var(--color-secondary);
+  --hx-bg: #0a0c13;
+  --hx-ink: #f0f5fa;
+  --hx-ink-soft: #8a93a6;
+  min-height: 100dvh;
+  background: var(--hx-bg);
+  color: var(--hx-ink);
+  font-family: "Figtree", system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 18px 96px;
+}
+
+.hx14 h1 {
+  font-family: "Anybody", system-ui, sans-serif;
+  font-stretch: condensed;
+}
+
+.hx14-wrap {
+  width: 100%;
+  max-width: 1180px;
+}
+
+.hx14-head {
+  margin-bottom: 22px;
+}
+.hx14-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--hx-cyan);
+  margin-bottom: 10px;
+}
+.hx14-title {
+  font-size: clamp(34px, 9vw, 50px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.hx14-sub {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--hx-ink-soft);
+  margin-top: 12px;
+  max-width: 42ch;
+}
+
+/* ── Pila de tarjetas (móvil): se solapan como en la cartera ── */
+.hx14-pila {
+  list-style: none;
+  padding-top: 6px;
+}
+.hx14-item + .hx14-item {
+  margin-top: -18px;
+}
+.hx14-item {
+  position: relative;
+  z-index: calc(var(--i) + 1);
+  transition: margin 0.22s ease;
+}
+.hx14-item.is-abierta {
+  z-index: 20;
+}
+.hx14-item.is-abierta + .hx14-item {
+  margin-top: 10px;
+}
+
+.hx14-tarjeta {
+  border-radius: 16px;
+  padding: 2px;
+  background: #171c2a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+.hx14-mag {
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--hx-mag) 32%, #171c2a),
+    #171c2a 62%
+  );
+}
+.hx14-cyan {
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--hx-cyan) 28%, #171c2a),
+    #171c2a 62%
+  );
+}
+
+.hx14-cabecera {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.hx14-chip {
+  width: 26px;
+  height: 19px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+.hx14-nombre {
+  flex: 1;
+  font-family: "Anybody", sans-serif;
+  font-stretch: condensed;
+  font-weight: 700;
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.hx14-dato {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hx-ink);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 999px;
+  padding: 5px 10px;
+}
+
+/* El detalle solo existe en la tarjeta abierta */
+.hx14-detalle {
+  display: none;
+  padding: 0 18px 18px;
+}
+.hx14-item.is-abierta .hx14-detalle {
+  display: block;
+}
+.hx14-detalle p {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #cfd8e6;
+  max-width: 42ch;
+}
+.hx14-accion {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--hx-ink);
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.34);
+  border-radius: 999px;
+  padding: 11px 20px;
+}
+.hx14-accion:hover {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.hx14 a:focus-visible,
+.hx14 button:focus-visible {
+  outline: 2.5px solid var(--hx-cyan);
+  outline-offset: 3px;
+}
+
+/* ── Escritorio: la pila se abre en abanico y todas se leen a la vez ── */
+@media (min-width: 900px) {
+  .hx14 {
+    padding: 44px 36px 96px;
+  }
+  .hx14-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 48px;
+    margin-bottom: 30px;
+  }
+  .hx14-title {
+    font-size: clamp(46px, 4.4vw, 62px);
+    max-width: 12ch;
+  }
+  .hx14-sub {
+    margin-top: 0;
+    padding-bottom: 6px;
+    text-align: right;
+  }
+
+  .hx14-pila {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .hx14-item,
+  .hx14-item + .hx14-item,
+  .hx14-item.is-abierta + .hx14-item {
+    margin-top: 0;
+  }
+  .hx14-tarjeta {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
+  }
+  .hx14-item.is-abierta .hx14-tarjeta {
+    transform: translateY(-6px);
+  }
+  /* En pantalla ancha cabe todo: el detalle no se esconde */
+  .hx14-detalle {
+    display: block;
+    margin-top: auto;
+  }
+  .hx14-cabecera {
+    cursor: default;
+  }
+  .hx14-nombre {
+    font-size: 25px;
+  }
+}
+
+@media (min-width: 1180px) {
+  .hx14-pila {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .hx14-nombre {
+    font-size: 20px;
+  }
+  .hx14-cabecera {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .hx14-dato {
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx14 * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
