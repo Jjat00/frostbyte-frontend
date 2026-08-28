@@ -4,6 +4,7 @@ import { X, Search, Package, Check, Loader2, ImageIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { productsService } from '@/services/products.service';
 import { cn } from '@/lib/utils';
+import { matchesSearch } from "@/lib/search";
 
 /**
  * Modal para seleccionar un producto existente
@@ -37,11 +38,8 @@ export function ProductSelectorModal({
   // Filter products by search term
   const filteredProducts = useMemo(() => {
     if (!searchTerm.trim()) return products;
-    const term = searchTerm.toLowerCase();
-    return products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(term) ||
-        p.category_name?.toLowerCase().includes(term)
+    return products.filter((p) =>
+      matchesSearch(searchTerm, p.name, p.category_name)
     );
   }, [products, searchTerm]);
 

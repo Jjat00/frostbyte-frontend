@@ -35,6 +35,7 @@ import {
 } from "@/lib/paymentMethods";
 import TableSelect from "@/components/orders/TableSelect";
 import { DeliveryBadge, DeliveryInfo, PaymentPendingBadge, SourceBadge } from "@/components/orders/DeliveryInfo";
+import { matchesSearch } from "@/lib/search";
 
 const statusConfig = {
   pending: {
@@ -313,10 +314,8 @@ const OrderDetailPage = () => {
 
   // Filtrar productos para búsqueda
   const filteredProducts =
-    productsData?.results?.filter(
-      (product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category_name?.toLowerCase().includes(searchQuery.toLowerCase())
+    productsData?.results?.filter((product) =>
+      matchesSearch(searchQuery, product.name, product.category_name)
     ) || [];
 
   const handleAddProduct = (variant, qty = 1) => {

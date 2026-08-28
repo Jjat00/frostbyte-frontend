@@ -20,6 +20,7 @@ import { productsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBusinessStore } from '@/stores/useBusinessStore';
+import { matchesSearch } from "@/lib/search";
 
 const ProductsListPage = () => {
   const navigate = useNavigate();
@@ -95,12 +96,8 @@ const ProductsListPage = () => {
   // Filtrar productos por búsqueda
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
-    const query = searchQuery.toLowerCase();
-    return products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(query) ||
-        p.description?.toLowerCase().includes(query) ||
-        p.category_name?.toLowerCase().includes(query)
+    return products.filter((p) =>
+      matchesSearch(searchQuery, p.name, p.description, p.category_name)
     );
   }, [products, searchQuery]);
 

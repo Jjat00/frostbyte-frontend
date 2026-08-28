@@ -19,6 +19,7 @@ import {
   usePollaAdminPlayers,
 } from "@/hooks/usePolla";
 import MencionesAdminSection from "./MencionesAdminSection";
+import { matchesSearch } from "@/lib/search";
 
 const fmt = (n) => new Intl.NumberFormat("es-CO").format(n || 0);
 
@@ -103,11 +104,8 @@ const PollaAdminDashboard = () => {
   const totalPlayers = overview?.players?.total ?? players.length;
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return players;
-    return players.filter(
-      (p) => `${p.name} ${p.email}`.toLowerCase().includes(q)
-    );
+    if (!search.trim()) return players;
+    return players.filter((p) => matchesSearch(search, p.name, p.email));
   }, [players, search]);
 
   return (

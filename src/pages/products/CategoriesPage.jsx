@@ -19,6 +19,7 @@ import {
 import { categoriesService } from '@/services/categories.service';
 import { businessService } from '@/services/business.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
+import { matchesSearch } from "@/lib/search";
 
 const CategoriesPage = () => {
   const queryClient = useQueryClient();
@@ -105,11 +106,8 @@ const CategoriesPage = () => {
   // Filtrar categorías por búsqueda
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) return categories;
-    const query = searchQuery.toLowerCase();
-    return categories.filter(
-      (cat) =>
-        cat.name.toLowerCase().includes(query) ||
-        cat.description?.toLowerCase().includes(query)
+    return categories.filter((cat) =>
+      matchesSearch(searchQuery, cat.name, cat.description)
     );
   }, [categories, searchQuery]);
 

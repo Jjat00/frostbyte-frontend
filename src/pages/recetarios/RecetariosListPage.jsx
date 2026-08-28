@@ -19,6 +19,7 @@ import { apiClient } from "@/services/api/client";
 import { useBusinessStore } from "@/stores/useBusinessStore";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import toast from "react-hot-toast";
+import { matchesSearch } from "@/lib/search";
 
 const DIFFICULTY_STYLES = {
   easy: { bg: "bg-green-500/20", text: "text-green-400", label: "Facil" },
@@ -92,12 +93,7 @@ const RecetariosListPage = () => {
 
   const filteredRecipes = useMemo(() => {
     if (!search) return recipes;
-    const q = search.toLowerCase();
-    return recipes.filter(
-      (r) =>
-        r.name.toLowerCase().includes(q) ||
-        r.product_name?.toLowerCase().includes(q)
-    );
+    return recipes.filter((r) => matchesSearch(search, r.name, r.product_name));
   }, [recipes, search]);
 
   return (

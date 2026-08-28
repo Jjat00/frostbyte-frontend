@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Flag from "@/components/polla/Flag";
 import { usePollaAdminAwards, useResolveAward } from "@/hooks/usePolla";
+import { matchesSearch } from "@/lib/search";
 
 const AWARD_ICONS = {
   champion: Trophy,
@@ -44,9 +45,7 @@ const ResolveSheet = ({ award, options, onClose, onResolve, isPending }) => {
   const Icon = AWARD_ICONS[award.code] || Star;
   const isTeam = award.type === "team";
   const opts = optionsFor(options, award.type);
-  const filtered = q
-    ? opts.filter((o) => o.name.toLowerCase().includes(q.toLowerCase()))
-    : opts;
+  const filtered = q ? opts.filter((o) => matchesSearch(q, o.name)) : opts;
 
   return createPortal(
     <motion.div

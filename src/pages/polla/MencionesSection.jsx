@@ -31,6 +31,7 @@ import {
   formatCountdownLong,
 } from "@/hooks/useCountdown";
 import { matchDayLabel, matchTime } from "@/data/mundial2026";
+import { matchesSearch } from "@/lib/search";
 
 const AWARD_ICONS = {
   champion: Trophy,
@@ -64,9 +65,7 @@ const PickerSheet = ({
   const isTeam = award.type === "team";
   const opts = optionsFor(options, award.type);
   const busy = isPending || isClearing;
-  const filtered = q
-    ? opts.filter((o) => o.name.toLowerCase().includes(q.toLowerCase()))
-    : opts;
+  const filtered = q ? opts.filter((o) => matchesSearch(q, o.name)) : opts;
 
   // Se renderiza en un portal a <body> para que el overlay escape del stacking
   // context de <main> (z-10) y de los motion.div animados: si no, su z-[60]

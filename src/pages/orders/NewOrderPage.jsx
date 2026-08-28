@@ -22,6 +22,7 @@ import { productsService, categoriesService } from '@/services';
 import { ordersService } from '@/services/orders.service';
 import { businessService } from '@/services/business.service';
 import TableSelect from '@/components/orders/TableSelect';
+import { matchesSearch } from "@/lib/search";
 
 // Punto de color por negocio (alineado con BusinessSelector)
 const businessDot = (color) => {
@@ -89,11 +90,8 @@ const NewOrderPage = () => {
   // Filtrar productos por búsqueda
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
-    const query = searchQuery.toLowerCase();
-    return products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(query) ||
-        p.category?.name?.toLowerCase().includes(query)
+    return products.filter((p) =>
+      matchesSearch(searchQuery, p.name, p.category?.name)
     );
   }, [products, searchQuery]);
 

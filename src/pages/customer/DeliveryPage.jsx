@@ -26,6 +26,7 @@ import CustomerTabBar from "@/components/CustomerTabBar";
 import DeliveryProductCard from "@/components/delivery/DeliveryProductCard";
 import DeliveryLoginWall from "@/components/delivery/DeliveryLoginWall";
 import VariantPickerSheet from "@/components/delivery/VariantPickerSheet";
+import { matchesSearch } from "@/lib/search";
 
 const formatCOP = (v) =>
   new Intl.NumberFormat("es-CO", {
@@ -33,13 +34,6 @@ const formatCOP = (v) =>
     currency: "COP",
     minimumFractionDigits: 0,
   }).format(v || 0);
-
-// Normaliza para buscar sin acentos ni mayúsculas
-const norm = (s = "") =>
-  s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 
 const StepPill = ({ done, children }) => (
   <span
@@ -131,9 +125,7 @@ const DeliveryPage = () => {
 
   // Secciones visibles según categoría activa y búsqueda
   const sections = useMemo(() => {
-    const q = norm(query.trim());
-    const matches = (p) =>
-      !q || norm(p.name).includes(q) || norm(p.description || "").includes(q);
+    const matches = (p) => matchesSearch(query, p.name, p.description);
     return categories
       .filter((c) => activeCat === "todo" || c.slug === activeCat)
       .map((c) => ({

@@ -20,6 +20,7 @@ import { ordersService } from '@/services/orders.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { DeliveryBadge, PaymentPendingBadge, SourceBadge } from '@/components/orders/DeliveryInfo';
+import { matchesSearch } from "@/lib/search";
 
 const statusConfig = {
   pending: { label: 'Pendiente', color: 'yellow', icon: Clock },
@@ -204,12 +205,11 @@ const OrdersHistoryPage = () => {
 
   // Filtrar por búsqueda
   const filteredOrders = orders.filter((order) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      order.order_number?.toLowerCase().includes(query) ||
-      order.customer_name?.toLowerCase().includes(query) ||
-      order.customer_phone?.includes(query)
+    return matchesSearch(
+      searchQuery,
+      order.order_number,
+      order.customer_name,
+      order.customer_phone
     );
   });
 

@@ -26,6 +26,7 @@ import {
 import { inventoryService } from '@/services/inventory.service';
 import { businessService } from '@/services/business.service';
 import { useBusinessStore } from '@/stores/useBusinessStore';
+import { matchesSearch } from "@/lib/search";
 
 // Punto de color por negocio (alineado con BusinessSelector)
 const businessDot = (color) => {
@@ -40,9 +41,8 @@ const SearchableSelect = ({ value, onChange, options, placeholder = "Seleccionar
   
   const selectedOption = options.find(opt => opt.id === parseInt(value));
   
-  const filteredOptions = options.filter(opt =>
-    opt.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (opt.unit_abbreviation && opt.unit_abbreviation.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredOptions = options.filter((opt) =>
+    matchesSearch(searchTerm, opt.name, opt.unit_abbreviation)
   );
 
   const handleSelect = (optionId) => {
