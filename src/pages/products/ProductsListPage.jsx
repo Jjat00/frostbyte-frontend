@@ -39,20 +39,23 @@ const ProductsListPage = () => {
     queryFn: () => categoriesService.getAll({ active_only: false, business: biz }),
   });
 
-  // Obtener productos filtrados
+  // Obtener productos filtrados. page_size alto: la API pagina a 50 y aquí
+  // se quieren ver todos (la búsqueda y el filtro son locales).
   const { data: productsData, isLoading } = useQuery({
     queryKey: ['products', selectedCategory, showInactive, selectedBusinessSlug],
     queryFn: () => productsService.getAll({
       active_only: !showInactive,
       category: selectedCategory !== 'all' ? selectedCategory : undefined,
       business: biz,
+      page_size: 1000,
     }),
   });
 
   // Obtener todos los productos para estadísticas
   const { data: allProductsData } = useQuery({
     queryKey: ['products', 'all', selectedBusinessSlug],
-    queryFn: () => productsService.getAll({ active_only: false, business: biz }),
+    queryFn: () =>
+      productsService.getAll({ active_only: false, business: biz, page_size: 1000 }),
   });
 
   // Mutación para eliminar producto
