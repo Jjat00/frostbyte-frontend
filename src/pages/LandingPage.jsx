@@ -12,7 +12,7 @@ import {
   ShoppingCart,
   Package,
   BarChart3,
-  DollarSign,
+  Wallet,
   Gamepad2,
   ArrowRight,
   Globe,
@@ -23,6 +23,16 @@ import {
   Users,
   Clock,
   Shield,
+  QrCode,
+  ChefHat,
+  Bike,
+  MapPin,
+  Route,
+  Bell,
+  Building2,
+  LayoutGrid,
+  Store,
+  PenLine,
 } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -32,25 +42,27 @@ gsap.registerPlugin(useGSAP);
  * Landing pública del SaaS (`/landing`): Frostbyte como plataforma para
  * restaurantes y bares.
  *
- * Hasta el 2026-08-28 seguía en el lenguaje anterior de la carta (titulares
- * `font-black` con el texto en degradado, `backdrop-blur-xl`, orbes de
- * `blur-[120px]`, un canvas binario con `requestAnimationFrame` permanente,
- * `animate-pulse` y tarjetas flotando en bucle, botones de bloque saturado y
- * un degradado distinto por tarjeta). La ruta `/` había pasado el 2026-08-20
- * al lenguaje del hero de servicios (`minimal.css`), así que al saltar de una
- * a otra la marca cambiaba de personalidad.
+ * Lenguaje visual: el mismo de la carta (`minimal.css`) desde el 2026-08-28
+ * (fondo con grano `fb-section`, vidrio rebajado `fb-card` sin
+ * `backdrop-filter`, Orbitron con tracking amplio, botones de borde `fb-btn`,
+ * entradas cortas `fb-reveal` y GSAP solo en el hero). El color significa
+ * algo: magenta para lo que hace la IA, cyan para la operación del negocio,
+ * neutro el resto.
  *
- * Ahora habla igual que la carta: fondo de degradado con grano (`fb-section`),
- * vidrio rebajado sin `backdrop-filter` (`fb-card`), Orbitron 500/600 con
- * tracking amplio, botones de borde (`fb-btn`) y entradas cortas
- * (`fb-reveal`, GSAP en el hero). El color significa algo: magenta para lo
- * que hace la IA, cyan para la gestión de la plataforma, neutro el resto.
+ * Contenido: hasta el 2026-08-31 la página solo contaba el menú digital con
+ * IA y se había quedado atrás frente a lo que la plataforma hace hoy. Ahora
+ * cuenta las tres puertas por las que entra un pedido (QR de mesa, app del
+ * cliente y agente de IA en WhatsApp), los domicilios propios con la zona
+ * dibujada en el mapa, y la operación completa (cocina en vivo, mesas por
+ * piso con sus QR, inventario, gastos, analítica y dos negocios en un mismo
+ * sistema).
  *
- * Las secciones y el contenido son los mismos; solo cambia cómo se ven.
+ * Regla al editar este archivo: solo se anuncia lo que existe en `main`. Nada
+ * de multi-sede, facturación electrónica ni integraciones que aún no están.
  */
 
-// Acento cyan para la sección de gestión: el mismo mecanismo que usan las
-// secciones de producto de la carta (`--fb-accent` en el contenedor).
+// Acento cyan para las secciones de operación: el mismo mecanismo que usan
+// las secciones de producto de la carta (`--fb-accent` en el contenedor).
 const CYAN_SECTION = {
   "--fb-accent": "var(--color-secondary)",
   "--fb-accent-2": "var(--color-primary)",
@@ -58,10 +70,10 @@ const CYAN_SECTION = {
 
 // --- HERO ---
 const heroChecks = [
-  "Menú inteligente",
-  "Recomendaciones por voz",
-  "Imágenes generadas con IA",
-  "Gestión en tiempo real",
+  "Agente de IA en WhatsApp",
+  "Domicilios propios",
+  "QR por mesa",
+  "Cocina en tiempo real",
 ];
 
 const scrollTo = (id) =>
@@ -95,7 +107,7 @@ const HeroSection = () => {
       <div className="container relative z-10 mx-auto px-5 md:px-8">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center md:gap-8">
           <span className="hero-reveal fb-eyebrow fb-eyebrow--accent">
-            Potenciado con inteligencia artificial
+            Plataforma para bares y restaurantes
           </span>
 
           <h1 className="hero-reveal m-0 flex flex-col items-center gap-3 md:gap-4">
@@ -110,18 +122,19 @@ const HeroSection = () => {
           <span aria-hidden className="hero-reveal fb-rule" />
 
           <p className="hero-reveal max-w-xl text-xs leading-relaxed text-light/55 md:text-[0.9rem]">
-            La plataforma all-in-one que transforma la forma en que gestionas
-            tu restaurante o bar. Menú digital con IA que recomienda, genera
-            contenido y entiende a tus clientes.
+            El sistema completo de tu local: carta con QR en cada mesa, pedidos
+            por WhatsApp que atiende una IA, domicilios propios sin comisiones,
+            cocina en vivo, inventario y caja. Un solo lugar, sin apps que
+            instalar.
           </p>
 
           <div className="hero-reveal flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
             <button
               type="button"
-              onClick={() => scrollTo("ai-features")}
+              onClick={() => scrollTo("canales")}
               className="fb-btn fb-btn--accent cursor-pointer"
             >
-              Descubrir Frostbyte
+              Ver todo lo que hace
               <ArrowRight size={15} />
             </button>
             <a
@@ -151,10 +164,10 @@ const HeroSection = () => {
 
 // --- CIFRAS ---
 const stats = [
-  { value: "5+", label: "Funciones de IA activas", icon: Brain },
-  { value: "10+", label: "Módulos integrados", icon: Layers },
-  { value: "0", label: "Apps que instalar", icon: Globe },
-  { value: "24/7", label: "Disponible para tus clientes", icon: Clock },
+  { value: "3", label: "Canales de pedido, una sola cocina", icon: Layers },
+  { value: "14", label: "Módulos en la misma cuenta", icon: LayoutGrid },
+  { value: "0", label: "Comisiones por pedido", icon: Wallet },
+  { value: "24/7", label: "IA respondiendo en WhatsApp", icon: Clock },
 ];
 
 const StatsSection = () => (
@@ -180,59 +193,215 @@ const StatsSection = () => (
   </section>
 );
 
+// --- CANALES DE PEDIDO ---
+const channels = [
+  {
+    icon: QrCode,
+    title: "El QR de la mesa",
+    description:
+      "Cada mesa tiene su código, y el código sabe en qué piso está. El cliente escanea, ve la carta con fotos y precios al día, pide su canción, sigue el estado de su pedido y juega mientras espera.",
+    detail: "Sin descargar nada, sin registrarse",
+  },
+  {
+    icon: MessageSquare,
+    title: "WhatsApp con agente de IA",
+    description:
+      "Un agente atiende el chat del negocio a toda hora: arma el pedido, cotiza el total, revisa si la dirección entra en tu zona y lo crea en el sistema. Si el cliente se sale del libreto, le pasa la conversación a una persona.",
+    detail: "Contesta a las 11 de la noche y en hora pico",
+  },
+  {
+    icon: ShoppingCart,
+    title: "Pedidos desde la app",
+    description:
+      "El cliente entra con Google, arma el carrito con variantes y adiciones, marca su casa en el mapa y paga contra entrega. Después sigue su pedido en vivo, con estados y la ruta hasta su puerta.",
+    detail: "Domicilio o para recoger, cada uno con su interruptor",
+  },
+];
+
+const ChannelsSection = () => (
+  <section id="canales" className="fb-section scroll-mt-16 py-16 md:py-20">
+    <div className="container relative z-10 mx-auto px-5">
+      <SectionHeading
+        eyebrow="Por dónde entran los pedidos"
+        title="Tres puertas, una sola cocina"
+        description="Tus clientes piden como les quede cómodo. Da igual por dónde entre: el pedido cae en la misma pantalla de cocina, con el mismo historial y las mismas cuentas."
+        className="mb-12"
+      />
+
+      <div className="mx-auto grid max-w-5xl gap-3 md:grid-cols-3">
+        {channels.map((channel) => (
+          <div
+            key={channel.title}
+            className="fb-card fb-card--lift fb-reveal flex h-full flex-col p-5"
+          >
+            <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-[12px] border border-white/[0.1] bg-white/[0.03]">
+              <channel.icon size={18} className="text-primary" />
+            </span>
+
+            <h3 className="font-display text-[0.82rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
+              {channel.title}
+            </h3>
+
+            <p className="mt-2.5 flex-1 text-[0.75rem] leading-relaxed text-light/50">
+              {channel.description}
+            </p>
+
+            <p className="mt-4 flex items-center gap-2 border-t border-white/[0.06] pt-3 text-[0.68rem] leading-snug text-light/65">
+              <Check size={13} className="flex-shrink-0 text-primary" />
+              {channel.detail}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <p className="fb-reveal mx-auto mt-6 flex max-w-2xl items-center justify-center gap-2.5 text-center text-[0.72rem] leading-relaxed text-light/45">
+        <ChefHat size={14} className="flex-shrink-0 text-light/35" />
+        Mesa, WhatsApp y app terminan en la misma comanda, con el mismo número
+        de pedido y el mismo estado.
+      </p>
+    </div>
+  </section>
+);
+
+// --- DOMICILIOS ---
+const deliveryPoints = [
+  {
+    icon: MapPin,
+    title: "Dibujas hasta dónde llegas",
+    description:
+      "La cobertura no es un círculo que te sobra por un lado y te falta por el otro: marcas la zona en el mapa, calle por calle. Fuera de ella el sistema no deja crear el pedido, ni en la app ni por WhatsApp.",
+  },
+  {
+    icon: Wallet,
+    title: "Sin comisiones de terceros",
+    description:
+      "El domicilio es tuyo. El valor del envío se registra aparte y no se mezcla con las ventas del local, así el margen sigue siendo el que es.",
+  },
+  {
+    icon: Route,
+    title: "El cliente ve dónde va su pedido",
+    description:
+      "Estados claros, tiempo estimado y la ruta hasta su casa, con un código de acceso para consultarlo. Nadie tiene que llamar a preguntar si ya salió.",
+  },
+  {
+    icon: Bell,
+    title: "Avisos automáticos",
+    description:
+      "Cuando el pedido se confirma, sale o queda listo para recoger, el cliente se entera solo, por WhatsApp o en la app.",
+  },
+];
+
+const DeliverySection = () => (
+  <section
+    id="domicilios"
+    className="fb-section scroll-mt-16 border-y border-white/[0.06] py-16 md:py-20"
+    style={CYAN_SECTION}
+  >
+    <div className="container relative z-10 mx-auto px-5">
+      <SectionHeading
+        eyebrow="Domicilios propios"
+        title="Tus domicilios, tus reglas"
+        description="Sin plataformas de por medio, sin comisiones y sin entregarle tus clientes a nadie. Tú decides la zona, el horario y cuándo se prende o se apaga el servicio."
+        className="mb-12"
+      />
+
+      <div className="mx-auto grid max-w-4xl gap-3 sm:grid-cols-2">
+        {deliveryPoints.map((point) => (
+          <div
+            key={point.title}
+            className="fb-card fb-reveal flex h-full gap-4 p-5"
+          >
+            <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[12px] border border-white/[0.1] bg-white/[0.03]">
+              <point.icon size={18} className="text-secondary" />
+            </span>
+
+            <div>
+              <h3 className="font-display text-[0.82rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
+                {point.title}
+              </h3>
+              <p className="mt-2.5 text-[0.75rem] leading-relaxed text-light/50">
+                {point.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="fb-reveal mx-auto mt-6 flex max-w-4xl flex-wrap items-center justify-center gap-2">
+        <span className="fb-pill">
+          <Bike size={12} className="text-secondary" />
+          Domicilio
+        </span>
+        <span className="fb-pill">
+          <Store size={12} className="text-secondary" />
+          Para recoger
+        </span>
+        <span className="fb-pill">
+          <Users size={12} className="text-secondary" />
+          En el local
+        </span>
+        <span className="fb-pill">
+          <Shield size={12} className="text-secondary" />
+          Cerrado significa cerrado: lo impone el sistema, no un aviso
+        </span>
+      </div>
+    </div>
+  </section>
+);
+
 // --- FUNCIONES DE IA ---
 const aiFeatures = [
+  {
+    icon: MessageSquare,
+    title: "Un agente que toma pedidos",
+    description:
+      "Conoce tu carta, los precios y lo que ese cliente pidió la última vez. Cotiza, verifica cobertura, crea el pedido, lo modifica o lo cancela, y avisa cuando va en camino. Cuando conviene, llama a una persona del equipo.",
+    highlight: "Atiende el chat cuando tú no puedes",
+  },
   {
     icon: ImageIcon,
     title: "Fotos profesionales al instante",
     description:
-      "Sube una foto básica de tu producto y obtén una imagen profesional lista para tu menú. Sin fotógrafo, sin edición manual. La IA transforma tus fotos en contenido de alta calidad.",
+      "Sube una foto básica del producto y obtén una imagen lista para la carta. Sin fotógrafo y sin edición manual. Cada imagen queda guardada en tu biblioteca para reutilizarla o asignarla a otro producto.",
     highlight: "Ahorra horas de producción fotográfica",
   },
   {
     icon: Brain,
     title: "Recomendaciones que venden",
     description:
-      "Tus clientes dicen cómo se sienten o responden un quiz rápido, y Frostbyte les recomienda el producto perfecto de tu menú. Cada interacción es una oportunidad de venta.",
-    highlight: "Aumenta el ticket promedio automáticamente",
+      "Tus clientes dicen cómo se sienten o responden un quiz rápido, y la app les recomienda el producto perfecto de tu carta. Cada consulta es una oportunidad de venta, no una lista de precios más.",
+    highlight: "Sube el ticket promedio sin presionar a nadie",
   },
   {
     icon: Mic,
-    title: "Pedidos y búsquedas por voz",
+    title: "Búsqueda por voz",
     description:
-      "Los clientes hablan naturalmente y la IA entiende. Dictan su estado de ánimo, lo que buscan o lo que quieren, y el sistema responde con la mejor opción del menú.",
+      "El cliente habla como hablaría en la barra, dice qué se le antoja o qué anda buscando, y el sistema responde con lo mejor de tu carta. Sin escribir y sin menús interminables.",
     highlight: "Experiencia accesible y sin fricción",
+  },
+  {
+    icon: PenLine,
+    title: "Descripciones que enamoran",
+    description:
+      "Agregas un producto y la IA escribe su descripción. Copy que suena a tu negocio, en segundos, para los cien productos que nunca ibas a sentarte a redactar.",
+    highlight: "Tu carta completa, bien contada",
   },
   {
     icon: Sparkles,
     title: "Contenido fresco cada día",
     description:
-      "Tu menú digital nunca se ve igual. Frases únicas, datos curiosos y contenido dinámico que se renueva automáticamente para mantener la atención de tus clientes.",
+      "La carta no se ve igual dos días seguidos: frases propias, historias reales de cada trago y detalles que cambian solos para que quien vuelve encuentre algo nuevo.",
     highlight: "Tu marca siempre activa, sin esfuerzo",
-  },
-  {
-    icon: MessageSquare,
-    title: "Descripciones que enamoran",
-    description:
-      "Agrega un producto y la IA escribe una descripción irresistible automáticamente. Copy profesional en segundos, optimizado para convertir visitas en pedidos.",
-    highlight: "Copywriting profesional automatizado",
-  },
-  {
-    icon: Layers,
-    title: "Biblioteca visual inteligente",
-    description:
-      "Cada imagen generada se guarda con su historial. Reutiliza, compara y asigna directamente a cualquier producto de tu catálogo con un solo clic.",
-    highlight: "Todo tu contenido visual organizado",
   },
 ];
 
 const AIFeaturesSection = () => (
-  <section id="ai-features" className="fb-section scroll-mt-16 py-16 md:py-20">
+  <section id="ia" className="fb-section scroll-mt-16 py-16 md:py-20">
     <div className="container relative z-10 mx-auto px-5">
       <SectionHeading
         eyebrow="Inteligencia artificial"
         title="La IA trabaja por ti"
-        description="Cada función de IA está diseñada para ahorrarte tiempo, vender más y darle a tus clientes una experiencia que no van a olvidar."
+        description="No es un chatbot pegado encima. La IA está metida donde duele: atender, vender, producir contenido y quitarte trabajo de encima."
         className="mb-12"
       />
 
@@ -265,57 +434,69 @@ const AIFeaturesSection = () => (
   </section>
 );
 
-// --- PLATAFORMA ---
+// --- OPERACIÓN ---
 const platformFeatures = [
   {
-    icon: Globe,
-    title: "Menú digital sin app",
+    icon: ChefHat,
+    title: "Cocina en vivo",
     description:
-      "Tus clientes escanean un QR y acceden al menú completo. Sin descargas, sin registros. Categorías dinámicas, fotos y precios siempre actualizados.",
+      "Los pedidos entran a la pantalla de cocina en el momento, con sus notas y sus adiciones, y cambian de estado a la vista de todos. Se acabó gritar comandas y perder papeles.",
   },
   {
-    icon: ShoppingCart,
-    title: "Pedidos en control total",
+    icon: QrCode,
+    title: "Mesas por piso, con sus QR",
     description:
-      "Desde que el cliente pide hasta que se entrega. Tracking en tiempo real por mesa, estados claros y notas personalizadas para cada pedido.",
+      "Cada piso con su numeración y su barra. Generas los códigos con el estilo de tu marca y los imprimes en hoja, con las copias que necesites para reponer.",
   },
   {
     icon: Package,
-    title: "Inventario que se cuida solo",
+    title: "Inventario que avisa",
     description:
-      "Sabes exactamente qué tienes, qué necesitas y cuándo pedir. Alertas de stock bajo, recetas vinculadas y órdenes de compra en un solo lugar.",
+      "Materias primas, movimientos, alertas de stock bajo y órdenes de compra a proveedores. Con la receta de cada producto sabes cuánto te cuesta de verdad lo que vendes.",
   },
   {
-    icon: DollarSign,
-    title: "Finanzas claras",
+    icon: Wallet,
+    title: "Gastos y margen sin trampas",
     description:
-      "Registra gastos diarios y recurrentes, establece límites y visualiza a dónde va tu dinero. Reportes que te ayudan a tomar mejores decisiones.",
+      "Gastos del día y recurrentes, separando lo que es gasto de lo que es inversión. El margen que ves es el margen que hay, no un número inflado.",
   },
   {
     icon: BarChart3,
-    title: "Datos que importan",
+    title: "Los números que sí decides",
     description:
-      "Dashboards con las métricas que necesitas: ventas, productos más pedidos, horarios pico. Información accionable para crecer tu negocio.",
+      "Ventas por día y por hora, productos que más salen, horarios pico e histórico completo. Sabes qué quitar de la carta y a qué hora poner más gente.",
   },
   {
-    icon: Gamepad2,
-    title: "Experiencias para tus clientes",
+    icon: Building2,
+    title: "Dos negocios, un sistema",
     description:
-      "Juegos interactivos multijugador en tiempo real. Tus clientes se divierten, se quedan más tiempo y vuelven. Entretenimiento que genera lealtad.",
+      "Puedes tener la cocina y el bar como negocios distintos, cada uno con su catálogo y sus ventas, operados por el mismo equipo desde la misma cuenta.",
   },
+];
+
+const extraModules = [
+  "Reservas de mesa y salón",
+  "Música por piso con Spotify",
+  "Pantallas del local",
+  "Feedback de clientes",
+  "Juegos multijugador",
+  "Variantes y adiciones",
+  "Recetarios del equipo",
+  "Roles de administrador y empleado",
+  "Historial y estadísticas de pedidos",
 ];
 
 const PlatformSection = () => (
   <section
-    id="platform"
+    id="operacion"
     className="fb-section scroll-mt-16 border-y border-white/[0.06] py-16 md:py-20"
     style={CYAN_SECTION}
   >
     <div className="container relative z-10 mx-auto px-5">
       <SectionHeading
-        eyebrow="Gestión completa"
-        title="Todo en un solo lugar"
-        description="Olvida las hojas de cálculo, los cuadernos y las apps separadas. Frostbyte centraliza toda la operación de tu negocio."
+        eyebrow="Operación completa"
+        title="Todo el negocio en un solo lugar"
+        description="Olvida los cuadernos, las hojas de cálculo y las cinco apps sueltas. Lo que pasa en la mesa, en la cocina, en la bodega y en la caja vive en el mismo sistema."
         className="mb-12"
       />
 
@@ -339,15 +520,29 @@ const PlatformSection = () => (
           </div>
         ))}
       </div>
+
+      <div className="fb-reveal mx-auto mt-8 max-w-4xl">
+        <p className="mb-3 text-center text-[0.7rem] uppercase tracking-[0.18em] text-light/35">
+          Y además
+        </p>
+        <ul className="m-0 flex list-none flex-wrap justify-center gap-2 p-0">
+          {extraModules.map((item) => (
+            <li key={item} className="fb-pill">
+              <Check size={12} className="text-secondary" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </section>
 );
 
 // --- DEMO EN PRODUCCIÓN ---
 const demoHighlights = [
-  { icon: Brain, label: "Quiz IA", desc: "Te recomienda según tu mood" },
+  { icon: Brain, label: "Quiz IA", desc: "Recomienda según tu mood" },
   { icon: Mic, label: "Búsqueda por voz", desc: "Habla y encuentra" },
-  { icon: Sparkles, label: "Contenido diario", desc: "Siempre fresco" },
+  { icon: Bike, label: "Domicilios", desc: "Carrito, mapa y ruta" },
   { icon: Users, label: "Sin registro", desc: "Acceso inmediato" },
 ];
 
@@ -355,9 +550,9 @@ const demoHighlights = [
 // ahora están quietas (regla 5 del lenguaje: nada infinito).
 const demoNotes = [
   {
-    icon: ImageIcon,
-    title: "Foto generada",
-    desc: "En 10 segundos",
+    icon: MessageSquare,
+    title: "«¿Tienen salchipapas?»",
+    desc: "La IA arma el pedido y cotiza",
     accent: "text-primary",
     position: "-right-4 top-1/4",
   },
@@ -377,7 +572,7 @@ const DemoSection = () => (
         <SectionHeading
           eyebrow="En producción"
           title="Velo en acción"
-          description="Esto no es un mockup. Es un menú digital real, funcionando en producción, con todas las funciones de IA activas. Explóralo tú mismo."
+          description="Esto no es un mockup. Es un bar real operando con Frostbyte todos los días: carta, domicilios, cocina, inventario y caja, con clientes reales pidiendo ahora mismo."
           className="mb-10"
         />
 
@@ -393,7 +588,7 @@ const DemoSection = () => (
               <div className="flex flex-1 justify-center">
                 <span className="fb-inset flex w-full max-w-xs items-center justify-center gap-2 px-3 py-1 text-[0.68rem] text-light/40">
                   <Shield size={11} />
-                  frostbyte.app
+                  frostbyte.com.co
                 </span>
               </div>
             </div>
@@ -402,14 +597,14 @@ const DemoSection = () => (
               <div className="text-center">
                 <span className="fb-eyebrow fb-eyebrow--accent inline-flex items-center gap-2">
                   <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  Menú digital en vivo
+                  Carta digital en vivo
                 </span>
                 <h3 className="font-display m-0 mt-3 text-xl font-semibold leading-none tracking-[0.16em] text-light md:text-2xl">
                   FROSTBYTE
                 </h3>
                 <p className="mx-auto mt-3 max-w-md text-[0.75rem] leading-relaxed text-light/50">
-                  Explora el menú con recomendaciones personalizadas, búsqueda
-                  por voz y contenido generado con IA.
+                  Explora la carta con recomendaciones personalizadas, búsqueda
+                  por voz, historias de cada trago y pedido a domicilio.
                 </p>
               </div>
 
@@ -475,7 +670,7 @@ const CTASection = () => (
       <div className="mx-auto max-w-2xl">
         <SectionHeading
           title="¿Listo para el siguiente nivel?"
-          description="Tu competencia sigue con cuadernos y hojas de cálculo. Tú puedes tener IA trabajando para ti ahora mismo."
+          description="Un local no necesita cinco apps sueltas ni pagarle comisión a nadie por sus propios clientes. Necesita un sistema, y este ya está funcionando."
         />
 
         <div className="fb-reveal mt-8 flex flex-col justify-center gap-2.5 sm:flex-row">
@@ -501,8 +696,10 @@ const CTASection = () => (
 // --- PIE ---
 const footerLinks = [
   { label: "Demo", href: "/", external: true },
-  { label: "IA", href: "#ai-features" },
-  { label: "Plataforma", href: "#platform" },
+  { label: "Canales", href: "#canales" },
+  { label: "Domicilios", href: "#domicilios" },
+  { label: "IA", href: "#ia" },
+  { label: "Operación", href: "#operacion" },
 ];
 
 const LandingFooter = () => (
@@ -562,8 +759,9 @@ const LandingFooter = () => (
 
 // --- BARRA DE NAVEGACIÓN ---
 const navLinks = [
-  { label: "IA", href: "#ai-features" },
-  { label: "Plataforma", href: "#platform" },
+  { label: "Canales", href: "#canales" },
+  { label: "IA", href: "#ia" },
+  { label: "Operación", href: "#operacion" },
   { label: "Demo", href: "/", external: true },
 ];
 
@@ -634,6 +832,8 @@ const LandingPage = () => {
       <main>
         <HeroSection />
         <StatsSection />
+        <ChannelsSection />
+        <DeliverySection />
         <AIFeaturesSection />
         <PlatformSection />
         <DemoSection />
