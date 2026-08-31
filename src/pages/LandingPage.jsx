@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import {
   Sparkles,
-  Image,
+  Image as ImageIcon,
   Mic,
   MessageSquare,
   Brain,
@@ -12,792 +14,559 @@ import {
   BarChart3,
   DollarSign,
   Gamepad2,
-  ChevronDown,
   ArrowRight,
-  Zap,
-  Shield,
   Globe,
   Check,
   ExternalLink,
   Layers,
-  Bot,
   TrendingUp,
   Users,
   Clock,
+  Shield,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { themeColorChannels } from "@/lib/themeColors";
+import SectionHeading from "@/components/SectionHeading";
 
-const BYTE_BINARY = "01000010011110010111010001100101";
+gsap.registerPlugin(useGSAP);
 
-// --- HERO SECTION ---
+/**
+ * Landing pública del SaaS (`/landing`): Frostbyte como plataforma para
+ * restaurantes y bares.
+ *
+ * Hasta el 2026-08-28 seguía en el lenguaje anterior de la carta (titulares
+ * `font-black` con el texto en degradado, `backdrop-blur-xl`, orbes de
+ * `blur-[120px]`, un canvas binario con `requestAnimationFrame` permanente,
+ * `animate-pulse` y tarjetas flotando en bucle, botones de bloque saturado y
+ * un degradado distinto por tarjeta). La ruta `/` había pasado el 2026-08-20
+ * al lenguaje del hero de servicios (`minimal.css`), así que al saltar de una
+ * a otra la marca cambiaba de personalidad.
+ *
+ * Ahora habla igual que la carta: fondo de degradado con grano (`fb-section`),
+ * vidrio rebajado sin `backdrop-filter` (`fb-card`), Orbitron 500/600 con
+ * tracking amplio, botones de borde (`fb-btn`) y entradas cortas
+ * (`fb-reveal`, GSAP en el hero). El color significa algo: magenta para lo
+ * que hace la IA, cyan para la gestión de la plataforma, neutro el resto.
+ *
+ * Las secciones y el contenido son los mismos; solo cambia cómo se ven.
+ */
+
+// Acento cyan para la sección de gestión: el mismo mecanismo que usan las
+// secciones de producto de la carta (`--fb-accent` en el contenedor).
+const CYAN_SECTION = {
+  "--fb-accent": "var(--color-secondary)",
+  "--fb-accent-2": "var(--color-primary)",
+};
+
+// --- HERO ---
+const heroChecks = [
+  "Menú inteligente",
+  "Recomendaciones por voz",
+  "Imágenes generadas con IA",
+  "Gestión en tiempo real",
+];
+
+const scrollTo = (id) =>
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
 const HeroSection = () => {
   const sectionRef = useRef(null);
-  const canvasRef = useRef(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const section = sectionRef.current;
-    if (!canvas || !section) return;
-
-    const ctx = canvas.getContext("2d");
-    let rafId;
-    const mouse = { x: -9999, y: -9999 };
-    // Color de marca (primary) leido una vez del tema; se reusa en cada frame sin volver a leer el token
-    const primaryChannels = themeColorChannels("--color-primary") || [255, 0, 212];
-    const COL_W = 22;
-    const ROW_H = 20;
-    const FONT_SIZE = 12;
-    const HOVER_RADIUS = 140;
-
-    let flickerPhases = [];
-    let cols = 0;
-    let rows = 0;
-
-    const buildGrid = () => {
-      cols = Math.ceil(canvas.width / COL_W) + 1;
-      rows = Math.ceil(canvas.height / ROW_H) + 1;
-      const total = cols * rows;
-      flickerPhases = new Float32Array(total);
-      for (let i = 0; i < total; i++) {
-        flickerPhases[i] = Math.random() * Math.PI * 2;
-      }
-    };
-
-    const resize = () => {
-      canvas.width = section.offsetWidth;
-      canvas.height = section.offsetHeight;
-      buildGrid();
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const handleMouseMove = (e) => {
-      const rect = section.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-    };
-    const handleMouseLeave = () => {
-      mouse.x = -9999;
-      mouse.y = -9999;
-    };
-
-    section.addEventListener("mousemove", handleMouseMove);
-    section.addEventListener("mouseleave", handleMouseLeave);
-
-    ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const t = Date.now() * 0.001;
-
-      for (let col = 0; col < cols; col++) {
-        for (let row = 0; row < rows; row++) {
-          const idx = col * rows + row;
-          const x = col * COL_W + COL_W / 2;
-          const y = row * ROW_H + ROW_H / 2;
-
-          const digit = BYTE_BINARY[idx % BYTE_BINARY.length];
-          const phase = flickerPhases[idx];
-          const flicker = 0.5 + 0.5 * Math.sin(t * 0.8 + phase);
-          let alpha = 0.06 + flicker * 0.12;
-          let r = 255, g = 255, b = 255;
-
-          const colorCycle = Math.sin(t * 0.5 + phase * 1.5);
-          if (colorCycle > 0.3) { r = 180; g = 240; b = 255; }
-          else if (colorCycle < -0.3) { r = 255; g = 180; b = 240; }
-
-          const dx = x - mouse.x;
-          const dy = y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          let drawX = x;
-          let drawY = y;
-          if (dist < HOVER_RADIUS) {
-            const intensity = 1 - dist / HOVER_RADIUS;
-            const ease = intensity * intensity;
-
-            // Ripple wave distortion
-            const waveFreq = 0.06;
-            const waveAmp = 8;
-            const wave = Math.sin(dist * waveFreq - t * 4) * waveAmp * ease;
-            const angle = Math.atan2(dy, dx);
-            drawX += Math.cos(angle) * wave;
-            drawY += Math.sin(angle) * wave;
-
-            alpha = Math.min(1, alpha + ease * 0.85);
-            r = Math.round(r * (1 - ease) + primaryChannels[0] * ease);
-            g = Math.round(g * (1 - ease) + primaryChannels[1] * ease);
-            b = Math.round(b * (1 - ease) + primaryChannels[2] * ease);
-            const scale = 1 + ease * 0.5;
-            ctx.font = `${Math.round(FONT_SIZE * scale)}px 'Courier New', monospace`;
-            ctx.shadowColor = `rgba(${primaryChannels[0]},${primaryChannels[1]},${primaryChannels[2]}, ${ease * 0.7})`;
-            ctx.shadowBlur = ease * 16;
-          }
-
-          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-          ctx.fillText(digit, drawX, drawY);
-
-          if (dist < HOVER_RADIUS) {
-            ctx.font = `${FONT_SIZE}px 'Courier New', monospace`;
-            ctx.shadowColor = "transparent";
-            ctx.shadowBlur = 0;
-          }
-        }
-      }
-      rafId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    return () => {
-      section.removeEventListener("mousemove", handleMouseMove);
-      section.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(rafId);
-    };
-  }, []);
+  // Misma entrada que el hero de la carta: opacidad y 14 px, en cascada.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from(".hero-reveal", {
+          opacity: 0,
+          y: 14,
+          duration: 0.5,
+          stagger: 0.06,
+          ease: "power2.out",
+        });
+      });
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+      className="fb-section flex min-h-[100svh] items-center pt-24 pb-14 md:pt-28"
     >
-      <div className="absolute inset-0 backdrop-blur-xl bg-black/[0.3]" />
-      <div className="absolute inset-0 bg-linear-to-b from-white/[0.04] via-transparent to-white/[0.03]" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/[0.1] to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
-      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
+      <div className="container relative z-10 mx-auto px-5 md:px-8">
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center md:gap-8">
+          <span className="hero-reveal fb-eyebrow fb-eyebrow--accent">
+            Potenciado con inteligencia artificial
+          </span>
 
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-primary rounded-full filter blur-[120px] animate-pulse" />
-        <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-secondary rounded-full filter blur-[120px] animate-pulse"
-          style={{ animationDelay: "1s" }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-5xl mx-auto text-center space-y-8">
-          <div>
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-primary/20 to-secondary/20 border border-primary/50 rounded-full text-primary text-xs sm:text-sm font-semibold tracking-wider">
-              <Bot size={16} />
-              POTENCIADO CON INTELIGENCIA ARTIFICIAL
+          <h1 className="hero-reveal m-0 flex flex-col items-center gap-3 md:gap-4">
+            <span className="font-display text-[clamp(2.2rem,11vw,3.25rem)] font-semibold leading-none tracking-[0.16em] text-light md:text-[clamp(3.5rem,8vw,6.5rem)] md:tracking-[0.03em]">
+              FROSTBYTE
             </span>
-          </div>
-
-          <h1 className="text-[clamp(2.8rem,11vw,9rem)] font-black text-light leading-none tracking-tight">
-            FROSTBYTE
-            <span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-widest mt-2">
-              TU NEGOCIO. OTRO NIVEL.
+            <span className="font-display text-[0.7rem] font-medium uppercase tracking-[0.32em] text-light/60 md:text-[0.95rem]">
+              Tu negocio. Otro nivel.
             </span>
           </h1>
 
-          <p className="text-gray text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
+          <span aria-hidden className="hero-reveal fb-rule" />
+
+          <p className="hero-reveal max-w-xl text-xs leading-relaxed text-light/55 md:text-[0.9rem]">
             La plataforma all-in-one que transforma la forma en que gestionas
-            tu restaurante o bar. Menu digital con IA que recomienda, genera
+            tu restaurante o bar. Menú digital con IA que recomienda, genera
             contenido y entiende a tus clientes.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              onClick={() =>
-                document
-                  .getElementById("ai-features")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+          <div className="hero-reveal flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row">
+            <button
+              type="button"
+              onClick={() => scrollTo("ai-features")}
+              className="fb-btn fb-btn--accent cursor-pointer"
             >
               Descubrir Frostbyte
-              <ArrowRight size={20} className="ml-2" />
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-2 border-primary/50 text-primary font-bold text-lg px-8 py-6 hover:bg-primary/10 hover:border-primary hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
+              <ArrowRight size={15} />
+            </button>
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="fb-btn"
             >
-              <a href="/" target="_blank" rel="noopener noreferrer">
-                <ExternalLink size={20} className="mr-2" />
-                Ver Demo en Vivo
-              </a>
-            </Button>
+              <ExternalLink size={15} />
+              Ver demo en vivo
+            </a>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
-            {[
-              "Menu inteligente",
-              "Recomendaciones por voz",
-              "Imagenes generadas con IA",
-              "Gestion en tiempo real",
-            ].map((item) => (
-              <span
-                key={item}
-                className="flex items-center gap-2 text-gray/70 text-sm font-medium"
-              >
-                <Check size={14} className="text-secondary" />
+          <ul className="hero-reveal m-0 flex list-none flex-wrap justify-center gap-2 p-0">
+            {heroChecks.map((item) => (
+              <li key={item} className="fb-pill">
+                <Check size={12} className="text-secondary" />
                 {item}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          <ChevronDown className="text-primary" size={40} />
-        </motion.div>
-      </motion.div>
     </section>
   );
 };
 
-// --- STATS SECTION ---
+// --- CIFRAS ---
 const stats = [
   { value: "5+", label: "Funciones de IA activas", icon: Brain },
-  { value: "10+", label: "Modulos integrados", icon: Layers },
+  { value: "10+", label: "Módulos integrados", icon: Layers },
   { value: "0", label: "Apps que instalar", icon: Globe },
   { value: "24/7", label: "Disponible para tus clientes", icon: Clock },
 ];
 
 const StatsSection = () => (
-  <section className="py-16 relative">
-    <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
-    <div className="container mx-auto px-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
-            className="liquid-glass-light relative text-center rounded-2xl p-6 border border-white/[0.08]"
+  <section className="fb-section fb-section--plain border-y border-white/[0.06] py-10">
+    <div className="container relative z-10 mx-auto px-5">
+      <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-4">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="fb-card fb-reveal flex flex-col items-center p-5 text-center"
           >
-            <stat.icon size={24} className="text-primary/50 mx-auto mb-3" />
-            <p className="text-4xl md:text-5xl font-black bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+            <stat.icon size={16} className="mb-3 text-light/45" />
+            <span className="font-display text-2xl font-semibold leading-none tracking-[0.06em] text-light md:text-3xl">
               {stat.value}
-            </p>
-            <p className="text-gray text-sm font-medium tracking-wide">
+            </span>
+            <span className="mt-2.5 text-[0.68rem] leading-snug text-light/50">
               {stat.label}
-            </p>
-          </motion.div>
+            </span>
+          </div>
         ))}
       </div>
     </div>
   </section>
 );
 
-// --- AI FEATURES SECTION ---
+// --- FUNCIONES DE IA ---
 const aiFeatures = [
   {
-    icon: Image,
+    icon: ImageIcon,
     title: "Fotos profesionales al instante",
     description:
-      "Sube una foto basica de tu producto y obtene una imagen profesional lista para tu menu. Sin fotografo, sin edicion manual. La IA transforma tus fotos en contenido de alta calidad.",
-    highlight: "Ahorra horas de produccion fotografica",
-    color: "from-primary to-pink-500",
+      "Sube una foto básica de tu producto y obtén una imagen profesional lista para tu menú. Sin fotógrafo, sin edición manual. La IA transforma tus fotos en contenido de alta calidad.",
+    highlight: "Ahorra horas de producción fotográfica",
   },
   {
     icon: Brain,
     title: "Recomendaciones que venden",
     description:
-      "Tus clientes dicen como se sienten o responden un quiz rapido, y Frostbyte les recomienda el producto perfecto de tu menu. Cada interaccion es una oportunidad de venta.",
-    highlight: "Aumenta el ticket promedio automaticamente",
-    color: "from-secondary to-blue-500",
+      "Tus clientes dicen cómo se sienten o responden un quiz rápido, y Frostbyte les recomienda el producto perfecto de tu menú. Cada interacción es una oportunidad de venta.",
+    highlight: "Aumenta el ticket promedio automáticamente",
   },
   {
     icon: Mic,
-    title: "Pedidos y busquedas por voz",
+    title: "Pedidos y búsquedas por voz",
     description:
-      "Los clientes hablan naturalmente y la IA entiende. Dictan su estado de animo, lo que buscan o lo que quieren, y el sistema responde con la mejor opcion del menu.",
-    highlight: "Experiencia accesible y sin friccion",
-    color: "from-purple-500 to-primary",
+      "Los clientes hablan naturalmente y la IA entiende. Dictan su estado de ánimo, lo que buscan o lo que quieren, y el sistema responde con la mejor opción del menú.",
+    highlight: "Experiencia accesible y sin fricción",
   },
   {
     icon: Sparkles,
-    title: "Contenido fresco cada dia",
+    title: "Contenido fresco cada día",
     description:
-      "Tu menu digital nunca se ve igual. Frases unicas, datos curiosos y contenido dinamico que se renueva automaticamente para mantener la atencion de tus clientes.",
+      "Tu menú digital nunca se ve igual. Frases únicas, datos curiosos y contenido dinámico que se renueva automáticamente para mantener la atención de tus clientes.",
     highlight: "Tu marca siempre activa, sin esfuerzo",
-    color: "from-amber-500 to-orange-500",
   },
   {
     icon: MessageSquare,
     title: "Descripciones que enamoran",
     description:
-      "Agrega un producto y la IA escribe una descripcion irresistible automaticamente. Copy profesional en segundos, optimizado para convertir visitas en pedidos.",
+      "Agrega un producto y la IA escribe una descripción irresistible automáticamente. Copy profesional en segundos, optimizado para convertir visitas en pedidos.",
     highlight: "Copywriting profesional automatizado",
-    color: "from-emerald-500 to-secondary",
   },
   {
     icon: Layers,
     title: "Biblioteca visual inteligente",
     description:
-      "Cada imagen generada se guarda con su historial. Reutiliza, compara y asigna directamente a cualquier producto de tu catalogo con un solo clic.",
+      "Cada imagen generada se guarda con su historial. Reutiliza, compara y asigna directamente a cualquier producto de tu catálogo con un solo clic.",
     highlight: "Todo tu contenido visual organizado",
-    color: "from-rose-500 to-primary",
   },
 ];
 
 const AIFeaturesSection = () => (
-  <section id="ai-features" className="py-24 relative overflow-hidden">
-    <div className="absolute inset-0">
-      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
-      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full filter blur-[150px]" />
-      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full filter blur-[150px]" />
-    </div>
+  <section id="ai-features" className="fb-section scroll-mt-16 py-16 md:py-20">
+    <div className="container relative z-10 mx-auto px-5">
+      <SectionHeading
+        eyebrow="Inteligencia artificial"
+        title="La IA trabaja por ti"
+        description="Cada función de IA está diseñada para ahorrarte tiempo, vender más y darle a tus clientes una experiencia que no van a olvidar."
+        className="mb-12"
+      />
 
-    <div className="container mx-auto px-4 relative z-10">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-16"
-      >
-        <span className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/30 rounded-full text-primary text-xs font-semibold tracking-wider mb-4">
-          <Zap size={14} />
-          INTELIGENCIA ARTIFICIAL
-        </span>
-        <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-          LA IA TRABAJA{" "}
-          <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-            POR TI
-          </span>
-        </h2>
-        <p className="text-gray text-lg max-w-2xl mx-auto">
-          Cada funcion de IA esta disenada para ahorrarte tiempo, vender mas
-          y darle a tus clientes una experiencia que no van a olvidar.
-        </p>
-      </motion.div>
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {aiFeatures.map((feature, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="group"
+      <div className="mx-auto grid max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {aiFeatures.map((feature) => (
+          <div
+            key={feature.title}
+            className="fb-card fb-card--lift fb-reveal flex h-full flex-col p-5"
           >
-            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col transition-all duration-500 hover:border-primary/40 hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-primary)_15%,transparent)] hover:-translate-y-1">
-              <div
-                className={`w-14 h-14 bg-linear-to-br ${feature.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}
-              >
-                <feature.icon className="text-dark" size={28} />
-              </div>
+            <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-[12px] border border-white/[0.1] bg-white/[0.03]">
+              <feature.icon size={18} className="text-primary" />
+            </span>
 
-              <h3 className="text-xl font-bold text-light mb-3 tracking-wide">
-                {feature.title}
-              </h3>
+            <h3 className="font-display text-[0.82rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
+              {feature.title}
+            </h3>
 
-              <p className="text-gray leading-relaxed mb-6 flex-1">
-                {feature.description}
-              </p>
+            <p className="mt-2.5 flex-1 text-[0.75rem] leading-relaxed text-light/50">
+              {feature.description}
+            </p>
 
-              <div className="flex items-center gap-2 pt-4 border-t border-gray/10">
-                <TrendingUp size={14} className="text-secondary flex-shrink-0" />
-                <span className="text-secondary text-sm font-semibold">
-                  {feature.highlight}
-                </span>
-              </div>
-            </div>
-          </motion.div>
+            <p className="mt-4 flex items-center gap-2 border-t border-white/[0.06] pt-3 text-[0.68rem] leading-snug text-light/65">
+              <TrendingUp size={13} className="flex-shrink-0 text-primary" />
+              {feature.highlight}
+            </p>
+          </div>
         ))}
       </div>
     </div>
   </section>
 );
 
-// --- PLATFORM FEATURES SECTION ---
+// --- PLATAFORMA ---
 const platformFeatures = [
   {
     icon: Globe,
-    title: "Menu Digital sin App",
+    title: "Menú digital sin app",
     description:
-      "Tus clientes escanean un QR y acceden al menu completo. Sin descargas, sin registros. Categorias dinamicas, fotos y precios siempre actualizados.",
-    color: "primary",
+      "Tus clientes escanean un QR y acceden al menú completo. Sin descargas, sin registros. Categorías dinámicas, fotos y precios siempre actualizados.",
   },
   {
     icon: ShoppingCart,
-    title: "Pedidos en Control Total",
+    title: "Pedidos en control total",
     description:
       "Desde que el cliente pide hasta que se entrega. Tracking en tiempo real por mesa, estados claros y notas personalizadas para cada pedido.",
-    color: "secondary",
   },
   {
     icon: Package,
-    title: "Inventario que se Cuida Solo",
+    title: "Inventario que se cuida solo",
     description:
-      "Sabes exactamente que tienes, que necesitas y cuando pedir. Alertas de stock bajo, recetas vinculadas y ordenes de compra en un solo lugar.",
-    color: "primary",
+      "Sabes exactamente qué tienes, qué necesitas y cuándo pedir. Alertas de stock bajo, recetas vinculadas y órdenes de compra en un solo lugar.",
   },
   {
     icon: DollarSign,
-    title: "Finanzas Claras",
+    title: "Finanzas claras",
     description:
-      "Registra gastos diarios y recurrentes, establece limites y visualiza a donde va tu dinero. Reportes que te ayudan a tomar mejores decisiones.",
-    color: "secondary",
+      "Registra gastos diarios y recurrentes, establece límites y visualiza a dónde va tu dinero. Reportes que te ayudan a tomar mejores decisiones.",
   },
   {
     icon: BarChart3,
-    title: "Datos que Importan",
+    title: "Datos que importan",
     description:
-      "Dashboards con las metricas que necesitas: ventas, productos mas pedidos, horarios pico. Informacion accionable para crecer tu negocio.",
-    color: "primary",
+      "Dashboards con las métricas que necesitas: ventas, productos más pedidos, horarios pico. Información accionable para crecer tu negocio.",
   },
   {
     icon: Gamepad2,
-    title: "Experiencias para tus Clientes",
+    title: "Experiencias para tus clientes",
     description:
-      "Juegos interactivos multijugador en tiempo real. Tus clientes se divierten, se quedan mas tiempo y vuelven. Entretenimiento que genera lealtad.",
-    color: "secondary",
+      "Juegos interactivos multijugador en tiempo real. Tus clientes se divierten, se quedan más tiempo y vuelven. Entretenimiento que genera lealtad.",
   },
 ];
 
 const PlatformSection = () => (
-  <section id="platform" className="py-24 relative overflow-hidden backdrop-blur-md bg-white/[0.02] border-y border-white/[0.08]">
-    <div className="absolute inset-0">
-      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-secondary/30 to-transparent" />
-      <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
-    </div>
+  <section
+    id="platform"
+    className="fb-section scroll-mt-16 border-y border-white/[0.06] py-16 md:py-20"
+    style={CYAN_SECTION}
+  >
+    <div className="container relative z-10 mx-auto px-5">
+      <SectionHeading
+        eyebrow="Gestión completa"
+        title="Todo en un solo lugar"
+        description="Olvida las hojas de cálculo, los cuadernos y las apps separadas. Frostbyte centraliza toda la operación de tu negocio."
+        className="mb-12"
+      />
 
-    <div className="container mx-auto px-4 relative z-10">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-16"
-      >
-        <span className="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 border border-secondary/30 rounded-full text-secondary text-xs font-semibold tracking-wider mb-4">
-          <Shield size={14} />
-          GESTION COMPLETA
-        </span>
-        <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-          TODO EN{" "}
-          <span className="bg-linear-to-r from-secondary to-primary bg-clip-text text-transparent">
-            UN SOLO LUGAR
-          </span>
-        </h2>
-        <p className="text-gray text-lg max-w-2xl mx-auto">
-          Olvida las hojas de calculo, los cuadernos y las apps separadas.
-          Frostbyte centraliza toda la operacion de tu negocio.
-        </p>
-      </motion.div>
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {platformFeatures.map((feature, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-            className="group"
+      <div className="mx-auto grid max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {platformFeatures.map((feature) => (
+          <div
+            key={feature.title}
+            className="fb-card fb-card--lift fb-reveal flex h-full flex-col p-5"
           >
-            <div className="liquid-glass-interactive relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-8 h-full flex flex-col items-start transition-all duration-300 hover:border-primary/40 hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-primary)_15%,transparent)]">
-              <div
-                className={`w-16 h-16 bg-linear-to-br ${
-                  feature.color === "primary"
-                    ? "from-primary/20 to-primary/5"
-                    : "from-secondary/20 to-secondary/5"
-                } border ${
-                  feature.color === "primary"
-                    ? "border-primary/30"
-                    : "border-secondary/30"
-                } rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
-              >
-                <feature.icon
-                  className={
-                    feature.color === "primary" ? "text-primary" : "text-secondary"
-                  }
-                  size={28}
-                />
-              </div>
+            <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-[12px] border border-white/[0.1] bg-white/[0.03]">
+              <feature.icon size={18} className="text-secondary" />
+            </span>
 
-              <h3 className="text-xl font-bold text-light mb-3 tracking-wide">
-                {feature.title}
-              </h3>
+            <h3 className="font-display text-[0.82rem] font-semibold uppercase leading-tight tracking-[0.12em] text-light">
+              {feature.title}
+            </h3>
 
-              <p className="text-gray leading-relaxed">{feature.description}</p>
-            </div>
-          </motion.div>
+            <p className="mt-2.5 text-[0.75rem] leading-relaxed text-light/50">
+              {feature.description}
+            </p>
+          </div>
         ))}
       </div>
     </div>
   </section>
 );
 
-// --- DEMO / CASE STUDY SECTION ---
+// --- DEMO EN PRODUCCIÓN ---
+const demoHighlights = [
+  { icon: Brain, label: "Quiz IA", desc: "Te recomienda según tu mood" },
+  { icon: Mic, label: "Búsqueda por voz", desc: "Habla y encuentra" },
+  { icon: Sparkles, label: "Contenido diario", desc: "Siempre fresco" },
+  { icon: Users, label: "Sin registro", desc: "Acceso inmediato" },
+];
+
+// Las dos notas al costado del navegador. Antes flotaban en bucle infinito;
+// ahora están quietas (regla 5 del lenguaje: nada infinito).
+const demoNotes = [
+  {
+    icon: ImageIcon,
+    title: "Foto generada",
+    desc: "En 10 segundos",
+    accent: "text-primary",
+    position: "-right-4 top-1/4",
+  },
+  {
+    icon: Brain,
+    title: "«Quiero algo frío»",
+    desc: "IA: Granizado de mango",
+    accent: "text-secondary",
+    position: "-left-4 bottom-1/4",
+  },
+];
+
 const DemoSection = () => (
-  <section className="py-24 relative overflow-hidden">
-    <div className="absolute inset-0">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full filter blur-[200px]" />
-    </div>
+  <section className="fb-section fb-section--plain py-16 md:py-20">
+    <div className="container relative z-10 mx-auto px-5">
+      <div className="mx-auto max-w-5xl">
+        <SectionHeading
+          eyebrow="En producción"
+          title="Velo en acción"
+          description="Esto no es un mockup. Es un menú digital real, funcionando en producción, con todas las funciones de IA activas. Explóralo tú mismo."
+          className="mb-10"
+        />
 
-    <div className="container mx-auto px-4 relative z-10">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <span className="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 border border-secondary/30 rounded-full text-secondary text-xs font-semibold tracking-wider mb-4">
-            <Globe size={14} />
-            EN PRODUCCION
-          </span>
-          <h2 className="text-4xl md:text-6xl font-black text-light mb-4">
-            VELO EN{" "}
-            <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-              ACCION
-            </span>
-          </h2>
-          <p className="text-gray text-lg max-w-2xl mx-auto">
-            Esto no es un mockup. Es un menu digital real, funcionando en
-            produccion, con todas las funciones de IA activas. Exploralo tu mismo.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="relative"
-        >
-          {/* Browser mockup */}
-          <div className="liquid-glass relative bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)]">
-            <div className="flex items-center gap-3 px-6 py-4 bg-white/[0.04] border-b border-white/[0.08]">
-              <div className="flex gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                <div className="w-3 h-3 rounded-full bg-green-500/80" />
+        <div className="relative">
+          {/* Ventana de navegador */}
+          <div className="fb-card fb-reveal overflow-hidden">
+            <div className="flex items-center gap-3 border-b border-white/[0.06] bg-white/[0.02] px-4 py-3">
+              <div className="flex gap-1.5" aria-hidden>
+                <span className="h-2.5 w-2.5 rounded-full bg-white/[0.12]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-white/[0.12]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-white/[0.12]" />
               </div>
-              <div className="flex-1 flex justify-center">
-                <div className="bg-white/[0.06] border border-white/[0.1] rounded-lg px-4 py-1.5 text-gray text-sm font-mono flex items-center gap-2 max-w-md w-full">
-                  <Shield size={12} className="text-green-400" />
-                  <span className="text-gray/50">frostbyte.app</span>
-                </div>
+              <div className="flex flex-1 justify-center">
+                <span className="fb-inset flex w-full max-w-xs items-center justify-center gap-2 px-3 py-1 text-[0.68rem] text-light/40">
+                  <Shield size={11} />
+                  frostbyte.app
+                </span>
               </div>
             </div>
 
-            <div className="p-8 md:p-12 space-y-8">
-              <div className="text-center space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/30 rounded-full">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span className="text-primary text-xs font-semibold">
-                    MENU DIGITAL EN VIVO
-                  </span>
-                </div>
-                <h3 className="text-3xl md:text-4xl font-black text-light">
+            <div className="space-y-6 p-6 md:p-10">
+              <div className="text-center">
+                <span className="fb-eyebrow fb-eyebrow--accent inline-flex items-center gap-2">
+                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  Menú digital en vivo
+                </span>
+                <h3 className="font-display m-0 mt-3 text-xl font-semibold leading-none tracking-[0.16em] text-light md:text-2xl">
                   FROSTBYTE
                 </h3>
-                <p className="text-gray max-w-lg mx-auto">
-                  Explora el menu con recomendaciones personalizadas,
-                  busqueda por voz y contenido generado con IA.
+                <p className="mx-auto mt-3 max-w-md text-[0.75rem] leading-relaxed text-light/50">
+                  Explora el menú con recomendaciones personalizadas, búsqueda
+                  por voz y contenido generado con IA.
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { icon: Brain, label: "Quiz IA", desc: "Te recomienda segun tu mood" },
-                  { icon: Mic, label: "Busqueda por Voz", desc: "Habla y encuentra" },
-                  { icon: Sparkles, label: "Contenido Diario", desc: "Siempre fresco" },
-                  { icon: Users, label: "Sin Registro", desc: "Acceso inmediato" },
-                ].map((item, i) => (
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                {demoHighlights.map((item) => (
                   <div
-                    key={i}
-                    className="liquid-glass-light relative bg-white/[0.06] backdrop-blur-sm border border-white/[0.08] rounded-xl p-4 text-center space-y-2"
+                    key={item.label}
+                    className="fb-inset flex flex-col items-center gap-2 p-3.5 text-center"
                   >
-                    <div className="w-10 h-10 bg-linear-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center mx-auto">
-                      <item.icon size={18} className="text-primary" />
-                    </div>
-                    <p className="text-light text-sm font-bold">{item.label}</p>
-                    <p className="text-gray text-xs">{item.desc}</p>
+                    <item.icon size={16} className="text-light/55" />
+                    <span className="text-[0.72rem] font-medium leading-tight text-light">
+                      {item.label}
+                    </span>
+                    <span className="text-[0.62rem] leading-tight text-light/45">
+                      {item.desc}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Floating elements */}
-          <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-            className="absolute -right-4 top-1/4 hidden lg:block"
-          >
-            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-primary/30 rounded-xl p-4 shadow-[0_8px_32px_color-mix(in_srgb,var(--color-primary)_15%,transparent)]">
+          {demoNotes.map((note) => (
+            <div
+              key={note.title}
+              className={`fb-card absolute hidden p-3.5 lg:block ${note.position}`}
+            >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
-                  <Image size={18} className="text-primary" />
-                </div>
+                <span className="flex h-9 w-9 items-center justify-center rounded-[11px] border border-white/[0.1] bg-white/[0.03]">
+                  <note.icon size={16} className={note.accent} />
+                </span>
                 <div>
-                  <p className="text-light text-sm font-bold">Foto generada</p>
-                  <p className="text-gray text-xs">En 10 segundos</p>
+                  <p className="m-0 text-[0.75rem] font-medium text-light">
+                    {note.title}
+                  </p>
+                  <p className="m-0 text-[0.65rem] text-light/45">{note.desc}</p>
                 </div>
               </div>
             </div>
-          </motion.div>
-
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
-            className="absolute -left-4 bottom-1/4 hidden lg:block"
-          >
-            <div className="liquid-glass-light relative bg-white/[0.08] backdrop-blur-xl border border-secondary/30 rounded-xl p-4 shadow-[0_8px_32px_color-mix(in_srgb,var(--color-secondary)_15%,transparent)]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-secondary/20 rounded-lg flex items-center justify-center">
-                  <Brain size={18} className="text-secondary" />
-                </div>
-                <div>
-                  <p className="text-light text-sm font-bold">"Quiero algo frio"</p>
-                  <p className="text-gray text-xs">IA: Granizado de mango</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="text-center mt-10"
-        >
-          <Button
-            asChild
-            className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-8 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
-          >
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              Explorar Demo Completa
-              <ArrowRight size={20} className="ml-2" />
-            </a>
-          </Button>
-        </motion.div>
-      </div>
-    </div>
-  </section>
-);
-
-// --- CTA SECTION ---
-const CTASection = () => (
-  <section className="py-24 relative overflow-hidden">
-    <div className="absolute inset-0">
-      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
-      <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-secondary/5" />
-    </div>
-
-    <div className="container mx-auto px-4 relative z-10">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="max-w-3xl mx-auto text-center space-y-8"
-      >
-        <h2 className="text-4xl md:text-6xl font-black text-light">
-          LISTO PARA{" "}
-          <span className="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-            EL SIGUIENTE
-          </span>
-          <br />
-          NIVEL?
-        </h2>
-        <p className="text-gray text-lg max-w-xl mx-auto">
-          Tu competencia sigue con cuadernos y hojas de calculo.
-          Tu puedes tener IA trabajando para ti ahora mismo.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button
-            asChild
-            className="bg-linear-to-r from-primary to-secondary text-dark font-bold text-lg px-10 py-6 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
-          >
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              Ver Demo
-              <ArrowRight size={20} className="ml-2" />
-            </a>
-          </Button>
-          <Button
-            asChild
-            variant="outline"
-            className="border-2 border-gray/30 text-gray font-bold text-lg px-10 py-6 hover:bg-gray/10 hover:border-gray/50 transition-all duration-300"
-          >
-            <Link to="/login">
-              Iniciar Sesion
-              <ArrowRight size={20} className="ml-2" />
-            </Link>
-          </Button>
-        </div>
-      </motion.div>
-    </div>
-  </section>
-);
-
-// --- FOOTER ---
-const LandingFooter = () => (
-  <footer className="backdrop-blur-xl bg-white/[0.04] border-t border-white/[0.08] py-12">
-    <div className="container mx-auto px-4">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-linear-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-            <span className="text-xl font-bold text-dark">F</span>
-          </div>
-          <span className="text-2xl font-bold text-light tracking-wider">
-            FROSTBYTE
-          </span>
+          ))}
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="fb-reveal mt-8 text-center">
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray hover:text-primary transition-colors text-sm font-medium"
+            className="fb-btn fb-btn--accent"
           >
-            Demo
-          </a>
-          <Link
-            to="/login"
-            className="text-gray hover:text-primary transition-colors text-sm font-medium"
-          >
-            Login
-          </Link>
-          <a
-            href="#ai-features"
-            className="text-gray hover:text-primary transition-colors text-sm font-medium"
-          >
-            IA
-          </a>
-          <a
-            href="#platform"
-            className="text-gray hover:text-primary transition-colors text-sm font-medium"
-          >
-            Plataforma
+            Explorar demo completa
+            <ArrowRight size={15} />
           </a>
         </div>
-
-        <p className="text-gray/50 text-sm">
-          &copy; 2026 Frostbyte. Todos los derechos reservados.
-        </p>
       </div>
+    </div>
+  </section>
+);
+
+// --- CTA ---
+const CTASection = () => (
+  <section className="fb-section border-t border-white/[0.06] py-16 md:py-20">
+    <div className="container relative z-10 mx-auto px-5">
+      <div className="mx-auto max-w-2xl">
+        <SectionHeading
+          title="¿Listo para el siguiente nivel?"
+          description="Tu competencia sigue con cuadernos y hojas de cálculo. Tú puedes tener IA trabajando para ti ahora mismo."
+        />
+
+        <div className="fb-reveal mt-8 flex flex-col justify-center gap-2.5 sm:flex-row">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fb-btn fb-btn--accent"
+          >
+            Ver demo
+            <ArrowRight size={15} />
+          </a>
+          <Link to="/login" className="fb-btn">
+            Iniciar sesión
+            <ArrowRight size={15} />
+          </Link>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+// --- PIE ---
+const footerLinks = [
+  { label: "Demo", href: "/", external: true },
+  { label: "IA", href: "#ai-features" },
+  { label: "Plataforma", href: "#platform" },
+];
+
+const LandingFooter = () => (
+  <footer className="fb-section fb-section--plain border-t border-white/[0.06] py-12">
+    <div className="container relative z-10 mx-auto px-5">
+      <div className="flex flex-col items-center gap-6 md:flex-row md:justify-between">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-[11px] bg-linear-to-br from-primary to-secondary">
+            <span className="font-display text-base font-semibold text-dark">
+              F
+            </span>
+          </span>
+          <span className="font-display text-base font-semibold tracking-[0.14em] text-light">
+            FROSTBYTE
+          </span>
+        </div>
+
+        <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+          {footerLinks.map((link) =>
+            link.external ? (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[0.78rem] text-light/50 transition-colors hover:text-light"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-[0.78rem] text-light/50 transition-colors hover:text-light"
+              >
+                {link.label}
+              </a>
+            )
+          )}
+          <Link
+            to="/login"
+            className="text-[0.78rem] text-light/50 transition-colors hover:text-light"
+          >
+            Iniciar sesión
+          </Link>
+        </nav>
+      </div>
+
+      <span aria-hidden className="fb-hairline my-8" />
+
+      <p className="m-0 text-center text-[0.72rem] text-light/35">
+        © 2026 Frostbyte. Todos los derechos reservados.
+      </p>
     </div>
   </footer>
 );
 
-// --- NAVBAR ---
+// --- BARRA DE NAVEGACIÓN ---
+const navLinks = [
+  { label: "IA", href: "#ai-features" },
+  { label: "Plataforma", href: "#platform" },
+  { label: "Demo", href: "/", external: true },
+];
+
 const LandingNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -812,65 +581,55 @@ const LandingNav = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         isScrolled
-          ? "liquid-glass backdrop-blur-xl bg-white/[0.08] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
+          ? "bg-dark/92 border-b border-white/[0.07]"
           : "bg-transparent"
       }`}
     >
-      <nav className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <Link to="/landing" className="flex items-center space-x-2">
-            <img loading="lazy" decoding="async"
-              src="/logo.png"
-              alt="Frostbyte"
-              width={40}
-              height={40}
-              className="w-10 h-10 object-contain"
-            />
-            <span className="text-2xl font-bold text-light tracking-wider">
-              FROSTBYTE
-            </span>
-          </Link>
+      <nav className="container mx-auto flex items-center justify-between px-4 py-2.5">
+        <Link to="/landing" className="flex flex-shrink-0 items-center gap-2.5">
+          <img
+            src="/logo.png"
+            alt="Frostbyte"
+            width={40}
+            height={40}
+            className="h-9 w-9 object-contain md:h-10 md:w-10"
+          />
+          <span className="font-display text-base font-semibold tracking-[0.14em] text-light">
+            FROSTBYTE
+          </span>
+        </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+        <div className="flex items-center gap-2 md:gap-6">
+          {navLinks.map((link) => (
             <a
-              href="#ai-features"
-              className="text-gray hover:text-primary transition-colors text-sm font-medium tracking-wide"
+              key={link.label}
+              href={link.href}
+              {...(link.external
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
+              className="hidden text-[0.78rem] font-medium tracking-wide text-light/55 transition-colors hover:text-light md:block"
             >
-              IA
+              {link.label}
             </a>
-            <a
-              href="#platform"
-              className="text-gray hover:text-primary transition-colors text-sm font-medium tracking-wide"
-            >
-              Plataforma
-            </a>
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray hover:text-primary transition-colors text-sm font-medium tracking-wide"
-            >
-              Demo
-            </a>
-            <Button
-              asChild
-              className="bg-linear-to-r from-primary to-secondary text-dark font-bold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
-            >
-              <Link to="/login">Iniciar Sesion</Link>
-            </Button>
-          </div>
+          ))}
+          <Link
+            to="/login"
+            className="fb-btn fb-btn--accent rounded-full px-4 py-2 text-[0.7rem]"
+          >
+            Iniciar sesión
+          </Link>
         </div>
       </nav>
     </motion.header>
   );
 };
 
-// --- MAIN LANDING PAGE ---
+// --- PÁGINA ---
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-dark overflow-hidden">
+    <div className="min-h-screen overflow-hidden bg-dark">
       <LandingNav />
       <main>
         <HeroSection />
