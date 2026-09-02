@@ -28,6 +28,18 @@ const CoverageAreaMap = lazy(() => import("./CoverageAreaMap"));
 const formatKm2 = (value) =>
   new Intl.NumberFormat("es-CO", { maximumFractionDigits: 1 }).format(value);
 
+// "13:30" -> "1:30 p. m." Solo para mostrar: al backend siempre va HH:MM.
+const formatHora = (hhmm) => {
+  const [h, m] = String(hhmm || "").split(":").map(Number);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return "";
+  return new Date(2000, 0, 1, h, m).toLocaleTimeString("es-CO", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+const DEFAULT_OPENING_TIME = "13:30";
+
 // Límites del radio de domicilios (deben coincidir con MIN/MAX_DELIVERY_RADIUS_KM
 // del backend, que es quien valida de verdad).
 const RADIUS_MIN_KM = 0.1;
@@ -40,6 +52,8 @@ const RADIUS_PRESETS = [1, 1.5, 2, 3];
  *
  * Cuatro controles independientes, cada uno con su diálogo:
  *  1. Abierto/Cerrado  -> is_open (cerrado = no se puede pedir por ningún canal).
+ *     Al cerrar se ajusta también `opening_time`: es la hora que el agente de
+ *     WhatsApp le responde a quien escriba mientras el local está cerrado.
  *  2. Domicilios        -> customer_ordering_enabled.
  *  3. Para recoger      -> pickup_enabled. Canal aparte: con los domicilios
  *     pausados el agente de WhatsApp sigue tomando encargos para pasar a
@@ -63,6 +77,8 @@ const StoreControls = () => {
   const [draftPoints, setDraftPoints] = useState([]);
   // Valor en edición del radio (texto: el usuario puede escribir "1,5")
   const [radiusDraft, setRadiusDraft] = useState("");
+  // Hora de apertura en edición, formato HH:MM del <input type="time">
+  const [openingDraft, setOpeningDraft] = useState("");
 
   if (isLoading || !settings) {
     return (
@@ -76,6 +92,7 @@ const StoreControls = () => {
   const isOpen = !!settings.is_open;
   const deliveryOn = !!settings.customer_ordering_enabled;
   const pickupOn = !!settings.pickup_enabled;
+  const openingTime = settings.opening_time || DEFAULT_OPENING_TIME;
 
   // Zona vigente (la que ya ve el cliente)
   const coverage = resolveCoverage(settings);
@@ -175,7 +192,10 @@ const StoreControls = () => {
     <>
       {/* Chip: Abierto / Cerrado */}
       <button
-        onClick={() => setConfirm("store")}
+        onClick={() => {
+          setOpeningDraft(openingTime);
+          setConfirm("store");
+        }}
         className={cn(
           "flex items-center gap-2 rounded-lg border px-3 py-2 transition-colors",
           isOpen
@@ -292,18 +312,47 @@ const StoreControls = () => {
         message={
           isOpen
             ? "Los clientes verán el local como 'Cerrado' en la carta y en las mesas, y no podrán hacer pedidos en línea."
-            : "Los clientes verán el local como 'Abierto' y podrán hacer pedidos (si los domicilios están activos)."
+            : `Los clientes verán el local como 'Abierto' y podrán hacer pedidos (si los domicilios están activos). Mientras estuvo cerrado, el agente de WhatsApp respondió que normalmente abren a las ${formatHora(openingTime)}.`
         }
         confirmLabel={isOpen ? "Sí, cerrar" : "Sí, abrir"}
         loading={updateMutation.isPending}
+        confirmDisabled={isOpen && !openingDraft}
         onCancel={() => setConfirm(null)}
         onConfirm={() =>
           apply(
-            { is_open: !isOpen },
+            isOpen
+              ? { is_open: false, opening_time: openingDraft }
+              : { is_open: true },
             isOpen ? "Frostbyte está cerrado" : "Frostbyte está abierto"
           )
         }
-      />
+      >
+        {/* Al cerrar, lo único que le queda al cliente es saber cuándo volver:
+            esta hora es la que responde el agente de WhatsApp mientras tanto. */}
+        {isOpen && (
+          <div className="space-y-2">
+            <label
+              htmlFor="opening-time"
+              className="block text-xs font-semibold text-gray"
+            >
+              ¿A qué hora abren normalmente?
+            </label>
+            <input
+              id="opening-time"
+              type="time"
+              value={openingDraft}
+              onChange={(e) => setOpeningDraft(e.target.value)}
+              className="w-full rounded-xl bg-white/[0.04] border border-white/[0.12] px-3 py-2.5 text-base text-light focus:outline-none focus:border-white/30"
+            />
+            <p className="text-xs text-gray">
+              Es lo que el agente de WhatsApp le responde a quien escriba con el
+              local cerrado ("normalmente abrimos a las{" "}
+              {formatHora(openingDraft) || "…"}"). No abre el local: eso lo
+              siguen haciendo ustedes desde aquí.
+            </p>
+          </div>
+        )}
+      </ConfirmDialog>
 
       {/* Confirmación: activar/desactivar domicilios */}
       <ConfirmDialog
