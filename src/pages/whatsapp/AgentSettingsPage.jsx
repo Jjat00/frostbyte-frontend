@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   Bot,
+  Check,
   Heart,
   Home,
   Image as ImageIcon,
@@ -56,11 +57,11 @@ const CAPABILITIES = [
     field: 'quick_replies_enabled',
     icon: MousePointerClick,
     title: 'Botones',
-    hint: 'Botones de respuesta rápida para confirmar el pedido y elegir el pago.',
+    hint: 'Botones de respuesta rápida para confirmar el pedido. El pago nunca se pregunta así.',
   },
 ];
 
-const TEXT_FIELDS = ['agent_name', 'tone', 'owner_phones'];
+const TEXT_FIELDS = ['agent_name', 'tone_preset', 'tone', 'owner_phones'];
 
 const formatWeight = (bytes) => (bytes ? `${Math.round(bytes / 1024)} KB` : '—');
 
@@ -81,15 +82,14 @@ const Switch = ({ checked, onChange, disabled, label }) => (
     aria-label={label}
     disabled={disabled}
     onClick={() => onChange(!checked)}
-    className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors disabled:opacity-50 ${
+    className={`inline-flex h-6 w-11 shrink-0 items-center rounded-full border p-0 transition-colors disabled:opacity-50 ${
       checked ? 'border-secondary/40 bg-secondary/70' : 'border-white/[0.12] bg-white/[0.07]'
     }`}
   >
     <span
-      className={`absolute top-[2px] rounded-full bg-light transition-transform ${
-        checked ? 'translate-x-[22px]' : 'translate-x-[3px]'
+      className={`block h-[18px] w-[18px] rounded-full bg-light transition-transform ${
+        checked ? 'translate-x-[22px]' : 'translate-x-[2px]'
       }`}
-      style={{ height: '18px', width: '18px' }}
     />
   </button>
 );
@@ -139,6 +139,7 @@ const AgentSettingsPage = () => {
     if (settings && !draft) {
       setDraft({
         agent_name: settings.agent_name || '',
+        tone_preset: settings.tone_preset || '',
         tone: settings.tone || '',
         owner_phones: settings.owner_phones || '',
       });
@@ -150,6 +151,7 @@ const AgentSettingsPage = () => {
     [draft, settings]
   );
 
+  const presets = settings?.tone_presets || [];
   const activeStickers = stickers.filter((s) => s.is_active).length;
   const agentName = settings?.agent_name || 'Frosty';
 
@@ -172,6 +174,7 @@ const AgentSettingsPage = () => {
       onSuccess: (data) => {
         setDraft({
           agent_name: data.agent_name || '',
+          tone_preset: data.tone_preset || '',
           tone: data.tone || '',
           owner_phones: data.owner_phones || '',
         });
@@ -327,14 +330,55 @@ const AgentSettingsPage = () => {
                     onChange={(e) => setDraft({ ...draft, agent_name: e.target.value })}
                   />
                 </Field>
+                <div>
+                  <span className="fb-eyebrow mb-2 block">Tono</span>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {presets.map((preset) => {
+                      const active = draft.tone_preset === preset.key;
+                      return (
+                        <button
+                          key={preset.key}
+                          type="button"
+                          onClick={() => setDraft({ ...draft, tone_preset: preset.key })}
+                          className={`rounded-xl border px-3.5 py-3 text-left transition-colors ${
+                            active
+                              ? 'border-secondary/40 bg-secondary/[0.08]'
+                              : 'border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06]'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span
+                              className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                                active ? 'bg-secondary' : 'bg-white/20'
+                              }`}
+                            />
+                            <span className="text-sm font-medium text-light">{preset.name}</span>
+                            {active && <Check className="ml-auto h-4 w-4 shrink-0 text-secondary" />}
+                          </span>
+                          <span className="mt-1.5 block text-[0.72rem] leading-relaxed text-light/45">
+                            {preset.description}
+                          </span>
+                          <span className="mt-1 block text-[0.72rem] leading-relaxed text-light/30">
+                            «{preset.sample}»
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <span className="mt-2 block text-[0.72rem] leading-relaxed text-light/40">
+                    Es la personalidad con la que habla: el tono que elijas reemplaza al de
+                    fábrica, no se le suma.
+                  </span>
+                </div>
+
                 <Field
-                  label="Tono y personalidad"
-                  hint="Manda sobre el estilo por defecto. Ej.: «trata al cliente de usted» o «sin emojis». Vacío = el tono de siempre."
+                  label="Ajustes de tono (opcional)"
+                  hint="Retoques encima del tono elegido; mandan sobre él. Ej.: «trata al cliente de usted» o «sin emojis». Vacío = el tono tal cual."
                 >
                   <textarea
-                    className={`${inputClass} min-h-[110px] resize-y leading-relaxed`}
+                    className={`${inputClass} min-h-[88px] resize-y leading-relaxed`}
                     value={draft.tone}
-                    placeholder="Escríbele cómo quieres que hable…"
+                    placeholder="Sin emojis, y nunca digas «pana»…"
                     onChange={(e) => setDraft({ ...draft, tone: e.target.value })}
                   />
                 </Field>

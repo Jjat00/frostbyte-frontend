@@ -9,13 +9,13 @@ import { ENDPOINTS } from './api/endpoints';
  * exponen a propósito; eso vive en el prompt, con tests detrás.
  */
 export const whatsappAgentService = {
-  /** Identidad, tono, números del dueño y los cuatro interruptores. */
+  /** Identidad, tono (el elegido y el catálogo), dueño y los cuatro interruptores. */
   async getSettings() {
     const response = await apiClient.get(ENDPOINTS.WHATSAPP_AGENT_SETTINGS);
     return response.data;
   },
 
-  /** @param {{ agent_name?: string, tone?: string, owner_phones?: string, stickers_enabled?: boolean, reactions_enabled?: boolean, product_photos_enabled?: boolean, quick_replies_enabled?: boolean }} data */
+  /** @param {{ agent_name?: string, tone_preset?: string, tone?: string, owner_phones?: string, stickers_enabled?: boolean, reactions_enabled?: boolean, product_photos_enabled?: boolean, quick_replies_enabled?: boolean }} data */
   async updateSettings(data) {
     const response = await apiClient.patch(ENDPOINTS.WHATSAPP_AGENT_SETTINGS, data);
     return response.data;

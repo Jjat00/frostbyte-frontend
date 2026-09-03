@@ -309,14 +309,14 @@ const ExpenseFormPage = () => {
                       : KINDS.investment.value,
                 }))
               }
-              className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${
+              className={`inline-flex w-12 h-7 items-center rounded-full p-0 transition-colors flex-shrink-0 ${
                 formData.kind === KINDS.investment.value
                   ? "bg-indigo-500/60"
                   : "bg-white/[0.12]"
               }`}
             >
               <span
-                className={`absolute top-1 w-5 h-5 rounded-full bg-light transition-transform ${
+                className={`block w-5 h-5 rounded-full bg-light transition-transform ${
                   formData.kind === KINDS.investment.value
                     ? "translate-x-6"
                     : "translate-x-1"
