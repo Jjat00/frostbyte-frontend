@@ -103,6 +103,9 @@ export const ENDPOINTS = {
   WHATSAPP_AGENT_SETTINGS: '/whatsapp/agent-settings/',
   WHATSAPP_STICKERS: '/whatsapp/stickers/',
   WHATSAPP_STICKER_DETAIL: (id) => `/whatsapp/stickers/${id}/`,
+  WHATSAPP_AGENT_TONES: '/whatsapp/agent-tones/',
+  WHATSAPP_AGENT_TONE_DETAIL: (id) => `/whatsapp/agent-tones/${id}/`,
+  WHATSAPP_AGENT_TONE_RESTORE: (id) => `/whatsapp/agent-tones/${id}/restore/`,
 
   // Polla Mundialista 2026
   POLLA_TOURNAMENT: '/polla/tournament/',

@@ -37,6 +37,10 @@ export {
 export {
   useAgentSettings,
   useUpdateAgentSettings,
+  useCreateTone,
+  useUpdateTone,
+  useDeleteTone,
+  useRestoreTone,
   useStickers,
   useCreateSticker,
   useUpdateSticker,

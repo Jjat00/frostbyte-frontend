@@ -10,10 +10,12 @@ import {
   Image as ImageIcon,
   Info,
   Loader2,
+  MessageCircle,
   MousePointerClick,
   Pencil,
   Phone,
   Plus,
+  RotateCcw,
   Save,
   Smile,
   Sparkles,
@@ -23,6 +25,10 @@ import {
 import {
   useAgentSettings,
   useUpdateAgentSettings,
+  useCreateTone,
+  useUpdateTone,
+  useDeleteTone,
+  useRestoreTone,
   useStickers,
   useCreateSticker,
   useUpdateSticker,
@@ -62,6 +68,12 @@ const CAPABILITIES = [
 ];
 
 const TEXT_FIELDS = ['agent_name', 'tone_preset', 'tone', 'owner_phones'];
+
+const BLANK_TONE = { name: '', description: '', sample: '', persona: '' };
+
+// El mismo mínimo que exige el servidor: mejor que el botón no deje mandar
+// una personalidad de dos palabras a que la rechace después.
+const MIN_PERSONA = 40;
 
 const formatWeight = (bytes) => (bytes ? `${Math.round(bytes / 1024)} KB` : '—');
 
@@ -123,6 +135,10 @@ const AgentSettingsPage = () => {
   const { data: settings, isLoading } = useAgentSettings();
   const { data: stickers = [], isLoading: loadingStickers } = useStickers();
   const updateSettings = useUpdateAgentSettings();
+  const createTone = useCreateTone();
+  const updateTone = useUpdateTone();
+  const deleteTone = useDeleteTone();
+  const restoreTone = useRestoreTone();
   const createSticker = useCreateSticker();
   const updateSticker = useUpdateSticker();
   const deleteSticker = useDeleteSticker();
@@ -133,6 +149,9 @@ const AgentSettingsPage = () => {
   // Sticker en edición: { id? , label, description, file, previewUrl } | null
   const [editing, setEditing] = useState(null);
   const [removing, setRemoving] = useState(null);
+  // Tono en edición: uno del catálogo, o el molde vacío si es nuevo
+  const [toneEditing, setToneEditing] = useState(null);
+  const [toneRemoving, setToneRemoving] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -191,6 +210,74 @@ const AgentSettingsPage = () => {
       { [field]: value },
       { onError: (error) => showError(error, 'No se pudo cambiar') }
     );
+  };
+
+  // ---- Los tonos ----
+  // Se crean y se editan aquí, pero elegir cuál habla sigue siendo parte del
+  // borrador: es un cambio de configuración, no del catálogo.
+
+  const savingTone = createTone.isPending || updateTone.isPending;
+  const toneValid =
+    toneEditing &&
+    toneEditing.name?.trim() &&
+    toneEditing.description?.trim() &&
+    (toneEditing.persona || '').trim().length >= MIN_PERSONA;
+  // El servidor se niega a borrar el que está en uso y el último que queda;
+  // aquí el botón ni aparece, para no ofrecer algo que va a fallar.
+  const toneRemovable =
+    toneEditing?.id && presets.length > 1 && settings?.tone_preset !== toneEditing.key;
+
+  const saveTone = () => {
+    const payload = {
+      name: (toneEditing.name || '').trim(),
+      description: (toneEditing.description || '').trim(),
+      sample: (toneEditing.sample || '').trim(),
+      persona: (toneEditing.persona || '').trim(),
+    };
+    const fail = (error) => showError(error, 'No se pudo guardar el tono');
+
+    if (toneEditing.id) {
+      updateTone.mutate(
+        { id: toneEditing.id, ...payload },
+        {
+          onSuccess: () => {
+            setToneEditing(null);
+            toast({
+              title: 'Tono actualizado',
+              description:
+                settings?.tone_preset === toneEditing.key
+                  ? 'Es el que está hablando: se aplica desde la próxima conversación.'
+                  : undefined,
+            });
+          },
+          onError: fail,
+        }
+      );
+      return;
+    }
+    createTone.mutate(payload, {
+      onSuccess: (data) => {
+        setToneEditing(null);
+        // Queda elegido, pero sin guardar: quien lo creó lo hizo para usarlo,
+        // y aun así el cambio de cómo habla el negocio pasa por el botón.
+        setDraft((prev) => ({ ...prev, tone_preset: data.key }));
+        toast({
+          title: 'Tono creado',
+          description: 'Queda elegido: dale a Guardar para que hable así.',
+        });
+      },
+      onError: fail,
+    });
+  };
+
+  const restoreOriginal = () => {
+    restoreTone.mutate(toneEditing.id, {
+      onSuccess: (data) => {
+        setToneEditing(data);
+        toast({ title: 'Tono restaurado', description: 'Volvió al texto con el que vino.' });
+      },
+      onError: (error) => showError(error, 'No se pudo restaurar'),
+    });
   };
 
   // El preview local es un blob del navegador: si no se suelta, cada archivo
@@ -331,43 +418,69 @@ const AgentSettingsPage = () => {
                   />
                 </Field>
                 <div>
-                  <span className="fb-eyebrow mb-2 block">Tono</span>
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <span className="fb-eyebrow">Tono</span>
+                    <button
+                      type="button"
+                      onClick={() => setToneEditing({ ...BLANK_TONE })}
+                      className="-mr-1 inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[0.72rem] text-secondary transition-colors hover:bg-secondary/[0.08]"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      Nuevo tono
+                    </button>
+                  </div>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {presets.map((preset) => {
                       const active = draft.tone_preset === preset.key;
                       return (
-                        <button
+                        <div
                           key={preset.key}
-                          type="button"
-                          onClick={() => setDraft({ ...draft, tone_preset: preset.key })}
-                          className={`rounded-xl border px-3.5 py-3 text-left transition-colors ${
+                          className={`relative rounded-xl border transition-colors ${
                             active
                               ? 'border-secondary/40 bg-secondary/[0.08]'
                               : 'border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.06]'
                           }`}
                         >
-                          <span className="flex items-center gap-2">
-                            <span
-                              className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                                active ? 'bg-secondary' : 'bg-white/20'
-                              }`}
-                            />
-                            <span className="text-sm font-medium text-light">{preset.name}</span>
-                            {active && <Check className="ml-auto h-4 w-4 shrink-0 text-secondary" />}
-                          </span>
-                          <span className="mt-1.5 block text-[0.72rem] leading-relaxed text-light/45">
-                            {preset.description}
-                          </span>
-                          <span className="mt-1 block text-[0.72rem] leading-relaxed text-light/30">
-                            «{preset.sample}»
-                          </span>
-                        </button>
+                          <button
+                            type="button"
+                            onClick={() => setDraft({ ...draft, tone_preset: preset.key })}
+                            className="block w-full px-3.5 py-3 pr-12 text-left"
+                          >
+                            <span className="flex items-center gap-2">
+                              <span
+                                className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                                  active ? 'bg-secondary' : 'bg-white/20'
+                                }`}
+                              />
+                              <span className="text-sm font-medium text-light">{preset.name}</span>
+                              {active && <Check className="h-4 w-4 shrink-0 text-secondary" />}
+                            </span>
+                            <span className="mt-1.5 block text-[0.72rem] leading-relaxed text-light/45">
+                              {preset.description}
+                            </span>
+                            {preset.sample && (
+                              <span className="mt-1 block text-[0.72rem] leading-relaxed text-light/30">
+                                «{preset.sample}»
+                              </span>
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setToneEditing({ ...preset })}
+                            className="absolute right-1.5 top-1.5 rounded-lg p-2.5 text-gray transition-colors hover:bg-white/[0.06] hover:text-light"
+                            title={`Editar ${preset.name}`}
+                            aria-label={`Editar el tono ${preset.name}`}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
                   <span className="mt-2 block text-[0.72rem] leading-relaxed text-light/40">
                     Es la personalidad con la que habla: el tono que elijas reemplaza al de
-                    fábrica, no se le suma.
+                    fábrica, no se le suma. Con el lápiz cambias lo que dice cada uno, o creas
+                    el tuyo.
                   </span>
                 </div>
 
@@ -589,6 +702,137 @@ const AgentSettingsPage = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Alta y edición de un tono */}
+      <ConfirmDialog
+        open={!!toneEditing}
+        title={toneEditing?.id ? `Editar «${toneEditing.name}»` : 'Nuevo tono'}
+        message={
+          toneEditing?.id
+            ? 'La personalidad es lo único que lee el agente; lo demás es para reconocerlo aquí.'
+            : `Dile a ${agentName} quién es cuando habla así. Reemplaza la personalidad entera, no se le suma.`
+        }
+        icon={MessageCircle}
+        size="lg"
+        confirmLabel={toneEditing?.id ? 'Guardar tono' : 'Crear tono'}
+        loading={savingTone}
+        confirmDisabled={!toneValid}
+        onConfirm={saveTone}
+        onCancel={() => setToneEditing(null)}
+      >
+        <div className="space-y-4">
+          <Field label="Nombre">
+            <input
+              className={inputClass}
+              value={toneEditing?.name || ''}
+              maxLength={40}
+              placeholder="Parcero"
+              onChange={(e) => setToneEditing({ ...toneEditing, name: e.target.value })}
+            />
+          </Field>
+
+          <Field label="De qué va" hint="Una línea para reconocerlo al elegir. No la lee el agente.">
+            <input
+              className={inputClass}
+              value={toneEditing?.description || ''}
+              maxLength={200}
+              placeholder="Caluroso y rápido, hablando como en Nariño."
+              onChange={(e) => setToneEditing({ ...toneEditing, description: e.target.value })}
+            />
+          </Field>
+
+          <Field
+            label="Frase de ejemplo (opcional)"
+            hint="Cómo sonaría un saludo suyo. Solo se ve en esta pantalla."
+          >
+            <input
+              className={inputClass}
+              value={toneEditing?.sample || ''}
+              maxLength={200}
+              placeholder="Qué más parce, ¿lo de siempre?"
+              onChange={(e) => setToneEditing({ ...toneEditing, sample: e.target.value })}
+            />
+          </Field>
+
+          <Field
+            label="Personalidad"
+            hint="Esto SÍ lo lee el agente. Escríbelo hablándole a él («eres…», «tuteas…») y dile también qué hacer cuando el cliente está molesto."
+          >
+            <textarea
+              className={`${inputClass} min-h-[170px] resize-y leading-relaxed`}
+              value={toneEditing?.persona || ''}
+              placeholder="QUIÉN ERES: el que atiende de siempre en el local, cálido y atento…"
+              onChange={(e) => setToneEditing({ ...toneEditing, persona: e.target.value })}
+            />
+          </Field>
+
+          {toneEditing?.id && (
+            <div className="flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-3">
+              {toneEditing.is_builtin && toneEditing.is_modified && (
+                <button
+                  type="button"
+                  onClick={restoreOriginal}
+                  disabled={restoreTone.isPending}
+                  className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[0.72rem] text-gray transition-colors hover:bg-white/[0.06] hover:text-light disabled:opacity-50"
+                >
+                  {restoreTone.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <RotateCcw className="h-3.5 w-3.5" />
+                  )}
+                  Restaurar el original
+                </button>
+              )}
+              {toneRemovable ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setToneRemoving(toneEditing);
+                    setToneEditing(null);
+                  }}
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[0.72rem] text-gray transition-colors hover:bg-red-500/10 hover:text-red-400"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Eliminar
+                </button>
+              ) : (
+                settings?.tone_preset === toneEditing.key && (
+                  <span className="ml-auto text-[0.7rem] text-light/30">
+                    Es el tono con el que habla ahora
+                  </span>
+                )
+              )}
+            </div>
+          )}
+        </div>
+      </ConfirmDialog>
+
+      {/* Borrado de un tono */}
+      <ConfirmDialog
+        open={!!toneRemoving}
+        title={`¿Eliminar «${toneRemoving?.name || ''}»?`}
+        message="Desaparece de la lista de tonos. No se puede deshacer; si solo quieres que hable distinto, edítalo o elige otro."
+        confirmLabel="Eliminar"
+        tone="danger"
+        icon={Trash2}
+        loading={deleteTone.isPending}
+        onConfirm={() =>
+          deleteTone.mutate(toneRemoving.id, {
+            onSuccess: () => {
+              // Si estaba elegido sin guardar, el borrador vuelve al que sí lo está.
+              setDraft((prev) =>
+                prev?.tone_preset === toneRemoving.key
+                  ? { ...prev, tone_preset: settings?.tone_preset || '' }
+                  : prev
+              );
+              setToneRemoving(null);
+              toast({ title: 'Tono eliminado' });
+            },
+            onError: (error) => showError(error, 'No se pudo eliminar'),
+          })
+        }
+        onCancel={() => setToneRemoving(null)}
+      />
 
       {/* Alta y edición de un sticker */}
       <ConfirmDialog

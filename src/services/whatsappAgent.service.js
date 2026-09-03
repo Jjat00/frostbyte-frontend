@@ -9,7 +9,7 @@ import { ENDPOINTS } from './api/endpoints';
  * exponen a propósito; eso vive en el prompt, con tests detrás.
  */
 export const whatsappAgentService = {
-  /** Identidad, tono (el elegido y el catálogo), dueño y los cuatro interruptores. */
+  /** Identidad, tono (el elegido y el catálogo completo), dueño y los cuatro interruptores. */
   async getSettings() {
     const response = await apiClient.get(ENDPOINTS.WHATSAPP_AGENT_SETTINGS);
     return response.data;
@@ -18,6 +18,36 @@ export const whatsappAgentService = {
   /** @param {{ agent_name?: string, tone_preset?: string, tone?: string, owner_phones?: string, stickers_enabled?: boolean, reactions_enabled?: boolean, product_photos_enabled?: boolean, quick_replies_enabled?: boolean }} data */
   async updateSettings(data) {
     const response = await apiClient.patch(ENDPOINTS.WHATSAPP_AGENT_SETTINGS, data);
+    return response.data;
+  },
+
+  /**
+   * Crea un tono nuevo. La clave se genera del nombre en el servidor: es lo
+   * que apunta desde la configuración y por eso no se teclea.
+   * @param {{ name: string, description: string, sample?: string, persona: string }} data
+   */
+  async createTone(data) {
+    const response = await apiClient.post(ENDPOINTS.WHATSAPP_AGENT_TONES, data);
+    return response.data;
+  },
+
+  /** Afina un tono: su nombre, cómo se describe o la personalidad que lee el agente. */
+  async updateTone(id, data) {
+    const response = await apiClient.patch(ENDPOINTS.WHATSAPP_AGENT_TONE_DETAIL(id), data);
+    return response.data;
+  },
+
+  /**
+   * Borra un tono. El servidor se niega si es el que está en uso o el último
+   * que queda: sin catálogo no habría nada que elegir.
+   */
+  async deleteTone(id) {
+    await apiClient.delete(ENDPOINTS.WHATSAPP_AGENT_TONE_DETAIL(id));
+  },
+
+  /** Devuelve un tono de fábrica al texto con el que vino. */
+  async restoreTone(id) {
+    const response = await apiClient.post(ENDPOINTS.WHATSAPP_AGENT_TONE_RESTORE(id));
     return response.data;
   },
 
