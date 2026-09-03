@@ -7,6 +7,7 @@ import {
   List,
   Tag,
   Layers,
+  Calculator,
   LogOut,
   Menu,
   X,
@@ -71,6 +72,13 @@ const ProductsLayout = () => {
       shortName: 'Opciones',
       path: '/productos/modificadores',
       icon: Layers,
+      adminOnly: true,
+    },
+    {
+      name: 'Costeo',
+      shortName: 'Costeo',
+      path: '/productos/costeo',
+      icon: Calculator,
       adminOnly: true,
     },
     {
