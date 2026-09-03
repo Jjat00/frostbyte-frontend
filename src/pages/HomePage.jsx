@@ -35,6 +35,8 @@ import {
   ChevronRight,
   CalendarDays,
   Crown,
+  Bot,
+  Smile,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -288,6 +290,18 @@ const HomePage = () => {
         { icon: DollarSign, text: 'Ingresos vs Gastos' },
         { icon: PieChart, text: 'Distribucion' },
         { icon: BarChart3, text: 'Tendencias' },
+      ],
+    },
+    {
+      id: 'whatsapp-agent',
+      title: 'Agente de WhatsApp',
+      description: 'Como habla Frosty, que puede mandar y su banco de stickers',
+      icon: Bot,
+      path: '/agente-whatsapp',
+      features: [
+        { icon: MessageSquare, text: 'Tono' },
+        { icon: Smile, text: 'Stickers' },
+        { icon: Shield, text: 'Permisos' },
       ],
     },
     {

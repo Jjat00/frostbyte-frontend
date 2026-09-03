@@ -11,4 +11,5 @@ export { gamesService } from './games.service';
 export { feedbackService } from './feedback.service';
 export { pollaService } from './polla.service';
 export { customerOrdersService } from './customerOrders.service';
+export { whatsappAgentService } from './whatsappAgent.service';
 export { apiClient, ENDPOINTS } from './api';

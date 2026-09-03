@@ -99,6 +99,11 @@ export const ENDPOINTS = {
   VIDEO_PLAYER_PAUSE: '/video-requests/player/pause/',
   VIDEO_PLAYER_RESUME: '/video-requests/player/resume/',
 
+  // Agente de pedidos por WhatsApp (Frosty) - solo admin
+  WHATSAPP_AGENT_SETTINGS: '/whatsapp/agent-settings/',
+  WHATSAPP_STICKERS: '/whatsapp/stickers/',
+  WHATSAPP_STICKER_DETAIL: (id) => `/whatsapp/stickers/${id}/`,
+
   // Polla Mundialista 2026
   POLLA_TOURNAMENT: '/polla/tournament/',
   POLLA_GROUPS: '/polla/groups/',

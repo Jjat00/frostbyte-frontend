@@ -33,6 +33,17 @@ export {
   storeSettingsKeys,
 } from './useStoreSettings';
 
+// Agente de WhatsApp (Frosty): configuración y banco de stickers (solo admin)
+export {
+  useAgentSettings,
+  useUpdateAgentSettings,
+  useStickers,
+  useCreateSticker,
+  useUpdateSticker,
+  useDeleteSticker,
+  whatsappAgentKeys,
+} from './useWhatsAppAgent';
+
 // AI Image Generation hooks
 export { useImageGeneration, useGenerationHistory, useImageValidation } from './useImageGeneration';
 export { useImageUpload } from './useImageUpload';
