@@ -45,7 +45,7 @@ const CAPABILITIES = [
     field: 'stickers_enabled',
     icon: Smile,
     title: 'Stickers',
-    hint: 'Manda uno del banco al saludar, al cerrar el pedido o al dar una mala noticia.',
+    hint: 'Manda uno del banco cuando el momento lo pide. Él decide cuándo y cuál: a veces sí, a veces no.',
   },
   {
     field: 'reactions_enabled',
@@ -564,7 +564,8 @@ const AgentSettingsPage = () => {
             <div className="flex items-center justify-between gap-3">
               <p className="text-[0.72rem] leading-relaxed text-light/40">
                 {activeStickers} activo{activeStickers === 1 ? '' : 's'} de {stickers.length}. El
-                agente elige por el «cuándo usarlo», no por el dibujo.
+                agente elige por el «cuándo usarlo», no por el dibujo, y no repite el último que
+                mandó: con varios para un mismo momento, menos suena a bot.
               </p>
               <button
                 onClick={() => setEditing({ label: '', description: '' })}
@@ -897,7 +898,7 @@ const AgentSettingsPage = () => {
 
           <Field
             label="Cuándo usarlo"
-            hint="Es lo único que el agente lee para elegirlo: describe el momento, no el dibujo."
+            hint="Es lo único que el agente lee para elegirlo: describe el momento o el ánimo, no el dibujo. Varios pueden servir para lo mismo."
           >
             <textarea
               className={`${inputClass} min-h-[76px] resize-y leading-relaxed`}
