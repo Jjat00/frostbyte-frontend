@@ -769,4 +769,11 @@ export const router = createBrowserRouter([
       </Lazy>
     ),
   },
+  // Cualquier ruta que no exista vuelve a la carta, sin pantalla de error.
+  // Importa para las rutas retiradas que siguen circulando fuera de la app
+  // (Google, QR impresos, enlaces compartidos), como las del Mundial 2026.
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
 ]);
