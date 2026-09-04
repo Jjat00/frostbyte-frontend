@@ -79,6 +79,18 @@ const buildGenreColors = () => ({
 
 const FLOOR_LABEL = { 2: 'Piso 2', 3: 'Piso 3' };
 
+/**
+ * Relleno de un tramo de barra. El primer piso va en color pleno; el segundo,
+ * rayado: la opacidad sola se confundía con el tramo vacío de la barra.
+ */
+const segmentFill = (color, secondary) =>
+  secondary
+    ? {
+        backgroundColor: `color-mix(in srgb, ${color} 30%, transparent)`,
+        backgroundImage: `repeating-linear-gradient(115deg, ${color} 0 2px, transparent 2px 6px)`,
+      }
+    : { backgroundColor: color };
+
 const nf = new Intl.NumberFormat('es-CO');
 const pct = (value) => `${Math.round((value || 0) * 100)}%`;
 
@@ -175,8 +187,7 @@ const GenreRow = ({ genre, max, floors, total, genreColor }) => {
               title={`${FLOOR_LABEL[parte.floor]}: ${nf.format(parte.value)}`}
               style={{
                 width: `${(parte.value / genre.total) * 100}%`,
-                backgroundColor: genreColor(genre.slug),
-                opacity: i === 0 ? 1 : 0.45,
+                ...segmentFill(genreColor(genre.slug), i > 0),
               }}
             />
           ))}
@@ -443,12 +454,31 @@ const MusicStatsPage = () => {
             <div className="grid grid-cols-1 gap-5 xl:grid-cols-12">
               <Panel
                 title="Qué géneros piden"
-                subtitle="Cada barra es un género; el tramo claro es el piso 3."
+                subtitle={
+                  floors.length > 1
+                    ? 'Cada barra es un género, partida por piso.'
+                    : `Cada barra es un género. Solo el piso ${floors[0]}.`
+                }
                 className="xl:col-span-8"
                 right={
-                  <span className="fb-pill hidden shrink-0 text-[0.6rem] uppercase tracking-[0.16em] sm:inline-flex">
-                    {nf.format(totalPedidos)} pedidos
-                  </span>
+                  <div className="hidden shrink-0 items-center gap-3 sm:flex">
+                    {floors.length > 1 &&
+                      floors.map((floor, i) => (
+                        <span
+                          key={floor}
+                          className="flex items-center gap-1.5 text-[0.7rem] text-light/45"
+                        >
+                          <span
+                            className="h-2.5 w-5 rounded-full opacity-70"
+                            style={segmentFill('var(--color-light)', i > 0)}
+                          />
+                          {FLOOR_LABEL[floor]}
+                        </span>
+                      ))}
+                    <span className="fb-pill text-[0.6rem] uppercase tracking-[0.16em]">
+                      {nf.format(totalPedidos)} pedidos
+                    </span>
+                  </div>
                 }
               >
                 <div className="divide-y divide-white/[0.04]">
@@ -521,7 +551,7 @@ const MusicStatsPage = () => {
                               {pct(piso.share)}
                             </span>
                           </div>
-                          <p className="mt-1 truncate text-[0.72rem] text-light/40">
+                          <p className="mt-1 text-[0.72rem] leading-snug text-light/40">
                             {nf.format(piso.total)} pedidos · manda{' '}
                             <span style={{ color: genreColor(piso.top_genre.slug) }}>
                               {piso.top_genre.label}
