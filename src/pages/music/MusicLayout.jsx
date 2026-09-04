@@ -3,6 +3,7 @@ import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  BarChart3,
   Music,
   Youtube,
   LogOut,
@@ -90,6 +91,13 @@ const MusicLayout = () => {
       shortName: 'YouTube',
       path: '/musica/youtube',
       icon: Youtube,
+      end: true,
+    },
+    {
+      name: 'Estadísticas',
+      shortName: 'Stats',
+      path: '/musica/estadisticas',
+      icon: BarChart3,
       end: true,
     },
     {

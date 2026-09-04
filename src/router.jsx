@@ -52,6 +52,7 @@ const ModifierGroupsPage = lazyLoad(() => import("./pages/products/ModifierGroup
 // Música
 const MusicLayout = lazyLoad(() => import("./pages/music/MusicLayout"));
 const SongRequestsPage = lazyLoad(() => import("./pages/music/SongRequestsPage"));
+const MusicStatsPage = lazyLoad(() => import("./pages/music/MusicStatsPage"));
 
 // YouTube
 const YouTubeAdminPage = lazyLoad(() => import("./pages/youtube/YouTubeAdminPage"));
@@ -535,6 +536,14 @@ export const router = createBrowserRouter([
         element: (
           <Lazy>
             <YouTubeAdminPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: "estadisticas",
+        element: (
+          <Lazy>
+            <MusicStatsPage />
           </Lazy>
         ),
       },

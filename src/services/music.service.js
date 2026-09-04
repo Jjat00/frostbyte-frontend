@@ -148,6 +148,15 @@ export const musicService = {
     const response = await apiClient.patch(ENDPOINTS.MUSIC_SETTINGS, data);
     return response.data;
   },
+
+  /**
+   * Estadisticas de lo que la gente pide: generos, pisos, horas y tops.
+   * @param {Object} params - { days?: number|'all', start?: 'YYYY-MM-DD', end?: 'YYYY-MM-DD', floor?: 2|3 }
+   */
+  async getStats(params = {}) {
+    const response = await apiClient.get(ENDPOINTS.MUSIC_STATS, { params });
+    return response.data;
+  },
 };
 
 export default musicService;

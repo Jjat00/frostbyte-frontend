@@ -229,7 +229,7 @@ const HomePage = () => {
       features: [
         { icon: Music, text: 'Solicitudes' },
         { icon: ClipboardList, text: 'Gestionar Estados' },
-        { icon: BarChart3, text: 'Historial' },
+        { icon: BarChart3, text: 'Géneros y pisos' },
       ],
     },
     {

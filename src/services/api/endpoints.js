@@ -70,6 +70,7 @@ export const ENDPOINTS = {
 
   // Music Settings
   MUSIC_SETTINGS: '/music-settings/',
+  MUSIC_STATS: '/music-stats/',
 
   // Feedback
   FEEDBACK: '/feedback/',
