@@ -8,7 +8,7 @@ import {
 /**
  * Servicio de autenticación de CLIENTES (login con Google).
  *
- * General y reutilizable: hoy lo usa la Polla Mundialista, mañana puede
+ * General y reutilizable: hoy lo usan pedidos y reservas, mañana puede
  * usarlo el flujo de pedidos. Mantiene la sesión separada del staff.
  */
 export const customerAuthService = {

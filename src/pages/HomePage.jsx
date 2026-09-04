@@ -304,18 +304,6 @@ const HomePage = () => {
         { icon: Shield, text: 'Permisos' },
       ],
     },
-    {
-      id: 'polla-admin',
-      title: 'Polla Mundial',
-      description: 'Monitorea el ranking y el avance de cada jugador del Mundial 2026',
-      icon: Trophy,
-      path: '/polla-admin',
-      features: [
-        { icon: Trophy, text: 'Ranking' },
-        { icon: Users, text: 'Jugadores' },
-        { icon: BarChart3, text: 'Misiones' },
-      ],
-    },
   ];
 
   const modules = isAdmin()

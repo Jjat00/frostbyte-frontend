@@ -142,9 +142,7 @@ Una paleta de dos neones sobre noche azulada, con dos acentos funcionales que no
 - **Cyan Escarcha** (`#00e0ff`): el compañero inseparable del magenta y el color del dato. Precios, cifras, valores destacados, cierre del gradiente de firma y el thumb del scrollbar. Es el acento más usado de la app, precisamente porque los números mandan.
 
 ### Tertiary
-- **Oro de Consumo** (`#f2c53d`): acciones y valores de compra — cuenta del cliente, dinero, premios. Nunca decorativo.
 - **Esmeralda de Domicilio** (`#34d399` → `#059669`): identidad exclusiva de `/domicilios` y del pedido en curso (chip de categoría seleccionado, punto verde de pedido activo, foco del buscador de la tienda). Marca el territorio de la tienda dentro de la app.
-- **Verde Cancha** (`#1e9e5a`): superviviente del tema `theme-26`; solo vive en las páginas históricas de la Polla.
 
 ### Neutral
 - **Noche Frostbyte** (`#0a0b14`): fondo global, y también fondo de tarjetas opacas y popovers. Es el negro de la marca, azulado, nunca `#000`.
@@ -178,7 +176,7 @@ Una paleta de dos neones sobre noche azulada, con dos acentos funcionales que no
 
 ### Named Rules
 
-**La Regla de la Familia Única.** Un tema = una familia. Meter una segunda fuente "de apoyo" rompe el sistema; la única forma legítima de traer otra tipografía es definir un tema nuevo en `theme.css` que redefina `--font-display` y `--font-body` juntos (como hizo `.theme-26` con Archivo + Noto Sans).
+**La Regla de la Familia Única.** Un tema = una familia. Meter una segunda fuente "de apoyo" rompe el sistema; la única forma legítima de traer otra tipografía es definir un tema nuevo en `theme.css` que redefina `--font-display` y `--font-body` juntos (por ejemplo, un tema de temporada que traiga su propio par display/texto).
 
 **La Regla de la Versalita Espaciada.** Todo texto pequeño en mayúsculas lleva `tracking-wide` o mayor. Orbitron en versalitas apretadas se vuelve ilegible a 12px; el espaciado no es estilo, es legibilidad.
 

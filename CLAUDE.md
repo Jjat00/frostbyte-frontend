@@ -87,7 +87,7 @@ Use `@/` for imports from `src/` directory (configured in vite.config.js)
 
 ### Styling
 
-- **The entire design system lives in `src/theme.css`** (single source of truth): color tokens, `--font-display`/`--font-body`, radii, and alternative themes as `.theme-<name>` classes (activated on `<body>` globally or on a page's root container locally, e.g. `.theme-26` on the Polla pages).
+- **The entire design system lives in `src/theme.css`** (single source of truth): color tokens, `--font-display`/`--font-body`, radii, and alternative themes as `.theme-<name>` classes (activated on `<body>` globally or on a page's root container locally).
 - Base theme: dark cyberpunk — primary (#ff00d4 magenta), secondary (#00e0ff cyan), Orbitron font. To retheme the whole app, edit tokens in `theme.css` only.
 - NEVER hardcode brand colors or fonts in components. Use token utilities (`text-primary`, `from-secondary`…); in inline/arbitrary styles use `var(--color-primary)` and `color-mix(in srgb, var(--color-primary) 40%, transparent)`; in canvas/Mapbox/charts/framer-motion-animated values use the helpers in `src/lib/themeColors.js`.
 - Known exceptions that intentionally don't follow the theme: product-identity gradients in menu sections, data-viz series palettes, `FrostbyteTVPage`, `impostorAvatars.js`, `qrStyling.js`.

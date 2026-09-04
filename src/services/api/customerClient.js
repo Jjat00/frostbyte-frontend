@@ -7,7 +7,7 @@ import { env } from "@/config";
  * Está deliberadamente AISLADO del apiClient de staff: usa sus propias
  * claves de localStorage (`frostbyte_customer_*`) para que la sesión de un
  * cliente nunca se mezcle con la de un administrador/empleado. Pensado para
- * reutilizarse en la Polla y, a futuro, en pedidos.
+ * reutilizarse en cualquier vista del cliente (pedidos, reservas, mi cuenta).
  */
 export const CUSTOMER_TOKEN_KEY = "frostbyte_customer_token";
 export const CUSTOMER_REFRESH_KEY = "frostbyte_customer_refresh";
@@ -63,7 +63,7 @@ async function refreshCustomerToken() {
 }
 
 // Promesa de refresh compartida: si varias peticiones reciben 401 a la vez
-// (p. ej. al cargar la Polla), todas esperan la MISMA renovación en lugar de
+// (p. ej. al abrir mi cuenta), todas esperan la MISMA renovación en lugar de
 // disparar refreshes en paralelo que se invalidarían entre sí por la rotación.
 let refreshPromise = null;
 

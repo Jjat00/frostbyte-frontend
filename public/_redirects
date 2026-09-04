@@ -1,5 +1,5 @@
 # Cloudflare Pages: fallback de SPA.
 # Sirve index.html (200) para cualquier ruta que no sea un archivo estático,
 # para que el router del lado del cliente maneje rutas profundas al recargar
-# o compartir el link (p.ej. /partidos, /grupos, /polla-mundial).
+# o compartir el link (p.ej. /carta, /mi-cuenta, /mis-reservas).
 /*    /index.html   200

@@ -15,7 +15,7 @@ import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
  * Google salta una sola vez, al confirmar el pedido. Con sesión suma el acceso
  * al estado del pedido (/mis-pedidos). WhatsApp queda de respaldo.
  *
- * Variantes (mismo patrón que el banner de la Polla Mundialista para repetir sin saturar):
+ * Variantes (para repetir el banner en varias vistas sin saturar):
  * - "feature": tarjeta completa, encabeza la carta (lleva el id #domicilios)
  * - "strip": barra compacta de recordatorio al cierre de la carta
  *

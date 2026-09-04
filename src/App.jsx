@@ -54,9 +54,6 @@ function App() {
           <WaterSection />
           {/* Recordatorio compacto de domicilios al cierre de la carta */}
           <DomiciliosBanner variant="strip" />
-          {/* El Mundial se retiró de la carta: sus vistas siguen en el código
-              y accesibles por URL para el equipo, pero el cliente ya no ve
-              nada del torneo. */}
           <DrinkRecommender />
           <SocialDiscountBanner />
           <BirthdayDiscountBanner />

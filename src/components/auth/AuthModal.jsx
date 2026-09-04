@@ -6,7 +6,7 @@ import GoogleSignInButton from "./GoogleSignInButton";
 
 /**
  * Modal de inicio de sesión para clientes. Reutilizable desde cualquier
- * parte de la app (hoy la Polla; mañana, pedidos).
+ * parte de la app (pedidos, reservas, mi cuenta).
  *
  * Props:
  *  - open: boolean

@@ -106,38 +106,6 @@ export const ENDPOINTS = {
   WHATSAPP_AGENT_TONES: '/whatsapp/agent-tones/',
   WHATSAPP_AGENT_TONE_DETAIL: (id) => `/whatsapp/agent-tones/${id}/`,
   WHATSAPP_AGENT_TONE_RESTORE: (id) => `/whatsapp/agent-tones/${id}/restore/`,
-
-  // Polla Mundialista 2026
-  POLLA_TOURNAMENT: '/polla/tournament/',
-  POLLA_GROUPS: '/polla/groups/',
-  POLLA_STANDINGS: '/polla/standings/',
-  POLLA_TOPSCORERS: '/polla/topscorers/',
-  POLLA_TEAM_DETAIL: (code) => `/polla/teams/${code}/`,
-  POLLA_PLAYER_DETAIL: (id) => `/polla/players/${id}/`,
-  POLLA_MATCHES: '/polla/matches/',
-  POLLA_MATCH_DETAIL: (slug) => `/polla/matches/${slug}/`,
-  POLLA_MATCH_PREDICT: (slug) => `/polla/matches/${slug}/predict/`,
-  POLLA_MATCH_PULSE: (slug) => `/polla/matches/${slug}/pulse/`,
-  POLLA_MY_PREDICTIONS: '/polla/predictions/me/',
-  POLLA_AWARDS: '/polla/awards/',
-  POLLA_AWARD_PICK: (code) => `/polla/awards/${code}/pick/`,
-  POLLA_BRACKET: '/polla/bracket/',
-  POLLA_BRACKET_PICK: (slug) => `/polla/bracket/${slug}/pick/`,
-  POLLA_RANKING: '/polla/ranking/',
-  POLLA_PARTICIPANT: (userId) => `/polla/participants/${userId}/`,
-  POLLA_MISSIONS: '/polla/missions/',
-  POLLA_MY_STATS: '/polla/me/stats/',
-  POLLA_GRANIZADO: '/polla/granizado/',
-  POLLA_GRANIZADO_REDEEM: (id) => `/polla/granizado/${id}/redeem/`,
-  POLLA_REFERRAL: '/polla/referral/',
-  POLLA_REFERRAL_CLAIM: '/polla/referral/claim/',
-
-  // Polla - Dashboard de administración (solo staff/admin)
-  POLLA_ADMIN_OVERVIEW: '/polla/admin/overview/',
-  POLLA_ADMIN_PLAYERS: '/polla/admin/',
-  POLLA_ADMIN_PLAYER: (userId) => `/polla/admin/${userId}/`,
-  POLLA_ADMIN_AWARDS: '/polla/admin/awards/',
-  POLLA_ADMIN_RESOLVE_AWARD: '/polla/admin/resolve-award/',
 };
 
 export default ENDPOINTS;

@@ -97,11 +97,6 @@ const ImpostorGamePage = lazyLoad(() => import("./pages/game/impostor-frostbyte/
 
 const LandingPage = lazyLoad(() => import("./pages/LandingPage"));
 
-const PollaMundialPage = lazyLoad(() => import("./pages/PollaMundialPage"));
-const MundialPromoPage = lazyLoad(() => import("./pages/MundialPromoPage"));
-const PollaApp = lazyLoad(() => import("./pages/polla/PollaApp"));
-const PollaAdminDashboard = lazyLoad(() => import("./pages/polla-admin/PollaAdminDashboard"));
-const PollaPlayerDetail = lazyLoad(() => import("./pages/polla-admin/PollaPlayerDetail"));
 const PrivacyPolicyPage = lazyLoad(() => import("./pages/legal/PrivacyPolicyPage"));
 const TermsOfServicePage = lazyLoad(() => import("./pages/legal/TermsOfServicePage"));
 const AdminRoute = lazyLoad(() => import("./components/AdminRoute"));
@@ -239,34 +234,6 @@ export const router = createBrowserRouter([
       </Lazy>
     ),
   },
-  // Polla Mundialista 2026 (pública)
-  {
-    path: "/polla-mundial",
-    element: (
-      <Lazy>
-        <PollaMundialPage />
-      </Lazy>
-    ),
-  },
-  // Anuncio público con QR para invitar a participar (pantalla del local / redes)
-  {
-    path: "/mundial",
-    element: (
-      <Lazy>
-        <MundialPromoPage />
-      </Lazy>
-    ),
-  },
-  // App de la Polla: una ruta por tab (requiere sesión de cliente; si no, el
-  // propio PollaApp redirige a /polla-mundial).
-  ...["/partidos", "/grupos", "/ranking", "/misiones"].map((path) => ({
-    path,
-    element: (
-      <Lazy>
-        <PollaApp />
-      </Lazy>
-    ),
-  })),
   // Páginas legales (públicas) - requeridas por Google OAuth
   {
     path: "/privacidad",
@@ -732,31 +699,6 @@ export const router = createBrowserRouter([
         ),
       },
     ],
-  },
-  // Dashboard de la Polla Mundialista (admin only)
-  {
-    path: "/polla-admin",
-    element: (
-      <Lazy>
-        <ProtectedRoute>
-          <AdminRoute>
-            <PollaAdminDashboard />
-          </AdminRoute>
-        </ProtectedRoute>
-      </Lazy>
-    ),
-  },
-  {
-    path: "/polla-admin/jugador/:userId",
-    element: (
-      <Lazy>
-        <ProtectedRoute>
-          <AdminRoute>
-            <PollaPlayerDetail />
-          </AdminRoute>
-        </ProtectedRoute>
-      </Lazy>
-    ),
   },
   // Panel de administración de juegos (empleados y admin)
   {
