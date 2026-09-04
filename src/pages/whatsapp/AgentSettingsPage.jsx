@@ -744,7 +744,7 @@ const AgentSettingsPage = () => {
 
           <Field
             label="Frase de ejemplo (opcional)"
-            hint="Cómo sonaría un saludo suyo. Solo se ve en esta pantalla."
+            hint="Cómo sonaría un saludo suyo. Se ve aquí y también se la damos al agente: un ejemplo corto le afina el registro más que explicárselo."
           >
             <input
               className={inputClass}
