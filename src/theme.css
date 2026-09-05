@@ -56,8 +56,8 @@
   --color-ring: var(--color-primary);
   --color-primary-foreground: var(--color-dark);
   --color-secondary-foreground: var(--color-dark);
-  --font-body: "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Helvetica Neue", Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --aa-font-editorial: "Bodoni MT", "Didot", Georgia, serif;
   --aa-line: color-mix(in srgb, var(--color-primary) 22%, transparent);
 }
