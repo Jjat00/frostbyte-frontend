@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Download, Share2, ImagePlus } from 'lucide-react';
+import { ArrowLeft, Download, Share2, ImagePlus, Sparkles } from 'lucide-react';
 import { useCartaPath } from '@/hooks';
 import { env } from '@/config/env';
 import '@/components/amor-amistad.css';
+
+const DEFAULT_PHRASE = 'Lo mejor de la vida es compartirla contigo.';
 
 export default function CelebrationCardPage() {
   const { cartaPath } = useCartaPath();
@@ -14,6 +16,10 @@ export default function CelebrationCardPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [phrase, setPhrase] = useState(DEFAULT_PHRASE);
+  const [writing, setWriting] = useState(false);
+  const [phraseNotice, setPhraseNotice] = useState('');
+  const form = useRef(null);
   const controller = useRef(null);
   const locked = useRef(false);
   useEffect(() => {
@@ -36,6 +42,34 @@ export default function CelebrationCardPage() {
     }
     setPhoto(file); setResult(null); setError(''); setNotice('');
   }
+  // La frase que está en pantalla viaja como `avoid`: sin eso, pulsar otra vez
+  // devuelve casi lo mismo y el botón parece roto.
+  async function writePhrase() {
+    if (writing) return;
+    setWriting(true); setPhraseNotice('');
+    const current = new FormData(form.current);
+    try {
+      const response = await fetch(`${env.API_BASE_URL}/motivational/celebration-card/phrase/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to_name: current.get('to_name') || '',
+          from_name: current.get('from_name') || '',
+          avoid: phrase.slice(0, 240),
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.phrase) {
+        throw new Error(response.status === 429
+          ? 'Ya pediste muchas frases por ahora. Escribe la tuya o vuelve más tarde.'
+          : payload.error || 'No pudimos escribirla. Prueba de nuevo o escribe la tuya.');
+      }
+      setPhrase(payload.phrase);
+      setPhraseNotice('Dedicatoria lista. Púlsalo otra vez para otra, o edítala a tu gusto.');
+    } catch (e) { setPhraseNotice(e.message); }
+    finally { setWriting(false); }
+  }
+
   async function generate(event) {
     event.preventDefault();
     if (locked.current || !photo) return;
@@ -70,7 +104,7 @@ export default function CelebrationCardPage() {
           <p>Una tarjeta de Amor y Amistad con el estilo de Frostbyte y los colores de su ropa y accesorios.</p>
         </div>
         <div className="aa-card-workspace">
-          <form onSubmit={generate} className="aa-card-form">
+          <form ref={form} onSubmit={generate} className="aa-card-form">
             <fieldset disabled={busy}>
               <label htmlFor="card-photo">La foto que quieres regalar</label>
               <label className="aa-photo-upload" htmlFor="card-photo">
@@ -79,8 +113,17 @@ export default function CelebrationCardPage() {
               <input id="card-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={choosePhoto} required={!photo} />
               <p className="aa-input-hint">JPG, PNG o WebP · Hasta 10 MB. Usa una foto que tengas permiso de compartir.</p>
               <div className="aa-card-names"><label>Para<input name="to_name" maxLength={60} placeholder="Su nombre (opcional)" /></label><label>De<input name="from_name" maxLength={60} placeholder="Tu nombre (opcional)" /></label></div>
-              <label>Tu dedicatoria<textarea name="phrase" maxLength={240} rows={3} defaultValue="Lo mejor de la vida es compartirla contigo." /></label>
-              <p className="aa-input-hint">La foto se enviará a Google Gemini o, si no responde, a OpenAI para generar la tarjeta. Frostbyte no la guarda en una galería. Revisa el resultado antes de compartirlo.</p>
+              <div className="aa-phrase">
+                <label htmlFor="card-phrase">Tu dedicatoria</label>
+                <textarea id="card-phrase" name="phrase" maxLength={240} rows={3}
+                  value={phrase} onChange={(e) => setPhrase(e.target.value)} />
+                <button type="button" className="aa-phrase-write" onClick={writePhrase} disabled={writing}>
+                  <Sparkles size={15} aria-hidden="true" />
+                  {writing ? 'Escribiendo…' : 'Escríbela por mí'}
+                </button>
+                <p role="status" className="aa-input-hint">{phraseNotice}</p>
+              </div>
+              <p className="aa-input-hint">La foto se procesa fuera de Frostbyte solo para crear la tarjeta y no se guarda. Revisa el resultado antes de compartirlo.</p>
               <button className="aa-button aa-button--primary" type="submit" disabled={!photo || busy}>{busy ? 'Creando tu tarjeta…' : result ? 'Crear otra versión' : 'Crear mi tarjeta'}</button>
             </fieldset>
             <p role="status" className="aa-card-status">{busy ? 'Estamos combinando tu foto, los colores y la dedicatoria. Puede tardar hasta dos minutos si el primer intento no sale.' : notice}</p>

@@ -235,6 +235,16 @@
 .aa-photo-upload { min-height: 12rem; display: flex !important; flex-direction: column; justify-content: center; align-items: center; border: 1px dashed var(--color-primary); border-radius: 1rem; padding: 1rem; cursor: pointer; text-align: center; }
 .aa-photo-upload img { max-height: 16rem; object-fit: contain; border-radius: .75rem; }
 .aa-card-names { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+/* La ayuda va debajo del campo y no dentro: quien ya trae su frase escrita no
+   tiene que rodear un botón para llegar al área de texto. */
+.aa-phrase { display: grid; gap: .5rem; min-width: 0; }
+.aa-phrase-write { justify-self: start; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .5rem 1rem; border: 1px solid var(--aa-line); border-radius: .875rem; background: transparent; color: var(--color-light); font: inherit; font-size: .8125rem; font-weight: 600; transition: background-color .15s, border-color .15s; }
+.aa-phrase-write svg { color: var(--color-primary); flex-shrink: 0; }
+.aa-phrase-write:active { background: var(--aa-line); }
+.aa-phrase .aa-input-hint:empty { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .aa-phrase-write:hover:not(:disabled) { background: var(--aa-line); border-color: var(--color-primary); }
+}
 .aa-input-hint, .aa-card-status { font-size: .8125rem; line-height: 1.7; color: var(--color-gray); }
 .aa-card-status:not(:empty) { margin-top: 1rem; }
 .aa-card-error { margin-top: 1rem; padding: 1rem; border: 1px solid var(--color-primary); border-radius: .75rem; }
