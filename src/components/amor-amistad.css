@@ -73,10 +73,83 @@
   .aa-button--primary:hover { background: var(--color-light); border-color: var(--color-light); }
   .aa-button--secondary:hover, .aa-services-links a:hover { background: var(--aa-line); border-color: var(--color-primary); }
 }
+/* Cristal de temporada: una superficie por nivel, sin blur en sus hijos.
+   La base opaca también sirve a navegadores sin backdrop-filter. */
+.aa-hero {
+  position: relative;
+  isolation: isolate;
+  background-image:
+    radial-gradient(ellipse at 90% 20%, color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 55%),
+    radial-gradient(ellipse at 15% 95%, color-mix(in srgb, var(--color-secondary) 12%, transparent), transparent 50%);
+}
+.aa-services,
+.aa-button--secondary,
+.aa-photo span,
+.theme-amor-amistad > header {
+  background-color: var(--color-dark-secondary);
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--color-light) 10%, transparent), transparent 45%, color-mix(in srgb, var(--color-primary) 5%, transparent));
+  border: 1px solid color-mix(in srgb, var(--color-light) 18%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-light) 14%, transparent), 0 .75rem 2rem color-mix(in srgb, var(--color-dark) 24%, transparent);
+}
+.aa-services { padding: 1.25rem; border-radius: 1.75rem; }
+.aa-services-links a {
+  background: transparent;
+  border-color: transparent;
+}
+.aa-button--primary {
+  background-image: linear-gradient(160deg, color-mix(in srgb, var(--color-light) 25%, transparent), transparent 65%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-light) 55%, transparent), 0 .375rem 1.25rem color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+.aa-photo { box-shadow: 0 1.25rem 2.5rem color-mix(in srgb, var(--color-dark) 35%, transparent); }
+.aa-photo span {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 1.5rem);
+  padding: .375rem 1rem .5rem;
+  border-radius: 100vmax;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+.theme-amor-amistad > header {
+  border-width: 0 0 1px;
+  /* El desenfoque permanece fijo durante el scroll. */
+  transition-property: background-color, border-color;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .aa-services,
+  .aa-button--secondary,
+  .aa-photo span,
+  .theme-amor-amistad > header {
+    background-color: color-mix(in srgb, var(--color-dark-secondary) 72%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(135%);
+    backdrop-filter: blur(16px) saturate(135%);
+  }
+  .aa-photo span {
+    background-color: color-mix(in srgb, var(--color-dark) 65%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+}
+@media (max-width: 40rem) {
+  .aa-services { padding: 1rem; border-radius: 1.5rem; }
+  .aa-services-links a { padding-inline: .5rem; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .aa-services,
+  .aa-button--secondary,
+  .aa-photo span,
+  .theme-amor-amistad > header {
+    background: var(--color-dark-secondary);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .aa-hero { background-image: none; }
+}
 @media (prefers-contrast: more) {
   .aa-hero { --color-gray: var(--color-light); --aa-line: var(--color-primary); }
-  .aa-services-links a, .aa-button--secondary { background: var(--color-dark); }
-}
-@media (prefers-reduced-transparency: reduce) {
-  .aa-services-links a, .aa-button--secondary, .aa-edition .aa-table-location { background: var(--color-dark-secondary); }
+  .aa-services, .aa-button--secondary, .aa-photo span, .aa-services-links a,
+  .theme-amor-amistad > header { border-color: var(--color-light); }
 }
