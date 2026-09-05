@@ -40,13 +40,18 @@
    - qrStyling.js: la librería de QR exige hex literales.
    ═══════════════════════════════════════════════════════════════════ */
 
+/* Negro mate de base y vino de acompañamiento: el color aparece en los
+   brillos, los hilos y la tipografía, nunca como fondo. `--aa-wine` es el
+   vino profundo de las superficies (casi negro); `--color-primary` es el
+   vino claro que sí se puede leer sobre negro (4,7:1). */
 .theme-amor-amistad {
-  --color-dark: #1b1017;
-  --color-dark-secondary: #2a1b24;
-  --color-light: #faf0f2;
-  --color-gray: #c3abb5;
-  --color-primary: #e8a9ba;
-  --color-secondary: #c6d5cf;
+  --color-dark: #0a0a0a;
+  --color-dark-secondary: #141011;
+  --color-light: #f4f0f1;
+  --color-gray: #9b8f92;
+  --color-primary: #c45a6d;
+  --color-secondary: #a9757f;
+  --aa-wine: #5e1c2b;
   --color-background: var(--color-dark);
   --color-foreground: var(--color-light);
   --color-card: var(--color-dark-secondary);
