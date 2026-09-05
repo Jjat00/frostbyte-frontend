@@ -80,7 +80,7 @@ export default function CelebrationCardPage() {
               <p className="aa-input-hint">JPG, PNG o WebP · Hasta 10 MB. Usa una foto que tengas permiso de compartir.</p>
               <div className="aa-card-names"><label>Para<input name="to_name" maxLength={60} placeholder="Su nombre (opcional)" /></label><label>De<input name="from_name" maxLength={60} placeholder="Tu nombre (opcional)" /></label></div>
               <label>Tu dedicatoria<textarea name="phrase" maxLength={240} rows={3} defaultValue="Lo mejor de la vida es compartirla contigo." /></label>
-              <p className="aa-input-hint">La foto se enviará a Google Gemini para generar la tarjeta. Frostbyte no la guarda en una galería. Revisa el resultado antes de compartirlo.</p>
+              <p className="aa-input-hint">La foto se enviará a Google Gemini o, si no responde, a OpenAI para generar la tarjeta. Frostbyte no la guarda en una galería. Revisa el resultado antes de compartirlo.</p>
               <button className="aa-button aa-button--primary" type="submit" disabled={!photo || busy}>{busy ? 'Creando tu tarjeta…' : result ? 'Crear otra versión' : 'Crear mi tarjeta'}</button>
             </fieldset>
             <p role="status" className="aa-card-status">{busy ? 'Estamos combinando tu foto, los colores y la dedicatoria. Puede tardar hasta un minuto y medio.' : notice}</p>
