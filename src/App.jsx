@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
+import AmorAmistadHero from "@/components/AmorAmistadHero";
 import Features from "@/components/Features";
 // import Gallery from "@/components/Gallery";
 // import Contact from "@/components/Contact";
@@ -38,10 +38,10 @@ function App() {
 
   return (
     <>
-      <div className={`min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
+      <div className={`theme-amor-amistad min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
         <main>
-          <Hero />
+          <AmorAmistadHero />
           <QuickNav />
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;

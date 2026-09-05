@@ -40,6 +40,28 @@
    - qrStyling.js: la librería de QR exige hex literales.
    ═══════════════════════════════════════════════════════════════════ */
 
+.theme-amor-amistad {
+  --color-dark: #1b1017;
+  --color-dark-secondary: #2a1b24;
+  --color-light: #faf0f2;
+  --color-gray: #c3abb5;
+  --color-primary: #e8a9ba;
+  --color-secondary: #c6d5cf;
+  --color-background: var(--color-dark);
+  --color-foreground: var(--color-light);
+  --color-card: var(--color-dark-secondary);
+  --color-card-foreground: var(--color-light);
+  --color-popover: var(--color-dark-secondary);
+  --color-popover-foreground: var(--color-light);
+  --color-ring: var(--color-primary);
+  --color-primary-foreground: var(--color-dark);
+  --color-secondary-foreground: var(--color-dark);
+  --font-body: "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Helvetica Neue", Arial, sans-serif;
+  --aa-font-editorial: "Bodoni MT", "Didot", Georgia, serif;
+  --aa-line: color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
 @theme {
   /* ── Paleta de marca (tema base: Frostbyte cyberpunk) ── */
   --color-dark: #0a0b14; /* fondo global */

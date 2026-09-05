@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
+import AmorAmistadHero from "@/components/AmorAmistadHero";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
 import QuickNav from "@/components/QuickNav";
@@ -118,10 +118,10 @@ function TablePage() {
           content="Experimenta el futuro de las bebidas heladas. Frostbyte ofrece granizados y frappés premium con sabores únicos. Sabores vibrantes, experiencia única."
         />
       </Helmet>
-      <div className={`min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
+      <div className={`theme-amor-amistad min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
         <main>
-          <Hero />
+          <AmorAmistadHero locationLabel={displayName} />
 
           {/* Order Tracker: MiniBar si ya verificado, o banner de código */}
           {order ? (
