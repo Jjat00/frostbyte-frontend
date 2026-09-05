@@ -15,7 +15,7 @@ export const whatsappAgentService = {
     return response.data;
   },
 
-  /** @param {{ agent_name?: string, tone_preset?: string, tone?: string, owner_phones?: string, stickers_enabled?: boolean, reactions_enabled?: boolean, product_photos_enabled?: boolean, quick_replies_enabled?: boolean }} data */
+  /** @param {{ agent_name?: string, tone_preset?: string, tone?: string, banned_words?: string, owner_phones?: string, stickers_enabled?: boolean, reactions_enabled?: boolean, product_photos_enabled?: boolean, quick_replies_enabled?: boolean }} data */
   async updateSettings(data) {
     const response = await apiClient.patch(ENDPOINTS.WHATSAPP_AGENT_SETTINGS, data);
     return response.data;
