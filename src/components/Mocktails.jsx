@@ -75,7 +75,7 @@ const ProductCard = ({ product, index, styles }) => {
           </h3>
           <p className="mb-2 text-[0.78rem] leading-relaxed text-light/55">{product.description}</p>
           {styles.liquor && (
-            <p className="text-xs text-secondary/80 mb-4 grow">
+            <p className="text-xs text-secondary mb-4 grow">
               <span className="font-semibold">Base:</span> {styles.liquor}
             </p>
           )}
@@ -116,7 +116,7 @@ const ProductCard = ({ product, index, styles }) => {
                 type="button"
                 onClick={() => setShowHistory((prev) => !prev)}
                 aria-expanded={showHistory}
-                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-secondary/90 hover:text-secondary transition-colors"
+                className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-secondary hover:text-light transition-colors"
               >
                 <BookOpen size={14} />
                 Historia

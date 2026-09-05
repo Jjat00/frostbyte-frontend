@@ -56,7 +56,7 @@ const SPECIAL_SECTIONS = [
   {
     id: "descuento-redes",
     name: "Descuento por Redes",
-    gradient: "from-pink-400 to-rose-500",
+    gradient: "from-sky-400 to-indigo-500",
     icon: Share2,
     description: "Siguenos en redes sociales y obtendras un descuento.",
   },

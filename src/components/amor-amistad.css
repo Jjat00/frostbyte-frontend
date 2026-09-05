@@ -213,7 +213,7 @@
    cada categoría vuelve a ocupar lo que ocupaba antes de la temporada. */
 .theme-amor-amistad .aa-menu-category h3 { font: 400 1.0625rem/1.25 var(--aa-font-editorial); letter-spacing: .015em; }
 .aa-dedication-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; font-size: .75rem; font-weight: 600; text-decoration: underline; text-underline-offset: .2em; }
-.aa-card-banner { display: flex; align-items: center; gap: 2rem; width: min(70rem, calc(100% - 2.5rem)); margin: 3rem auto; padding: 2rem; border: 1px solid var(--aa-line); border-radius: 1.75rem; background: linear-gradient(125deg, color-mix(in srgb, var(--aa-wine) 62%, transparent), transparent), var(--color-dark-secondary); box-shadow: inset 0 1px 0 var(--aa-line), 0 1rem 3rem color-mix(in srgb, var(--color-dark) 55%, transparent); }
+.aa-card-banner { display: flex; align-items: center; gap: 2rem; width: min(70rem, calc(100% - 2.5rem)); margin: 3rem auto; padding: 2rem; border: 1px solid var(--aa-line); border-radius: 1.75rem; background: linear-gradient(125deg, color-mix(in srgb, var(--aa-wine) 45%, transparent), transparent), var(--color-dark-secondary); box-shadow: inset 0 1px 0 var(--aa-line), 0 1rem 3rem color-mix(in srgb, var(--color-dark) 55%, transparent); }
 .aa-card-banner-mark { font: italic 5rem var(--aa-font-editorial); color: var(--color-primary); }
 .aa-card-banner h2 { font: 400 clamp(1.5rem, 3vw, 2rem)/1.2 var(--aa-font-editorial); margin-bottom: .75rem; }
 .aa-card-banner p { color: var(--color-gray); font-size: .875rem; }

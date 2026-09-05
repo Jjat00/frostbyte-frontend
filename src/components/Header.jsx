@@ -208,7 +208,7 @@ const Header = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent px-2.5 2xl:px-4 text-gray hover:text-primary focus:text-primary font-medium tracking-wide">
+                  <NavigationMenuTrigger className="bg-transparent px-2.5 2xl:px-4 text-gray hover:text-light focus:text-light font-medium tracking-wide">
                     Productos
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -233,7 +233,7 @@ const Header = () => {
                       <Link
                         to="/domicilios"
                         className={navLinkCls(
-                          "text-emerald-400 hover:text-emerald-300 focus:text-emerald-300 font-bold flex items-center gap-1.5"
+                          "text-secondary hover:text-light focus:text-light font-bold flex items-center gap-1.5"
                         )}
                       >
                         <Bike className="w-4 h-4" />
@@ -250,7 +250,7 @@ const Header = () => {
                       <Link
                         to="/game"
                         className={navLinkCls(
-                          "text-gray hover:text-primary focus:text-primary"
+                          "text-gray hover:text-light focus:text-light"
                         )}
                       >
                         Frostbyte Play
@@ -267,7 +267,7 @@ const Header = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={navLinkCls(
-                          "text-gray hover:text-primary focus:text-primary"
+                          "text-gray hover:text-light focus:text-light"
                         )}
                       >
                         {item.name}
@@ -277,7 +277,7 @@ const Header = () => {
                         <Link
                           to={item.href}
                           className={navLinkCls(
-                            "text-gray hover:text-primary focus:text-primary"
+                            "text-gray hover:text-light focus:text-light"
                           )}
                         >
                           {item.name}
@@ -291,7 +291,7 @@ const Header = () => {
                     <NavigationMenuLink
                       asChild
                       className={navLinkCls(
-                        "text-gray hover:text-primary focus:text-primary"
+                        "text-gray hover:text-light focus:text-light"
                       )}
                     >
                       <Link to="/mis-pedidos" className="flex items-center gap-2">
@@ -309,7 +309,7 @@ const Header = () => {
                   <NavigationMenuLink
                     asChild
                     className={navLinkCls(
-                      "text-white/35 hover:text-primary focus:text-primary text-xs"
+                      "text-white/35 hover:text-light focus:text-light text-xs"
                     )}
                   >
                     <Link
@@ -406,7 +406,7 @@ const Header = () => {
                 secciones. */}
             <a
               href="#carta"
-              className="block text-[0.85rem] font-medium text-primary transition-colors hover:text-primary/80"
+              className="block text-[0.85rem] font-medium text-primary transition-colors hover:text-light"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Carta completa
@@ -419,7 +419,7 @@ const Header = () => {
               {inAppOrdering && (
                 <Link
                   to="/domicilios"
-                  className="flex items-center gap-2 text-[0.85rem] font-medium text-secondary transition-colors hover:text-secondary/80"
+                  className="flex items-center gap-2 text-[0.85rem] font-medium text-secondary transition-colors hover:text-light"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Bike className="w-4 h-4" />
