@@ -7,7 +7,9 @@
 .aa-editorial { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; gap: 3.5rem; padding-block: 3.5rem 0; }
 .aa-kicker { margin: 0 0 1.5625rem; color: var(--color-primary); font-size: 0.75rem; letter-spacing: .16em; text-transform: uppercase; }
 .aa-copy h1 { margin: 0; font-family: var(--aa-font-editorial); font-size: clamp(3.5rem, 6.7vw, 5.75rem); font-weight: 400; line-height: 1.02; letter-spacing: -.035em; text-wrap: balance; overflow-wrap: anywhere; }
-.aa-copy h1 em { display: block; color: var(--color-primary); font-weight: 400; }
+/* El <em> marca la palabra que remata el titular, y el color ya la marca:
+   la cursiva encima inclina 12 caracteres de 92 px y rompe la línea. */
+.aa-copy h1 em { display: block; color: var(--color-primary); font-weight: 400; font-style: normal; }
 .aa-description { max-width: 22.1875rem; margin: 1.6875rem 0 1.875rem; color: var(--color-gray); font-size: 1rem; line-height: 1.8; }
 .aa-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 .aa-button { display: inline-flex; align-items: center; justify-content: center; gap: 1.125rem; min-height: 3.25rem; padding: 0.75rem 1.3125rem; border: 1px solid var(--aa-line); border-radius: 1rem; font-size: 0.9375rem; font-weight: 600; transition: background-color .2s, border-color .2s; }
@@ -207,7 +209,6 @@
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-light) 7%, transparent), 0 1rem 2.5rem color-mix(in srgb, var(--color-dark) 55%, transparent);
 }
 .theme-amor-amistad .aa-menu-body .fb-card h3 { text-transform: none; letter-spacing: .01em; font-size: 1.125rem; }
-.theme-amor-amistad .aa-menu-body .aa-menu-paper { outline: 1px solid var(--aa-line); outline-offset: -.625rem; }
 /* La carta es una lista, no una pila de tarjetas: la campaña solo le presta
    la tipografía editorial y el hilo de acento. Sin caja ni relleno propios,
    cada categoría vuelve a ocupar lo que ocupaba antes de la temporada. */

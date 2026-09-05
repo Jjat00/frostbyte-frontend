@@ -310,7 +310,7 @@ const CartaList = () => {
         <SalchipapasPromoBanner />
 
         {/* Carta border container */}
-        <div className="fb-card aa-menu-paper px-4 py-6 sm:p-7 md:p-10">
+        <div className="fb-card px-4 py-6 sm:p-7 md:p-10">
           {/* Categorias de productos (desde la API) */}
           {activeCategories.map((category) => (
             <CategoryGroup key={category.slug} category={category} />
