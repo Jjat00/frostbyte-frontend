@@ -87,7 +87,10 @@ export const DeliveryInfo = ({ order, className = "" }) => {
     >
       <div className="flex items-start gap-1.5 text-xs text-light">
         <MapPin className="w-3.5 h-3.5 text-secondary flex-shrink-0 mt-0.5" />
-        <span>{order.delivery_address || "Sin dirección"}</span>
+        <span>
+          {order.delivery_address ||
+            (hasCoords ? "Ubicación compartida" : "Sin dirección")}
+        </span>
       </div>
       {order.delivery_reference && (
         <p className="text-xs text-gray pl-5">{order.delivery_reference}</p>
