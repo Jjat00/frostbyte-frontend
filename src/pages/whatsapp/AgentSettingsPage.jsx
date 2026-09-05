@@ -67,7 +67,7 @@ const CAPABILITIES = [
   },
 ];
 
-const TEXT_FIELDS = ['agent_name', 'tone_preset', 'tone', 'owner_phones'];
+const TEXT_FIELDS = ['agent_name', 'tone_preset', 'tone', 'banned_words', 'owner_phones'];
 
 const BLANK_TONE = { name: '', description: '', sample: '', persona: '' };
 
@@ -160,6 +160,7 @@ const AgentSettingsPage = () => {
         agent_name: settings.agent_name || '',
         tone_preset: settings.tone_preset || '',
         tone: settings.tone || '',
+        banned_words: settings.banned_words || '',
         owner_phones: settings.owner_phones || '',
       });
     }
@@ -195,6 +196,7 @@ const AgentSettingsPage = () => {
           agent_name: data.agent_name || '',
           tone_preset: data.tone_preset || '',
           tone: data.tone || '',
+          banned_words: data.banned_words || '',
           owner_phones: data.owner_phones || '',
         });
         toast({ title: 'Listo, así queda' });
@@ -491,8 +493,20 @@ const AgentSettingsPage = () => {
                   <textarea
                     className={`${inputClass} min-h-[88px] resize-y leading-relaxed`}
                     value={draft.tone}
-                    placeholder="Sin emojis, y nunca digas «pana»…"
+                    placeholder="Sin emojis, y trata al cliente de usted…"
                     onChange={(e) => setDraft({ ...draft, tone: e.target.value })}
+                  />
+                </Field>
+
+                <Field
+                  label="Palabras que nunca debe decir"
+                  hint="Separadas por coma. Estas no dependen de que haga caso: se le quitan al mensaje antes de enviarlo, aunque el tono elegido las use."
+                >
+                  <input
+                    className={inputClass}
+                    value={draft.banned_words}
+                    placeholder="parce, pana"
+                    onChange={(e) => setDraft({ ...draft, banned_words: e.target.value })}
                   />
                 </Field>
               </div>
