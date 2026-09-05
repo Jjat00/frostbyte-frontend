@@ -76,7 +76,7 @@ export default function AmorAmistadHero() {
                 srcSet="/images/amor-amistad-brindis-mobile.webp 640w, /images/amor-amistad-brindis.webp 1122w"
                 sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1000px) 46vw, 560px"
                 width="1122" height="1402"
-                alt="Escena de celebración: dos bebidas sobre mármol vino, unidas por un lazo de satén junto a una vela."
+                alt="Escena de celebración: dos bebidas sobre mármol negro, unidas por un lazo de satén vino junto a una vela."
                 fetchPriority="high"
               />
               <div className="aa-campaign-signature" aria-hidden="true">

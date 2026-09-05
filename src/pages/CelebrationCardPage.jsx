@@ -87,7 +87,7 @@ export default function CelebrationCardPage() {
             {error && <p role="alert" className="aa-card-error">{error}</p>}
           </form>
           <section className="aa-card-result" aria-label="Tu tarjeta" aria-busy={busy}>
-            {resultUrl ? <><img src={resultUrl} alt="Tarjeta de Amor y Amistad generada con tu foto y dedicatoria" /><div className="aa-actions"><a className="aa-button aa-button--primary" href={resultUrl} download={result.name}><Download size={16} /> Descargar</a><button type="button" className="aa-button aa-button--secondary" onClick={share}><Share2 size={16} /> Compartir</button></div></> : <><img src="/images/amor-amistad-brindis-mobile.webp" alt="Referencia de estilo: tonos vino, cristal y un lazo de satén" /><p>Tu foto será la protagonista.<br />El satén y los reflejos tomarán sus colores.</p></>}
+            {resultUrl ? <><img src={resultUrl} alt="Tarjeta de Amor y Amistad generada con tu foto y dedicatoria" /><div className="aa-actions"><a className="aa-button aa-button--primary" href={resultUrl} download={result.name}><Download size={16} /> Descargar</a><button type="button" className="aa-button aa-button--secondary" onClick={share}><Share2 size={16} /> Compartir</button></div></> : <><img src="/images/amor-amistad-brindis-mobile.webp" alt="Referencia de estilo: negro mate, cristal y un lazo de satén vino" /><p>Tu foto será la protagonista.<br />El satén y los reflejos tomarán sus colores.</p></>}
           </section>
         </div>
       </div>
