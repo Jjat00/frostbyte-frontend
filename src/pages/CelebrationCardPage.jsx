@@ -83,7 +83,7 @@ export default function CelebrationCardPage() {
               <p className="aa-input-hint">La foto se enviará a Google Gemini o, si no responde, a OpenAI para generar la tarjeta. Frostbyte no la guarda en una galería. Revisa el resultado antes de compartirlo.</p>
               <button className="aa-button aa-button--primary" type="submit" disabled={!photo || busy}>{busy ? 'Creando tu tarjeta…' : result ? 'Crear otra versión' : 'Crear mi tarjeta'}</button>
             </fieldset>
-            <p role="status" className="aa-card-status">{busy ? 'Estamos combinando tu foto, los colores y la dedicatoria. Puede tardar hasta un minuto y medio.' : notice}</p>
+            <p role="status" className="aa-card-status">{busy ? 'Estamos combinando tu foto, los colores y la dedicatoria. Puede tardar hasta dos minutos si el primer intento no sale.' : notice}</p>
             {error && <p role="alert" className="aa-card-error">{error}</p>}
           </form>
           <section className="aa-card-result" aria-label="Tu tarjeta" aria-busy={busy}>
