@@ -69,19 +69,27 @@ export default function AmorAmistadHero({ locationLabel = "Cumbal, Nariño" }) {
             <p className="aa-footnote">Granizados · Frappés · Cócteles · Algo para compartir</p>
           </div>
 
-          <figure className="aa-still-life">
-            <div className="aa-photo aa-photo--first">
-              <img src="/SODA-ITALIANA-FRESA-9715.webp" width="600" height="534"
-                alt="Soda rosada de fresa con hielo" fetchPriority="high" />
-              <span aria-hidden="true">Para ti.</span>
+          <figure className="aa-campaign">
+            <div className="aa-campaign-frame">
+              <img
+                src="/images/amor-amistad-brindis.webp"
+                srcSet="/images/amor-amistad-brindis-mobile.webp 640w, /images/amor-amistad-brindis.webp 1122w"
+                sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1000px) 46vw, 560px"
+                width="1122" height="1402"
+                alt="Escena de celebración: dos bebidas sobre mármol vino, unidas por un lazo de satén junto a una vela."
+                fetchPriority="high"
+              />
+              <div className="aa-campaign-signature" aria-hidden="true">
+                <span>FROSTBYTE</span>
+                <span>Juntos sabe mejor.</span>
+              </div>
+              <span className="aa-campaign-seal" aria-hidden="true">&</span>
             </div>
-            <div className="aa-photo aa-photo--second">
-              <img src="/margarota.jpeg" width="570" height="333"
-                alt="Margarita con limón y borde de sal" />
-              <span aria-hidden="true">Para mí.</span>
-            </div>
-            <span className="aa-ampersand" aria-hidden="true">&</span>
-            <figcaption>Sabores distintos. El mismo plan.</figcaption>
+            <figcaption className="aa-dedication">
+              <span className="aa-dedication-to">Para: mi persona favorita</span>
+              <span className="aa-dedication-message">Nos debemos<br />un brindis.</span>
+              <span className="aa-dedication-sign">Con amor, Frostbyte</span>
+            </figcaption>
           </figure>
 
           <nav className="aa-services" aria-label={isTableRoute ? "En tu mesa" : "Planea tu visita"}>
