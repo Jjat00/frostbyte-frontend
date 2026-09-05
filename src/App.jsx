@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
+import CelebrationCardBanner from "@/components/CelebrationCardBanner";
 import AmorAmistadHero from "@/components/AmorAmistadHero";
 import Features from "@/components/Features";
 // import Gallery from "@/components/Gallery";
@@ -40,9 +41,10 @@ function App() {
     <>
       <div className={`theme-amor-amistad min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
-        <main>
+        <main className="aa-menu-body">
           <AmorAmistadHero />
           <QuickNav />
+          <CelebrationCardBanner />
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}

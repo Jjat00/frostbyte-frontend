@@ -19,6 +19,7 @@ const lazyLoad = (importFn) =>
   );
 
 // Lazy load de todas las rutas excepto la carta pública (/)
+const CelebrationCardPage = lazyLoad(() => import("./pages/CelebrationCardPage"));
 const TablePage = lazyLoad(() => import("./pages/TablePage"));
 const LoginPage = lazyLoad(() => import("./pages/auth/LoginPage"));
 const HomePage = lazyLoad(() => import("./pages/HomePage"));
@@ -152,6 +153,8 @@ const PublicRoute = ({ children }) => {
 };
 
 export const router = createBrowserRouter([
+  { path: "/dia-madre/generador", element: <Navigate to="/amor-amistad/tarjeta" replace /> },
+  { path: "/amor-amistad/tarjeta", element: <Lazy><CelebrationCardPage /></Lazy> },
   // Ruta principal - Carta pública (NO lazy - es la más visitada)
   {
     path: "/",

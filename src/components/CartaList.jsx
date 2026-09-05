@@ -123,7 +123,7 @@ const CategoryGroup = ({ category }) => {
   if (!products.length) return null;
 
   return (
-    <div className="mb-10">
+    <div className="aa-menu-category mb-10">
       {/* Cabecera de categoría: el nombre siempre en blanco, y el color del
           producto solo en el hilo de debajo (ver minimal.css). */}
       <div className="mb-4">
@@ -198,7 +198,7 @@ const SpecialSectionItem = ({ section }) => {
   const Icon = section.icon;
 
   return (
-    <div className="mb-10">
+    <div className="aa-menu-category mb-10">
       <div className="mb-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
@@ -310,7 +310,7 @@ const CartaList = () => {
         <SalchipapasPromoBanner />
 
         {/* Carta border container */}
-        <div className="fb-card px-4 py-6 sm:p-7 md:p-10">
+        <div className="fb-card aa-menu-paper px-4 py-6 sm:p-7 md:p-10">
           {/* Categorias de productos (desde la API) */}
           {activeCategories.map((category) => (
             <CategoryGroup key={category.slug} category={category} />

@@ -24,7 +24,7 @@ function SeasonLink({ to, children, ...props }) {
 }
 
 // Edición compartida por la portada y los QR de mesas de todos los pisos.
-export default function AmorAmistadHero({ locationLabel = "Cumbal, Nariño" }) {
+export default function AmorAmistadHero() {
   const { isTableRoute } = useCartaPath();
   const { data: storeConfig } = useStoreConfig();
   const { data: reservationsConfig } = useReservationsConfig();
@@ -36,7 +36,7 @@ export default function AmorAmistadHero({ locationLabel = "Cumbal, Nariño" }) {
       <div className="aa-container">
         <div className="aa-edition">
           <span>Especial de Amor & Amistad</span>
-          <span className={isTableRoute ? "aa-table-location" : undefined}>{locationLabel}</span>
+          <span>Cumbal, Nariño</span>
         </div>
 
         <div className="aa-editorial">
@@ -89,6 +89,7 @@ export default function AmorAmistadHero({ locationLabel = "Cumbal, Nariño" }) {
               <span className="aa-dedication-to">Para: mi persona favorita</span>
               <span className="aa-dedication-message">Nos debemos<br />un brindis.</span>
               <span className="aa-dedication-sign">Con amor, Frostbyte</span>
+              <SeasonLink to="/amor-amistad/tarjeta" className="aa-dedication-link">Crea la tuya con una foto <ArrowUpRight size={14} aria-hidden="true" /></SeasonLink>
             </figcaption>
           </figure>
 

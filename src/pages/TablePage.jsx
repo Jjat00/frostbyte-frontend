@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
+import CelebrationCardBanner from "@/components/CelebrationCardBanner";
 import AmorAmistadHero from "@/components/AmorAmistadHero";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
@@ -120,8 +121,8 @@ function TablePage() {
       </Helmet>
       <div className={`theme-amor-amistad min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
-        <main>
-          <AmorAmistadHero locationLabel={displayName} />
+        <main className="aa-menu-body">
+          <AmorAmistadHero />
 
           {/* Order Tracker: MiniBar si ya verificado, o banner de código */}
           {order ? (
@@ -138,6 +139,7 @@ function TablePage() {
           )}
 
           <QuickNav />
+          <CelebrationCardBanner />
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}
