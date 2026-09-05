@@ -130,7 +130,12 @@ export default function CelebrationCardPage() {
             {error && <p role="alert" className="aa-card-error">{error}</p>}
           </form>
           <section className="aa-card-result" aria-label="Tu tarjeta" aria-busy={busy}>
-            {resultUrl ? <><img src={resultUrl} alt="Tarjeta de Amor y Amistad generada con tu foto y dedicatoria" /><div className="aa-actions"><a className="aa-button aa-button--primary" href={resultUrl} download={result.name}><Download size={16} /> Descargar</a><button type="button" className="aa-button aa-button--secondary" onClick={share}><Share2 size={16} /> Compartir</button></div></> : <><img src="/images/amor-amistad-brindis-mobile.webp" alt="Referencia de estilo: negro mate, cristal y un lazo de satén vino" /><p>Tu foto será la protagonista.<br />El satén y los reflejos tomarán sus colores.</p></>}
+            {resultUrl ? <><img src={resultUrl} alt="Tarjeta de Amor y Amistad generada con tu foto y dedicatoria" /><div className="aa-actions"><a className="aa-button aa-button--primary" href={resultUrl} download={result.name}><Download size={16} /> Descargar</a><button type="button" className="aa-button aa-button--secondary" onClick={share}><Share2 size={16} /> Compartir</button></div></>
+              /* Antes había aquí una escena de copas y velas como «referencia de
+                 estilo»: prometía una tarjeta que ya no se genera. La única
+                 muestra honesta es la foto que acaba de elegir. */
+              : preview ? <><img src={preview} alt="La foto que elegiste, tal como entrará en la tarjeta" /><p>Tu foto es la protagonista.<br />Los colores de la tarjeta saldrán de ella.</p></>
+              : <div className="aa-card-empty"><p>Tu foto será la protagonista.<br />Los colores de la tarjeta saldrán de ella.</p></div>}
           </section>
         </div>
       </div>
