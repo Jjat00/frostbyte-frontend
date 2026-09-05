@@ -7,6 +7,44 @@ import '@/components/amor-amistad.css';
 
 const DEFAULT_PHRASE = 'Lo mejor de la vida es compartirla contigo.';
 
+// Formatos que el servidor abre tal cual. Lo demás (el HEIC del iPhone, un
+// AVIF, un archivo sin tipo declarado que llega desde Google Fotos) se
+// convierte aquí antes de subirlo: la foto que el teléfono muestra sin
+// problema no puede ser "un formato que no sirve" para quien la eligió.
+const READY_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_SIDE = 2048;
+const MAX_BYTES = 10 * 1024 * 1024;
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => { URL.revokeObjectURL(url); resolve(image); };
+    image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('formato')); };
+    image.src = url;
+  });
+}
+
+/**
+ * La foto ya en JPEG y a un tamaño razonable.
+ *
+ * Se hace siempre, no solo con los formatos raros: una foto de celular son
+ * varios MB que se suben por datos móviles, y el servidor la iba a reducir
+ * igual. De paso el canvas se queda sin los metadatos EXIF.
+ */
+async function toJpeg(file) {
+  const image = await loadImage(file);
+  const scale = Math.min(1, MAX_SIDE / Math.max(image.naturalWidth, image.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(image.naturalWidth * scale);
+  canvas.height = Math.round(image.naturalHeight * scale);
+  canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+  if (!blob) throw new Error('formato');
+  const name = file.name?.replace(/\.[^.]+$/, '') || 'foto';
+  return new File([blob], `${name}.jpg`, { type: 'image/jpeg' });
+}
+
 export default function CelebrationCardPage() {
   const { cartaPath } = useCartaPath();
   const [photo, setPhoto] = useState(null);
@@ -14,6 +52,7 @@ export default function CelebrationCardPage() {
   const [result, setResult] = useState(null);
   const [resultUrl, setResultUrl] = useState('');
   const [busy, setBusy] = useState(false);
+  const [preparing, setPreparing] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [phrase, setPhrase] = useState(DEFAULT_PHRASE);
@@ -34,13 +73,28 @@ export default function CelebrationCardPage() {
   }, [result]);
   useEffect(() => () => controller.current?.abort(), []);
 
-  function choosePhoto(event) {
+  async function choosePhoto(event) {
     const file = event.target.files?.[0];
     if (!file) return;
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024) {
-      setError('Elige una foto JPG, PNG o WebP de hasta 10 MB.'); event.target.value = ''; return;
-    }
-    setPhoto(file); setResult(null); setError(''); setNotice('');
+    event.target.value = '';
+    setError(''); setNotice(''); setPreparing(true);
+    try {
+      const ready = await toJpeg(file);
+      if (ready.size > MAX_BYTES) throw new Error('peso');
+      setPhoto(ready); setResult(null);
+    } catch (e) {
+      // Solo se rinde si el navegador tampoco pudo abrirla; si ya venía en un
+      // formato que el servidor lee, se sube tal cual.
+      if (e.message !== 'peso' && READY_TYPES.includes(file.type) && file.size <= MAX_BYTES) {
+        setPhoto(file); setResult(null);
+      } else if (e.message === 'peso') {
+        setError('Esa foto pesa demasiado. Prueba con otra.');
+      } else {
+        setError(/\.(heic|heif)$/i.test(file.name || '')
+          ? 'Tu teléfono guardó esa foto en formato HEIC. Ábrela en tus fotos y compártela como JPG, o mándale una captura de pantalla.'
+          : 'No pudimos abrir esa foto. Prueba con otra, o con una captura de pantalla.');
+      }
+    } finally { setPreparing(false); }
   }
   // La frase que está en pantalla viaja como `avoid`: sin eso, pulsar otra vez
   // devuelve casi lo mismo y el botón parece roto.
@@ -105,13 +159,13 @@ export default function CelebrationCardPage() {
         </div>
         <div className="aa-card-workspace">
           <form ref={form} onSubmit={generate} className="aa-card-form">
-            <fieldset disabled={busy}>
+            <fieldset disabled={busy || preparing}>
               <label htmlFor="card-photo">La foto que quieres regalar</label>
               <label className="aa-photo-upload" htmlFor="card-photo">
                 {preview ? <img src={preview} alt="Foto de referencia seleccionada" /> : <><ImagePlus size={32} /><span>Selecciona una foto juntos o un retrato</span></>}
               </label>
-              <input id="card-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={choosePhoto} required={!photo} />
-              <p className="aa-input-hint">JPG, PNG o WebP · Hasta 10 MB. Usa una foto que tengas permiso de compartir.</p>
+              <input id="card-photo" type="file" accept="image/*" onChange={choosePhoto} required={!photo} />
+              <p className="aa-input-hint">{preparing ? 'Preparando la foto…' : 'Cualquier foto de tu galería. Usa una que tengas permiso de compartir.'}</p>
               <div className="aa-card-names"><label>Para<input name="to_name" maxLength={60} placeholder="Su nombre (opcional)" /></label><label>De<input name="from_name" maxLength={60} placeholder="Tu nombre (opcional)" /></label></div>
               <div className="aa-phrase">
                 <label htmlFor="card-phrase">Tu dedicatoria</label>
@@ -124,7 +178,7 @@ export default function CelebrationCardPage() {
                 <p role="status" className="aa-input-hint">{phraseNotice}</p>
               </div>
               <p className="aa-input-hint">La foto se procesa fuera de Frostbyte solo para crear la tarjeta y no se guarda. Revisa el resultado antes de compartirlo.</p>
-              <button className="aa-button aa-button--primary" type="submit" disabled={!photo || busy}>{busy ? 'Creando tu tarjeta…' : result ? 'Crear otra versión' : 'Crear mi tarjeta'}</button>
+              <button className="aa-button aa-button--primary" type="submit" disabled={!photo || busy || preparing}>{busy ? 'Creando tu tarjeta…' : result ? 'Crear otra versión' : 'Crear mi tarjeta'}</button>
             </fieldset>
             <p role="status" className="aa-card-status">{busy ? 'Estamos combinando tu foto, los colores y la dedicatoria. Puede tardar hasta dos minutos si el primer intento no sale.' : notice}</p>
             {error && <p role="alert" className="aa-card-error">{error}</p>}
