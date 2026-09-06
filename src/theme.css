@@ -40,6 +40,34 @@
    - qrStyling.js: la librería de QR exige hex literales.
    ═══════════════════════════════════════════════════════════════════ */
 
+/* Negro mate de base y vino de acompañamiento: el color aparece en los
+   brillos, los hilos y la tipografía, nunca como fondo. `--aa-wine` es el
+   vino profundo de las superficies (casi negro); `--color-primary` es el
+   vino claro que sí se puede leer sobre las tarjetas de la carta, que no
+   son negras sino vino al 28% (5:1 ahí, 5,7:1 sobre el negro de fondo). */
+.theme-amor-amistad {
+  --color-dark: #0a0a0a;
+  --color-dark-secondary: #141011;
+  --color-light: #f4f0f1;
+  --color-gray: #9b8f92;
+  --color-primary: #cf6b7c;
+  --color-secondary: #b4838c;
+  --aa-wine: #5e1c2b;
+  --color-background: var(--color-dark);
+  --color-foreground: var(--color-light);
+  --color-card: var(--color-dark-secondary);
+  --color-card-foreground: var(--color-light);
+  --color-popover: var(--color-dark-secondary);
+  --color-popover-foreground: var(--color-light);
+  --color-ring: var(--color-primary);
+  --color-primary-foreground: var(--color-dark);
+  --color-secondary-foreground: var(--color-dark);
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --aa-font-editorial: "Bodoni MT", "Didot", Georgia, serif;
+  --aa-line: color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
 @theme {
   /* ── Paleta de marca (tema base: Frostbyte cyberpunk) ── */
   --color-dark: #0a0b14; /* fondo global */

@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
+import CampaignBanner from "@/components/CampaignBanner";
+import CampaignHero from "@/components/CampaignHero";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
 import QuickNav from "@/components/QuickNav";
@@ -28,6 +29,7 @@ import OrderTracker from "@/components/order-tracker/OrderTracker";
 import OrderReadyAlert from "@/components/order-tracker/OrderReadyAlert";
 import { publicOrdersService } from "@/services/publicOrders.service";
 import { env } from "@/config/env";
+import { campaignThemeClass, campaignBodyClass } from "@/config/campaign";
 
 function TablePage() {
   const { tableNumber, floor: floorParam } = useParams();
@@ -118,10 +120,10 @@ function TablePage() {
           content="Experimenta el futuro de las bebidas heladas. Frostbyte ofrece granizados y frappés premium con sabores únicos. Sabores vibrantes, experiencia única."
         />
       </Helmet>
-      <div className={`min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
+      <div className={`${campaignThemeClass} min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
-        <main>
-          <Hero />
+        <main className={campaignBodyClass}>
+          <CampaignHero />
 
           {/* Order Tracker: MiniBar si ya verificado, o banner de código */}
           {order ? (
@@ -138,6 +140,7 @@ function TablePage() {
           )}
 
           <QuickNav />
+          <CampaignBanner />
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}

@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
+import CampaignBanner from "@/components/CampaignBanner";
+import CampaignHero from "@/components/CampaignHero";
 import Features from "@/components/Features";
 // import Gallery from "@/components/Gallery";
 // import Contact from "@/components/Contact";
@@ -21,6 +22,7 @@ import DomiciliosBanner from "@/components/DomiciliosBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import { env } from "@/config/env";
+import { campaignThemeClass, campaignBodyClass } from "@/config/campaign";
 
 function App() {
   useEffect(() => {
@@ -38,11 +40,12 @@ function App() {
 
   return (
     <>
-      <div className={`min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
+      <div className={`${campaignThemeClass} min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
         <Header />
-        <main>
-          <Hero />
+        <main className={campaignBodyClass}>
+          <CampaignHero />
           <QuickNav />
+          <CampaignBanner />
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}

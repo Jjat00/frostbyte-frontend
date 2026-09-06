@@ -24,7 +24,7 @@ const SectionHeading = ({
 
   return (
     <div
-      className={`fb-reveal ${centered ? "text-center" : ""} ${className}`}
+      className={`fb-section-heading fb-reveal ${centered ? "text-center" : ""} ${className}`}
     >
       {eyebrow && (
         <span className="fb-eyebrow fb-eyebrow--accent block">{eyebrow}</span>

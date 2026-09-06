@@ -15,6 +15,7 @@ import { useActiveCategories, useProductsByCategory } from "@/hooks";
 import { getCategoryStyles } from "@/lib/productStyles";
 import SalchipapasPromoBanner from "@/components/SalchipapasPromoBanner";
 import SectionHeading from "@/components/SectionHeading";
+import { campaignOn } from "@/config/campaign";
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -56,7 +57,9 @@ const SPECIAL_SECTIONS = [
   {
     id: "descuento-redes",
     name: "Descuento por Redes",
-    gradient: "from-pink-400 to-rose-500",
+    // El rosa de esta sección se confunde con el vino de una campaña de
+    // temporada; mientras haya campaña se vira a azul y luego vuelve solo.
+    gradient: campaignOn ? "from-sky-400 to-indigo-500" : "from-pink-400 to-rose-500",
     icon: Share2,
     description: "Siguenos en redes sociales y obtendras un descuento.",
   },
@@ -123,7 +126,7 @@ const CategoryGroup = ({ category }) => {
   if (!products.length) return null;
 
   return (
-    <div className="mb-10">
+    <div className="aa-menu-category mb-10">
       {/* Cabecera de categoría: el nombre siempre en blanco, y el color del
           producto solo en el hilo de debajo (ver minimal.css). */}
       <div className="mb-4">
@@ -198,7 +201,7 @@ const SpecialSectionItem = ({ section }) => {
   const Icon = section.icon;
 
   return (
-    <div className="mb-10">
+    <div className="aa-menu-category mb-10">
       <div className="mb-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
