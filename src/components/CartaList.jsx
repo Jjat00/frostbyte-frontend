@@ -15,6 +15,7 @@ import { useActiveCategories, useProductsByCategory } from "@/hooks";
 import { getCategoryStyles } from "@/lib/productStyles";
 import SalchipapasPromoBanner from "@/components/SalchipapasPromoBanner";
 import SectionHeading from "@/components/SectionHeading";
+import { campaignOn } from "@/config/campaign";
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -56,7 +57,9 @@ const SPECIAL_SECTIONS = [
   {
     id: "descuento-redes",
     name: "Descuento por Redes",
-    gradient: "from-sky-400 to-indigo-500",
+    // El rosa de esta sección se confunde con el vino de una campaña de
+    // temporada; mientras haya campaña se vira a azul y luego vuelve solo.
+    gradient: campaignOn ? "from-sky-400 to-indigo-500" : "from-pink-400 to-rose-500",
     icon: Share2,
     description: "Siguenos en redes sociales y obtendras un descuento.",
   },

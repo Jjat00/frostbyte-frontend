@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useActiveCategories, useStoreConfig } from "@/hooks";
 import StoreStatusBadge from "@/components/StoreStatusBadge";
+import { campaignOn } from "@/config/campaign";
 
 /**
  * Estilo de los enlaces del nav de escritorio.
@@ -39,6 +40,23 @@ const navLinkCls = (extra = "") =>
     "bg-transparent px-2.5 2xl:px-4 font-medium tracking-wide whitespace-nowrap",
     extra
   );
+
+/* Hovers del nav. Una campaña de temporada trae su propia paleta y el
+   magenta de marca no cabe en ella, así que los enlaces viran a blanco
+   mientras dure. Sin campaña vuelve el hover magenta de siempre: el color
+   no está escrito a mano en cada enlace, cuelga del interruptor. */
+const navHover = campaignOn
+  ? "hover:text-light focus:text-light"
+  : "hover:text-primary focus:text-primary";
+
+/* Domicilios es el único enlace con color propio (verde de reparto). La
+   campaña lo pasa al secundario de su paleta para que no desentone. */
+const deliveryNavColor = campaignOn
+  ? "text-secondary hover:text-light focus:text-light"
+  : "text-emerald-400 hover:text-emerald-300 focus:text-emerald-300";
+
+const mobileCartaHover = campaignOn ? "hover:text-light" : "hover:text-primary/80";
+const mobileDeliveryHover = campaignOn ? "hover:text-light" : "hover:text-secondary/80";
 
 const ListItem = React.forwardRef(
   ({ className, title, children, ...props }, ref) => {
@@ -208,7 +226,12 @@ const Header = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent px-2.5 2xl:px-4 text-gray hover:text-light focus:text-light font-medium tracking-wide">
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "bg-transparent px-2.5 2xl:px-4 text-gray font-medium tracking-wide",
+                      navHover
+                    )}
+                  >
                     Productos
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -233,7 +256,7 @@ const Header = () => {
                       <Link
                         to="/domicilios"
                         className={navLinkCls(
-                          "text-secondary hover:text-light focus:text-light font-bold flex items-center gap-1.5"
+                          cn(deliveryNavColor, "font-bold flex items-center gap-1.5")
                         )}
                       >
                         <Bike className="w-4 h-4" />
@@ -250,7 +273,7 @@ const Header = () => {
                       <Link
                         to="/game"
                         className={navLinkCls(
-                          "text-gray hover:text-light focus:text-light"
+                          cn("text-gray", navHover)
                         )}
                       >
                         Frostbyte Play
@@ -267,7 +290,7 @@ const Header = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className={navLinkCls(
-                          "text-gray hover:text-light focus:text-light"
+                          cn("text-gray", navHover)
                         )}
                       >
                         {item.name}
@@ -277,7 +300,7 @@ const Header = () => {
                         <Link
                           to={item.href}
                           className={navLinkCls(
-                            "text-gray hover:text-light focus:text-light"
+                            cn("text-gray", navHover)
                           )}
                         >
                           {item.name}
@@ -291,7 +314,7 @@ const Header = () => {
                     <NavigationMenuLink
                       asChild
                       className={navLinkCls(
-                        "text-gray hover:text-light focus:text-light"
+                        cn("text-gray", navHover)
                       )}
                     >
                       <Link to="/mis-pedidos" className="flex items-center gap-2">
@@ -309,7 +332,7 @@ const Header = () => {
                   <NavigationMenuLink
                     asChild
                     className={navLinkCls(
-                      "text-white/35 hover:text-light focus:text-light text-xs"
+                      cn("text-white/35 text-xs", navHover)
                     )}
                   >
                     <Link
@@ -406,7 +429,10 @@ const Header = () => {
                 secciones. */}
             <a
               href="#carta"
-              className="block text-[0.85rem] font-medium text-primary transition-colors hover:text-light"
+              className={cn(
+                "block text-[0.85rem] font-medium text-primary transition-colors",
+                mobileCartaHover
+              )}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Carta completa
@@ -419,7 +445,10 @@ const Header = () => {
               {inAppOrdering && (
                 <Link
                   to="/domicilios"
-                  className="flex items-center gap-2 text-[0.85rem] font-medium text-secondary transition-colors hover:text-light"
+                  className={cn(
+                    "flex items-center gap-2 text-[0.85rem] font-medium text-secondary transition-colors",
+                    mobileDeliveryHover
+                  )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Bike className="w-4 h-4" />

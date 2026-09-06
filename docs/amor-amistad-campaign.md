@@ -4,6 +4,36 @@ Concepto: **Juntos sabe mejor**. La escena de dos bebidas conectadas por un lazo
 
 Es una imagen ambiental generada, no una fotografía de producto ni una promesa sobre la presentación, decoración o accesorios del local. La carta conserva sus productos, fotos y precios. La composición no anuncia promociones ni fechas.
 
+## Encender y apagar la campaña
+
+La campaña es un skin de temporada sobre la carta pública, no un cambio del design system. Vive detrás de un interruptor en `src/config/campaign.js`:
+
+```js
+export const ACTIVE_CAMPAIGN = "amor-amistad"; // null = look habitual de Frostbyte
+```
+
+Para volver al look de siempre basta con dejarlo en `null` y publicar. No hay que despintar componentes a mano como pasó con el skin del Mundial 2026. Encenderla otra vez el año que viene es la misma línea al revés.
+
+Qué cuelga del interruptor:
+
+| Pieza | Sin campaña |
+|---|---|
+| `campaignThemeClass` en `App.jsx` y `TablePage.jsx` | clase vacía, mandan los tokens de `@theme` |
+| `campaignBodyClass` en el `<main>` | clase vacía, las secciones vuelven a `minimal.css` |
+| `CampaignHero` | monta `Hero` en vez de `AmorAmistadHero` |
+| `CampaignBanner` | no renderiza nada |
+| `navHover`, `deliveryNavColor`, `mobileCartaHover`, `mobileDeliveryHover` (`Header.jsx`) | hover magenta y Domicilios en verde esmeralda |
+| `gradient` de Descuento por Redes (`CartaList.jsx`) | vuelve a `from-pink-400 to-rose-500` |
+| Base y botón de Historia (`Mocktails.jsx`) | vuelven a `text-secondary/80` y `text-secondary/90` |
+
+Qué **no** depende del interruptor, a propósito:
+
+- El generador de tarjetas (`/amor-amistad/tarjeta`, `CelebrationCardPage`) y toda su API. Es una feature permanente y reutilizable, no un adorno de temporada: se autoestiliza aplicando `theme-amor-amistad` en su propia raíz, así que sigue en pie con la campaña apagada. Cuando llegue otra fecha, se le cambia el tema y el copy sin tocar la carta.
+- Las clases `fb-section-heading` y `aa-menu-category` que se emiten siempre en `SectionHeading.jsx` y `CartaList.jsx`. Son ganchos de CSS sin reglas propias fuera de `.theme-amor-amistad`: no pintan nada si el tema no está puesto.
+- `amor-amistad.css` viaja en el bundle aunque la campaña esté apagada (~1,5 KB gzip). Es inerte: todas sus reglas cuelgan de `.theme-amor-amistad` o de clases `aa-*` que solo existen dentro de sus componentes.
+
+Regla para la próxima campaña: si un cambio altera un píxel del look habitual, tiene que colgar de `ACTIVE_CAMPAIGN` o del tema `.theme-<campaña>` en `theme.css`. Si algún día hay que revertir a mano un color escrito en un componente, es que el interruptor se saltó.
+
 ## Referencias consultadas
 
 - [Scarfes Bar](https://scarfesbar.com/): referencia de una carta con concepto narrativo e identidad propia. Se tomó la idea de articular una campaña alrededor de una historia; no sus ilustraciones ni su contenido.
