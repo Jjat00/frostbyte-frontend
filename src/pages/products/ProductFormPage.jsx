@@ -19,6 +19,7 @@ import { categoriesService } from '@/services/categories.service';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { AIGalleryPickerModal } from '@/components/ai-generator/AIGalleryPickerModal';
 import ProductModifiersSection from '@/components/products/ProductModifiersSection';
+import VariantCostingSection from '@/components/products/VariantCostingSection';
 import { useBusinessStore } from '@/stores/useBusinessStore';
 
 const ProductFormPage = () => {
@@ -658,6 +659,11 @@ const ProductFormPage = () => {
               (carnes, salsas, tamaños, bebida, etc.).
             </p>
           </div>
+        )}
+
+        {/* Costo real por variante (receta) — requiere producto guardado */}
+        {isEditing && productData && (
+          <VariantCostingSection product={productData} />
         )}
 
         {/* Botones de acción */}

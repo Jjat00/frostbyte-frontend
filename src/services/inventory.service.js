@@ -202,5 +202,36 @@ export const inventoryService = {
     const response = await apiClient.get(`${BASE_URL}/units/`);
     return response.data;
   },
+
+  // ============= RECIPES (costeo por variante) =============
+
+  /**
+   * Receta y costeo de una variante: ingredientes, costo total, ganancia,
+   * margen, food cost y precio sugerido.
+   */
+  async getVariantCosting(variantId) {
+    const response = await apiClient.get(`${BASE_URL}/recipes/by-variant/${variantId}/`);
+    return response.data;
+  },
+
+  /**
+   * Reemplaza la receta entera de una variante en una sola llamada.
+   * items: [{ raw_material_id, quantity, notes }]
+   */
+  async saveVariantRecipe(variantId, items) {
+    const response = await apiClient.put(`${BASE_URL}/recipes/by-variant/${variantId}/`, {
+      items,
+    });
+    return response.data;
+  },
+
+  /**
+   * Costeo de todo el catálogo (una fila por variante) con resumen de cobertura.
+   * params: { business, category, include_inactive }
+   */
+  async getCostingSummary(params = {}) {
+    const response = await apiClient.get(`${BASE_URL}/recipes/costing-summary/`, { params });
+    return response.data;
+  },
 };
 
