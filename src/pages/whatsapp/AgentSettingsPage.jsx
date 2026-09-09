@@ -741,7 +741,7 @@ const AgentSettingsPage = () => {
               className={inputClass}
               value={toneEditing?.name || ''}
               maxLength={40}
-              placeholder="Parcero"
+              placeholder="Con chispa"
               onChange={(e) => setToneEditing({ ...toneEditing, name: e.target.value })}
             />
           </Field>
@@ -751,7 +751,7 @@ const AgentSettingsPage = () => {
               className={inputClass}
               value={toneEditing?.description || ''}
               maxLength={200}
-              placeholder="Caluroso y rápido, hablando como en Nariño."
+              placeholder="Caluroso y rápido, hablando como en Colombia."
               onChange={(e) => setToneEditing({ ...toneEditing, description: e.target.value })}
             />
           </Field>
@@ -764,7 +764,7 @@ const AgentSettingsPage = () => {
               className={inputClass}
               value={toneEditing?.sample || ''}
               maxLength={200}
-              placeholder="Qué más parce, ¿lo de siempre?"
+              placeholder="Qué hubo, ¿lo de siempre?"
               onChange={(e) => setToneEditing({ ...toneEditing, sample: e.target.value })}
             />
           </Field>

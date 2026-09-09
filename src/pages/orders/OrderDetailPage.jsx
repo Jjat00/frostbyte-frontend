@@ -15,6 +15,7 @@ import {
   Loader2,
   Banknote,
   AlertCircle,
+  AlertTriangle,
   Trash2,
   Plus,
   Search,
@@ -36,6 +37,7 @@ import {
 import TableSelect from "@/components/orders/TableSelect";
 import { DeliveryBadge, DeliveryInfo, PaymentPendingBadge, SourceBadge } from "@/components/orders/DeliveryInfo";
 import { matchesSearch } from "@/lib/search";
+import { splitOrderNotes } from "@/lib/orderNotes";
 
 const statusConfig = {
   pending: {
@@ -95,6 +97,7 @@ const OrderDetailPage = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [selectedItemForPayment, setSelectedItemForPayment] = useState(null);
+  const [itemToDeliver, setItemToDeliver] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -312,6 +315,30 @@ const OrderDetailPage = () => {
     ready: "Marcar como Entregado",
   };
 
+  const { missing: missingData, notes: orderNotes } = splitOrderNotes(
+    order.customer_notes
+  );
+
+  // Los pedidos tomados por WhatsApp le avisan al cliente cada cambio de
+  // estado (backend: apps/whatsapp/signals.py). Aquí eso no se veía por
+  // ninguna parte: el 06/09 alguien marcó los items entregados para cobrarlos
+  // y al cliente le llegó "pedido entregado" con el domicilio aún en camino.
+  const notifiesCustomer =
+    order.source === "whatsapp" && Boolean(order.customer_phone);
+  const undeliveredItems = (order.items || []).filter((i) => !i.is_delivered);
+
+  // Marcar el último item pendiente cierra el pedido (update_delivery_status)
+  const closesOrder = (item) =>
+    undeliveredItems.length === 1 && undeliveredItems[0].id === item.id;
+
+  const deliverItem = (item) => {
+    if (notifiesCustomer && closesOrder(item)) {
+      setItemToDeliver(item);
+      return;
+    }
+    markItemDeliveredMutation.mutate(item.id);
+  };
+
   // Filtrar productos para búsqueda
   const filteredProducts =
     productsData?.results?.filter((product) =>
@@ -497,13 +524,22 @@ const OrderDetailPage = () => {
               </div>
             </>
           )}
-          {order.customer_notes && (
+          {missingData && (
+            <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/25 rounded-lg">
+              <p className="text-xs text-amber-300 font-medium mb-1 flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                Falta por confirmar con el cliente
+              </p>
+              <p className="text-light text-sm">{missingData}</p>
+            </div>
+          )}
+          {orderNotes && (
             <div className="mt-3 p-3 bg-secondary/10 border border-secondary/20 rounded-lg">
               <p className="text-xs text-secondary font-medium mb-1 flex items-center gap-1">
                 <MessageSquare className="w-3 h-3" />
                 Notas especiales
               </p>
-              <p className="text-light text-sm">{order.customer_notes}</p>
+              <p className="text-light text-sm">{orderNotes}</p>
             </div>
           )}
         </div>
@@ -625,9 +661,7 @@ const OrderDetailPage = () => {
                     {/* Botón de entrega */}
                     {!item.is_delivered ? (
                       <button
-                        onClick={() =>
-                          markItemDeliveredMutation.mutate(item.id)
-                        }
+                        onClick={() => deliverItem(item)}
                         disabled={markItemDeliveredMutation.isPending}
                         className="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center gap-1"
                       >
@@ -807,6 +841,12 @@ const OrderDetailPage = () => {
                 </>
               )}
             </button>
+          )}
+          {nextStatus[order.status] && notifiesCustomer && (
+            <p className="flex items-center justify-center gap-1.5 text-xs text-gray">
+              <MessageSquare className="w-3.5 h-3.5" />
+              Al cliente le llega un WhatsApp con este cambio
+            </p>
           )}
 
           {/* Botón de pago completo */}
@@ -1407,6 +1447,57 @@ const OrderDetailPage = () => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Confirmación de la entrega que cierra el pedido y avisa al cliente */}
+      {itemToDeliver && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="fb-sheet w-full max-w-md p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-emerald-500/20 rounded-xl">
+                <PackageCheck className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-light">
+                  ¿Dar el pedido por entregado?
+                </h3>
+                <p className="text-sm text-gray">
+                  Es el último producto sin entregar: el pedido queda entregado
+                  y al cliente le llega un WhatsApp diciéndoselo.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setItemToDeliver(null)}
+                className="flex-1 py-3 bg-gray/10 text-gray hover:text-light rounded-xl font-medium transition-colors"
+              >
+                No, todavía no
+              </button>
+              <button
+                onClick={() => {
+                  markItemDeliveredMutation.mutate(itemToDeliver.id);
+                  setItemToDeliver(null);
+                }}
+                disabled={markItemDeliveredMutation.isPending}
+                className="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+              >
+                {markItemDeliveredMutation.isPending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <PackageCheck className="w-5 h-5" />
+                    Sí, entregado
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Modal de confirmación de cancelación */}
       {showCancelConfirm && (

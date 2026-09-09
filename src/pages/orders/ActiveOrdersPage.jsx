@@ -26,6 +26,7 @@ import { businessService } from "@/services/business.service";
 import { useBusinessStore } from "@/stores/useBusinessStore";
 import { useWebSocket } from "@/hooks";
 import { DeliveryBadge, DeliveryInfo, PaymentPendingBadge, SourceBadge } from "@/components/orders/DeliveryInfo";
+import OrderNotes from "@/components/orders/OrderNotes";
 
 const statusConfig = {
   pending: {
@@ -243,11 +244,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
           </div>
         )}
         <DeliveryInfo order={order} />
-        {order.customer_notes && (
-          <p className="text-xs text-secondary mt-1 bg-secondary/10 px-2 py-1 rounded">
-            📝 {order.customer_notes}
-          </p>
-        )}
+        <OrderNotes notes={order.customer_notes} />
         <BusinessBreakdown breakdown={order.business_breakdown} />
       </div>
 

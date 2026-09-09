@@ -17,6 +17,7 @@ import { useBusinessStore } from "@/stores/useBusinessStore";
 import { useWebSocket } from "@/hooks";
 import { PaymentPendingBadge, SourceBadge } from "@/components/orders/DeliveryInfo";
 import { cn } from "@/lib/utils";
+import OrderNotes from "@/components/orders/OrderNotes";
 
 // Config visual por estado de preparación del item
 const prepConfig = {
@@ -123,12 +124,8 @@ const KitchenOrderCard = ({ order, onSetPrep, onAllReady, pendingItemId, busyOrd
         </div>
       </div>
 
-      {/* Nota del cliente */}
-      {order.customer_notes && (
-        <p className="text-xs text-secondary mb-3 bg-secondary/10 px-2 py-1.5 rounded">
-          Nota: {order.customer_notes}
-        </p>
-      )}
+      {/* Nota del cliente (lo que le falte al pedido no es cosa de la cocina) */}
+      <OrderNotes notes={order.customer_notes} showMissing={false} className="mb-3" />
 
       {/* Items */}
       <div className="space-y-2 flex-1">
