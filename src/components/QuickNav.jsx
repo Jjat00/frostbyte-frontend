@@ -119,9 +119,10 @@ const QuickNav = () => {
           <div className="flex flex-wrap justify-center gap-2">
             {visibleSections.map((section) => (
               <button
+                type="button"
                 key={section.name}
                 onClick={() => handleClick(section.href, section.isRoute)}
-                className="fb-pill cursor-pointer whitespace-nowrap"
+                className="fb-quick-nav-button cursor-pointer whitespace-nowrap"
               >
                 {section.name}
               </button>

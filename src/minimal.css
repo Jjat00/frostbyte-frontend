@@ -427,6 +427,60 @@
     color: var(--color-light);
   }
 
+  /* ── Atajos de carta: controles táctiles, no texto suelto ───────── */
+  .fb-quick-nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    border: 1px solid
+      color-mix(in srgb, var(--fb-accent, var(--color-primary)) 58%, var(--color-dark-secondary));
+    border-radius: 0.75rem;
+    background-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 25%,
+      var(--color-dark-secondary)
+    );
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-light) 14%, transparent),
+      0 3px 0 color-mix(in srgb, var(--color-dark) 45%, transparent);
+    padding: 0.55rem 0.95rem;
+    color: color-mix(in srgb, var(--color-light) 88%, transparent);
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    touch-action: manipulation;
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .fb-quick-nav-button:hover {
+    border-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 82%,
+      var(--color-dark-secondary)
+    );
+    background-color: color-mix(
+      in srgb,
+      var(--fb-accent, var(--color-primary)) 37%,
+      var(--color-dark-secondary)
+    );
+    color: var(--color-light);
+  }
+
+  .fb-quick-nav-button:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-light) 8%, transparent);
+  }
+
+  .fb-quick-nav-button:focus-visible {
+    outline: 2px solid var(--color-light);
+    outline-offset: 3px;
+  }
+
   /* ── Entrada al hacer scroll ────────────────────────────────────────
      El equivalente en CSS del reveal del hero, para no montar un
      framer-motion por sección. Sin JavaScript: `animation-timeline`

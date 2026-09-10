@@ -129,7 +129,7 @@ const Shots = () => {
             <div className="absolute inset-0 bg-linear-to-t from-dark via-dark/70 to-transparent" />
 
             <div className="absolute inset-x-0 bottom-0 p-6">
-              <span className="fb-eyebrow block">Sin licor</span>
+              <span className="fb-eyebrow block">Con licor</span>
               <h3 className="font-display m-0 mt-2.5 text-[1.1rem] font-semibold uppercase leading-none tracking-[0.14em] text-light sm:text-[1.35rem]">
                 Shots de sabores
               </h3>

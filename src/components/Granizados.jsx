@@ -164,7 +164,7 @@ const Granizados = ({ showExtras = true }) => {
               formula={["Granizado", "Shot", "Envenenado"]}
             />
             <ExtrasBlock
-              eyebrow="Sin licor"
+              eyebrow="Con licor"
               title="Shots de sabores"
               description="Dale un toque extra de sabor a tu granizado con nuestros shots especiales."
               options={flavorShots}
