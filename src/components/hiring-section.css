@@ -1,0 +1,32 @@
+@layer components {
+  .hiring-card {
+    border: 1px solid color-mix(in srgb, var(--color-light) 11%, transparent);
+    border-radius: 34px;
+    background:
+      radial-gradient(ellipse at top left, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 65%),
+      radial-gradient(ellipse at bottom right, color-mix(in srgb, var(--color-secondary) 10%, transparent), transparent 65%),
+      var(--color-dark);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-light) 6%, transparent);
+  }
+
+  .hiring-contact {
+    background: color-mix(in srgb, var(--color-primary) 9%, transparent);
+    transition: background-color 160ms ease, border-color 160ms ease;
+  }
+
+  .hiring-contact:hover {
+    background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+    border-color: var(--color-primary);
+  }
+
+  .hiring-contact:focus-visible {
+    outline: 2px solid var(--color-light);
+    outline-offset: 5px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hiring-contact {
+      transition: none;
+    }
+  }
+}

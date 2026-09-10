@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import CampaignBanner from "@/components/CampaignBanner";
 import CampaignHero from "@/components/CampaignHero";
 import Features from "@/components/Features";
+import HiringSection from "@/components/HiringSection";
 // import Gallery from "@/components/Gallery";
 // import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -46,6 +47,7 @@ function App() {
           <CampaignHero />
           <QuickNav />
           <CampaignBanner />
+          <HiringSection />
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}
