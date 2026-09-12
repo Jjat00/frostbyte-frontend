@@ -246,9 +246,15 @@
 .aa-phrase-write { justify-self: start; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .5rem 1rem; border: 1px solid var(--aa-line); border-radius: .875rem; background: transparent; color: var(--color-light); font: inherit; font-size: .8125rem; font-weight: 600; transition: background-color .15s, border-color .15s; }
 .aa-phrase-write svg { color: var(--color-primary); flex-shrink: 0; }
 .aa-phrase-write:active { background: var(--aa-line); }
+.aa-phrase-for { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; }
+.aa-phrase-for > span { font-size: .8125rem; color: var(--color-gray); }
+.aa-phrase-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.aa-phrase-chip { min-height: 2.25rem; padding: .375rem .875rem; border: 1px solid var(--aa-line); border-radius: 999px; background: transparent; color: var(--color-gray); font: inherit; font-size: .8125rem; font-weight: 600; transition: background-color .15s, border-color .15s, color .15s; }
+.aa-phrase-chip[aria-pressed="true"] { border-color: var(--color-primary); color: var(--color-light); background: color-mix(in srgb, var(--color-primary) 18%, transparent); }
 .aa-phrase .aa-input-hint:empty { display: none; }
 @media (hover: hover) and (pointer: fine) {
   .aa-phrase-write:hover:not(:disabled) { background: var(--aa-line); border-color: var(--color-primary); }
+  .aa-phrase-chip:hover:not(:disabled) { color: var(--color-light); border-color: var(--color-primary); }
 }
 .aa-input-hint, .aa-card-status { font-size: .8125rem; line-height: 1.7; color: var(--color-gray); }
 .aa-card-status:not(:empty) { margin-top: 1rem; }

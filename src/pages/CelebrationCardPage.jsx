@@ -6,6 +6,13 @@ import { env } from '@/config/env';
 import '@/components/amor-amistad.css';
 
 const DEFAULT_PHRASE = 'Lo mejor de la vida es compartirla contigo.';
+// El valor vacío va primero en el estado, pero de última en la fila: lo normal es
+// que quien pide una frase ya sepa a quién se la va a dar.
+const PHRASE_AUDIENCES = [
+  { value: 'pareja', label: 'Mi pareja' },
+  { value: 'amigos', label: 'Un amigo' },
+  { value: '', label: 'Aún no sé' },
+];
 
 // Formatos que el servidor abre tal cual. Lo demás (el HEIC del iPhone, un
 // AVIF, un archivo sin tipo declarado que llega desde Google Fotos) se
@@ -58,6 +65,9 @@ export default function CelebrationCardPage() {
   const [phrase, setPhrase] = useState(DEFAULT_PHRASE);
   const [writing, setWriting] = useState(false);
   const [phraseNotice, setPhraseNotice] = useState('');
+  // Para quién es la dedicatoria: sin esto, «te amo» le salía igual a la pareja
+  // que al parche. Vacío significa que sirva para cualquiera de los dos.
+  const [relationship, setRelationship] = useState('');
   const form = useRef(null);
   const controller = useRef(null);
   const locked = useRef(false);
@@ -109,6 +119,7 @@ export default function CelebrationCardPage() {
         body: JSON.stringify({
           to_name: current.get('to_name') || '',
           from_name: current.get('from_name') || '',
+          relationship,
           avoid: phrase.slice(0, 240),
         }),
       });
@@ -171,6 +182,17 @@ export default function CelebrationCardPage() {
                 <label htmlFor="card-phrase">Tu dedicatoria</label>
                 <textarea id="card-phrase" name="phrase" maxLength={240} rows={3}
                   value={phrase} onChange={(e) => setPhrase(e.target.value)} />
+                <div className="aa-phrase-for">
+                  <span id="aa-phrase-for-label">¿Para quién es?</span>
+                  <div className="aa-phrase-chips" role="group" aria-labelledby="aa-phrase-for-label">
+                    {PHRASE_AUDIENCES.map(({ value, label }) => (
+                      <button key={value || 'cualquiera'} type="button" className="aa-phrase-chip"
+                        aria-pressed={relationship === value} onClick={() => setRelationship(value)}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <button type="button" className="aa-phrase-write" onClick={writePhrase} disabled={writing}>
                   <Sparkles size={15} aria-hidden="true" />
                   {writing ? 'Escribiendo…' : 'Escríbela por mí'}
