@@ -155,7 +155,7 @@ export default function CelebrationCardPage() {
         <Link to={cartaPath} className="aa-back"><ArrowLeft size={18} /> Volver a la carta</Link>
         <div className="aa-card-intro"><p className="aa-kicker">Un recuerdo para regalar</p>
           <h1>Su foto. <em>Tu dedicatoria.</em></h1>
-          <p>Una tarjeta de Amor y Amistad con el estilo de Frostbyte y los colores de su ropa y accesorios.</p>
+          <p>Una tarjeta de Amor y Amistad tipo álbum: su foto montada como una copia de verdad, sobre papel y con detalles a mano.</p>
         </div>
         <div className="aa-card-workspace">
           <form ref={form} onSubmit={generate} className="aa-card-form">
@@ -192,8 +192,8 @@ export default function CelebrationCardPage() {
               /* Antes había aquí una escena de copas y velas como «referencia de
                  estilo»: prometía una tarjeta que ya no se genera. La única
                  muestra honesta es la foto que acaba de elegir. */
-              : preview ? <><img src={preview} alt="La foto que elegiste, tal como entrará en la tarjeta" /><p>Tu foto es la protagonista.<br />Los colores de la tarjeta saldrán de ella.</p></>
-              : <div className="aa-card-empty"><p>Tu foto será la protagonista.<br />Los colores de la tarjeta saldrán de ella.</p></div>}
+              : preview ? <><img src={preview} alt="La foto que elegiste, tal como entrará en la tarjeta" /><p>Tu foto es la protagonista.<br />Irá montada sobre papel, y el diseño cambia en cada tarjeta.</p></>
+              : <div className="aa-card-empty"><p>Tu foto será la protagonista.<br />Irá montada sobre papel, y el diseño cambia en cada tarjeta.</p></div>}
           </section>
         </div>
       </div>
