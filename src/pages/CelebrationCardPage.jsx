@@ -202,7 +202,7 @@ export default function CelebrationCardPage() {
               <p className="aa-input-hint">La foto se procesa fuera de Frostbyte solo para crear la tarjeta y no se guarda. Revisa el resultado antes de compartirlo.</p>
               <button className="aa-button aa-button--primary" type="submit" disabled={!photo || busy || preparing}>{busy ? 'Creando tu tarjeta…' : result ? 'Crear otra versión' : 'Crear mi tarjeta'}</button>
             </fieldset>
-            <p role="status" className="aa-card-status">{busy ? 'Estamos combinando tu foto, los colores y la dedicatoria. Puede tardar hasta dos minutos si el primer intento no sale.' : notice}</p>
+            <p role="status" className="aa-card-status">{busy ? 'Estamos combinando tu foto, los colores y la dedicatoria. No cierres esta pantalla.' : notice}</p>
             {error && <p role="alert" className="aa-card-error">{error}</p>}
           </form>
           <section className="aa-card-result" aria-label="Tu tarjeta" aria-busy={busy}>
