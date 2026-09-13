@@ -23,6 +23,10 @@ const InstagramIcon = SOCIAL_ICON.instagram;
  * Es una hoja inferior, no un modal centrado: en el celular se descarta con
  * el pulgar y no tapa la carta entera. El velo no lleva `backdrop-filter`,
  * por las GPU de gama baja.
+ *
+ * El texto es el mínimo: petición, cuenta y botón. Una hoja que interrumpe
+ * se gana el permiso siendo corta; explicar por qué seguir la cuenta pedía
+ * leer un párrafo antes de poder cerrarla.
  */
 
 const DELAY_MS = 75000;
@@ -131,23 +135,20 @@ const SocialFollowPopup = () => {
 
               <h3
                 id="social-popup-title"
-                className="font-display m-0 mb-2 mt-4 text-lg font-semibold leading-snug tracking-[0.04em] text-light"
+                className="font-display m-0 mb-1.5 mt-4 text-xl font-semibold leading-snug tracking-[0.03em] text-light"
               >
-                Lo que sale nuevo, sale primero ahí
+                Síguenos en Instagram
               </h3>
-              <p className="mb-5 text-[0.8rem] leading-relaxed text-light/55">
-                Bebidas nuevas, lo que suena esta noche y las promos del fin de
-                semana en {SOCIAL_HANDLE}.
-              </p>
+              <p className="mb-6 text-[0.85rem] text-light/55">{SOCIAL_HANDLE}</p>
 
               <SocialLink
                 network="instagram"
                 source={SOCIAL_SOURCE.POPUP}
                 onClick={handleFollow}
-                className="fb-btn fb-btn--accent w-full"
+                className="fb-btn fb-btn--lg fb-btn--solid w-full"
               >
-                <InstagramIcon size={15} />
-                Seguir en Instagram
+                <InstagramIcon size={17} />
+                Seguir
               </SocialLink>
 
               <button
