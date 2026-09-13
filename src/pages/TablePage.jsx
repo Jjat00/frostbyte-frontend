@@ -148,10 +148,12 @@ function TablePage() {
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}
           <DomiciliosBanner />
-          <CartaList />
-          {/* El descuento por redes va aquí, con la carta principal recién
-              leída: al final de la página (donde estaba) casi nadie llegaba. */}
+          {/* Ultimo bloque antes de la carta: por aqui pasa todo el que baja
+              a verla. Estuvo despues de CartaList unas horas, pero esa
+              seccion mide 4.400 px, asi que el descuento caia en el pixel
+              7.500 y no lo veia nadie. */}
           <SocialDiscountBanner />
+          <CartaList />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
