@@ -2,7 +2,7 @@ import React from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Link } from "react-router-dom";
-import SocialLink, { SOCIAL_ICON } from "@/components/SocialLink";
+import SocialLink, { SOCIAL_ICON, TikTokIcon } from "@/components/SocialLink";
 import { SOCIAL, SOCIAL_HANDLE, SOCIAL_SOURCE } from "@/lib/social";
 import { useCartaPath, useStoreConfig } from "@/hooks";
 import { reservationsWaLink } from "@/lib/reservas";
@@ -49,7 +49,6 @@ gsap.registerPlugin(useGSAP);
  * degradado de ambos reservar, el resto neutro.
  */
 
-const NETWORKS = ["instagram", "tiktok"];
 const InstagramIcon = SOCIAL_ICON.instagram;
 
 // Fondo del hero: dos velos de marca sobre el degradado oscuro, más una
@@ -357,52 +356,49 @@ const Hero = () => {
               </span>
             </h1>
 
-            {/* Móvil: el filete de marca lleva el @ a su derecha. Así la
-                cuenta deja de ser invisible justo en el dispositivo por el
-                que entra casi todo el mundo, y sin gastar altura nueva: esta
-                fila ya existía, solo tenía el filete. En neutro, porque el
-                color del hero está reservado a carta, domicilios y reservar. */}
-            <div className="flex items-center gap-3 md:hidden">
-              <span
-                aria-hidden
-                className="h-px w-13 shrink-0 bg-linear-to-r from-primary to-secondary"
-              />
-              <SocialLink
-                network="instagram"
-                source={SOCIAL_SOURCE.HERO}
-                className="inline-flex items-center gap-1.5 text-[0.68rem] font-medium text-light/45 transition-colors hover:text-secondary"
-              >
-                <InstagramIcon size={13} />
-                {SOCIAL_HANDLE}
-              </SocialLink>
-            </div>
+            <span
+              aria-hidden
+              className="h-px w-13 bg-linear-to-r from-primary to-secondary md:hidden"
+            />
 
             <p className="max-w-[19rem] text-xs leading-relaxed text-light/55 md:ml-auto md:max-w-[21rem] md:text-[0.84rem]">
               Granizados, frappés, cócteles, micheladas y shots en Cumbal,
               Nariño.
             </p>
 
-            {/* Redes completas: solo en escritorio, donde sobra sitio. En
-                móvil basta el @ de arriba (las dos redes vuelven en su
-                banner), y los 44 px se quedan para los servicios. */}
-            <div className="hidden md:ml-auto md:flex md:w-[21rem] md:items-center md:gap-2.5">
-              <span className="text-[0.53rem] font-medium tracking-[0.4em] text-light/40">
-                SÍGUENOS
-              </span>
-              {NETWORKS.map((network) => {
-                const Icon = SOCIAL_ICON[network];
-                return (
-                  <SocialLink
-                    key={network}
-                    network={network}
-                    source={SOCIAL_SOURCE.HERO}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-[0.68rem] font-medium text-light/60 transition-colors hover:border-secondary/40 hover:text-secondary"
-                  >
-                    <Icon size={14} />
-                    {SOCIAL[network].label}
-                  </SocialLink>
-                );
-              })}
+            {/* Síguenos: visible en las dos direcciones, no solo en
+                escritorio como hasta el 2026-09-13. Instagram manda (es la
+                cuenta que se quiere hacer crecer) y lleva el @ escrito y
+                grande, que es lo que la gente teclea luego en la aplicación
+                si no toca el enlace; TikTok queda al lado, más tenue.
+
+                Destaca por contraste y tamaño, no por color: el magenta y el
+                cyan del hero siguen significando carta y domicilios, y darle
+                uno a Instagram lo haría pasar por un servicio del local. */}
+            <div className="flex flex-wrap items-center gap-2 md:ml-auto md:w-[21rem]">
+              <SocialLink
+                network="instagram"
+                source={SOCIAL_SOURCE.HERO}
+                className="inline-flex flex-1 items-center gap-2.5 rounded-[14px] border border-white/20 bg-white/[0.07] px-3.5 py-2.5 transition-colors hover:border-white/40 hover:bg-white/[0.1] md:flex-none"
+              >
+                <InstagramIcon size={17} className="shrink-0 text-light/80" />
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="text-[0.5rem] font-medium tracking-[0.22em] text-light/45">
+                    SÍGUENOS
+                  </span>
+                  <span className="truncate text-[0.82rem] font-semibold text-light">
+                    {SOCIAL_HANDLE}
+                  </span>
+                </span>
+              </SocialLink>
+              <SocialLink
+                network="tiktok"
+                source={SOCIAL_SOURCE.HERO}
+                className="inline-flex items-center gap-1.5 rounded-[14px] border border-white/[0.1] bg-white/[0.04] px-3 py-2.5 text-[0.7rem] font-medium text-light/55 transition-colors hover:border-white/25 hover:text-light/80"
+              >
+                <TikTokIcon size={14} />
+                {SOCIAL.tiktok.label}
+              </SocialLink>
             </div>
           </div>
 

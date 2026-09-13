@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowDown, ArrowUpRight, Gamepad2, Music2, ShoppingBag, User, Wine } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Gamepad2, Instagram, Music2, ShoppingBag, User, Wine } from "lucide-react";
 import { useCartaPath, useStoreConfig } from "@/hooks";
 import { useReservationsConfig } from "@/hooks/useReservations";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { reservationsWaLink } from "@/lib/reservas";
+import SocialLink from "@/components/SocialLink";
+import { SOCIAL_HANDLE, SOCIAL_SOURCE } from "@/lib/social";
 import "./amor-amistad.css";
 
 const MotionLink = motion(Link);
@@ -66,6 +68,23 @@ export default function AmorAmistadHero() {
                 </SeasonLink>
               )}
             </div>
+            {/* Instagram al nivel de los CTA, no escondido al pie: es el
+                sitio por el que la carta puede convertir un visitante en
+                seguidor, y antes no se veía en ninguna de las dos
+                direcciones. Abre en pestaña nueva para no perder la carta. */}
+            <SocialLink
+              network="instagram"
+              source={SOCIAL_SOURCE.HERO}
+              className="aa-social"
+            >
+              <Instagram size={19} aria-hidden="true" />
+              <span className="aa-social-text">
+                <span className="aa-social-label">Síguenos en Instagram</span>
+                <span className="aa-social-handle">{SOCIAL_HANDLE}</span>
+              </span>
+              <ArrowUpRight size={15} aria-hidden="true" />
+            </SocialLink>
+
             <p className="aa-footnote">Granizados · Frappés · Cócteles · Algo para compartir</p>
           </div>
 

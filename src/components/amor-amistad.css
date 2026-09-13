@@ -16,6 +16,28 @@
 .aa-button--primary { background: var(--color-primary); color: var(--color-dark); border-color: var(--color-primary); }
 
 
+/* Síguenos: bajo los CTA y con el mismo peso visual, porque el enlace a
+   Instagram no existía en la portada y era invisible en las dos
+   direcciones. El @ va escrito y grande: es lo que la gente teclea luego
+   en la aplicación si no toca el enlace. */
+.aa-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-top: 1.125rem;
+  padding: 0.8125rem 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 50%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-primary) 13%, transparent);
+  color: var(--color-light);
+  transition: background-color .2s, border-color .2s;
+}
+.aa-social svg:first-child { flex: none; color: var(--color-primary); }
+.aa-social svg:last-child { flex: none; opacity: .55; }
+.aa-social-text { display: flex; flex-direction: column; gap: .1875rem; min-width: 0; }
+.aa-social-label { font-size: 0.6875rem; letter-spacing: .16em; text-transform: uppercase; color: var(--color-gray); }
+.aa-social-handle { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.01em; }
+
 .aa-footnote { margin-top: 1.375rem; color: var(--color-gray); font-size: 0.75rem; line-height: 1.7; }
 .aa-campaign { position: relative; min-width: 0; margin: 0 0 2.5rem; padding-left: 1.5rem; }
 .aa-campaign-frame {
@@ -113,6 +135,8 @@
      cuadrado enorme. */
   .aa-actions .aa-button { flex: 1 1 9.375rem; }
   .aa-button { padding-inline: 1rem; gap: 0.625rem; font-size: 0.875rem; }
+  .aa-social { display: flex; width: 100%; margin-top: 0.875rem; padding: 0.75rem 1rem; }
+  .aa-social-handle { font-size: 1rem; }
   .aa-footnote { font-size: 0.75rem; margin-top: 0.9375rem; }
   .aa-services-links { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 0.5rem; }
 }
@@ -123,9 +147,11 @@
 .aa-hero a svg { flex-shrink: 0; }
 .aa-button:active { background: var(--color-light); color: var(--color-dark); }
 .aa-services-links a:active { background: var(--aa-line); border-color: var(--color-primary); }
+.aa-social:active { background: color-mix(in srgb, var(--color-primary) 24%, transparent); border-color: var(--color-primary); }
 @media (hover: hover) and (pointer: fine) {
   .aa-button--primary:hover { background: var(--color-light); border-color: var(--color-light); }
   .aa-button--secondary:hover, .aa-services-links a:hover { background: var(--aa-line); border-color: var(--color-primary); }
+  .aa-social:hover { background: color-mix(in srgb, var(--color-primary) 22%, transparent); border-color: var(--color-primary); }
 }
 /* Cristal de temporada: una superficie por nivel, sin blur en sus hijos.
    La base opaca también sirve a navegadores sin backdrop-filter. */
