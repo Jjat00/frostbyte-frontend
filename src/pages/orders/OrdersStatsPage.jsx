@@ -36,6 +36,7 @@ import {
   TrendingDown,
   Package,
   Armchair,
+  Instagram,
   Receipt,
   ArrowDown,
   Bike,
@@ -378,6 +379,14 @@ const OrdersStatsPage = () => {
     queryFn: () => ordersService.getTableStats(),
   });
 
+  // Ventana fija de 30 días: la pregunta aquí no es "cuánto vendimos este
+  // mes" sino "qué sitio de la app manda gente a Instagram", que se lee
+  // mejor sobre una ventana estable que sobre el periodo de ventas.
+  const { data: socialStats } = useQuery({
+    queryKey: ['social-click-stats'],
+    queryFn: () => ordersService.getSocialClickStats(30),
+  });
+
   const formatCurrency = (value) => {
     if (!value) return '$0';
     const num = parseFloat(value);
@@ -640,6 +649,51 @@ const OrdersStatsPage = () => {
           </div>
         )}
       </div>
+
+      {/* Clics hacia las redes, por origen */}
+      {socialStats?.by_source?.length > 0 && (
+        <div className="fb-card p-4 md:p-6">
+          <h2 className="text-lg font-bold text-light mb-4 flex items-center gap-2">
+            <Instagram className="w-5 h-5 text-pink-400" />
+            Clics a Redes Sociales
+          </h2>
+          <p className="text-sm text-gray mb-1">
+            Últimos {socialStats.days} días:{' '}
+            <span className="text-light font-medium">{socialStats.total_clicks} clics</span>
+          </p>
+          <p className="text-xs text-gray mb-4">
+            Desde dónde tocan el enlace. Es intención, no seguidores: la web no
+            puede saber quién terminó siguiendo la cuenta.
+          </p>
+          <div className="space-y-2">
+            {socialStats.by_source.map((row) => {
+              const share = socialStats.total_clicks
+                ? Math.round((row.clicks / socialStats.total_clicks) * 100)
+                : 0;
+              return (
+                <div
+                  key={`${row.network}-${row.source}`}
+                  className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3"
+                >
+                  <span
+                    className={`h-2 w-2 shrink-0 rounded-full ${
+                      row.network === 'instagram' ? 'bg-pink-400' : 'bg-cyan-400'
+                    }`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm text-light">{row.source_label}</p>
+                    <p className="text-xs text-gray">{row.network_label}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-light">{row.clicks}</p>
+                    <p className="text-xs text-gray">{share}%</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Gráfica de Mesas Más Frecuentadas */}
       {tableStats?.tables && tableStats.tables.length > 0 && (

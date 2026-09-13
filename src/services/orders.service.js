@@ -220,6 +220,20 @@ export const ordersService = {
   },
 
   /**
+   * Clics de salida hacia Instagram y TikTok, por origen y por día.
+   *
+   * Responde qué sitio de la app (hero, banner del descuento, popup, pie)
+   * manda gente a las redes. Un clic es intención, no un seguidor: desde la
+   * web no hay forma de saber si la persona terminó siguiendo la cuenta.
+   *
+   * @param {number} days - Ventana en días (30 por defecto, 365 máximo)
+   */
+  async getSocialClickStats(days = 30) {
+    const response = await apiClient.get('/social/stats/', { params: { days } });
+    return response.data;
+  },
+
+  /**
    * Obtener ventas por hora del día (para identificar horarios pico)
    * @param {string} date - Periodo (today, yesterday, week, month, last_month, year)
    * @param {string} start_date - Fecha inicio (YYYY-MM-DD) para rango personalizado
