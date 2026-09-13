@@ -5,83 +5,81 @@ import { SOCIAL, SOCIAL_HANDLE, SOCIAL_SOURCE } from "@/lib/social";
 
 const NETWORKS = ["instagram", "tiktok"];
 
+const STEPS = [
+  <>
+    Sube una historia y etiqueta a{" "}
+    <span className="text-light">{SOCIAL_HANDLE}</span>
+  </>,
+  "Muéstrasela al mesero",
+];
+
 /**
  * Descuento por redes.
  *
- * Es un gancho, no un servicio: por eso va en neutro (regla del hero — el
- * color se reserva para la carta, los domicilios y reservar). Lo que manda
- * aquí es el número, y manda por tamaño, no por color.
+ * Sin tarjeta: el contenido va directo sobre la sección. La carta ya separa
+ * sus bloques con el fondo y el filete superior, así que una tarjeta dentro
+ * dibujaba un segundo borde a tres milímetros del primero.
  *
- * El 2026-09-13 dejó de vivir al final de la página (detrás de toda la carta,
- * el Desguayabator y el recomendador, donde casi nadie llegaba) y pasó a ir
- * justo después de la carta principal.
+ * Manda el número, y manda por tamaño. "Descuento por redes" bajó a
+ * subtítulo: era una etiqueta encima del título que solo repetía en pequeño
+ * lo que el bloque ya dice.
  *
- * Los pasos bajaron de tres a dos. El primero era "síguenos" y el segundo
- * "sube una foto y etiquétanos": quien sube una historia etiquetando ya está
- * en la cuenta, así que pedirlo aparte solo alargaba la lista. El @ queda
- * visible arriba para que se lea aunque nadie toque los botones.
+ * Los pasos van numerados porque aquí el orden es información real (hay que
+ * publicar antes de enseñar la historia), no adorno de plantilla.
  */
 const SocialDiscountBanner = () => {
   return (
-    <section id="descuento-redes" className="fb-section fb-section--plain py-9">
+    <section id="descuento-redes" className="fb-section fb-section--plain py-11">
       <div className="container relative z-10 mx-auto px-5">
-        <div className="fb-reveal fb-card mx-auto max-w-xl p-5 sm:p-6">
-          {/* Encabezado */}
-          <div className="mb-5 flex items-center gap-3.5">
-            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[13px] border border-white/[0.1] bg-white/[0.04]">
-              <Tag size={19} className="text-light/70" />
+        <div className="fb-reveal mx-auto max-w-xl">
+          <div className="flex items-center gap-4">
+            <span className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-[18px] border border-white/[0.12] bg-linear-to-br from-white/[0.09] to-transparent shadow-[0_10px_24px_-12px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.1)]">
+              <Tag size={23} className="text-light/80" />
             </span>
             <div className="min-w-0">
-              <span className="fb-eyebrow block">Descuento por redes</span>
-              <h3 className="font-display m-0 mt-1.5 text-2xl font-semibold leading-none tracking-[0.06em] text-light">
-                10%{" "}
-                <span className="text-base tracking-[0.14em] text-light/55">
+              <h3 className="font-display m-0 text-[2.6rem] font-semibold leading-none tracking-[-0.02em] text-light">
+                10%
+                <span className="ml-2 align-middle text-lg tracking-[0.12em] text-light/50">
                   OFF
                 </span>
               </h3>
+              <p className="mt-2 text-[0.8rem] text-light/55">
+                Descuento por redes
+              </p>
             </div>
           </div>
 
-          {/* Dos pasos. El @ va impreso en el primero: es lo que la persona
-              busca luego en la aplicación de Instagram si no toca el botón. */}
-          <ol className="mb-5 space-y-2.5">
-            <li className="flex items-center gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.1] text-[0.62rem] font-medium text-light/55">
-                1
-              </span>
-              <span className="text-[0.78rem] text-light/65">
-                Sube una historia y etiqueta a{" "}
-                <span className="text-light/85">{SOCIAL_HANDLE}</span>
-              </span>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.1] text-[0.62rem] font-medium text-light/55">
-                2
-              </span>
-              <span className="text-[0.78rem] text-light/65">
-                Muéstrasela al mesero
-              </span>
-            </li>
+          <ol className="mb-7 mt-7 space-y-4">
+            {STEPS.map((text, i) => (
+              <li key={i} className="flex items-start gap-3.5">
+                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.14] bg-white/[0.05] text-[0.7rem] font-semibold text-light/70">
+                  {i + 1}
+                </span>
+                <span className="pt-[0.3rem] text-[0.88rem] leading-relaxed text-light/65">
+                  {text}
+                </span>
+              </li>
+            ))}
           </ol>
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            {NETWORKS.map((network) => {
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {NETWORKS.map((network, i) => {
               const Icon = SOCIAL_ICON[network];
               return (
                 <SocialLink
                   key={network}
                   network={network}
                   source={SOCIAL_SOURCE.BANNER_DESCUENTO}
-                  className="fb-btn w-full"
+                  className={`fb-btn fb-btn--lg w-full ${i === 0 ? "fb-btn--solid" : ""}`}
                 >
-                  <Icon size={15} />
+                  <Icon size={17} />
                   {SOCIAL[network].label}
                 </SocialLink>
               );
             })}
           </div>
 
-          <p className="mt-4 text-center text-[0.62rem] text-light/30">
+          <p className="mt-4 text-[0.68rem] text-light/35">
             Válido para tu pedido de hoy en el local
           </p>
         </div>

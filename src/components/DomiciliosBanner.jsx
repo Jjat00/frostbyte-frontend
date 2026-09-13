@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Bike, MessageCircle, MapPin, ClipboardList } from "lucide-react";
+import { Bike, MessageCircle, ClipboardList } from "lucide-react";
 import { useStoreConfig } from "@/hooks";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import { WHATSAPP_LINES, waLink } from "@/lib/domicilios";
@@ -86,47 +86,47 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
   }
 
   return (
-    <section id="domicilios" style={accent} className="fb-section py-9">
+    <section id="domicilios" style={accent} className="fb-section py-11">
       <div className="container relative z-10 mx-auto px-5">
-        <div className="fb-reveal fb-card fb-card--accent mx-auto max-w-xl p-5 sm:p-6">
-          {/* Encabezado */}
-          <div className="mb-5 flex items-center gap-3.5">
-            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[13px] border border-secondary/20 bg-secondary/10">
-              <Bike size={19} className="text-secondary" />
+        <div className="fb-reveal mx-auto max-w-xl">
+          {/* Encabezado. "Nuevo servicio" pasó a distintivo junto al título:
+              como etiqueta encima solo repetía en pequeño lo que el bloque
+              ya dice, y empujaba el nombre del servicio a segunda línea. */}
+          <div className="flex items-center gap-4">
+            <span className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-[18px] border border-secondary/25 bg-linear-to-br from-secondary/20 to-secondary/[0.04] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.12)]">
+              <Bike size={24} className="text-secondary" />
             </span>
             <div className="min-w-0">
-              <span className="fb-eyebrow fb-eyebrow--accent block">
-                Nuevo servicio
-              </span>
-              <h3 className="font-display m-0 mt-1.5 text-lg font-semibold uppercase leading-none tracking-[0.14em] text-light">
-                Domicilios
-              </h3>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h3 className="font-display m-0 text-2xl font-semibold uppercase leading-none tracking-[0.1em] text-light">
+                  Domicilios
+                </h3>
+                <span className="rounded-full border border-secondary/30 bg-secondary/10 px-2.5 py-1 text-[0.6rem] font-medium uppercase tracking-[0.16em] text-secondary">
+                  Nuevo
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Qué es */}
-          <div className="fb-inset mb-4 flex items-start gap-3 p-3.5">
-            <MapPin size={17} className="mt-0.5 flex-shrink-0 text-secondary" />
-            <p className="text-[0.78rem] leading-relaxed text-light/65">
-              Pide tu domicilio{" "}
-              <span className="text-light">directo en la app</span>: escoge tus
-              productos con fotos y precios, marca tu ubicación en el mapa y
-              sigue tu pedido en vivo hasta tu puerta.
-            </p>
-          </div>
+          {/* A ancho completo y no junto al icono: en 390 px esa columna
+              dejaba la frase en cuatro líneas de medida muy corta. */}
+          <p className="mt-4 text-[0.82rem] leading-relaxed text-light/60">
+            Escoge con fotos y precios, marca tu ubicación en el mapa y sigue
+            tu pedido en vivo hasta tu puerta.
+          </p>
 
           {/* El login no se pide aquí sino en /domicilios, que es un muro:
               una sola puerta para pedir, no tres copys sueltos. */}
           {isCustomerAuthenticated && (
-            <p className="mb-3 text-center text-[0.75rem] text-light/60">
+            <p className="mt-6 text-[0.78rem] text-light/60">
               {firstName ? `Listo, ${firstName}.` : "Listo."} Tu cuenta está
               conectada, solo falta escoger.
             </p>
           )}
 
-          <div className="space-y-2">
-            <Link to="/domicilios" className="fb-btn fb-btn--accent w-full">
-              <Bike size={16} />
+          <div className="mt-7 space-y-2.5">
+            <Link to="/domicilios" className="fb-btn fb-btn--lg fb-btn--solid w-full">
+              <Bike size={18} />
               {/* Sin sesión el siguiente paso es entrar: decirlo evita que el
                   muro se sienta una puerta en la cara */}
               {isCustomerAuthenticated
@@ -134,28 +134,34 @@ const DomiciliosBanner = ({ variant = "feature" }) => {
                 : "Entrar y pedir a domicilio"}
             </Link>
             {isCustomerAuthenticated && (
-              <Link to="/mis-pedidos" className="fb-btn w-full">
-                <ClipboardList size={16} />
+              <Link to="/mis-pedidos" className="fb-btn fb-btn--lg w-full">
+                <ClipboardList size={17} />
                 Ver el estado de mi pedido
               </Link>
             )}
           </div>
 
           {/* WhatsApp sigue siendo un canal de pedidos de primera, no letra pequeña */}
-          <div className="mt-5 border-t border-white/[0.06] pt-4">
-            <p className="fb-eyebrow mb-2.5 text-center">
+          <div className="mt-7 border-t border-white/[0.07] pt-6">
+            <p className="mb-3 text-[0.75rem] text-light/45">
               ¿Prefieres pedir por WhatsApp?
             </p>
-            <div className="grid gap-2">
+            {/* Una sola línea ocupa el ancho entero: en dos columnas se
+                quedaba a media caja, desalineada del CTA de arriba. */}
+            <div
+              className={`grid gap-2.5 ${
+                WHATSAPP_LINES.length > 1 ? "sm:grid-cols-2" : ""
+              }`}
+            >
               {WHATSAPP_LINES.map((line) => (
                 <a
                   key={line.number}
                   href={waLink(line.number)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="fb-btn w-full"
+                  className="fb-btn fb-btn--lg w-full"
                 >
-                  <MessageCircle size={15} />
+                  <MessageCircle size={16} />
                   {line.display}
                 </a>
               ))}

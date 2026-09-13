@@ -401,6 +401,41 @@
     );
   }
 
+  /* Botón de acción real: alto de pulgar, no una franja. `fb-btn` nació
+     para acciones secundarias en línea y se quedó corto cuando pasó a ser
+     el CTA a ancho completo de un bloque: 100 % de ancho por 44 px de alto
+     se lee como una barra, no como un botón. */
+  .fb-btn--lg {
+    min-height: 3.25rem;
+    border-radius: 16px;
+    padding: 0.9rem 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  /* La acción principal de un bloque, con peso real: el acento pintado, no
+     insinuado. El vidrio translúcido sirve para lo secundario; cuando todo
+     en un bloque es vidrio, nada manda y el conjunto se ve plano.
+     La sombra lleva desplazamiento y desenfoque (un halo sin offset es
+     decoración) y toma el color del acento, así que la superficie parece
+     apoyada sobre la sección en vez de recortada en ella. */
+  .fb-btn--solid {
+    border-color: transparent;
+    background-image: none;
+    background-color: var(--fb-accent, var(--color-primary));
+    color: var(--color-dark);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow:
+      0 10px 26px -10px color-mix(in srgb, var(--fb-accent, var(--color-primary)) 70%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 28%, transparent);
+  }
+
+  .fb-btn--solid:hover {
+    background-color: color-mix(in srgb, var(--fb-accent, var(--color-primary)) 88%, #fff);
+    border-color: transparent;
+    color: var(--color-dark);
+  }
+
   /* ── Pastilla: los atajos del QuickNav y las etiquetas sueltas ────── */
   .fb-pill {
     display: inline-flex;
