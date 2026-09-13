@@ -19,6 +19,7 @@ import SolicitarMusica from "@/components/SolicitarMusica";
 import FeedbackSection from "@/components/FeedbackSection";
 import FrostbytePlay from "@/components/FrostbytePlay";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
+import SocialFollowPopup from "@/components/SocialFollowPopup";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
@@ -172,6 +173,8 @@ function TablePage() {
         <ScrollToCarta />
         {/* La pestaña Carta se queda en esta misma mesa (no manda a /) */}
         <CustomerTabBar />
+        {/* Aparece pasado un rato, nunca al entrar */}
+        <SocialFollowPopup />
         <Toaster />
 
         {/* Order Tracker Panel */}

@@ -17,6 +17,7 @@ import ScrollToCarta from "@/components/ScrollToMenu";
 import SolicitarMusica from "@/components/SolicitarMusica";
 import FeedbackSection from "@/components/FeedbackSection";
 import SocialDiscountBanner from "@/components/SocialDiscountBanner";
+import SocialFollowPopup from "@/components/SocialFollowPopup";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
@@ -78,6 +79,8 @@ function App() {
             allí se monta CartLayer con la barra de carrito. */}
         <ScrollToCarta />
         <CustomerTabBar />
+        {/* Aparece pasado un rato, nunca al entrar */}
+        <SocialFollowPopup />
         <Toaster />
       </div>
     </>
