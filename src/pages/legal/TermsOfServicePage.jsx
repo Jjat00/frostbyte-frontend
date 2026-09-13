@@ -1,5 +1,6 @@
 import React from "react";
 import LegalPage, { LegalSection } from "./LegalPage";
+import { SOCIAL, SOCIAL_HANDLE } from "@/lib/social";
 
 const TermsOfServicePage = () => {
   return (
@@ -106,11 +107,11 @@ const TermsOfServicePage = () => {
           </a>{" "}
           o Instagram{" "}
           <a
-            href="https://www.instagram.com/frostbyte.col/"
+            href={SOCIAL.instagram.url}
             target="_blank"
             rel="noopener noreferrer"
           >
-            @frostbyte.col
+            {SOCIAL_HANDLE}
           </a>
           .
         </p>
