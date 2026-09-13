@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import CampaignBanner from "@/components/CampaignBanner";
 import CampaignHero from "@/components/CampaignHero";
 import Features from "@/components/Features";
-import HiringSection from "@/components/HiringSection";
+// import HiringSection from "@/components/HiringSection";
 import Footer from "@/components/Footer";
 import QuickNav from "@/components/QuickNav";
 import CartaList from "@/components/CartaList";
@@ -143,7 +143,9 @@ function TablePage() {
 
           <QuickNav />
           <CampaignBanner />
-          <HiringSection />
+          {/* Anuncio de contratacion apagado el 2026-09-13. Se vuelve a
+              encender descomentando esta linea y su import. */}
+          {/* <HiringSection /> */}
           {/* Domicilios: aviso del nuevo servicio con las líneas de WhatsApp
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}
