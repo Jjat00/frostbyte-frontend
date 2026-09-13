@@ -1,24 +1,25 @@
 import React from "react";
-import { Instagram, Tag } from "lucide-react";
+import { Tag } from "lucide-react";
+import SocialLink, { SOCIAL_ICON } from "@/components/SocialLink";
+import { SOCIAL, SOCIAL_HANDLE, SOCIAL_SOURCE } from "@/lib/social";
 
-const TikTokIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z" />
-  </svg>
-);
-
-const STEPS = [
-  "Síguenos en Instagram o TikTok",
-  "Sube una foto y etiquétanos",
-  "Muéstrale la publicación al mesero",
-];
+const NETWORKS = ["instagram", "tiktok"];
 
 /**
- * Descuento por seguir en redes.
+ * Descuento por redes.
  *
  * Es un gancho, no un servicio: por eso va en neutro (regla del hero — el
  * color se reserva para la carta, los domicilios y reservar). Lo que manda
  * aquí es el número, y manda por tamaño, no por color.
+ *
+ * El 2026-09-13 dejó de vivir al final de la página (detrás de toda la carta,
+ * el Desguayabator y el recomendador, donde casi nadie llegaba) y pasó a ir
+ * justo después de la carta principal.
+ *
+ * Los pasos bajaron de tres a dos. El primero era "síguenos" y el segundo
+ * "sube una foto y etiquétanos": quien sube una historia etiquetando ya está
+ * en la cuenta, así que pedirlo aparte solo alargaba la lista. El @ queda
+ * visible arriba para que se lea aunque nadie toque los botones.
  */
 const SocialDiscountBanner = () => {
   return (
@@ -41,41 +42,47 @@ const SocialDiscountBanner = () => {
             </div>
           </div>
 
-          {/* Pasos */}
+          {/* Dos pasos. El @ va impreso en el primero: es lo que la persona
+              busca luego en la aplicación de Instagram si no toca el botón. */}
           <ol className="mb-5 space-y-2.5">
-            {STEPS.map((text, i) => (
-              <li key={text} className="flex items-center gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.1] text-[0.62rem] font-medium text-light/55">
-                  {i + 1}
-                </span>
-                <span className="text-[0.78rem] text-light/65">{text}</span>
-              </li>
-            ))}
+            <li className="flex items-center gap-3">
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.1] text-[0.62rem] font-medium text-light/55">
+                1
+              </span>
+              <span className="text-[0.78rem] text-light/65">
+                Sube una historia y etiqueta a{" "}
+                <span className="text-light/85">{SOCIAL_HANDLE}</span>
+              </span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.1] text-[0.62rem] font-medium text-light/55">
+                2
+              </span>
+              <span className="text-[0.78rem] text-light/65">
+                Muéstrasela al mesero
+              </span>
+            </li>
           </ol>
 
           <div className="grid gap-2 sm:grid-cols-2">
-            <a
-              href="https://www.instagram.com/frostbyte.col/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="fb-btn w-full"
-            >
-              <Instagram size={15} />
-              Instagram
-            </a>
-            <a
-              href="https://www.tiktok.com/@frostbyte.col"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="fb-btn w-full"
-            >
-              <TikTokIcon size={15} />
-              TikTok
-            </a>
+            {NETWORKS.map((network) => {
+              const Icon = SOCIAL_ICON[network];
+              return (
+                <SocialLink
+                  key={network}
+                  network={network}
+                  source={SOCIAL_SOURCE.BANNER_DESCUENTO}
+                  className="fb-btn w-full"
+                >
+                  <Icon size={15} />
+                  {SOCIAL[network].label}
+                </SocialLink>
+              );
+            })}
           </div>
 
           <p className="mt-4 text-center text-[0.62rem] text-light/30">
-            Válido para tu pedido de hoy
+            Válido para tu pedido de hoy en el local
           </p>
         </div>
       </div>

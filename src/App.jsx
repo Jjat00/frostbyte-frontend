@@ -53,6 +53,9 @@ function App() {
               abajo se repite como strip compacto. */}
           <DomiciliosBanner />
           <CartaList />
+          {/* El descuento por redes va aquí, con la carta principal recién
+              leída: al final de la página (donde estaba) casi nadie llegaba. */}
+          <SocialDiscountBanner />
           {/* Secciones del menú renderizadas dinámicamente según categorías activas */}
           <MenuSections />
           <Desguayabator />
@@ -60,7 +63,6 @@ function App() {
           {/* Recordatorio compacto de domicilios al cierre de la carta */}
           <DomiciliosBanner variant="strip" />
           <DrinkRecommender />
-          <SocialDiscountBanner />
           <BirthdayDiscountBanner />
           {/* Sala VIP (piso 3): promoción sin precios, el interesado pide
               información al personal o por WhatsApp */}
