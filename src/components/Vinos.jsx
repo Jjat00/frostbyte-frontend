@@ -107,7 +107,7 @@ const Vinos = () => {
   return (
     <section
       id="vinos"
-      className="fb-section py-16"
+      className="fb-section aa-accent aa-accent--left aa-accent--candle py-16"
       style={{ "--fb-accent": "#dc2626", "--fb-accent-2": "#dc2626" }}
     >
       <div className="container mx-auto px-4 relative z-10">

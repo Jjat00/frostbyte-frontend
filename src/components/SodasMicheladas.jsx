@@ -120,7 +120,7 @@ const SodasMicheladas = () => {
   return (
     <section
       id="sodas"
-      className="fb-section py-16"
+      className="fb-section aa-accent aa-accent--right aa-accent--toast py-16"
     >
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading

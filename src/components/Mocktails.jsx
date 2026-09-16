@@ -247,7 +247,7 @@ const Mocktails = () => {
   return (
     <section
       id="mocktails"
-      className="fb-section py-16"
+      className="fb-section aa-accent aa-accent--left aa-accent--cherries py-16"
     >
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading

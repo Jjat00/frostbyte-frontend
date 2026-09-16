@@ -107,7 +107,7 @@ const Luladas = ({ showExtras = true }) => {
   return (
     <section
       id="luladas"
-      className="fb-section py-16"
+      className="fb-section aa-accent aa-accent--left aa-accent--ice py-16"
       style={{ "--fb-accent": "#84cc16", "--fb-accent-2": "#84cc16" }}
     >
 

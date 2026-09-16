@@ -233,7 +233,7 @@
 .theme-amor-amistad .aa-menu-body > .fb-section:nth-of-type(even) {
   background: radial-gradient(ellipse at 100% 50%, color-mix(in srgb, var(--aa-wine) 34%, transparent), transparent 62%), var(--color-dark-secondary);
 }
-.theme-amor-amistad .aa-menu-body > .fb-section::after {
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after {
   content: "";
   position: absolute;
   z-index: 0;
@@ -247,20 +247,19 @@
   filter: saturate(.82) contrast(.94);
   transform: rotate(8deg);
 }
-.theme-amor-amistad .aa-menu-body > #sodas,
-.theme-amor-amistad .aa-menu-body > #cuates,
-.theme-amor-amistad .aa-menu-body > #luladas {
+.theme-amor-amistad .aa-accent--toast {
   --aa-section-accent: url("/images/amor-amistad-brindis-acento.webp");
 }
-.theme-amor-amistad .aa-menu-body > #shots,
-.theme-amor-amistad .aa-menu-body > #vinos {
+.theme-amor-amistad .aa-accent--candle {
   --aa-section-accent: url("/images/amor-amistad-vela-acento.webp");
 }
-.theme-amor-amistad .aa-menu-body > #frappes::after,
-.theme-amor-amistad .aa-menu-body > #mocktails::after,
-.theme-amor-amistad .aa-menu-body > #vinos::after,
-.theme-amor-amistad .aa-menu-body > #cervezas::after,
-.theme-amor-amistad .aa-menu-body > #luladas::after {
+.theme-amor-amistad .aa-accent--letter {
+  --aa-section-accent: url("/images/amor-amistad-carta-acento.webp");
+}
+.theme-amor-amistad .aa-accent--cherries {
+  --aa-section-accent: url("/images/amor-amistad-cerezas-acento.webp");
+}
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--left::after {
   right: auto;
   left: clamp(-5rem, -2.5vw, -2rem);
   top: auto;
@@ -343,20 +342,16 @@
 }
 @media (prefers-contrast: more) {
   .theme-amor-amistad .aa-menu-body { --color-gray: var(--color-light); --aa-line: var(--color-light); }
-  .theme-amor-amistad .aa-menu-body > .fb-section::after { display: none; }
+  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after { display: none; }
 }
 @media (max-width: 40rem) {
-  .theme-amor-amistad .aa-menu-body > .fb-section::after {
+  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after {
     width: 9rem;
     opacity: .4;
     right: -4.5rem;
   }
-  .theme-amor-amistad .aa-menu-body > #frappes::after,
-  .theme-amor-amistad .aa-menu-body > #mocktails::after,
-  .theme-amor-amistad .aa-menu-body > #vinos::after,
-  .theme-amor-amistad .aa-menu-body > #cervezas::after,
-  .theme-amor-amistad .aa-menu-body > #luladas::after { left: -4.5rem; }
+  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--left::after { left: -4.5rem; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .theme-amor-amistad .aa-menu-body > .fb-section::after { opacity: .24; }
+  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after { opacity: .24; }
 }

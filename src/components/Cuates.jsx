@@ -112,7 +112,7 @@ const Cuates = () => {
   return (
     <section
       id="cuates"
-      className="fb-section py-16"
+      className="fb-section aa-accent aa-accent--right aa-accent--cherries py-16"
       style={{ "--fb-accent": "#a855f7", "--fb-accent-2": "#f59e0b" }}
     >
       <div className="container relative z-10 mx-auto px-4">

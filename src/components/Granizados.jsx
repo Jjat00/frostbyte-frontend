@@ -127,7 +127,7 @@ const Granizados = ({ showExtras = true }) => {
   const products = data?.results || [];
 
   return (
-    <section id="granizados" className="fb-section py-16">
+    <section id="granizados" className="fb-section aa-accent aa-accent--right aa-accent--ice py-16">
       <div className="container relative z-10 mx-auto px-4">
         <SectionHeading
           eyebrow="Hielo y fruta"

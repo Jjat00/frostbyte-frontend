@@ -130,7 +130,7 @@ const Micheladas = () => {
   return (
     <section
       id="micheladas"
-      className="fb-section py-16"
+      className="fb-section aa-accent aa-accent--right aa-accent--letter py-16"
       style={{ "--fb-accent": "#fb923c", "--fb-accent-2": "#fb923c" }}
     >
       <div className="container mx-auto px-4 relative z-10">
