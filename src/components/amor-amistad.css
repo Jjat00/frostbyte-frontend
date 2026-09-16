@@ -247,23 +247,23 @@
   filter: saturate(.82) contrast(.94);
   transform: rotate(8deg);
 }
-.theme-amor-amistad .aa-accent--toast {
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--toast {
   --aa-section-accent: url("/images/amor-amistad-brindis-acento.webp");
 }
-.theme-amor-amistad .aa-accent--candle {
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--candle {
   --aa-section-accent: url("/images/amor-amistad-vela-acento.webp");
 }
-.theme-amor-amistad .aa-accent--letter {
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--letter {
   --aa-section-accent: url("/images/amor-amistad-carta-acento.webp");
 }
-.theme-amor-amistad .aa-accent--cherries {
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--cherries {
   --aa-section-accent: url("/images/amor-amistad-cerezas-acento.webp");
 }
 .theme-amor-amistad .aa-accent--left > .aa-section-accent {
   right: auto;
   left: clamp(-5rem, -2.5vw, -2rem);
-  top: auto;
-  bottom: .5rem;
+  top: clamp(8rem, 14vw, 12rem);
+  bottom: auto;
   transform: scaleX(-1) rotate(5deg);
 }
 .theme-amor-amistad .aa-menu-body > .fb-section > :not(.aa-section-accent) { position: relative; z-index: 1; }
@@ -350,7 +350,7 @@
     opacity: .4;
     right: -4.5rem;
   }
-  .theme-amor-amistad .aa-accent--left > .aa-section-accent { left: -4.5rem; }
+  .theme-amor-amistad .aa-accent--left > .aa-section-accent { left: -4.5rem; top: 7rem; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .theme-amor-amistad .aa-section-accent { opacity: .24; }
