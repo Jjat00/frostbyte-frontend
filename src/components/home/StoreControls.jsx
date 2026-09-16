@@ -3,7 +3,6 @@ import {
   DoorOpen,
   DoorClosed,
   Bike,
-  ShoppingBag,
   Ruler,
   Hexagon,
   Loader2,
@@ -50,15 +49,16 @@ const RADIUS_PRESETS = [1, 1.5, 2, 3];
  * Controles operativos del local para el staff (admin y empleados), pensados
  * para la fila de "status chips" del dashboard /home.
  *
- * Cuatro controles independientes, cada uno con su diálogo:
+ * Tres controles independientes, cada uno con su diálogo. Recoger no es uno de
+ * ellos: con el local abierto el cliente siempre puede pasar por su pedido, así
+ * que no hay nada que decidir (Jaime, 15/09).
+ *
+ * Tres controles:
  *  1. Abierto/Cerrado  -> is_open (cerrado = no se puede pedir por ningún canal).
  *     Al cerrar se ajusta también `opening_time`: es la hora que el agente de
  *     WhatsApp le responde a quien escriba mientras el local está cerrado.
  *  2. Domicilios        -> customer_ordering_enabled.
- *  3. Para recoger      -> pickup_enabled. Canal aparte: con los domicilios
- *     pausados el agente de WhatsApp sigue tomando encargos para pasar a
- *     recoger, que es la venta que antes se perdía.
- *  4. Zona de entrega   -> delivery_area / delivery_radius_km (solo admin; los
+ *  3. Zona de entrega   -> delivery_area / delivery_radius_km (solo admin; los
  *     empleados la ven). La zona se dibuja como polígono; el círculo por radio
  *     queda como respaldo para volver atrás rápido.
  */
@@ -69,7 +69,7 @@ const StoreControls = () => {
   const isAdminUser = isAdmin();
   const { toast } = useToast();
 
-  // Qué confirmación está abierta: null | "store" | "delivery" | "pickup" | "area"
+  // Qué confirmación está abierta: null | "store" | "delivery" | "area"
   const [confirm, setConfirm] = useState(null);
   // Cómo se define la zona en el diálogo: "polygon" (dibujada) | "circle" (radio)
   const [mode, setMode] = useState("polygon");
@@ -91,7 +91,6 @@ const StoreControls = () => {
 
   const isOpen = !!settings.is_open;
   const deliveryOn = !!settings.customer_ordering_enabled;
-  const pickupOn = !!settings.pickup_enabled;
   const openingTime = settings.opening_time || DEFAULT_OPENING_TIME;
 
   // Zona vigente (la que ya ve el cliente)
@@ -254,31 +253,6 @@ const StoreControls = () => {
         </span>
       </button>
 
-      {/* Chip: pedidos para recoger (canal independiente del domicilio) */}
-      <button
-        onClick={() => setConfirm("pickup")}
-        className={cn(
-          "flex items-center gap-2 rounded-lg border px-3 py-2 transition-colors",
-          pickupOn
-            ? "bg-primary/10 border-primary/30 hover:bg-primary/20"
-            : "bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.08]"
-        )}
-        title="Activar o desactivar los pedidos para recoger en el local"
-      >
-        <ShoppingBag
-          className={cn("w-4 h-4", pickupOn ? "text-primary" : "text-gray")}
-        />
-        <span className="text-xs text-gray">Recoger</span>
-        <span
-          className={cn(
-            "text-xs font-semibold",
-            pickupOn ? "text-primary" : "text-gray"
-          )}
-        >
-          {pickupOn ? "Activos" : "Inactivos"}
-        </span>
-      </button>
-
       {/* Chip: zona de cobertura de domicilios (la cambia solo el admin) */}
       <AreaTag
         {...(isAdminUser
@@ -372,28 +346,6 @@ const StoreControls = () => {
           apply(
             { customer_ordering_enabled: !deliveryOn },
             deliveryOn ? "Domicilios desactivados" : "Domicilios activados"
-          )
-        }
-      />
-
-      {/* Confirmación: activar/desactivar pedidos para recoger */}
-      <ConfirmDialog
-        open={confirm === "pickup"}
-        tone={pickupOn ? "danger" : "success"}
-        icon={ShoppingBag}
-        title={pickupOn ? "¿Desactivar los encargos?" : "¿Activar los encargos?"}
-        message={
-          pickupOn
-            ? "El agente de WhatsApp dejará de tomar pedidos para recoger, incluso con el local abierto."
-            : "El agente de WhatsApp podrá tomar pedidos para recoger en el local aunque los domicilios estén pausados. No se cobra envío."
-        }
-        confirmLabel={pickupOn ? "Sí, desactivar" : "Sí, activar"}
-        loading={updateMutation.isPending}
-        onCancel={() => setConfirm(null)}
-        onConfirm={() =>
-          apply(
-            { pickup_enabled: !pickupOn },
-            pickupOn ? "Pedidos para recoger desactivados" : "Pedidos para recoger activados"
           )
         }
       />
