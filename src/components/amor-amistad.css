@@ -233,8 +233,8 @@
 .theme-amor-amistad .aa-menu-body > .fb-section:nth-of-type(even) {
   background: radial-gradient(ellipse at 100% 50%, color-mix(in srgb, var(--aa-wine) 34%, transparent), transparent 62%), var(--color-dark-secondary);
 }
-.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after {
-  content: "";
+.theme-amor-amistad .aa-section-accent {
+  display: block;
   position: absolute;
   z-index: 0;
   width: clamp(10rem, 19vw, 17rem);
@@ -259,14 +259,14 @@
 .theme-amor-amistad .aa-accent--cherries {
   --aa-section-accent: url("/images/amor-amistad-cerezas-acento.webp");
 }
-.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--left::after {
+.theme-amor-amistad .aa-accent--left > .aa-section-accent {
   right: auto;
   left: clamp(-5rem, -2.5vw, -2rem);
   top: auto;
   bottom: .5rem;
   transform: scaleX(-1) rotate(5deg);
 }
-.theme-amor-amistad .aa-menu-body > .fb-section > * { position: relative; z-index: 1; }
+.theme-amor-amistad .aa-menu-body > .fb-section > :not(.aa-section-accent) { position: relative; z-index: 1; }
 .theme-amor-amistad .fb-section-heading h2 {
   font: 400 clamp(2.25rem, 5vw, 3.75rem)/1.08 var(--aa-font-editorial);
   text-transform: none; letter-spacing: -.035em; text-wrap: balance;
@@ -342,16 +342,16 @@
 }
 @media (prefers-contrast: more) {
   .theme-amor-amistad .aa-menu-body { --color-gray: var(--color-light); --aa-line: var(--color-light); }
-  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after { display: none; }
+  .theme-amor-amistad .aa-section-accent { display: none; }
 }
 @media (max-width: 40rem) {
-  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after {
+  .theme-amor-amistad .aa-section-accent {
     width: 9rem;
     opacity: .4;
     right: -4.5rem;
   }
-  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--left::after { left: -4.5rem; }
+  .theme-amor-amistad .aa-accent--left > .aa-section-accent { left: -4.5rem; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent::after { opacity: .24; }
+  .theme-amor-amistad .aa-section-accent { opacity: .24; }
 }

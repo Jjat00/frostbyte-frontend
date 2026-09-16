@@ -91,6 +91,7 @@ const Shots = () => {
       id="shots"
       className="fb-section aa-accent aa-accent--right aa-accent--candle py-16"
     >
+      <span className="aa-section-accent" aria-hidden="true" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           eyebrow="Para brindar"

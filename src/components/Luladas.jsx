@@ -111,6 +111,7 @@ const Luladas = ({ showExtras = true }) => {
       style={{ "--fb-accent": "#84cc16", "--fb-accent-2": "#84cc16" }}
     >
 
+      <span className="aa-section-accent" aria-hidden="true" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           eyebrow="Lulo de Nariño"

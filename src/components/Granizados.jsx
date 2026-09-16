@@ -128,6 +128,7 @@ const Granizados = ({ showExtras = true }) => {
 
   return (
     <section id="granizados" className="fb-section aa-accent aa-accent--right aa-accent--ice py-16">
+      <span className="aa-section-accent" aria-hidden="true" />
       <div className="container relative z-10 mx-auto px-4">
         <SectionHeading
           eyebrow="Hielo y fruta"

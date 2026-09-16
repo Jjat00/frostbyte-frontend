@@ -119,6 +119,7 @@ const Cervezas = () => {
       className="fb-section aa-accent aa-accent--left aa-accent--toast py-16"
       style={{ "--fb-accent": "#eab308", "--fb-accent-2": "#eab308" }}
     >
+      <span className="aa-section-accent" aria-hidden="true" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           eyebrow="Bien frías"

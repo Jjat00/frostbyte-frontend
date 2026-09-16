@@ -110,6 +110,7 @@ const Vinos = () => {
       className="fb-section aa-accent aa-accent--left aa-accent--candle py-16"
       style={{ "--fb-accent": "#dc2626", "--fb-accent-2": "#dc2626" }}
     >
+      <span className="aa-section-accent" aria-hidden="true" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           eyebrow="Viñas chilenas"

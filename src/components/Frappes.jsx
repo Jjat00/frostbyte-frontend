@@ -120,6 +120,7 @@ const Frappes = () => {
       style={{ "--fb-accent": "#f59e0b", "--fb-accent-2": "#f59e0b" }}
     >
 
+      <span className="aa-section-accent" aria-hidden="true" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           eyebrow="Cremosos y helados"
