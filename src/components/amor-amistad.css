@@ -240,7 +240,7 @@
   width: clamp(10rem, 19vw, 17rem);
   aspect-ratio: 1;
   right: clamp(-5rem, -2.5vw, -2rem);
-  top: 1.25rem;
+  top: 3.75rem;
   pointer-events: none;
   opacity: .62;
   background: var(--aa-section-accent) center / contain no-repeat;
@@ -259,14 +259,20 @@
 .theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--cherries {
   --aa-section-accent: url("/images/amor-amistad-cerezas-acento.webp");
 }
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--gift {
+  --aa-section-accent: url("/images/amor-amistad-regalo-acento.webp");
+}
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent--bracelets {
+  --aa-section-accent: url("/images/amor-amistad-pulseras-acento.webp");
+}
 .theme-amor-amistad .aa-accent--left > .aa-section-accent {
   right: auto;
   left: clamp(-5rem, -2.5vw, -2rem);
-  top: clamp(8rem, 14vw, 12rem);
+  top: 3.75rem;
   bottom: auto;
   transform: scaleX(-1) rotate(5deg);
 }
-.theme-amor-amistad .aa-menu-body > .fb-section > :not(.aa-section-accent) { position: relative; z-index: 1; }
+.theme-amor-amistad .aa-menu-body > .fb-section.aa-accent > :not(.aa-section-accent) { position: relative; z-index: 1; }
 .theme-amor-amistad .fb-section-heading h2 {
   font: 400 clamp(2.25rem, 5vw, 3.75rem)/1.08 var(--aa-font-editorial);
   text-transform: none; letter-spacing: -.035em; text-wrap: balance;
@@ -348,9 +354,9 @@
   .theme-amor-amistad .aa-section-accent {
     width: 9rem;
     opacity: .4;
-    right: -4.5rem;
+    right: -3rem;
   }
-  .theme-amor-amistad .aa-accent--left > .aa-section-accent { left: -4.5rem; top: 7rem; }
+  .theme-amor-amistad .aa-accent--left > .aa-section-accent { left: -3rem; top: 3.75rem; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .theme-amor-amistad .aa-section-accent { opacity: .24; }

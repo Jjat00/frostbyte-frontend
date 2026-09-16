@@ -294,7 +294,11 @@ const CartaList = () => {
   if (!activeCategories.length) return null;
 
   return (
-    <section id="carta" className="fb-section py-12 sm:py-16">
+    <section
+      id="carta"
+      className="fb-section aa-accent aa-accent--left aa-accent--gift py-12 sm:py-16"
+    >
+      <span className="aa-section-accent" aria-hidden="true" />
       <div className="container relative z-10 mx-auto max-w-3xl px-5">
         <SectionHeading
           eyebrow="Bebidas y comida"
