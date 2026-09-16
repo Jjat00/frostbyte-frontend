@@ -239,7 +239,7 @@
   z-index: 0;
   width: clamp(10rem, 19vw, 17rem);
   aspect-ratio: 1;
-  right: clamp(-5rem, -2.5vw, -2rem);
+  right: clamp(.75rem, 1.5vw, 1.5rem);
   top: 3.75rem;
   pointer-events: none;
   opacity: .62;
@@ -267,7 +267,7 @@
 }
 .theme-amor-amistad .aa-accent--left > .aa-section-accent {
   right: auto;
-  left: clamp(-5rem, -2.5vw, -2rem);
+  left: clamp(.75rem, 1.5vw, 1.5rem);
   top: 3.75rem;
   bottom: auto;
   transform: scaleX(-1) rotate(5deg);
@@ -352,11 +352,11 @@
 }
 @media (max-width: 40rem) {
   .theme-amor-amistad .aa-section-accent {
-    width: 9rem;
+    width: 7rem;
     opacity: .4;
-    right: -3rem;
+    right: .5rem;
   }
-  .theme-amor-amistad .aa-accent--left > .aa-section-accent { left: -3rem; top: 3.75rem; }
+  .theme-amor-amistad .aa-accent--left > .aa-section-accent { left: .5rem; top: 3.75rem; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .theme-amor-amistad .aa-section-accent { opacity: .24; }
