@@ -12,8 +12,9 @@ const formatPrice = (price) => {
 
 const ProductCard = ({ product, index, styles }) => {
   const Icon = styles.icon;
-  const variants = product.variants || [];
+  const variants = (product.variants || []).filter((v) => v.is_active !== false);
   const defaultVariant = variants.find((v) => v.is_default) || variants[0];
+  const hasMultipleVariants = variants.length > 1;
 
   return (
     <motion.div
@@ -45,12 +46,30 @@ const ProductCard = ({ product, index, styles }) => {
             {product.name}
           </h3>
           <p className="mb-4 grow text-[0.78rem] leading-relaxed text-light/55">{product.description}</p>
-          <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/[0.06]">
-            <span className="text-base font-medium text-light">
-              {formatPrice(defaultVariant?.price)}
-            </span>
-            <span className="text-gray text-sm">{defaultVariant?.name}</span>
-          </div>
+          {hasMultipleVariants ? (
+            <div className="mt-auto flex flex-wrap items-center justify-center gap-x-5 gap-y-2.5 border-t border-white/[0.06] pt-4">
+              {variants.map((variant) => (
+                <div
+                  key={variant.id || variant.name}
+                  className="flex flex-col items-center"
+                >
+                  <span className="mb-0.5 text-[0.62rem] uppercase tracking-[0.14em] text-light/35">
+                    {variant.name}
+                  </span>
+                  <span className="text-[0.95rem] font-medium text-light">
+                    {formatPrice(variant.price)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/[0.06]">
+              <span className="text-base font-medium text-light">
+                {formatPrice(defaultVariant?.price)}
+              </span>
+              <span className="text-gray text-sm">{defaultVariant?.name}</span>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
@@ -113,9 +132,9 @@ const Vinos = () => {
       <span className="aa-section-accent" aria-hidden="true" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
-          eyebrow="Viñas chilenas"
+          eyebrow="Por copa o botella"
           title="Vinos"
-          description="Vinos en Cumbal: disfruta de una copa de vino tinto de las mejores viñas chilenas. Elegancia y sabor en Frostbyte."
+          description="Vinos en Cumbal: tinto por copa o botella, de viñas chilenas y de vino artesanal. Elegancia y sabor en Frostbyte."
           className="mb-12"
         />
 

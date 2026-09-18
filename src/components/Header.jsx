@@ -157,7 +157,7 @@ const Header = () => {
     { title: "Luladas", href: "#luladas", description: "Refrescantes luladas preparadas con lulo natural.", categorySlug: "luladas" },
     { title: "Cócteles", href: "#mocktails", description: "Mojitos, Margaritas, Moscow Mule y más.", categorySlug: "mocktails" },
     { title: "Shots", href: "#shots", description: "Ginebra, Vodka, Whisky, Tequila y Ron.", categorySlug: "shots" },
-    { title: "Vinos", href: "#vinos", description: "Copas de Gato Negro y Casillero del Diablo.", categorySlug: "vinos" },
+    { title: "Vinos", href: "#vinos", description: "Gato Negro, Casillero del Diablo, Quinta las Cabras y más, por copa o botella.", categorySlug: "vinos" },
     { title: "Recomendador", href: "#que-te-provoca", description: "Deja que te recomendemos la bebida perfecta.", categorySlug: null },
     { title: "Descuento Redes", href: "#descuento-redes", description: "Siguenos en redes y obtendras un descuento.", categorySlug: null },
     { title: "Descuento Cumple", href: "#descuento-cumple", description: "Si es tu cumple, tendras un descuento especial.", categorySlug: null },
