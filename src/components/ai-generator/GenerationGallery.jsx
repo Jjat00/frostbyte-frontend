@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 /**
  * Galería de imágenes generadas con IA
  */
-export function GenerationGallery() {
+export function GenerationGallery({ onContinueEdit }) {
   const [selectedGeneration, setSelectedGeneration] = useState(null);
   const [page, setPage] = useState(1);
 
@@ -177,6 +177,7 @@ export function GenerationGallery() {
         generation={selectedGeneration}
         isOpen={!!selectedGeneration}
         onClose={() => setSelectedGeneration(null)}
+        onContinueEdit={onContinueEdit}
       />
     </>
   );

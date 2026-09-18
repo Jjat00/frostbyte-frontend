@@ -5,6 +5,7 @@ import {
   Image as ImageIcon,
   Loader2,
   Check,
+  Wand2,
 } from 'lucide-react';
 import { useGenerationHistory } from '@/hooks/useImageGeneration';
 import { cn } from '@/lib/utils';
@@ -15,8 +16,14 @@ import { cn } from '@/lib/utils';
  * @param {boolean} props.isOpen - Si el modal esta abierto
  * @param {function} props.onClose - Callback para cerrar el modal
  * @param {function} props.onSelect - Callback con la URL de la imagen seleccionada
+ * @param {function} props.onContinueEdit - Callback para seguir editando esa imagen con IA
  */
-export function AIGalleryPickerModal({ isOpen, onClose, onSelect }) {
+export function AIGalleryPickerModal({
+  isOpen,
+  onClose,
+  onSelect,
+  onContinueEdit,
+}) {
   const [page, setPage] = useState(1);
   const [selectedUrl, setSelectedUrl] = useState(null);
 
@@ -33,6 +40,13 @@ export function AIGalleryPickerModal({ isOpen, onClose, onSelect }) {
   const handleSelect = () => {
     if (selectedUrl) {
       onSelect(selectedUrl);
+      handleClose();
+    }
+  };
+
+  const handleContinueEdit = () => {
+    if (selectedUrl) {
+      onContinueEdit(selectedUrl);
       handleClose();
     }
   };
@@ -185,6 +199,17 @@ export function AIGalleryPickerModal({ isOpen, onClose, onSelect }) {
               >
                 Cancelar
               </button>
+              {onContinueEdit && (
+                <button
+                  type="button"
+                  onClick={handleContinueEdit}
+                  disabled={!selectedUrl}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-secondary border border-secondary/30 rounded-lg hover:bg-secondary/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Wand2 className="w-4 h-4" />
+                  Seguir editando
+                </button>
+              )}
               <button
                 type="button"
                 onClick={handleSelect}

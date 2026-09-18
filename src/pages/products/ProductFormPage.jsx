@@ -49,6 +49,9 @@ const ProductFormPage = () => {
   const [isGeneratingHistory, setIsGeneratingHistory] = useState(false);
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
   const [showAIEditor, setShowAIEditor] = useState(false);
+  // Imagen desde la que arranca el editor de IA: por defecto la del
+  // formulario, salvo que se elija otra en la galeria para seguir editandola
+  const [aiEditorSource, setAiEditorSource] = useState(null);
 
   // Obtener producto si está editando
   const { data: productData, isLoading: loadingProduct } = useQuery({
@@ -702,8 +705,11 @@ const ProductFormPage = () => {
       {/* Generar o editar la imagen con IA sin salir del formulario */}
       <AIImageEditorModal
         isOpen={showAIEditor}
-        onClose={() => setShowAIEditor(false)}
-        initialImageUrl={formData.image_url || null}
+        onClose={() => {
+          setShowAIEditor(false);
+          setAiEditorSource(null);
+        }}
+        initialImageUrl={aiEditorSource || formData.image_url || null}
         productName={formData.name}
         onUse={(url) => {
           setFormData((prev) => ({ ...prev, image_url: url }));
@@ -717,6 +723,10 @@ const ProductFormPage = () => {
       <AIGalleryPickerModal
         isOpen={showGalleryPicker}
         onClose={() => setShowGalleryPicker(false)}
+        onContinueEdit={(url) => {
+          setAiEditorSource(url);
+          setShowAIEditor(true);
+        }}
         onSelect={(url) => {
           setFormData((prev) => ({ ...prev, image_url: url }));
           if (errors.image_url) {

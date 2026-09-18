@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   Loader2,
   ExternalLink,
+  Wand2,
 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { aiImageService } from '@/services/aiImage.service';
@@ -25,8 +26,14 @@ import { cn } from '@/lib/utils';
  * @param {Object} props.generation - Datos de la generación
  * @param {boolean} props.isOpen - Si el modal está abierto
  * @param {Function} props.onClose - Callback para cerrar
+ * @param {Function} props.onContinueEdit - Retomar esta generacion en el generador
  */
-export function GenerationDetailModal({ generation, isOpen, onClose }) {
+export function GenerationDetailModal({
+  generation,
+  isOpen,
+  onClose,
+  onContinueEdit,
+}) {
   const queryClient = useQueryClient();
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [localGeneration, setLocalGeneration] = useState(generation);
@@ -380,6 +387,24 @@ export function GenerationDetailModal({ generation, isOpen, onClose }) {
                   <Download className="w-4 h-4" />
                   <span>Descargar</span>
                 </button>
+
+                {onContinueEdit && localGeneration.generated_image_url && (
+                  <button
+                    onClick={() => {
+                      onContinueEdit(localGeneration);
+                      onClose();
+                    }}
+                    disabled={isProcessing}
+                    className={cn(
+                      'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
+                      'transition-all disabled:opacity-50 disabled:cursor-not-allowed',
+                      'border border-secondary/30 text-secondary hover:bg-secondary/10'
+                    )}
+                  >
+                    <Wand2 className="w-4 h-4" />
+                    <span>Seguir editando</span>
+                  </button>
+                )}
 
                 <button
                   onClick={() => setIsProductModalOpen(true)}

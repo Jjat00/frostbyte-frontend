@@ -22,26 +22,11 @@ import {
   useGenerationHistory,
 } from '@/hooks/useImageGeneration';
 import { cn } from '@/lib/utils';
+import { urlToFile } from '@/lib/imageFromUrl';
 
 // Modelos que NO soportan background transparente en el endpoint de OpenAI.
 const MODELS_WITHOUT_TRANSPARENCY = new Set(['gpt-image-2']);
 const DEFAULT_AI_MODEL = 'gpt-image-1.5';
-
-/**
- * Descarga una URL y la convierte en File para poder mandarla al generador.
- * R2 responde con Access-Control-Allow-Origin: * y el backend tiene el dominio
- * del panel en CORS_ALLOWED_ORIGINS, asi que ambas fuentes se pueden leer.
- */
-async function urlToFile(url, fallbackName = 'imagen.png') {
-  const response = await fetch(url, { mode: 'cors' });
-  if (!response.ok) {
-    throw new Error(`No se pudo leer la imagen (${response.status})`);
-  }
-  const blob = await response.blob();
-  const nameFromUrl = url.split('/').pop()?.split('?')[0];
-  const type = blob.type || 'image/png';
-  return new File([blob], nameFromUrl || fallbackName, { type });
-}
 
 /**
  * Modal para generar o editar con IA la imagen de un producto sin salir del

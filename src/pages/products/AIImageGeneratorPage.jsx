@@ -23,6 +23,8 @@ import {
   useImageValidation,
 } from "@/hooks/useImageGeneration";
 import { cn } from "@/lib/utils";
+import { urlToFile } from "@/lib/imageFromUrl";
+import toast from "react-hot-toast";
 
 // Modelos que NO soportan background transparente en el endpoint de OpenAI.
 const MODELS_WITHOUT_TRANSPARENCY = new Set(["gpt-image-2"]);
@@ -53,6 +55,11 @@ const AIImageGeneratorPage = () => {
 
   // Estado del modal de selección de producto
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+
+  // Imagen de una generación anterior que se retoma desde la galería: se
+  // muestra como original mientras el usuario no elija otro archivo.
+  const [continueSourceUrl, setContinueSourceUrl] = useState(null);
+  const [isPreparingEdit, setIsPreparingEdit] = useState(false);
 
   const supportsTransparency = !MODELS_WITHOUT_TRANSPARENCY.has(aiModel);
 
@@ -135,6 +142,7 @@ const AIImageGeneratorPage = () => {
 
   const handleOriginalSelect = useCallback((file) => {
     setOriginalImage(file);
+    setContinueSourceUrl(null);
     setErrors((prev) => ({ ...prev, original: null }));
   }, []);
 
@@ -192,6 +200,7 @@ const AIImageGeneratorPage = () => {
 
   const handleStartOver = useCallback(() => {
     setOriginalImage(null);
+    setContinueSourceUrl(null);
     setReferenceImage(null);
     setPrompt("");
     setTransparent(false);
@@ -199,6 +208,35 @@ const AIImageGeneratorPage = () => {
     setErrors({});
     reset();
   }, [reset]);
+
+  // Retomar una generación de la galería: su imagen pasa a ser la original y
+  // vuelven su prompt, su modelo y su fondo, para ajustar en vez de repetir.
+  const handleContinueEdit = useCallback(
+    async (generation) => {
+      const sourceUrl = generation?.generated_image_url;
+      if (!sourceUrl) return;
+
+      setIsPreparingEdit(true);
+      setActiveTab("generator");
+      try {
+        const file = await urlToFile(sourceUrl);
+        reset();
+        setOriginalImage(file);
+        setContinueSourceUrl(sourceUrl);
+        setReferenceImage(null);
+        setPrompt(generation.user_prompt || "");
+        setAiModel(generation.ai_model || DEFAULT_AI_MODEL);
+        setTransparent(!!generation.transparent_background);
+        setErrors({});
+        toast.success("Listo para seguir editando esa imagen");
+      } catch {
+        toast.error("No se pudo cargar esa imagen. Intenta de nuevo.");
+      } finally {
+        setIsPreparingEdit(false);
+      }
+    },
+    [reset, setActiveTab],
+  );
 
   // Mensaje de fallo de la generación (el backend responde con el motivo)
   const generationErrorMessage = generateError
@@ -299,7 +337,7 @@ const AIImageGeneratorPage = () => {
           animate={{ opacity: 1 }}
           className="py-2"
         >
-          <GenerationGallery />
+          <GenerationGallery onContinueEdit={handleContinueEdit} />
         </motion.div>
       )}
 
@@ -356,7 +394,8 @@ const AIImageGeneratorPage = () => {
               onReferenceSelect={handleReferenceSelect}
               originalError={errors.original}
               referenceError={errors.reference}
-              disabled={isGenerating}
+              disabled={isGenerating || isPreparingEdit}
+              initialOriginalPreview={continueSourceUrl}
             />
           </div>
 
