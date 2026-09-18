@@ -11,6 +11,8 @@ import { useImageUpload } from '@/hooks/useImageUpload';
  * @param {string} props.originalError - Error de validación para imagen original
  * @param {string} props.referenceError - Error de validación para imagen de referencia
  * @param {boolean} props.disabled - Deshabilitar componente
+ * @param {string} props.initialOriginalPreview - URL a mostrar como original mientras
+ *   el usuario no elija un archivo (sirve para partir de la imagen que ya tiene el producto)
  */
 export function DualImageUploader({
   onOriginalSelect,
@@ -18,12 +20,16 @@ export function DualImageUploader({
   originalError,
   referenceError,
   disabled = false,
+  initialOriginalPreview = null,
 }) {
   const originalInputRef = useRef(null);
   const referenceInputRef = useRef(null);
 
   const original = useImageUpload();
   const reference = useImageUpload();
+
+  // Si el usuario todavia no eligio archivo, mostramos la imagen que ya venia
+  const originalPreview = original.preview || initialOriginalPreview;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -63,10 +69,10 @@ export function DualImageUploader({
           />
 
           {/* Preview */}
-          {original.preview && (
+          {originalPreview && (
             <div className="absolute inset-0 p-2">
               <img loading="lazy" decoding="async"
-                src={original.preview}
+                src={originalPreview}
                 alt="Original preview"
                 className="w-full h-full object-contain rounded-lg"
               />
@@ -91,7 +97,7 @@ export function DualImageUploader({
           )}
 
           {/* Empty state */}
-          {!original.preview && (
+          {!originalPreview && (
             <div className="flex flex-col items-center gap-3 p-6 text-center">
               {original.isDragging ? (
                 <ImageIcon className="w-12 h-12 text-primary animate-pulse" />

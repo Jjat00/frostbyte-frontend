@@ -18,6 +18,7 @@ import { productsService, variantsService } from '@/services/products.service';
 import { categoriesService } from '@/services/categories.service';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { AIGalleryPickerModal } from '@/components/ai-generator/AIGalleryPickerModal';
+import { AIImageEditorModal } from '@/components/ai-generator/AIImageEditorModal';
 import ProductModifiersSection from '@/components/products/ProductModifiersSection';
 import { useBusinessStore } from '@/stores/useBusinessStore';
 
@@ -47,6 +48,7 @@ const ProductFormPage = () => {
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const [isGeneratingHistory, setIsGeneratingHistory] = useState(false);
   const [showGalleryPicker, setShowGalleryPicker] = useState(false);
+  const [showAIEditor, setShowAIEditor] = useState(false);
 
   // Obtener producto si está editando
   const { data: productData, isLoading: loadingProduct } = useQuery({
@@ -368,10 +370,18 @@ const ProductFormPage = () => {
 
             {/* Imagen del producto */}
             <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex flex-wrap items-center gap-2 mb-2 sm:gap-3">
                 <label className="text-sm font-medium text-gray">
                   Imagen del Producto
                 </label>
+                <button
+                  type="button"
+                  onClick={() => setShowAIEditor(true)}
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-secondary border border-secondary/30 rounded-lg hover:bg-secondary/10 hover:border-secondary/50 transition-all"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  {formData.image_url ? 'Editar con IA' : 'Crear con IA'}
+                </button>
                 <button
                   type="button"
                   onClick={() => setShowGalleryPicker(true)}
@@ -688,6 +698,20 @@ const ProductFormPage = () => {
           </button>
         </div>
       </form>
+
+      {/* Generar o editar la imagen con IA sin salir del formulario */}
+      <AIImageEditorModal
+        isOpen={showAIEditor}
+        onClose={() => setShowAIEditor(false)}
+        initialImageUrl={formData.image_url || null}
+        productName={formData.name}
+        onUse={(url) => {
+          setFormData((prev) => ({ ...prev, image_url: url }));
+          if (errors.image_url) {
+            setErrors((prev) => ({ ...prev, image_url: null }));
+          }
+        }}
+      />
 
       {/* Modal de galería IA */}
       <AIGalleryPickerModal

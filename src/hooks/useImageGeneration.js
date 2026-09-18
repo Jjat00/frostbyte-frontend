@@ -138,11 +138,12 @@ export function useImageGeneration({ onSuccess, onError } = {}) {
  * Hook para obtener el historial de generaciones
  * @param {Object} params - Parámetros de consulta
  */
-export function useGenerationHistory(params = {}) {
+export function useGenerationHistory(params = {}, options = {}) {
   return useQuery({
     queryKey: ['ai-history', params],
     queryFn: () => aiImageService.getHistory(params),
     staleTime: 5 * 60 * 1000, // 5 minutos
+    ...options,
   });
 }
 
