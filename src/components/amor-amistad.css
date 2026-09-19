@@ -15,6 +15,22 @@
 .aa-button { display: inline-flex; align-items: center; justify-content: center; gap: 1.125rem; min-height: 3.25rem; padding: 0.75rem 1.3125rem; border: 1px solid var(--aa-line); border-radius: 1rem; font-size: 0.9375rem; font-weight: 600; transition: background-color .2s, border-color .2s; }
 .aa-button--primary { background: var(--color-primary); color: var(--color-dark); border-color: var(--color-primary); }
 
+/* La dedicatoria y el canje se leen antes de la foto, también en móvil. */
+.aa-hero--shot .aa-copy h1 { font-size: clamp(2.75rem, 4.8vw, 4.5rem); }
+.aa-hero--shot .aa-promo-description { max-width: 32rem; margin-block: 1.25rem; line-height: 1.65; }
+.aa-promo-description strong { color: var(--color-light); font-weight: 600; }
+.aa-promo-steps { display: grid; gap: .75rem; margin: 0 0 1.5rem; padding: 0; list-style: none; }
+.aa-promo-steps li { display: flex; align-items: center; gap: .75rem; font-size: .875rem; line-height: 1.5; }
+.aa-promo-steps li > span { display: grid; place-items: center; flex: 0 0 1.75rem; height: 1.75rem; border: 1px solid var(--aa-line); border-radius: 50%; color: var(--color-primary); font-size: .75rem; }
+.aa-hero--shot .aa-social-label { letter-spacing: .06em; line-height: 1.5; }
+.aa-shot-reminder { margin-top: 1.25rem; padding: 1rem 1.25rem; border-left: 3px solid var(--color-primary); background: var(--color-dark-secondary); color: var(--color-light); font-size: .9375rem; line-height: 1.7; }
+.aa-shot-reminder strong { color: var(--color-primary); }
+.aa-shot-reminder a { text-decoration: underline; text-underline-offset: .2em; }
+@media (max-width: 40rem) {
+  .aa-hero--shot .aa-copy h1 { font-size: clamp(2.5rem, 10vw, 3.75rem); }
+  .aa-hero--shot .aa-actions .aa-button--primary { flex-basis: 100%; }
+}
+
 
 /* Síguenos: bajo los CTA y con el mismo peso visual, porque el enlace a
    Instagram no existía en la portada y era invisible en las dos

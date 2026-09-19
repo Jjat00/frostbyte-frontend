@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Download, Share2, ImagePlus, Sparkles } from 'lucide-react';
 import { useCartaPath } from '@/hooks';
 import { env } from '@/config/env';
+import CelebrationShotReminder from '@/components/CelebrationShotReminder';
 import '@/components/amor-amistad.css';
 
 const DEFAULT_PHRASE = 'Lo mejor de la vida es compartirla contigo.';
@@ -167,6 +168,7 @@ export default function CelebrationCardPage() {
         <div className="aa-card-intro"><p className="aa-kicker">Un recuerdo para regalar</p>
           <h1>Su foto. <em>Tu dedicatoria.</em></h1>
           <p>Una tarjeta de Amor y Amistad tipo álbum: su foto montada como una copia de verdad, sobre papel y con detalles a mano.</p>
+          <CelebrationShotReminder />
         </div>
         <div className="aa-card-workspace">
           <form ref={form} onSubmit={generate} className="aa-card-form">
