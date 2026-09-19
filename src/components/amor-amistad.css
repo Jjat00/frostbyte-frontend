@@ -1,4 +1,41 @@
 /* Composición editorial de temporada; la paleta vive en theme.css. */
+.aa-photo-poster { position: relative; isolation: isolate; overflow: hidden; border-radius: 1.75rem; background: var(--color-dark); border: 1px solid var(--aa-line); }
+.aa-photo-background { position: absolute; z-index: -2; inset: 0 0 0 auto; width: 70%; height: 100%; object-fit: cover; object-position: center 48%; }
+.aa-photo-poster::before { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, var(--color-dark) 3%, color-mix(in srgb, var(--color-dark) 94%, transparent) 29%, transparent 78%), linear-gradient(0deg, var(--color-dark) 2%, color-mix(in srgb, var(--color-dark) 92%, transparent) 27%, transparent 65%); }
+.aa-photo-content { padding: clamp(1.5rem, 4vw, 3.5rem); }
+.aa-photo-edition { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .625rem 1rem; font-size: .6875rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
+.aa-photo-edition span:last-child { color: var(--color-primary); }
+.aa-photo-intro { padding-block: 3.5rem 3rem; }
+.aa-photo-intro .aa-kicker { margin-bottom: 1rem; }
+.aa-photo-intro h1 { font: 400 clamp(3rem, 5.8vw, 5rem)/1.04 var(--aa-font-editorial); letter-spacing: -.035em; }
+.aa-photo-intro h1 em { color: var(--color-primary); font-weight: 400; }
+.aa-photo-description { margin-top: 1.25rem; font-size: .9375rem; line-height: 1.7; }
+.aa-photo-instructions { border-top: 1px solid var(--aa-line); padding-top: 1.25rem; }
+.aa-photo-instructions-title { margin-bottom: 1.25rem; color: var(--color-primary); font: italic 1.375rem var(--aa-font-editorial); }
+.aa-photo-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+.aa-photo-steps li { display: flex; gap: .875rem; align-items: baseline; }
+.aa-photo-number { color: var(--color-primary); font: italic 1.5rem var(--aa-font-editorial); }
+.aa-photo-steps strong { display: block; font-size: .9375rem; font-weight: 600; }
+.aa-photo-steps p { margin-top: .375rem; font-size: .8125rem; line-height: 1.6; color: var(--color-light); }
+.aa-photo-steps b { font-weight: 600; white-space: nowrap; }
+.aa-photo-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem; margin-top: 2rem; }
+.aa-photo-footer > p { font-size: .6875rem; line-height: 1.7; }
+@media (max-width: 40rem) {
+  .aa-photo-hero .aa-container { width: calc(100% - 1.5rem); }
+  .aa-photo-poster { border-radius: 1.25rem; }
+  .aa-photo-content { padding: 1.25rem; }
+  .aa-photo-background { width: 100%; height: 65%; object-position: 60% center; }
+  .aa-photo-poster::before { background: linear-gradient(90deg, color-mix(in srgb, var(--color-dark) 88%, transparent), color-mix(in srgb, var(--color-dark) 15%, transparent)), linear-gradient(0deg, var(--color-dark) 30%, color-mix(in srgb, var(--color-dark) 95%, transparent) 43%, transparent 82%); }
+  .aa-photo-edition { font-size: .625rem; letter-spacing: .07em; }
+  .aa-photo-intro { padding-block: 2.75rem 2rem; }
+  .aa-photo-intro h1 { font-size: clamp(2.25rem, 9.5vw, 3.75rem); }
+  .aa-photo-description { font-size: .8125rem; }
+  .aa-photo-steps { grid-template-columns: 1fr; gap: 1rem; }
+  .aa-photo-number { flex: 0 0 1.75rem; }
+  .aa-photo-footer { margin-top: 1.5rem; }
+  .aa-photo-footer .aa-actions { width: 100%; }
+  .aa-photo-footer .aa-button { flex-basis: 100%; }
+}
 .theme-amor-amistad { font-family: var(--font-body); font-optical-sizing: auto; }
 .aa-hero { padding: 7rem 0 2rem; color: var(--color-light); }
 .aa-container { width: min(75rem, calc(100% - 5rem)); margin-inline: auto; }
@@ -15,21 +52,9 @@
 .aa-button { display: inline-flex; align-items: center; justify-content: center; gap: 1.125rem; min-height: 3.25rem; padding: 0.75rem 1.3125rem; border: 1px solid var(--aa-line); border-radius: 1rem; font-size: 0.9375rem; font-weight: 600; transition: background-color .2s, border-color .2s; }
 .aa-button--primary { background: var(--color-primary); color: var(--color-dark); border-color: var(--color-primary); }
 
-/* La dedicatoria y el canje se leen antes de la foto, también en móvil. */
-.aa-hero--shot .aa-copy h1 { font-size: clamp(2.75rem, 4.8vw, 4.5rem); }
-.aa-hero--shot .aa-promo-description { max-width: 32rem; margin-block: 1.25rem; line-height: 1.65; }
-.aa-promo-description strong { color: var(--color-light); font-weight: 600; }
-.aa-promo-steps { display: grid; gap: .75rem; margin: 0 0 1.5rem; padding: 0; list-style: none; }
-.aa-promo-steps li { display: flex; align-items: center; gap: .75rem; font-size: .875rem; line-height: 1.5; }
-.aa-promo-steps li > span { display: grid; place-items: center; flex: 0 0 1.75rem; height: 1.75rem; border: 1px solid var(--aa-line); border-radius: 50%; color: var(--color-primary); font-size: .75rem; }
-.aa-hero--shot .aa-social-label { letter-spacing: .06em; line-height: 1.5; }
 .aa-shot-reminder { margin-top: 1.25rem; padding: 1rem 1.25rem; border-left: 3px solid var(--color-primary); background: var(--color-dark-secondary); color: var(--color-light); font-size: .9375rem; line-height: 1.7; }
 .aa-shot-reminder strong { color: var(--color-primary); }
 .aa-shot-reminder a { text-decoration: underline; text-underline-offset: .2em; }
-@media (max-width: 40rem) {
-  .aa-hero--shot .aa-copy h1 { font-size: clamp(2.5rem, 10vw, 3.75rem); }
-  .aa-hero--shot .aa-actions .aa-button--primary { flex-basis: 100%; }
-}
 
 
 /* Síguenos: bajo los CTA y con el mismo peso visual, porque el enlace a
