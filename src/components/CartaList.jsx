@@ -159,6 +159,35 @@ const CategoryGroup = ({ category }) => {
             variants.find((v) => v.is_default) || variants[0];
           const hasMultipleVariants = variants.length > 1;
 
+          // Con varias variantes los precios no caben en la misma linea que el
+          // nombre (hay nombres de variante largos): el producto encabeza y
+          // cada variante baja a su propia linea con su hilo de puntos.
+          if (hasMultipleVariants) {
+            return (
+              <li key={product.id} className="py-1.5">
+                <span className="block text-xs font-normal text-light/80 sm:text-sm md:text-[0.95rem]">
+                  {product.name}
+                </span>
+                <ul className="mt-1 space-y-0.5 pl-3">
+                  {variants.map((variant) => (
+                    <li
+                      key={variant.id || variant.name}
+                      className="flex items-baseline gap-1.5"
+                    >
+                      <span className="min-w-0 break-words text-[0.6rem] uppercase tracking-[0.12em] text-light/45 sm:text-[0.66rem]">
+                        {variant.name}
+                      </span>
+                      <span className="mb-1 min-w-[12px] flex-1 border-b border-dotted border-white/[0.08]" />
+                      <span className="flex-shrink-0 text-xs font-medium text-light sm:text-sm md:text-[0.95rem]">
+                        {formatPrice(variant.price)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          }
+
           return (
             <li key={product.id} className="py-1.5">
               <div className="flex items-baseline gap-1.5">
@@ -166,28 +195,9 @@ const CategoryGroup = ({ category }) => {
                   {product.name}
                 </span>
                 <span className="mb-1 min-w-[12px] flex-1 border-b border-dotted border-white/[0.08]" />
-                {!hasMultipleVariants && (
-                  <span className="flex-shrink-0 text-xs font-medium text-light sm:text-sm md:text-[0.95rem]">
-                    {formatPrice(defaultVariant?.price)}
-                  </span>
-                )}
-                {hasMultipleVariants && (
-                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                    {variants.map((variant) => (
-                      <div
-                        key={variant.id || variant.name}
-                        className="flex flex-col items-end"
-                      >
-                        <span className="text-[9px] uppercase leading-none tracking-[0.14em] text-light/35 sm:text-[10px]">
-                          {variant.name}
-                        </span>
-                        <span className="text-xs font-medium text-light sm:text-sm md:text-[0.95rem]">
-                          {formatPrice(variant.price)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <span className="flex-shrink-0 text-xs font-medium text-light sm:text-sm md:text-[0.95rem]">
+                  {formatPrice(defaultVariant?.price)}
+                </span>
               </div>
             </li>
           );
