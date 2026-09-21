@@ -16,6 +16,7 @@ import { useProductsByCategory } from "@/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { cn } from "@/lib/utils";
 import { campaignOn } from "@/config/campaign";
+import { activeVariants } from "@/lib/variants";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -26,7 +27,7 @@ const formatPrice = (price) => {
 const ProductCard = ({ product, index, styles }) => {
   const Icon = styles.icon;
   const [showHistory, setShowHistory] = useState(false);
-  const variants = product.variants || [];
+  const variants = activeVariants(product);
   const suaveVariant = variants.find((v) => v.name === "Suave");
   const cargadoVariant = variants.find((v) => v.name === "Cargado");
   const hasSuaveCargado = suaveVariant || cargadoVariant;

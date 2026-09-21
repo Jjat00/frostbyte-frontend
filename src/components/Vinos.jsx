@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Wine, Sparkles } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import SectionHeading from "@/components/SectionHeading";
+import { activeVariants } from "@/lib/variants";
 
 // Utilidad para formatear precios colombianos
 const formatPrice = (price) => {
@@ -12,7 +13,7 @@ const formatPrice = (price) => {
 
 const ProductCard = ({ product, index, styles }) => {
   const Icon = styles.icon;
-  const variants = (product.variants || []).filter((v) => v.is_active !== false);
+  const variants = activeVariants(product);
   const defaultVariant = variants.find((v) => v.is_default) || variants[0];
   const hasMultipleVariants = variants.length > 1;
 

@@ -2,6 +2,7 @@ import React from "react";
 import { useProductsByCategory } from "@/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { getProductStyles } from "@/lib/productStyles";
+import { activeVariants } from "@/lib/variants";
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -9,7 +10,7 @@ const formatPrice = (price) => {
 };
 
 const ProductCard = ({ product, index, styles }) => {
-  const variants = product.variants || [];
+  const variants = activeVariants(product);
   const ringColor = styles.ringColor || "border-lime-400";
 
   return (

@@ -16,6 +16,7 @@ import { getCategoryStyles } from "@/lib/productStyles";
 import SalchipapasPromoBanner from "@/components/SalchipapasPromoBanner";
 import SectionHeading from "@/components/SectionHeading";
 import { campaignOn } from "@/config/campaign";
+import { activeVariants } from "@/lib/variants";
 
 const formatPrice = (price) => {
   if (!price) return "$0";
@@ -154,10 +155,14 @@ const CategoryGroup = ({ category }) => {
       {/* Product list */}
       <ul className="space-y-0.5">
         {products.map((product) => {
-          const variants = product.variants || [];
+          const variants = activeVariants(product);
           const defaultVariant =
             variants.find((v) => v.is_default) || variants[0];
           const hasMultipleVariants = variants.length > 1;
+
+          // Sin variantes activas no hay nada que cobrar: el producto se cae
+          // de la carta en vez de anunciarse a "$0".
+          if (!variants.length) return null;
 
           // Con varias variantes los precios no caben en la misma linea que el
           // nombre (hay nombres de variante largos): el producto encabeza y

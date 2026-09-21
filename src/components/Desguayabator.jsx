@@ -2,6 +2,7 @@ import React from "react";
 import { Zap, Heart, Sparkles, Star } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import SectionHeading from "@/components/SectionHeading";
+import { activeVariants } from "@/lib/variants";
 
 /**
  * El Desguayabator: la bebida más famosa de la casa.
@@ -87,7 +88,7 @@ const Desguayabator = () => {
   const products = data?.results || [];
 
   // Obtener precio del primer producto (todos cuestan igual)
-  const defaultPrice = products[0]?.variants?.[0]?.price || "12000";
+  const defaultPrice = activeVariants(products[0])[0]?.price || "12000";
 
   return (
     <section

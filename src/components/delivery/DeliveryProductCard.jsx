@@ -1,6 +1,7 @@
 import React from "react";
 import { Plus } from "lucide-react";
 import { getProductStyles } from "@/lib/productStyles";
+import { activeVariants } from "@/lib/variants";
 
 const formatCOP = (v) =>
   new Intl.NumberFormat("es-CO", {
@@ -17,7 +18,7 @@ const formatCOP = (v) =>
 const DeliveryProductCard = ({ product, canOrder, onAdd }) => {
   const styles = getProductStyles(product, product.category_slug);
   const Icon = styles.icon;
-  const variants = product.variants || [];
+  const variants = activeVariants(product);
   const prices = variants.map((v) => Number(v.price) || 0);
   const minPrice = prices.length ? Math.min(...prices) : 0;
   const multi = variants.length > 1;

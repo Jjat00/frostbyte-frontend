@@ -5,6 +5,7 @@ import { useProductsByCategory } from "@/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { ExtraOption } from "@/components/CartaExtras";
 import { getProductStyles } from "@/lib/productStyles";
+import { activeVariants } from "@/lib/variants";
 
 const flavorShots = [
   { name: "Porrito", detalle: "Tequila · Verde", price: "$5.000", icon: Droplets, gradient: "from-green-400 to-emerald-600" },
@@ -21,7 +22,7 @@ const formatPrice = (price) => {
 
 const ShotCard = ({ shot, index, styles }) => {
   const Icon = styles.icon;
-  const variants = shot.variants || [];
+  const variants = activeVariants(shot);
   const defaultVariant = variants.find(v => v.is_default) || variants[0];
 
   return (

@@ -4,6 +4,7 @@ import { useProductsByCategory } from "@/hooks";
 import { getProductStyles } from "@/lib/productStyles";
 import SectionHeading from "@/components/SectionHeading";
 import ExtrasBlock from "@/components/CartaExtras";
+import { activeVariants } from "@/lib/variants";
 
 /**
  * Granizados: la sección insignia de la carta.
@@ -25,7 +26,7 @@ const formatPrice = (price) => {
 };
 
 const ProductCard = ({ product, styles }) => {
-  const variants = product.variants || [];
+  const variants = activeVariants(product);
   const ringColor = styles.ringColor || "border-cyan-400";
 
   return (

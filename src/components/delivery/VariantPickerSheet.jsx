@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus } from "lucide-react";
+import { activeVariants } from "@/lib/variants";
 
 const formatCOP = (v) =>
   new Intl.NumberFormat("es-CO", {
@@ -15,7 +16,7 @@ const formatCOP = (v) =>
  * tiene más de una variante.
  */
 const VariantPickerSheet = ({ product, image, open, onClose, onAdd }) => {
-  const variants = product?.variants || [];
+  const variants = activeVariants(product);
 
   return (
     <AnimatePresence>

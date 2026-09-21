@@ -1,6 +1,7 @@
 import React from "react";
 import { useProductsByCategory } from "@/hooks";
 import SectionHeading from "@/components/SectionHeading";
+import { activeVariants } from "@/lib/variants";
 
 /**
  * Los Cuates: cócteles listos con tequila.
@@ -42,7 +43,7 @@ const getCuatesStyles = (product) => {
 };
 
 const ProductCard = ({ product, styles }) => {
-  const variants = product.variants || [];
+  const variants = activeVariants(product);
   const defaultVariant = variants.find((v) => v.is_default) || variants[0];
 
   return (
