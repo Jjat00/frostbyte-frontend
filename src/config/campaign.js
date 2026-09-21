@@ -23,7 +23,7 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 /** Campaña activa, o null para el look habitual de Frostbyte. */
-export const ACTIVE_CAMPAIGN = "amor-amistad";
+export const ACTIVE_CAMPAIGN = null;
 
 /** true si `name` es la campaña que está corriendo ahora mismo. */
 export const isCampaign = (name) => ACTIVE_CAMPAIGN === name;
