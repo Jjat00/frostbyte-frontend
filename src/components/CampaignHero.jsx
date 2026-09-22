@@ -2,6 +2,7 @@ import React from "react";
 import { isCampaign } from "@/config/campaign";
 import Hero from "@/components/Hero";
 import AmorAmistadHero from "@/components/AmorAmistadHero";
+import HalloweenHero from "@/components/halloween/HalloweenHero";
 
 /**
  * El encabezado de la carta pública: el de la campaña de turno, o el Hero
@@ -13,5 +14,6 @@ import AmorAmistadHero from "@/components/AmorAmistadHero";
  */
 export default function CampaignHero() {
   if (isCampaign("amor-amistad")) return <AmorAmistadHero />;
+  if (isCampaign("halloween")) return <HalloweenHero />;
   return <Hero />;
 }

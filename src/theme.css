@@ -122,15 +122,31 @@
    <body> (global) o en el contenedor raíz de una página (local).
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Plantilla para un tema nuevo (copiar, renombrar y activar) ──
+/* Halloween: noche violeta casi negra, calabaza como acento y violeta de
+   acompañamiento. Las tarjetas y los velos de la carta toman primary y
+   secondary solos. La letra de miedo (--hw-font-scare) es solo para la
+   marca y los títulos: en texto corrido Eater no se lee. */
 .theme-halloween {
-  --color-primary: #ff6d00;
-  --color-secondary: #7c3aed;
-  --color-ring: #ff6d00;
-  --color-dark: #0c0a12;
-  --color-dark-secondary: #171322;
-  --font-display: "Creepster", cursive;   (+ <link> en index.html)
-  --font-body: "Inter", sans-serif;
+  --color-dark: #0b0810;
+  --color-dark-secondary: #150f1b;
+  --color-light: #f5ece2;
+  --color-gray: #a4988f;
+  --color-primary: #ff8a1f;
+  --color-secondary: #a66bff;
+  --color-background: var(--color-dark);
+  --color-foreground: var(--color-light);
+  --color-card: var(--color-dark-secondary);
+  --color-card-foreground: var(--color-light);
+  --color-popover: var(--color-dark-secondary);
+  --color-popover-foreground: var(--color-light);
+  --color-ring: var(--color-primary);
+  --color-primary-foreground: var(--color-dark);
+  --color-secondary-foreground: var(--color-dark);
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --hw-font-scare: "Eater", "Creepster", fantasy;
+  /* Noche cerrada de los héroes y brasa de la marca encendida */
+  --hw-night: #050305;
+  --hw-ember: #ffb347;
   font-family: var(--font-body);
 }
-*/

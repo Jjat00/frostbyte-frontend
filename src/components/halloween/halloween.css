@@ -1,0 +1,197 @@
+/* Halloween: lo que comparte cualquier variante del hero. La paleta vive en
+   theme.css (.theme-halloween); aquí van la tipografía de miedo y los
+   adornos de la carta. Todo cuelga de .theme-halloween o de clases hw-*,
+   así que con la campaña apagada nada de esto pinta. */
+
+/* Eater servida desde el propio dominio (subconjunto latino, 41 KB). Solo
+   se descarga si algo la usa, o sea, con la campaña encendida. */
+@font-face {
+  font-family: "Eater";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/eater-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Títulos de sección con la letra rasgada; el tracking ancho del tema base
+   la volvería ilegible. */
+.theme-halloween .hw-menu-body h2.font-display {
+  font-family: var(--hw-font-scare);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* ── Adornos de la carta (HalloweenDecor) ─────────────────────────────
+   La capa va dentro de cada sección, bajo su contenido. La transparencia
+   viene horneada en los WebP (60%). Móvil primero: piezas pequeñas y
+   medio fuera del borde para no tapar precios; en md crecen y entran. */
+.hw-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hw-p { position: absolute; display: block; }
+.hw-p img { display: block; width: 100%; height: auto; }
+
+/* Bucles: quietos hasta que la sección está en pantalla. */
+.hw-loop { animation-play-state: paused !important; }
+.hw-live > .hw-decor .hw-loop { animation-play-state: running !important; }
+
+/* Halo detrás de una pieza (luna, calabaza). */
+.hw-glow {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--hw-glow, rgba(255, 138, 31, 0.28)), transparent);
+}
+
+/* Murciélagos que cruzan la franja de accesos cada tanto. */
+.hw-p--flock { top: 0.25rem; left: 0; width: 5rem; }
+.hw-p--flock img { translate: -11rem 0; animation: hw-fly 12s linear infinite; }
+
+/* Carta: telaraña en la esquina y una araña que baja y sube por su hilo. */
+.hw-p--web { top: 0; left: -1.25rem; width: 7rem; }
+.hw-p--web img { scale: -1 1; }
+.hw-p--spider { top: 2.5rem; left: 22%; width: 2.6rem; animation: hw-dangle 9s ease-in-out infinite; }
+.hw-thread {
+  position: absolute;
+  left: 50%;
+  bottom: 55%;
+  width: 1px;
+  height: 30rem;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--color-light) 35%, transparent));
+}
+
+.hw-p--moon { top: 1rem; right: -1.5rem; width: 6.5rem; --hw-glow: rgba(120, 220, 255, 0.22); }
+.hw-p--moon .hw-glow { animation: hw-pulse 5s ease-in-out infinite alternate; }
+
+.hw-p--ghost { top: 2.5rem; left: -1.5rem; width: 5.5rem; }
+.hw-p--ghost img { animation: hw-float 5s ease-in-out infinite alternate; }
+
+.hw-p--jack { bottom: 0.5rem; right: -0.75rem; width: 5.75rem; }
+.hw-p--jack .hw-glow { inset: -20%; animation: hw-flicker 3.2s steps(1) infinite; }
+
+/* Murciélago colgado del borde superior que se mece. */
+.hw-p--bat { top: -0.5rem; left: 0.75rem; width: 3.5rem; }
+.hw-p--bat img { transform-origin: 50% 0; animation: hw-swing 3.4s ease-in-out infinite alternate; }
+
+.hw-p--mansion { top: 2rem; right: -1.75rem; width: 6.5rem; }
+
+.hw-p--tombs { bottom: 0; left: -1rem; width: 8rem; }
+
+/* Ramas que enmarcan el borde derecho y se mecen con el viento. */
+.hw-p--branches { top: 0.5rem; right: -2.25rem; width: 7rem; }
+.hw-p--branches img { transform-origin: 100% 0; animation: hw-sway 6s ease-in-out infinite alternate; }
+
+.hw-p--castle { top: 2rem; left: -1.5rem; width: 6rem; }
+
+/* Se asoman desde el borde mientras la sección cruza la pantalla. */
+.hw-p--crimson { top: 3rem; right: 0; width: 5.5rem; }
+.hw-p--chrome { top: 2rem; left: 0; width: 5.5rem; }
+.hw-p--slasher { top: 3rem; right: 0; width: 6rem; }
+
+.hw-p--tree { top: 0; left: -2rem; width: 6.5rem; }
+.hw-p--tree img { transform-origin: 50% 100%; animation: hw-sway 7s ease-in-out infinite alternate; }
+
+.hw-p--clown { bottom: 0; right: -0.75rem; width: 6.5rem; }
+
+.hw-p--creature { top: 1rem; right: -1.75rem; width: 6.5rem; }
+.hw-p--creature img { transform-origin: 50% 100%; animation: hw-breathe 4.5s ease-in-out infinite alternate; }
+
+.hw-p--pale-bats { top: 1rem; left: -1.25rem; width: 6rem; }
+.hw-p--pale-bats img { animation: hw-flutter 2.4s ease-in-out infinite alternate; }
+
+.hw-p--village { bottom: 0; left: 50%; width: 16rem; margin-left: -8rem; }
+
+/* Niebla que se arrastra por el suelo de la sección. */
+.hw-p--fog { bottom: -1.5rem; width: 26rem; }
+.hw-p--fog img { animation: hw-creep 16s ease-in-out infinite alternate; }
+.hw-p--fog-right { right: -8rem; }
+.hw-p--fog-left { left: -8rem; }
+.hw-p--fog-wide { left: -15%; width: 130%; }
+.hw-p--fog-back { bottom: 0.5rem; opacity: 0.7; }
+.hw-p--fog-back img { scale: -1 1; animation-duration: 21s; animation-direction: alternate-reverse; }
+
+@media (min-width: 48rem) {
+  .hw-p--flock { top: 0.5rem; width: 8rem; }
+  .hw-p--web { left: 0; width: 12rem; }
+  .hw-p--spider { left: 14%; width: 4rem; }
+  .hw-p--moon { top: 2rem; right: 6%; width: 10.5rem; }
+  .hw-p--ghost { top: 3rem; left: 4%; width: 9rem; }
+  .hw-p--jack { right: 5%; width: 9rem; }
+  .hw-p--bat { left: 7%; width: 5.5rem; }
+  .hw-p--mansion { right: 5%; width: 11rem; }
+  .hw-p--tombs { left: 4%; width: 13rem; }
+  .hw-p--branches { right: 1%; width: 11rem; }
+  .hw-p--castle { left: 5%; width: 10rem; }
+  .hw-p--crimson { width: 9rem; }
+  .hw-p--chrome { width: 8.5rem; }
+  .hw-p--slasher { width: 9.5rem; }
+  .hw-p--tree { left: 2%; width: 10rem; }
+  .hw-p--clown { right: 5%; width: 10.5rem; }
+  .hw-p--creature { right: 5%; width: 11rem; }
+  .hw-p--pale-bats { left: 5%; width: 10rem; }
+  .hw-p--village { width: 26rem; margin-left: -13rem; }
+  .hw-p--fog { width: 42rem; }
+  .hw-p--fog-wide { left: -5%; width: 110%; }
+}
+
+/* Movimiento ligado al scroll: parallax y piezas que se asoman. */
+@supports (animation-timeline: view()) {
+  .hw-drift,
+  .hw-rise,
+  .hw-peek-r,
+  .hw-peek-l {
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+  }
+  .hw-drift { animation-name: hw-drift; }
+  .hw-rise { animation-name: hw-rise; animation-range: entry 0% cover 55%; }
+  .hw-peek-r { animation-name: hw-peek-r; }
+  .hw-peek-l { animation-name: hw-peek-l; }
+}
+
+@keyframes hw-drift { from { transform: translateY(2.5rem); } to { transform: translateY(-2.5rem); } }
+@keyframes hw-rise { from { transform: translateY(85%); } to { transform: translateY(0); } }
+@keyframes hw-peek-r { 0%, 100% { transform: translateX(80%); } 35%, 65% { transform: translateX(8%); } }
+@keyframes hw-peek-l { 0%, 100% { transform: translateX(-80%); } 35%, 65% { transform: translateX(-8%); } }
+
+@keyframes hw-fly {
+  0% { translate: -11rem 0; }
+  40% { translate: calc(100vw + 2rem) -1.25rem; }
+  100% { translate: calc(100vw + 2rem) -1.25rem; }
+}
+@keyframes hw-dangle {
+  0%, 100% { translate: 0 -2rem; }
+  45% { translate: 0 3.5rem; }
+  60% { translate: 0 3rem; }
+}
+@keyframes hw-float { to { translate: 0.4rem -0.75rem; rotate: -4deg; } }
+@keyframes hw-swing { from { rotate: -7deg; } to { rotate: 7deg; } }
+@keyframes hw-sway { from { rotate: -2deg; } to { rotate: 2deg; } }
+@keyframes hw-breathe { to { scale: 1.035; } }
+@keyframes hw-flutter { to { translate: 0 -0.5rem; rotate: -3deg; } }
+@keyframes hw-creep { to { translate: 12% 0; } }
+@keyframes hw-pulse { from { opacity: 0.55; } to { opacity: 1; } }
+@keyframes hw-flicker {
+  0%, 18%, 22%, 60%, 64%, 100% { opacity: 1; }
+  20%, 62% { opacity: 0.45; }
+  40% { opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-decor *,
+  .hw-decor .hw-loop { animation: none !important; }
+  .hw-p--flock img { translate: none; }
+}
+
+/* Quien pide ahorrar datos o más contraste se queda sin adornos. */
+@media (prefers-reduced-data: reduce), (prefers-contrast: more) {
+  .hw-decor { display: none; }
+}
