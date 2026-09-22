@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Link } from "react-router-dom";
 import SocialLink, { SOCIAL_ICON, TikTokIcon } from "@/components/SocialLink";
-import { SOCIAL, SOCIAL_HANDLE, SOCIAL_SOURCE } from "@/lib/social";
+import { SOCIAL_HANDLE, SOCIAL_SOURCE } from "@/lib/social";
 import { useCartaPath, useStoreConfig } from "@/hooks";
 import { reservationsWaLink } from "@/lib/reservas";
 import { useReservationsConfig } from "@/hooks/useReservations";
@@ -366,39 +366,61 @@ const Hero = () => {
               Nariño.
             </p>
 
-            {/* Síguenos: visible en las dos direcciones, no solo en
-                escritorio como hasta el 2026-09-13. Instagram manda (es la
-                cuenta que se quiere hacer crecer) y lleva el @ escrito y
-                grande, que es lo que la gente teclea luego en la aplicación
-                si no toca el enlace; TikTok queda al lado, más tenue.
+            {/* Síguenos. Instagram no es un servicio más del local: es la
+                cuenta que se quiere hacer crecer, así que va en fila propia
+                y de ancho completo, con el @ grande — es lo que la gente
+                teclea luego en la aplicación si no toca el enlace. TikTok se
+                queda al lado como icono para no partir la atención en dos.
+
+                Debajo, el motivo: un botón sin razón se mira y no se toca.
+                El 10% por historia ya vive en #descuento-redes, pero ese
+                bloque está a un scroll de aquí. La campaña de Amor y Amistad
+                daba ese motivo en su propio hero (el shot gratis); al
+                apagarla el 2026-09-21, la carta habitual se quedó sin él.
 
                 Destaca por contraste y tamaño, no por color: el magenta y el
                 cyan del hero siguen significando carta y domicilios, y darle
                 uno a Instagram lo haría pasar por un servicio del local. */}
-            <div className="flex flex-wrap items-center gap-2 md:ml-auto md:w-[21rem]">
-              <SocialLink
-                network="instagram"
-                source={SOCIAL_SOURCE.HERO}
-                className="inline-flex flex-1 items-center gap-2.5 rounded-[14px] border border-white/20 bg-white/[0.07] px-3.5 py-2.5 transition-colors hover:border-white/40 hover:bg-white/[0.1] md:flex-none"
-              >
-                <InstagramIcon size={17} className="shrink-0 text-light/80" />
-                <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="text-[0.5rem] font-medium tracking-[0.22em] text-light/45">
-                    SÍGUENOS
+            <div className="flex flex-col gap-2 md:ml-auto md:w-[21rem]">
+              <div className="flex items-stretch gap-2">
+                <SocialLink
+                  network="instagram"
+                  source={SOCIAL_SOURCE.HERO}
+                  className="group flex min-w-0 flex-1 items-center gap-3 rounded-[16px] border border-white/25 bg-white/[0.08] px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] transition-[transform,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-white/45 hover:bg-white/[0.12]"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] border border-white/[0.16] bg-white/[0.07]">
+                    <InstagramIcon size={19} className="text-light/85" />
                   </span>
-                  <span className="truncate text-[0.82rem] font-semibold text-light">
-                    {SOCIAL_HANDLE}
+                  <span className="flex min-w-0 flex-col gap-1">
+                    <span className="text-[0.5rem] font-medium leading-none tracking-[0.22em] text-light/50">
+                      SÍGUENOS EN INSTAGRAM
+                    </span>
+                    <span className="truncate text-[0.95rem] font-semibold leading-none text-light">
+                      {SOCIAL_HANDLE}
+                    </span>
                   </span>
-                </span>
-              </SocialLink>
-              <SocialLink
-                network="tiktok"
-                source={SOCIAL_SOURCE.HERO}
-                className="inline-flex items-center gap-1.5 rounded-[14px] border border-white/[0.1] bg-white/[0.04] px-3 py-2.5 text-[0.7rem] font-medium text-light/55 transition-colors hover:border-white/25 hover:text-light/80"
-              >
-                <TikTokIcon size={14} />
-                {SOCIAL.tiktok.label}
-              </SocialLink>
+                  <ArrowIcon className="ml-auto shrink-0 text-light/35 transition-colors group-hover:text-light/70" />
+                </SocialLink>
+                <SocialLink
+                  network="tiktok"
+                  source={SOCIAL_SOURCE.HERO}
+                  className="flex w-12 shrink-0 items-center justify-center rounded-[16px] border border-white/[0.1] bg-white/[0.04] text-light/45 transition-colors hover:border-white/25 hover:text-light/80"
+                >
+                  <TikTokIcon size={16} />
+                </SocialLink>
+              </div>
+
+              <p className="text-[0.68rem] leading-relaxed text-light/40">
+                Publica una historia etiquetándonos y tienes{" "}
+                <a
+                  href="#descuento-redes"
+                  onClick={handleAnchorClick}
+                  className="font-medium text-light/70 underline decoration-white/20 underline-offset-2 transition-colors hover:text-light"
+                >
+                  10% OFF
+                </a>{" "}
+                en el local.
+              </p>
             </div>
           </div>
 
