@@ -15,6 +15,12 @@ const InstagramIcon = SOCIAL_ICON.instagram;
  * cuando la persona está cómoda y el gesto se lee como invitación y no como
  * peaje.
  *
+ * El retardo bajó de 75 a 45 s el 2026-09-21: con los primeros nueve días
+ * medidos, esta hoja trajo 10 clics a Instagram contra los 11 del hero
+ * teniendo muchas menos oportunidades de salir, así que se le dan más
+ * visitas sin tocar los frenos. Lo que no se toca es el principio: sigue
+ * llegando después de que la persona ya estuvo leyendo, nunca al entrar.
+ *
  * Tres frenos para que no se vuelva plaga:
  * - Una vez por sesión (sessionStorage).
  * - Nunca más de tres veces en el mismo dispositivo (localStorage).
@@ -29,7 +35,7 @@ const InstagramIcon = SOCIAL_ICON.instagram;
  * leer un párrafo antes de poder cerrarla.
  */
 
-const DELAY_MS = 75000;
+const DELAY_MS = 45000;
 const STORAGE_KEY = "frostbyte_social_popup";
 const SESSION_KEY = "frostbyte_social_popup_session";
 const MAX_VIEWS = 3;
