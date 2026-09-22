@@ -317,12 +317,18 @@ const Hero = () => {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Las tarjetas traen una transición CSS de transform para el hover:
+        // si sigue activa, cada fotograma de GSAP la reinicia y las tarjetas
+        // se quedan rezagadas a alturas distintas. Se apaga durante la
+        // entrada y se devuelve al terminar.
+        gsap.set(".hero-reveal", { transition: "none" });
         gsap.from(".hero-reveal", {
           opacity: 0,
           y: 14,
           duration: 0.5,
           stagger: 0.04,
           ease: "power2.out",
+          clearProps: "opacity,transform,transition",
         });
       });
     },
