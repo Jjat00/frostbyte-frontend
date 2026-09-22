@@ -21,7 +21,8 @@ import {
 import { productsService, categoriesService } from '@/services';
 import { ordersService } from '@/services/orders.service';
 import { businessService } from '@/services/business.service';
-import TableSelect from '@/components/orders/TableSelect';
+import DeliveryFields from '@/components/orders/DeliveryFields';
+import { storeSettingsService } from '@/services/storeSettings.service';
 import { matchesSearch } from "@/lib/search";
 
 // Punto de color por negocio (alineado con BusinessSelector)
@@ -39,6 +40,14 @@ const NewOrderPage = () => {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerNotes, setCustomerNotes] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
+  // Domicilio encargado en el local: el cliente está aquí pero quiere que se
+  // lo lleven. Pasa poco, así que vive detrás de un checkbox y no estorba al
+  // pedido de mesa, que es el de todos los días.
+  const [isDelivery, setIsDelivery] = useState(false);
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [deliveryReference, setDeliveryReference] = useState('');
+  // null = nadie lo ha tocado, así que vale la tarifa del local.
+  const [deliveryFee, setDeliveryFee] = useState(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [itemNotes, setItemNotes] = useState({});
   const [showAccessCode, setShowAccessCode] = useState(null);
@@ -47,6 +56,15 @@ const NewOrderPage = () => {
   const { data: tablesData } = useQuery({
     queryKey: ['tables'],
     queryFn: () => ordersService.getTables(),
+  });
+
+  // Tarifa de envío vigente del local, para no obligar a escribirla en cada
+  // domicilio. El staff la puede cambiar en el pedido (un viaje más lejos, o
+  // un envío que se regala) sin tocar la configuración.
+  const { data: storeSettings } = useQuery({
+    queryKey: ['store-settings'],
+    queryFn: () => storeSettingsService.get(),
+    staleTime: 10 * 60 * 1000,
   });
 
   // Obtener categorías. Solo activas: el endpoint por defecto devuelve TODAS
@@ -163,6 +181,22 @@ const NewOrderPage = () => {
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Lo que se muestra en el input del envío: la tarifa del local hasta que
+  // alguien escriba otra cosa (incluido un 0, que es regalarlo).
+  const deliveryFeeValue =
+    deliveryFee ?? (storeSettings?.delivery_fee ?? '');
+  const deliveryFeeAmount = isDelivery
+    ? parseFloat(deliveryFeeValue) || 0
+    : 0;
+  const orderTotal = cartTotal + deliveryFeeAmount;
+
+  // Un domicilio no lleva mesa, pero sin dirección ni celular no sale: el
+  // backend lo rechaza igual (OrderCreateSerializer).
+  const deliveryReady =
+    deliveryAddress.trim().length > 0 && customerPhone.trim().length > 0;
+  const canSubmit =
+    cart.length > 0 && (isDelivery ? deliveryReady : Boolean(selectedTable));
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -172,17 +206,12 @@ const NewOrderPage = () => {
   };
 
   const handleSubmitOrder = () => {
-    if (cart.length === 0) return;
-    if (!selectedTable) {
-      alert('Por favor selecciona una mesa');
-      return;
-    }
+    if (!canSubmit) return;
 
     const orderData = {
       customer_name: customerName || 'Cliente',
       customer_phone: customerPhone,
       customer_notes: customerNotes,
-      table_id: parseInt(selectedTable),
       items: cart.map((item) => ({
         product_variant_id: item.variantId,
         quantity: item.quantity,
@@ -190,8 +219,31 @@ const NewOrderPage = () => {
       })),
     };
 
+    if (isDelivery) {
+      orderData.order_type = 'delivery';
+      orderData.delivery_address = deliveryAddress.trim();
+      orderData.delivery_reference = deliveryReference.trim();
+      // Sin valor escrito manda la tarifa del local, que la pone el backend.
+      if (deliveryFeeValue !== '') {
+        orderData.delivery_fee = deliveryFeeValue;
+      }
+    } else {
+      orderData.table_id = parseInt(selectedTable);
+    }
+
     createOrderMutation.mutate(orderData);
   };
+
+  // Mensaje del backend cuando rechaza el pedido (dirección o celular que
+  // faltan, mesa inactiva); si no lo entiende, el aviso genérico de siempre.
+  const submitError = createOrderMutation.error?.response?.data;
+  const submitErrorText = (() => {
+    if (!createOrderMutation.isError) return null;
+    const first = submitError && Object.values(submitError)[0];
+    if (typeof first === 'string') return first;
+    if (Array.isArray(first) && typeof first[0] === 'string') return first[0];
+    return 'Error al crear el pedido. Intenta de nuevo.';
+  })();
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] md:h-[calc(100vh-4.5rem)] overflow-hidden">
@@ -428,23 +480,26 @@ const NewOrderPage = () => {
             )}
           </div>
 
-          {/* Selección de mesa */}
+          {/* Dónde se entrega: mesa o domicilio */}
           {cart.length > 0 && (
             <div className="p-4 border-t border-white/[0.1] flex-shrink-0">
-              <label className="block text-sm font-medium text-light mb-2">
-                Mesa/Barra <span className="text-red-400">*</span>
-              </label>
-              <TableSelect
+              <DeliveryFields
+                isDelivery={isDelivery}
+                onToggleDelivery={setIsDelivery}
                 tables={tablesData}
-                value={selectedTable}
-                onChange={(e) => setSelectedTable(e.target.value)}
-                className="w-full px-4 py-2.5 bg-dark border border-gray/20 rounded-lg text-sm text-light focus:border-white/30 focus:outline-none"
+                selectedTable={selectedTable}
+                onTableChange={(e) => setSelectedTable(e.target.value)}
+                address={deliveryAddress}
+                onAddressChange={setDeliveryAddress}
+                phone={customerPhone}
+                onPhoneChange={setCustomerPhone}
+                reference={deliveryReference}
+                onReferenceChange={setDeliveryReference}
+                fee={deliveryFeeValue}
+                onFeeChange={setDeliveryFee}
+                idPrefix="escritorio"
+                padY="py-2.5"
               />
-              {!selectedTable && (
-                <p className="text-xs text-red-400 mt-2">
-                  Debes seleccionar una mesa o barra
-                </p>
-              )}
             </div>
           )}
 
@@ -461,16 +516,19 @@ const NewOrderPage = () => {
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                 />
               </div>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray" />
-                <input
-                  type="tel"
-                  placeholder="Teléfono (opcional)"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
-                />
-              </div>
+              {/* En domicilio el celular se pide arriba, con la dirección */}
+              {!isDelivery && (
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray" />
+                  <input
+                    type="tel"
+                    placeholder="Teléfono (opcional)"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
+                  />
+                </div>
+              )}
               <div className="relative">
                 <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-gray" />
                 <textarea
@@ -486,15 +544,27 @@ const NewOrderPage = () => {
 
           {/* Total y botón de confirmar */}
           <div className="p-4 border-t border-gray/20 flex-shrink-0">
+            {isDelivery && (
+              <div className="space-y-1 mb-3 text-sm">
+                <div className="flex items-center justify-between text-gray">
+                  <span>Productos</span>
+                  <span>{formatCurrency(cartTotal)}</span>
+                </div>
+                <div className="flex items-center justify-between text-gray">
+                  <span>Envío</span>
+                  <span>{formatCurrency(deliveryFeeAmount)}</span>
+                </div>
+              </div>
+            )}
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray font-medium">Total</span>
               <span className="font-display text-[1.05rem] font-semibold uppercase tracking-[0.12em] text-light">
-                {formatCurrency(cartTotal)}
+                {formatCurrency(orderTotal)}
               </span>
             </div>
             <button
               onClick={handleSubmitOrder}
-              disabled={cart.length === 0 || !selectedTable || createOrderMutation.isPending}
+              disabled={!canSubmit || createOrderMutation.isPending}
               className="w-full py-3.5 border border-secondary/35 bg-secondary/[0.1] text-light rounded-xl hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {createOrderMutation.isPending ? (
@@ -511,7 +581,7 @@ const NewOrderPage = () => {
             </button>
             {createOrderMutation.isError && (
               <p className="text-red-400 text-xs mt-2 text-center">
-                Error al crear el pedido. Intenta de nuevo.
+                {submitErrorText}
               </p>
             )}
           </div>
@@ -625,23 +695,26 @@ const NewOrderPage = () => {
                     )}
                   </div>
 
-                  {/* Selección de mesa - Mobile */}
+                  {/* Dónde se entrega - Mobile */}
                   {cart.length > 0 && (
                     <div className="p-4 border-t border-white/[0.1] bg-white/[0.02]">
-                      <label className="block text-sm font-medium text-light mb-2">
-                        Mesa/Barra <span className="text-red-400">*</span>
-                      </label>
-                      <TableSelect
-                        tables={tablesData}
-                        value={selectedTable}
-                        onChange={(e) => setSelectedTable(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light focus:border-white/30 focus:outline-none"
-                      />
-                      {!selectedTable && (
-                        <p className="text-xs text-red-400 mt-2">
-                          Debes seleccionar una mesa o barra
-                        </p>
-                      )}
+                      <DeliveryFields
+                isDelivery={isDelivery}
+                onToggleDelivery={setIsDelivery}
+                tables={tablesData}
+                selectedTable={selectedTable}
+                onTableChange={(e) => setSelectedTable(e.target.value)}
+                address={deliveryAddress}
+                onAddressChange={setDeliveryAddress}
+                phone={customerPhone}
+                onPhoneChange={setCustomerPhone}
+                reference={deliveryReference}
+                onReferenceChange={setDeliveryReference}
+                fee={deliveryFeeValue}
+                onFeeChange={setDeliveryFee}
+                idPrefix="movil"
+                padY="py-3"
+              />
                     </div>
                   )}
 
@@ -659,16 +732,19 @@ const NewOrderPage = () => {
                           className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
                         />
                       </div>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray" />
-                        <input
-                          type="tel"
-                          placeholder="Teléfono (opcional)"
-                          value={customerPhone}
-                          onChange={(e) => setCustomerPhone(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
-                        />
-                      </div>
+                      {/* En domicilio el celular se pide arriba, con la dirección */}
+                      {!isDelivery && (
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray" />
+                          <input
+                            type="tel"
+                            placeholder="Teléfono (opcional)"
+                            value={customerPhone}
+                            onChange={(e) => setCustomerPhone(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.03] text-sm text-light placeholder:text-light/25 focus:border-white/30 focus:outline-none"
+                          />
+                        </div>
+                      )}
                       <div className="relative">
                         <MessageSquare className="absolute left-3 top-3 w-4 h-4 text-gray" />
                         <textarea
@@ -686,15 +762,27 @@ const NewOrderPage = () => {
                 {/* Footer fijo con Total y botón - Mobile */}
                 {cart.length > 0 && (
                   <div className="p-4 border-t border-white/[0.1] bg-white/[0.08] flex-shrink-0 safe-area-pb">
+                    {isDelivery && (
+                      <div className="space-y-1 mb-2 text-sm">
+                        <div className="flex items-center justify-between text-gray">
+                          <span>Productos</span>
+                          <span>{formatCurrency(cartTotal)}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-gray">
+                          <span>Envío</span>
+                          <span>{formatCurrency(deliveryFeeAmount)}</span>
+                        </div>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-gray font-medium">Total</span>
                       <span className="text-2xl font-bold text-secondary">
-                        {formatCurrency(cartTotal)}
+                        {formatCurrency(orderTotal)}
                       </span>
                     </div>
                     <button
                       onClick={handleSubmitOrder}
-                      disabled={cart.length === 0 || !selectedTable || createOrderMutation.isPending}
+                      disabled={!canSubmit || createOrderMutation.isPending}
                       className="w-full py-4 border border-secondary/35 bg-secondary/[0.1] text-light rounded-xl hover:shadow-lg hover:shadow-secondary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
                     >
                       {createOrderMutation.isPending ? (
@@ -711,7 +799,7 @@ const NewOrderPage = () => {
                     </button>
                     {createOrderMutation.isError && (
                       <p className="text-red-400 text-xs mt-2 text-center">
-                        Error al crear el pedido. Intenta de nuevo.
+                        {submitErrorText}
                       </p>
                     )}
                   </div>
@@ -743,7 +831,7 @@ const NewOrderPage = () => {
               </div>
               <span>Ver pedido</span>
             </div>
-            <span className="text-lg font-bold">{formatCurrency(cartTotal)}</span>
+            <span className="text-lg font-bold">{formatCurrency(orderTotal)}</span>
           </motion.button>
         )}
       </AnimatePresence>
