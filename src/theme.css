@@ -148,5 +148,7 @@
   /* Noche cerrada de los héroes y brasa de la marca encendida */
   --hw-night: #050305;
   --hw-ember: #ffb347;
+  /* Tallo de la calabaza que canta (sección de música) */
+  --hw-vine: #7a9a3c;
   font-family: var(--font-body);
 }

@@ -141,6 +141,54 @@
   .hw-p--fog-wide { left: -5%; width: 110%; }
 }
 
+/* ── Sección de música: la calabaza que canta (PumpkinVisualizer) ─────
+   El escenario es un hueco en el flujo; la calabaza la pinta el canvas de
+   detrás, centrada sobre él. El cursor de mano avisa que se puede tocar. */
+.hw-pumpkin-stage {
+  position: relative;
+  height: 15rem;
+  margin: -2rem auto 1.75rem;
+  max-width: 22rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hw-pumpkin-caption {
+  position: absolute;
+  inset: auto 0 0;
+  margin: 0;
+  text-align: center;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--hw-ember) 55%, transparent);
+  pointer-events: none;
+}
+@media (min-width: 48rem) {
+  .hw-pumpkin-stage { height: 23rem; margin-bottom: 2.25rem; }
+}
+
+/* Canciones del buscador: al pasar el ratón la tarjeta se levanta, el borde
+   toma la brasa y el "+" gira. En la cola, cada fila se asoma un poco. */
+.hw-menu-body #solicitar-cancion .fb-card--link {
+  transition: border-color 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hw-menu-body #solicitar-cancion .fb-card--link:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+.hw-menu-body #solicitar-cancion .fb-card--link > div:last-child > div {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hw-menu-body #solicitar-cancion .fb-card--link:hover > div:last-child > div {
+  transform: rotate(90deg) scale(1.12);
+}
+.hw-menu-body #solicitar-cancion .fb-inset {
+  transition: border-color 0.2s ease, transform 0.25s ease;
+}
+.hw-menu-body #solicitar-cancion .fb-inset:hover {
+  transform: translateX(4px);
+  border-color: color-mix(in srgb, var(--color-secondary) 35%, transparent);
+}
+
 /* Movimiento ligado al scroll: parallax y piezas que se asoman. */
 @supports (animation-timeline: view()) {
   .hw-drift,
@@ -186,6 +234,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hw-menu-body #solicitar-cancion .fb-card--link:hover,
+  .hw-menu-body #solicitar-cancion .fb-card--link:hover > div:last-child > div,
+  .hw-menu-body #solicitar-cancion .fb-inset:hover { transform: none; }
   .hw-decor *,
   .hw-decor .hw-loop { animation: none !important; }
   .hw-p--flock img { translate: none; }

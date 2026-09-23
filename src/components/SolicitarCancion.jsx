@@ -6,6 +6,12 @@ import { useToast } from '@/components/ui/use-toast';
 import { musicService } from '@/services';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useWebSocket } from '@/hooks';
+import { isCampaign } from '@/config/campaign';
+
+// En Halloween la esfera se vuelve una calabaza que canta. Va en su propio
+// chunk: fuera de la campaña no se descarga.
+const haunted = isCampaign('halloween');
+const PumpkinVisualizer = haunted ? React.lazy(() => import('@/components/halloween/PumpkinVisualizer')) : null;
 
 const parseSyncedLyrics = (syncedLyrics) => {
   if (!syncedLyrics) return [];
@@ -167,6 +173,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
   const inputRef = useRef(null);
+  const stageRef = useRef(null);
 
   const isFloorLocked = FLOORS.includes(floorProp);
   const [selectedFloor, setSelectedFloor] = useState(() => {
@@ -324,10 +331,28 @@ const SolicitarCancion = ({ floor: floorProp }) => {
       className="fb-section flex min-h-[80vh] flex-col justify-center"
     >
       {/* Canvas animation - PROTAGONIST */}
-      <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
+      {haunted ? (
+        <React.Suspense fallback={null}>
+          <PumpkinVisualizer isPlaying={!!nowPlaying?.is_playing} stageRef={stageRef} />
+        </React.Suspense>
+      ) : (
+        <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
+      )}
 
       {/* Content floats on top */}
       <div className="container mx-auto px-4 relative z-10 py-16">
+        {haunted && (
+          /* Hueco donde vive la calabaza (la pinta el canvas de detrás) */
+          <div ref={stageRef} className="hw-pumpkin-stage">
+            <p className="hw-pumpkin-caption" aria-live="polite">
+              {!isSpotifyConnected
+                ? 'Duerme hasta que vuelva la música'
+                : nowPlaying?.is_playing
+                  ? 'Canta con lo que suena en el local'
+                  : 'Duerme. Pide una canción y despiértala'}
+            </p>
+          </div>
+        )}
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
