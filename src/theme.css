@@ -152,3 +152,18 @@
   --hw-vine: #7a9a3c;
   font-family: var(--font-body);
 }
+
+/* Concurso de disfraces: póster de fanzine de terror (fotocopia verde
+   tóxico, letras en rojo sangre, texto en blanco hueso sobre carbón). Vive
+   en su propia clase y no en .theme-halloween porque el anuncio sale cuando
+   el staff publica el concurso, con la campaña encendida o no. Solo lo
+   llevan el anuncio de la carta y /concurso. */
+.theme-concurso {
+  --cz-ink: #0d0c0b;
+  --cz-ink-2: #1a1715;
+  --cz-toxic: #7dff5a;
+  --cz-blood: #e8392c;
+  --cz-bone: #efe6d6;
+  --cz-font-hand: "Permanent Marker", "Comic Sans MS", cursive;
+  --cz-font-scare: "Eater", "Creepster", fantasy;
+}

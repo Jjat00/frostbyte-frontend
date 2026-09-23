@@ -37,6 +37,8 @@ import {
   Crown,
   Bot,
   Smile,
+  Drama,
+  Instagram,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -209,6 +211,18 @@ const HomePage = () => {
       ],
     },
     {
+      id: 'contest',
+      title: 'Concurso',
+      description: 'Inscritos al concurso de disfraces: cobro en barra e Instagram',
+      icon: Drama,
+      path: '/concurso-admin',
+      features: [
+        { icon: Users, text: 'Inscritos' },
+        { icon: Wallet, text: 'Pagos' },
+        { icon: Instagram, text: 'Instagram' },
+      ],
+    },
+    {
       id: 'products',
       title: 'Productos',
       description: 'Gestiona productos de la carta, categorías y variantes',
@@ -308,7 +322,7 @@ const HomePage = () => {
 
   const modules = isAdmin()
     ? allModules
-    : allModules.filter(m => ['orders', 'products', 'music', 'feedback', 'recetarios', 'games'].includes(m.id));
+    : allModules.filter(m => ['orders', 'contest', 'products', 'music', 'feedback', 'recetarios', 'games'].includes(m.id));
 
   // Quick stats data
   const currentHour = new Date().getHours();

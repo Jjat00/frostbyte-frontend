@@ -23,6 +23,7 @@ import SocialFollowPopup from "@/components/SocialFollowPopup";
 import BirthdayDiscountBanner from "@/components/BirthdayDiscountBanner";
 import SalaVipBanner from "@/components/SalaVipBanner";
 import DomiciliosBanner from "@/components/DomiciliosBanner";
+import ConcursoBanner from "@/components/ConcursoBanner";
 import DrinkRecommender from "@/components/DrinkRecommender";
 import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import AccessCodeBanner from "@/components/order-tracker/AccessCodeBanner";
@@ -150,6 +151,8 @@ function TablePage() {
               que reciben pedidos. Encabeza la carta para máxima visibilidad;
               abajo se repite como strip compacto. */}
           <DomiciliosBanner />
+          {/* Concurso vigente (disfraces): solo existe si el staff lo publica */}
+          <ConcursoBanner />
           {/* Ultimo bloque antes de la carta: por aqui pasa todo el que baja
               a verla. Estuvo despues de CartaList unas horas, pero esa
               seccion mide 4.400 px, asi que el descuento caia en el pixel

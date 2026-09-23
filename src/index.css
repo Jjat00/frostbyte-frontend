@@ -9,6 +9,12 @@
    theme.css: no define ningún color de marca propio. */
 @import "./minimal.css";
 
+/* Póster del concurso de disfraces. Va aquí y no importado desde su
+   componente: un CSS con @layer que entra por JS antes que este archivo
+   declara la capa components antes que base, y entonces el reset de
+   Tailwind le gana a todo minimal.css (pasó el 2026-09-23). */
+@import "./components/concurso/concurso.css";
+
 @keyframes accordion-down {
   from {
     height: 0;
