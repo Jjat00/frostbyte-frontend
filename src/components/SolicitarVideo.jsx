@@ -15,6 +15,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { youtubeService } from "@/services/youtube.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useWebSocket } from "@/hooks";
+import { isCampaign } from "@/config/campaign";
+
+// En Halloween la esfera se cambia por el cementerio de las calabazas, igual
+// que en la sección de Spotify (SolicitarCancion)
+const haunted = isCampaign("halloween");
+const PumpkinVisualizer = haunted ? React.lazy(() => import("@/components/halloween/PumpkinVisualizer")) : null;
 
 const formatDuration = (iso) => {
   if (!iso) return "";
@@ -225,13 +231,19 @@ const SolicitarVideo = () => {
   return (
     <section
       id="solicitar-cancion"
-      className="relative overflow-hidden min-h-[80vh] flex flex-col justify-center"
+      className={`relative overflow-hidden min-h-[80vh] flex flex-col justify-center${haunted ? " hw-haunted" : ""}`}
       style={{
         background: "linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)",
       }}
     >
       {/* Canvas animation - esfera 3D de particulas */}
-      <MusicVisualizer isPlaying={!!nowPlaying?.video_id} />
+      {haunted ? (
+        <React.Suspense fallback={null}>
+          <PumpkinVisualizer isPlaying={!!nowPlaying?.video_id} />
+        </React.Suspense>
+      ) : (
+        <MusicVisualizer isPlaying={!!nowPlaying?.video_id} />
+      )}
 
 
       <div className="container mx-auto px-4 relative z-10 py-16">

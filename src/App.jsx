@@ -43,7 +43,7 @@ function App() {
 
   return (
     <>
-      <div className={`${campaignThemeClass} min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
+      <div className={`${campaignThemeClass} min-h-screen bg-dark overflow-clip ${tabBarSpacing}`}>
         <Header />
         <main className={campaignBodyClass}>
           <CampaignHero />

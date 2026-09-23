@@ -123,7 +123,7 @@ function TablePage() {
           content="Experimenta el futuro de las bebidas heladas. Frostbyte ofrece granizados y frappés premium con sabores únicos. Sabores vibrantes, experiencia única."
         />
       </Helmet>
-      <div className={`${campaignThemeClass} min-h-screen bg-dark overflow-hidden ${tabBarSpacing}`}>
+      <div className={`${campaignThemeClass} min-h-screen bg-dark overflow-clip ${tabBarSpacing}`}>
         <Header />
         <main className={campaignBodyClass}>
           <CampaignHero />
