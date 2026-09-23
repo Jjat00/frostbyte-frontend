@@ -8,8 +8,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useWebSocket } from '@/hooks';
 import { isCampaign } from '@/config/campaign';
 
-// En Halloween la esfera se vuelve una calabaza que canta. Va en su propio
-// chunk: fuera de la campaña no se descarga.
+// En Halloween la esfera se cambia por un cementerio de fondo con calabazas
+// que cantan. Va en su propio chunk: fuera de la campaña no se descarga.
 const haunted = isCampaign('halloween');
 const PumpkinVisualizer = haunted ? React.lazy(() => import('@/components/halloween/PumpkinVisualizer')) : null;
 
@@ -173,7 +173,6 @@ const SolicitarCancion = ({ floor: floorProp }) => {
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef(null);
   const inputRef = useRef(null);
-  const stageRef = useRef(null);
 
   const isFloorLocked = FLOORS.includes(floorProp);
   const [selectedFloor, setSelectedFloor] = useState(() => {
@@ -328,12 +327,12 @@ const SolicitarCancion = ({ floor: floorProp }) => {
   return (
     <section
       id="solicitar-cancion"
-      className="fb-section flex min-h-[80vh] flex-col justify-center"
+      className={`fb-section flex min-h-[80vh] flex-col justify-center${haunted ? ' hw-haunted' : ''}`}
     >
       {/* Canvas animation - PROTAGONIST */}
       {haunted ? (
         <React.Suspense fallback={null}>
-          <PumpkinVisualizer isPlaying={!!nowPlaying?.is_playing} stageRef={stageRef} />
+          <PumpkinVisualizer isPlaying={!!nowPlaying?.is_playing} />
         </React.Suspense>
       ) : (
         <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
@@ -341,18 +340,6 @@ const SolicitarCancion = ({ floor: floorProp }) => {
 
       {/* Content floats on top */}
       <div className="container mx-auto px-4 relative z-10 py-16">
-        {haunted && (
-          /* Hueco donde vive la calabaza (la pinta el canvas de detrás) */
-          <div ref={stageRef} className="hw-pumpkin-stage">
-            <p className="hw-pumpkin-caption" aria-live="polite">
-              {!isSpotifyConnected
-                ? 'Duerme hasta que vuelva la música'
-                : nowPlaying?.is_playing
-                  ? 'Canta con lo que suena en el local'
-                  : 'Duerme. Pide una canción y despiértala'}
-            </p>
-          </div>
-        )}
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}

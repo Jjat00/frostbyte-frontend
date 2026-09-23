@@ -141,11 +141,8 @@ const DECOR = {
       <Img name="criatura" w={280} h={315} className="hw-loop" />
     </span>
   ),
-  "solicitar-cancion": (
-    <span className="hw-p hw-p--pale-bats hw-drift">
-      <Img name="murcielagos-palidos" w={280} h={316} className="hw-loop" />
-    </span>
-  ),
+  // "solicitar-cancion" no lleva adornos: su escena la pinta
+  // PumpkinVisualizer (luna, árboles, lápidas y murciélagos propios).
   "frostbyte-play": (
     <span className="hw-p hw-p--slasher hw-peek-r">
       <Img name="enmascarado" w={260} h={390} />

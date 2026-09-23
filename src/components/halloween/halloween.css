@@ -103,9 +103,6 @@
 .hw-p--creature { top: 1rem; right: -1.75rem; width: 6.5rem; }
 .hw-p--creature img { transform-origin: 50% 100%; animation: hw-breathe 4.5s ease-in-out infinite alternate; }
 
-.hw-p--pale-bats { top: 1rem; left: -1.25rem; width: 6rem; }
-.hw-p--pale-bats img { animation: hw-flutter 2.4s ease-in-out infinite alternate; }
-
 .hw-p--village { bottom: 0; left: 50%; width: 16rem; margin-left: -8rem; }
 
 /* Niebla que se arrastra por el suelo de la sección. */
@@ -135,35 +132,36 @@
   .hw-p--tree { left: 2%; width: 10rem; }
   .hw-p--clown { right: 5%; width: 10.5rem; }
   .hw-p--creature { right: 5%; width: 11rem; }
-  .hw-p--pale-bats { left: 5%; width: 10rem; }
   .hw-p--village { width: 26rem; margin-left: -13rem; }
   .hw-p--fog { width: 42rem; }
   .hw-p--fog-wide { left: -5%; width: 110%; }
 }
 
-/* ── Sección de música: la calabaza que canta (PumpkinVisualizer) ─────
-   El escenario es un hueco en el flujo; la calabaza la pinta el canvas de
-   detrás, centrada sobre él. El cursor de mano avisa que se puede tocar. */
-.hw-pumpkin-stage {
-  position: relative;
-  height: 15rem;
-  margin: -2rem auto 1.75rem;
-  max-width: 22rem;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.hw-pumpkin-caption {
+/* ── Sección de música: el cementerio de fondo (PumpkinVisualizer) ────
+   La escena es el fondo de toda la sección y el buscador va encima. El
+   canvas se pega a la pantalla (sticky) mientras la lista pasa: para eso la
+   sección recorta con `overflow: clip`, que no crea contenedor de scroll
+   (el `hidden` de fb-section anularía el sticky). Al pie queda aire para
+   ver las calabazas enteras al terminar la lista. */
+.hw-menu-body #solicitar-cancion.hw-haunted { overflow: clip; }
+.hw-scene {
   position: absolute;
-  inset: auto 0 0;
-  margin: 0;
-  text-align: center;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  color: color-mix(in srgb, var(--hw-ember) 55%, transparent);
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
 }
+.hw-scene canvas {
+  position: sticky;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  max-height: 100%;
+}
+.hw-menu-body #solicitar-cancion.hw-haunted > .container { padding-bottom: 13rem; }
 @media (min-width: 48rem) {
-  .hw-pumpkin-stage { height: 23rem; margin-bottom: 2.25rem; }
+  .hw-menu-body #solicitar-cancion.hw-haunted > .container { padding-bottom: 19rem; }
 }
 
 /* Canciones del buscador: al pasar el ratón la tarjeta se levanta, el borde
@@ -224,7 +222,6 @@
 @keyframes hw-swing { from { rotate: -7deg; } to { rotate: 7deg; } }
 @keyframes hw-sway { from { rotate: -2deg; } to { rotate: 2deg; } }
 @keyframes hw-breathe { to { scale: 1.035; } }
-@keyframes hw-flutter { to { translate: 0 -0.5rem; rotate: -3deg; } }
 @keyframes hw-creep { to { translate: 12% 0; } }
 @keyframes hw-pulse { from { opacity: 0.55; } to { opacity: 1; } }
 @keyframes hw-flicker {
