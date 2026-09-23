@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  ChevronLeft, Loader2, Instagram, CheckCircle2, Circle, ArrowDown, ArrowRight,
+  ChevronLeft, Loader2, Instagram, CheckCircle2, Circle, ArrowDown, ArrowRight, LogOut, XCircle,
 } from "lucide-react";
 import { SOCIAL } from "@/lib/social";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
 import CustomerAuthGate from "@/components/checkout/CustomerAuthGate";
 import CustomerAvatar from "@/components/auth/CustomerAvatar";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ConcursoPoster from "@/components/concurso/ConcursoPoster";
 import {
   useCurrentContest,
@@ -45,7 +46,8 @@ const scrollTo = (id) => (event) => {
 };
 
 const ContestPage = () => {
-  const { customer, isAuthenticated } = useCustomerAuthStore();
+  const { customer, isAuthenticated, logout } = useCustomerAuthStore();
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const { data: contest, isLoading, isError } = useCurrentContest();
   const { data: entry, isLoading: entryLoading } = useMyContestEntry(
     isAuthenticated && !!contest
@@ -60,6 +62,8 @@ const ContestPage = () => {
   const [adult, setAdult] = useState(false);
   const [error, setError] = useState("");
   const [showAuth, setShowAuth] = useState(false);
+  // "Inicia sesión" sin llenar el formulario: solo cambia el texto del login
+  const [loginOnly, setLoginOnly] = useState(false);
   const pendingSubmit = useRef(false);
 
   useEffect(() => {
@@ -86,9 +90,10 @@ const ContestPage = () => {
 
   // Tras entrar con Google, el envío sigue solo
   useEffect(() => {
-    if (isAuthenticated && pendingSubmit.current) {
+    if (!isAuthenticated) return;
+    setShowAuth(false);
+    if (pendingSubmit.current) {
       pendingSubmit.current = false;
-      setShowAuth(false);
       doSubmit();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,19 +110,22 @@ const ContestPage = () => {
     setError("");
     if (!isAuthenticated) {
       pendingSubmit.current = true;
+      setLoginOnly(false);
       setShowAuth(true);
       return;
     }
     doSubmit();
   };
 
-  const handleCancel = async () => {
-    if (!window.confirm("¿Cancelar tu inscripción al concurso?")) return;
+  const [askCancel, setAskCancel] = useState(false);
+  const handleCancel = () => setAskCancel(true);
+  const confirmCancel = async () => {
     try {
       await cancel.mutateAsync();
     } catch (e) {
       setError(errorMessage(e, "No pudimos cancelar tu inscripción."));
     }
+    setAskCancel(false);
   };
 
   const canRegister = contest?.registrations_open && !entry;
@@ -125,7 +133,7 @@ const ContestPage = () => {
   return (
     <div className="theme-concurso cz-ground min-h-screen pb-24">
       <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[var(--cz-ink)]">
-        <div className="max-w-lg mx-auto px-4 h-14 flex items-center gap-3">
+        <div className="max-w-lg lg:max-w-5xl mx-auto px-4 h-14 flex items-center gap-3">
           <Link
             to="/"
             className="cz-muted grid h-9 w-9 place-items-center rounded-full border border-white/[0.12] transition-colors hover:text-[var(--cz-bone)]"
@@ -135,13 +143,43 @@ const ContestPage = () => {
           </Link>
           <h1 className="cz-hand flex-1 text-lg uppercase">Concurso</h1>
           {isAuthenticated && (
-            <Link
-              to="/mi-cuenta"
-              aria-label="Mi cuenta"
-              className="grid place-items-center rounded-full ring-1 ring-white/15 transition-all hover:ring-white/35"
-            >
-              <CustomerAvatar customer={customer} className="w-8 h-8 text-sm" />
-            </Link>
+            <>
+              <Link
+                to="/mi-cuenta"
+                aria-label="Mi cuenta"
+                className="grid place-items-center rounded-full ring-1 ring-white/15 transition-all hover:ring-white/35"
+              >
+                <CustomerAvatar customer={customer} className="w-8 h-8 text-sm" />
+              </Link>
+              {confirmLogout ? (
+                <span className="flex items-center gap-1.5">
+                  <button
+                    onClick={async () => {
+                      await logout();
+                      // Recarga para empezar limpio: sin la inscripción de la
+                      // sesión anterior en caché y con el formulario de nuevo
+                      window.location.reload();
+                    }}
+                    className="rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1.5 text-[0.75rem] font-bold text-red-300"
+                  >
+                    Sí, salir
+                  </button>
+                  <button
+                    onClick={() => setConfirmLogout(false)}
+                    className="cz-muted px-1.5 py-1.5 text-[0.75rem]"
+                  >
+                    No
+                  </button>
+                </span>
+              ) : (
+                <button
+                  onClick={() => setConfirmLogout(true)}
+                  className="cz-muted flex items-center gap-1.5 rounded-full border border-white/[0.12] px-3 py-1.5 text-[0.75rem] transition-colors hover:text-[var(--cz-bone)]"
+                >
+                  <LogOut className="h-3.5 w-3.5" /> Cerrar sesión
+                </button>
+              )}
+            </>
           )}
         </div>
       </header>
@@ -283,6 +321,24 @@ const ContestPage = () => {
                     <p className="cz-muted -mt-1 text-center text-[0.78rem]">
                       Queda pendiente hasta que pagues {money(contest.entry_fee)} en la barra.
                     </p>
+                    {!isAuthenticated && (
+                      <p className="border-t border-white/10 pt-4 text-center text-[0.88rem]">
+                        ¿Ya te inscribiste?{" "}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // Solo entrar: sin envío pendiente. Al volver con
+                            // sesión, si hay inscripción se muestra sola.
+                            pendingSubmit.current = false;
+                            setLoginOnly(true);
+                            setShowAuth(true);
+                          }}
+                          className="cz-ok font-semibold underline underline-offset-4"
+                        >
+                          Inicia sesión
+                        </button>
+                      </p>
+                    )}
                   </div>
                 </form>
               )}
@@ -291,6 +347,19 @@ const ContestPage = () => {
         </>
       )}
 
+      <ConfirmDialog
+        open={askCancel}
+        title="¿Cancelar tu inscripción?"
+        message="Pierdes tu número. Si cambias de opinión, puedes volver a inscribirte mientras las inscripciones sigan abiertas."
+        confirmLabel="Sí, cancelar"
+        cancelLabel="No"
+        tone="danger"
+        icon={XCircle}
+        loading={cancel.isPending}
+        onConfirm={confirmCancel}
+        onCancel={() => setAskCancel(false)}
+      />
+
       <CustomerAuthGate
         open={showAuth}
         onClose={() => {
@@ -298,8 +367,12 @@ const ContestPage = () => {
           pendingSubmit.current = false;
         }}
         onAuthenticated={() => {}}
-        title="Entra con Google para inscribirte"
-        description="Tu inscripción queda en tu cuenta: ahí ves si ya confirmamos tu pago y tu Instagram."
+        title={loginOnly ? "Entra con tu cuenta de Google" : "Entra con Google para inscribirte"}
+        description={
+          loginOnly
+            ? "Usa la misma cuenta con la que te inscribiste y verás tu número y lo que te falta."
+            : "Tu inscripción queda en tu cuenta: ahí ves si ya confirmamos tu pago y tu Instagram."
+        }
       />
     </div>
   );

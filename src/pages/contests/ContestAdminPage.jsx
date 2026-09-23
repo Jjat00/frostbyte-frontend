@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  ChevronLeft, Loader2, Search, Settings2, Instagram, Wallet, Phone,
-  CheckCircle2, AlertTriangle, ExternalLink,
+  ChevronLeft, Loader2, Search, Settings2, Instagram, Phone,
+  Check, AlertTriangle, ExternalLink, Banknote, Undo2, XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { matchesSearch } from "@/lib/search";
 import { useAuthStore } from "@/stores/useAuthStore";
 import {
@@ -41,7 +42,7 @@ const ContestAdminPage = () => {
   const isAdmin = useAuthStore((s) => s.isAdmin());
   const { data, isLoading, isError } = useContestAdmin();
   const updateEntry = useUpdateContestEntry();
-  const [filter, setFilter] = useState("pending");
+  const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [showSettings, setShowSettings] = useState(false);
   const [error, setError] = useState("");
@@ -60,8 +61,10 @@ const ContestAdminPage = () => {
     });
   }, [data?.entries, filter, query]);
 
-  const patch = async (entry, changes, confirmText) => {
-    if (confirmText && !window.confirm(confirmText)) return;
+  // Cambio que espera confirmación en el diálogo: { entry, changes, confirm }
+  const [pending, setPending] = useState(null);
+
+  const save = async (entry, changes) => {
     setError("");
     try {
       await updateEntry.mutateAsync({ id: entry.id, data: changes });
@@ -71,10 +74,21 @@ const ContestAdminPage = () => {
     }
   };
 
+  // Con `confirm` (título, mensaje, tono…) primero pregunta en el diálogo
+  const patch = (entry, changes, confirm) => {
+    if (confirm) setPending({ entry, changes, confirm });
+    else save(entry, changes);
+  };
+
+  const confirmPending = async () => {
+    await save(pending.entry, pending.changes);
+    setPending(null);
+  };
+
   return (
     <div className="min-h-screen bg-dark text-light pb-16">
       <header className="sticky top-0 z-40 bg-dark/90 border-b border-white/5">
-        <div className="max-w-[900px] mx-auto px-4 h-14 flex items-center gap-3">
+        <div className="max-w-[1100px] mx-auto px-4 h-14 flex items-center gap-3">
           <Link
             to="/home"
             className="grid place-items-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10"
@@ -100,7 +114,7 @@ const ContestAdminPage = () => {
         </div>
       </header>
 
-      <main className="max-w-[900px] mx-auto px-4 pt-5">
+      <main className="max-w-[1100px] mx-auto px-4 pt-5">
         {isLoading ? (
           <div className="py-24 grid place-items-center">
             <Loader2 className="h-7 w-7 animate-spin text-light/45" />
@@ -175,21 +189,44 @@ const ContestAdminPage = () => {
                 {query ? "Nadie coincide con la búsqueda." : "No hay inscripciones aquí."}
               </p>
             ) : (
-              <ul className="grid gap-3 md:grid-cols-2">
-                {entries.map((entry) => (
-                  <EntryCard
-                    key={entry.id}
-                    entry={entry}
+              <>
+                <div className="hidden lg:block">
+                  <EntriesTable
+                    entries={entries}
                     contest={contest}
-                    busy={updateEntry.isPending && updateEntry.variables?.id === entry.id}
+                    busyId={updateEntry.isPending ? updateEntry.variables?.id : null}
                     onPatch={patch}
                   />
-                ))}
-              </ul>
+                </div>
+                <ul className="grid gap-3 md:grid-cols-2 lg:hidden">
+                  {entries.map((entry) => (
+                    <EntryCard
+                      key={entry.id}
+                      entry={entry}
+                      contest={contest}
+                      busy={updateEntry.isPending && updateEntry.variables?.id === entry.id}
+                      onPatch={patch}
+                    />
+                  ))}
+                </ul>
+              </>
             )}
           </>
         )}
       </main>
+
+      <ConfirmDialog
+        open={!!pending}
+        title={pending?.confirm.title}
+        message={pending?.confirm.message}
+        confirmLabel={pending?.confirm.confirmLabel}
+        cancelLabel="No"
+        tone={pending?.confirm.tone}
+        icon={pending?.confirm.icon}
+        loading={updateEntry.isPending}
+        onConfirm={confirmPending}
+        onCancel={() => setPending(null)}
+      />
     </div>
   );
 };
@@ -207,6 +244,128 @@ const Stat = ({ label, value }) => (
   <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
     <p className="text-[0.65rem] uppercase tracking-wider text-white/45">{label}</p>
     <p className="mt-1 text-lg font-semibold">{value}</p>
+  </div>
+);
+
+/** Marcar pago siempre pregunta: en la barra se cobra y se mira la cédula. */
+const togglePaid = (entry, contest, onPatch) =>
+  entry.paid
+    ? onPatch(entry, { paid: false }, {
+        title: "¿Quitar la marca de pago?",
+        message: `La inscripción #${entry.number} de ${entry.full_name} vuelve a quedar pendiente.`,
+        confirmLabel: "Sí, quitar",
+        tone: "danger",
+        icon: Undo2,
+      })
+    : onPatch(entry, { paid: true }, {
+        title: `¿${entry.full_name} pagó ${money(contest.entry_fee)}?`,
+        message: `Inscripción #${entry.number}. Revisa la cédula antes de marcar: debe ser mayor de ${contest.min_age} años.`,
+        confirmLabel: "Sí, pagó",
+        tone: "success",
+        icon: Banknote,
+      });
+
+/** Cancelar también pregunta, y avisa si ya había pagado. */
+const cancelConfirm = (entry) => ({
+  title: `¿Cancelar la inscripción #${entry.number}?`,
+  message: entry.paid
+    ? `${entry.full_name} ya pagó. La devolución del dinero se hace aparte, en la barra.`
+    : `${entry.full_name} podrá volver a inscribirse desde la app.`,
+  confirmLabel: "Sí, cancelar",
+  tone: "danger",
+  icon: XCircle,
+});
+
+/** Escritorio: una fila por inscrito, con las dos casillas a la vista. */
+const EntriesTable = ({ entries, contest, busyId, onPatch }) => (
+  <div className="overflow-hidden rounded-2xl border border-white/10">
+    <table className="w-full text-left text-[0.82rem]">
+      <thead className="bg-white/[0.04] text-[0.68rem] uppercase tracking-wider text-white/45">
+        <tr>
+          <th className="px-3 py-2.5 font-medium">#</th>
+          <th className="px-3 py-2.5 font-medium">Inscrito</th>
+          <th className="px-3 py-2.5 font-medium">Instagram</th>
+          <th className="px-3 py-2.5 font-medium">Pago</th>
+          {contest.requires_instagram_follow && (
+            <th className="px-3 py-2.5 font-medium">Sigue en IG</th>
+          )}
+          <th className="px-3 py-2.5 font-medium">Estado</th>
+          <th className="px-3 py-2.5" />
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-white/[0.06]">
+        {entries.map((entry) => {
+          const busy = busyId === entry.id;
+          const status = STATUS[entry.status];
+          return (
+            <tr key={entry.id} className={cn("align-middle", entry.cancelled && "opacity-50")}>
+              <td className="px-3 py-3 text-base font-bold">#{entry.number}</td>
+              <td className="px-3 py-3">
+                <p className="font-medium">{entry.full_name}</p>
+                <p className="text-[0.72rem] text-white/45">
+                  {entry.phone}
+                  {entry.costume ? ` · ${entry.costume}` : ""}
+                </p>
+              </td>
+              <td className="px-3 py-3">
+                <a
+                  href={`https://www.instagram.com/${entry.instagram_handle}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-white/70 hover:text-light"
+                >
+                  @{entry.instagram_handle} <ExternalLink className="h-3 w-3" />
+                </a>
+              </td>
+              <td className="px-3 py-3">
+                {!entry.cancelled && (
+                  <CheckToggle
+                    compact
+                    on={entry.paid}
+                    busy={busy}
+                    label={entry.paid ? "Pagó" : `Cobrar ${money(contest.entry_fee)}`}
+                    hint={entry.paid ? entry.paid_by_name : null}
+                    onClick={() => togglePaid(entry, contest, onPatch)}
+                  />
+                )}
+              </td>
+              {contest.requires_instagram_follow && (
+                <td className="px-3 py-3">
+                  {!entry.cancelled && (
+                    <CheckToggle
+                      compact
+                      on={entry.follows_instagram}
+                      busy={busy}
+                      label={entry.follows_instagram ? "Sí" : "Revisar"}
+                      hint={entry.follows_instagram ? entry.instagram_checked_by_name : null}
+                      onClick={() => onPatch(entry, { follows_instagram: !entry.follows_instagram })}
+                    />
+                  )}
+                </td>
+              )}
+              <td className="px-3 py-3">
+                <span className={cn("rounded-full border px-2 py-0.5 text-[0.65rem] font-medium", status?.cls)}>
+                  {status?.label}
+                </span>
+              </td>
+              <td className="px-3 py-3 text-right">
+                <button
+                  onClick={() =>
+                    entry.cancelled
+                      ? onPatch(entry, { cancelled: false })
+                      : onPatch(entry, { cancelled: true }, cancelConfirm(entry))
+                  }
+                  disabled={busy}
+                  className="text-[0.72rem] text-white/40 hover:text-light disabled:opacity-40"
+                >
+                  {entry.cancelled ? "Reactivar" : "Cancelar"}
+                </button>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   </div>
 );
 
@@ -244,38 +403,24 @@ const EntryCard = ({ entry, contest, busy, onPatch }) => {
 
       {!cancelled && (
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <Toggle
+          <CheckToggle
             on={entry.paid}
             busy={busy}
-            Icon={Wallet}
-            labelOn={`Pagó ${money(contest.entry_fee)}`}
-            labelOff={`Cobrar ${money(contest.entry_fee)}`}
-            hint={entry.paid && entry.paid_by_name ? `por ${entry.paid_by_name}` : null}
-            onClick={() =>
-              entry.paid
-                ? onPatch(entry, { paid: false }, "¿Quitar la marca de pago?")
-                : onPatch(
-                    entry,
-                    { paid: true },
-                    `¿${entry.full_name} pagó ${money(contest.entry_fee)}?\n\nRevisa la cédula: debe ser mayor de ${contest.min_age} años.`
-                  )
-            }
+            label={`Pagó ${money(contest.entry_fee)}`}
+            hint={entry.paid && entry.paid_by_name ? `por ${entry.paid_by_name}` : "Pide la cédula"}
+            onClick={() => togglePaid(entry, contest, onPatch)}
           />
           {contest.requires_instagram_follow && (
-            <Toggle
+            <CheckToggle
               on={entry.follows_instagram}
               busy={busy}
-              Icon={Instagram}
-              labelOn="Nos sigue"
-              labelOff="¿Nos sigue?"
+              label="Nos sigue en IG"
               hint={
                 entry.follows_instagram && entry.instagram_checked_by_name
                   ? `revisó ${entry.instagram_checked_by_name}`
-                  : null
+                  : "Abre su perfil"
               }
-              onClick={() =>
-                onPatch(entry, { follows_instagram: !entry.follows_instagram })
-              }
+              onClick={() => onPatch(entry, { follows_instagram: !entry.follows_instagram })}
             />
           )}
         </div>
@@ -293,13 +438,7 @@ const EntryCard = ({ entry, contest, busy, onPatch }) => {
         ) : (
           <button
             onClick={() =>
-              onPatch(
-                entry,
-                { cancelled: true },
-                entry.paid
-                  ? "Esta inscripción ya está pagada. ¿Cancelarla de todos modos? La devolución se hace aparte."
-                  : "¿Cancelar esta inscripción?"
-              )
+              onPatch(entry, { cancelled: true }, cancelConfirm(entry))
             }
             disabled={busy}
             className="text-[0.72rem] text-white/35 hover:text-red-300 disabled:opacity-40"
@@ -312,22 +451,38 @@ const EntryCard = ({ entry, contest, busy, onPatch }) => {
   );
 };
 
-const Toggle = ({ on, busy, Icon, labelOn, labelOff, hint, onClick }) => (
+/**
+ * Casilla grande para la barra: se lee como casilla (cuadro con chulo) y no
+ * como botón, porque eso es lo que el staff hace aquí: chulear.
+ */
+const CheckToggle = ({ on, busy, label, hint, onClick, compact = false }) => (
   <button
+    type="button"
+    role="checkbox"
+    aria-checked={on}
     onClick={onClick}
     disabled={busy}
     className={cn(
-      "flex flex-col items-center justify-center gap-0.5 rounded-xl border px-2 py-2.5 text-[0.75rem] font-medium transition-colors disabled:opacity-50",
+      "flex items-center gap-2.5 rounded-xl border text-left transition-colors disabled:opacity-50",
+      compact ? "px-2.5 py-2" : "px-3 py-2.5",
       on
-        ? "border-emerald-500/35 bg-emerald-500/10 text-emerald-300"
-        : "border-white/15 bg-white/[0.04] text-light hover:bg-white/[0.08]"
+        ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
+        : "border-white/15 bg-white/[0.03] text-light hover:bg-white/[0.07]"
     )}
   >
-    <span className="flex items-center gap-1.5">
-      {on ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
-      {on ? labelOn : labelOff}
+    <span
+      aria-hidden
+      className={cn(
+        "grid h-6 w-6 flex-shrink-0 place-items-center rounded-md border-2",
+        on ? "border-emerald-400 bg-emerald-400 text-dark" : "border-white/40"
+      )}
+    >
+      {on && <Check className="h-4 w-4" strokeWidth={3.5} />}
     </span>
-    {hint && <span className="text-[0.62rem] font-normal opacity-70">{hint}</span>}
+    <span className="min-w-0">
+      <span className="block text-[0.78rem] font-medium leading-tight">{label}</span>
+      {hint && <span className="block text-[0.62rem] leading-tight opacity-70">{hint}</span>}
+    </span>
   </button>
 );
 
