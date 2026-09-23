@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Circle } from "lucide-react";
 import { useCurrentContest, useMyContestEntry } from "@/hooks/useContest";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
+import PrizeNotice from "./PrizeNotice";
 
 const IMG = "/images/concurso";
 const money = (v) => `$${Number(v || 0).toLocaleString("es-CO")}`;
@@ -67,9 +68,9 @@ const Invite = ({ contest }) => {
       <p className="cz-account__lead">
         Ven disfrazado{date ? ` el ${date}` : ""} y compite por el mejor
         disfraz de Frostbyte.
-        {contest.prize && <> Premio: <strong className="cz-ok">{contest.prize}</strong>.</>}
       </p>
-      <p className="cz-muted mt-1 text-[0.8rem]">
+      <PrizeNotice contest={contest} className="mt-3" />
+      <p className="cz-muted mt-3 text-[0.8rem]">
         Inscripción {money(contest.entry_fee)}, se paga en la barra.
       </p>
       <Link to="/concurso" className="cz-cta cz-cta--block mt-4">
@@ -115,6 +116,7 @@ const Enrolled = ({ entry, contest }) => {
           </li>
         ))}
       </ul>
+      <PrizeNotice contest={contest} className="mt-4" />
       <Link to="/concurso" className="cz-cta cz-cta--block cz-cta--toxic mt-4">
         {confirmed ? "Ver mi inscripción" : "Qué me falta"}
         <ArrowRight className="h-5 w-5" strokeWidth={2.5} />

@@ -552,7 +552,7 @@ const ContestSettings = ({ contest, onDone }) => {
         <input type="number" min="0" step="1000" value={form.entry_fee} onChange={set("entry_fee")} className={inputCls} />
       </label>
       <label className="grid gap-1 text-xs text-white/55">
-        Premio (vacío = no se menciona)
+        Premio (vacío = se anuncia que pronto se revela)
         <input value={form.prize} onChange={set("prize")} maxLength={200} className={inputCls} />
       </label>
       <label className="grid gap-1 text-xs text-white/55">

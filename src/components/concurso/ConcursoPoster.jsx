@@ -1,4 +1,5 @@
 import React from "react";
+import PrizeNotice from "./PrizeNotice";
 
 /**
  * Póster del concurso vigente, al estilo de fanzine de terror: monstruos en
@@ -112,9 +113,10 @@ const ConcursoPoster = ({ contest, cta, headingLevel = "h2" }) => {
             ))}
             {!date && <span>Solo +{contest.min_age}</span>}
           </p>
-          {contest.prize && (
-            <p className="cz-poster__prize">Premio: {contest.prize}</p>
-          )}
+        </div>
+
+        <div className="cz-poster__notice">
+          <PrizeNotice contest={contest} />
         </div>
 
         {cta && <div className="cz-poster__cta">{cta}</div>}
