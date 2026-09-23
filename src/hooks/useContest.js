@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { contestsService, contestsAdminService } from "@/services/contests.service";
+import { isCampaign } from "@/config/campaign";
 
 export const contestKeys = {
   current: ["contest", "current"],
@@ -80,4 +81,17 @@ export function useUpdateContest() {
       queryClient.invalidateQueries({ queryKey: contestKeys.current });
     },
   });
+}
+
+/**
+ * ¿Las pantallas del cliente van con traje de Halloween?
+ *
+ * Sí con la campaña de Halloween encendida, o mientras el concurso publicado
+ * sea el de Halloween: el concurso se anuncia antes de encender la campaña y
+ * la cuenta tiene que acompañarlo. Pasado el concurso vuelve sola al look de
+ * siempre.
+ */
+export function useHalloweenMood() {
+  const { data: contest } = useCurrentContest();
+  return isCampaign("halloween") || !!contest?.slug?.includes("halloween");
 }

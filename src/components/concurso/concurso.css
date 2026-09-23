@@ -301,6 +301,55 @@
 
   .cz-cta--toxic { background: var(--cz-toxic); }
 
+  /* ── Tarjeta del concurso en "Mi cuenta" ─────────────────────────── */
+  .cz-account {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--cz-bone) 14%, transparent);
+  }
+  .cz-account__art {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: -22%;
+    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 95%);
+    mask-image: linear-gradient(to bottom, #000 45%, transparent 95%);
+  }
+  .cz-account__body {
+    position: relative;
+    padding: 0 1.25rem 1.35rem;
+  }
+  .cz-account__title {
+    display: block;
+    width: min(100%, 22rem);
+    height: auto;
+    margin: 0.35rem 0 0 -0.4rem;
+  }
+  .cz-account__lead {
+    margin-top: 0.5rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  /* Escritorio: la imagen a un lado y el texto al otro */
+  @media (min-width: 1024px) {
+    .cz-account {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+    }
+    .cz-account__art {
+      height: 100%;
+      object-fit: cover;
+      margin: 0;
+      -webkit-mask-image: linear-gradient(to right, #000 60%, transparent);
+      mask-image: linear-gradient(to right, #000 60%, transparent);
+    }
+    .cz-account__body { padding: 1.5rem 1.5rem 1.5rem 0.5rem; }
+  }
+
   /* ── Página /concurso ──────────────────────────────────────────────── */
 
   .cz-panel {

@@ -1,0 +1,74 @@
+/* Mi cuenta: cabecera con saludo y layout de dos columnas en escritorio.
+   Se importa desde index.css (no desde el componente) para que su
+   @layer components no se declare antes que base. En traje de Halloween
+   (.acc--hw) la cabecera es el bosque con luna, niebla y telaraña, y los
+   tokens los pone .theme-halloween de theme.css. */
+
+@layer components {
+  .acc-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    min-height: 9.5rem;
+    padding: 1.25rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--color-dark-secondary);
+  }
+
+  /* Pisos: bosque (-2) < velo (-1) < luna, niebla y telaraña (0) < saludo (1) */
+  .acc-hero__bg,
+  .acc-hero__fx {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .acc-hero__bg { z-index: -2; }
+  .acc-hero__content { position: relative; z-index: 1; }
+  .acc-hero__bg {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+  /* Velo inferior: el saludo se lee sobre el bosque */
+  .acc--hw .acc-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, var(--color-dark) 8%,
+      color-mix(in srgb, var(--color-dark) 55%, transparent) 45%, transparent 80%);
+  }
+  .acc-hero__moon { top: 0.9rem; right: 1rem; width: 4.25rem; }
+  .acc-hero__mist { left: 0; right: 0; bottom: -0.5rem; width: 100%; opacity: 0.75; }
+  .acc-hero__web { top: -0.75rem; left: -0.75rem; width: 6.5rem; opacity: 0.35; }
+  .acc-hero__bats { top: 1rem; right: 5.5rem; width: 3.5rem; opacity: 0.85; }
+
+  .acc-hero__hello {
+    font-size: 1.6rem;
+    line-height: 1.05;
+    color: var(--color-light);
+  }
+  .acc--hw .acc-hero__hello {
+    font-family: var(--hw-font-scare);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    color: var(--color-primary);
+    text-shadow: 0 2px 0 var(--color-dark);
+  }
+  .acc--hw .acc-hero__avatar {
+    box-shadow: 0 0 0 3px var(--color-dark), 0 0 0 5px var(--color-primary);
+  }
+
+  @media (min-width: 1024px) {
+    .acc-hero { min-height: 14rem; padding: 2rem; }
+    .acc-hero__moon { width: 7rem; top: 1.25rem; right: 2rem; }
+    .acc-hero__web { width: 10rem; }
+    .acc-hero__bats { width: 5rem; right: 10rem; }
+    .acc-hero__hello { font-size: 2.6rem; }
+  }
+}
