@@ -165,7 +165,8 @@ const FLOORS = [2, 3];
 // floorProp: piso conocido con certeza (URL de mesa). Si viene, no se muestran
 // tabs y todo apunta a ese piso. Si no (carta publica), el cliente elige piso
 // con tabs y la eleccion se recuerda en localStorage.
-const SolicitarCancion = ({ floor: floorProp }) => {
+// active: la sección está en pantalla o cerca; lejos, sin sondeos ni WebSocket.
+const SolicitarCancion = ({ floor: floorProp, active = true }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
@@ -190,6 +191,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
   };
 
   useWebSocket('/ws/music/', {
+    enabled: active,
     onMessage: (data) => {
       // Eventos de otro piso no invalidan nada; floor null = cambio global
       if (data?.floor && data.floor !== floor) return;
@@ -211,10 +213,11 @@ const SolicitarCancion = ({ floor: floorProp }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const { data: spotifyStatus } = useQuery({
+  // Mientras llega el estado no se dice "no disponible": se espera.
+  const { data: spotifyStatus, isPending: statusPending } = useQuery({
     queryKey: ['spotify-status', floor],
     queryFn: () => musicService.getSpotifyStatus(floor),
-    refetchInterval: 30000,
+    refetchInterval: active ? 30000 : false,
   });
   const isSpotifyConnected = spotifyStatus?.connected === true;
 
@@ -228,14 +231,17 @@ const SolicitarCancion = ({ floor: floorProp }) => {
   const { data: nowPlaying } = useQuery({
     queryKey: ['now-playing', floor],
     queryFn: () => musicService.getNowPlaying(floor),
-    enabled: isSpotifyConnected,
-    refetchInterval: 10000,
+    // En paralelo con el estado (no después): solo se apaga si ya se sabe
+    // que Spotify no está conectado.
+    enabled: spotifyStatus?.connected !== false,
+    retry: false,
+    refetchInterval: active ? 10000 : false,
   });
 
   const { data: requestsData, isLoading: requestsLoading } = useQuery({
     queryKey: ['song-requests', floor],
     queryFn: () => musicService.getAll({ floor }),
-    refetchInterval: 5000,
+    refetchInterval: active ? 5000 : false,
   });
 
   const requests = (requestsData?.results || []).filter(
@@ -342,10 +348,10 @@ const SolicitarCancion = ({ floor: floorProp }) => {
       <div className="container mx-auto px-4 relative z-10 py-16">
         {/* Title */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.35 }}
           className="text-center mb-10"
         >
           <span className="fb-eyebrow block">Suena en el local</span>
@@ -390,7 +396,7 @@ const SolicitarCancion = ({ floor: floorProp }) => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.35 }}
           className="max-w-2xl mx-auto"
         >
           {isSpotifyConnected && nowPlaying && <NowPlayingBar data={nowPlaying} />}
@@ -398,13 +404,17 @@ const SolicitarCancion = ({ floor: floorProp }) => {
 
         {/* Search + Results - glassmorphism */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.35 }}
           className="max-w-2xl mx-auto"
         >
-          {!isSpotifyConnected ? (
+          {statusPending ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" aria-label="Cargando" />
+            </div>
+          ) : !isSpotifyConnected ? (
             <div className="text-center py-8">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.03]">
                 <Music className="text-white/30" size={28} />
@@ -479,10 +489,10 @@ const SolicitarCancion = ({ floor: floorProp }) => {
         {/* Queue - transparent items */}
         {requests.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.35 }}
             className="max-w-2xl mx-auto mt-10"
           >
             <h3 className="fb-eyebrow mb-4 block text-center">

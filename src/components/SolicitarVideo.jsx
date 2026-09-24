@@ -112,7 +112,8 @@ const NowPlayingCard = ({ video }) => {
   );
 };
 
-const SolicitarVideo = () => {
+// active: la sección está en pantalla o cerca; lejos, sin sondeos ni WebSocket.
+const SolicitarVideo = ({ active = true }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
@@ -122,6 +123,7 @@ const SolicitarVideo = () => {
   const inputRef = useRef(null);
 
   useWebSocket("/ws/youtube/", {
+    enabled: active,
     onMessage: () => {
       queryClient.invalidateQueries({ queryKey: ["video-requests"] });
       queryClient.invalidateQueries({ queryKey: ["video-now-playing"] });
@@ -159,13 +161,13 @@ const SolicitarVideo = () => {
         return null;
       }
     },
-    refetchInterval: 10000,
+    refetchInterval: active ? 10000 : false,
   });
 
   const { data: requestsData, isLoading: requestsLoading } = useQuery({
     queryKey: ["video-requests"],
     queryFn: () => youtubeService.getAll(),
-    refetchInterval: 5000,
+    refetchInterval: active ? 5000 : false,
   });
 
   const requests = (requestsData?.results || []).filter(
@@ -249,10 +251,10 @@ const SolicitarVideo = () => {
       <div className="container mx-auto px-4 relative z-10 py-16">
         {/* Title */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.35 }}
           className="text-center mb-10"
         >
           <span className="fb-eyebrow inline-flex items-center gap-2">
@@ -273,17 +275,17 @@ const SolicitarVideo = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.35 }}
         >
           {nowPlaying?.video_id && <NowPlayingCard video={nowPlaying} />}
         </motion.div>
 
         {/* Search + Results */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.35 }}
           className="max-w-2xl mx-auto"
         >
           <div className="fb-card p-5 md:p-6">
@@ -363,10 +365,10 @@ const SolicitarVideo = () => {
         {/* Queue */}
         {requests.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.35 }}
             className="max-w-2xl mx-auto mt-10"
           >
             <h3 className="fb-eyebrow mb-4 block text-center">
