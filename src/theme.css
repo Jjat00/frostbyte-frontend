@@ -150,6 +150,11 @@
   --hw-ember: #ffb347;
   /* Tallo de la calabaza que canta (sección de música) */
   --hw-vine: #7a9a3c;
+  /* "Se robaron la O": cielo violeta de la escena, verde lunar del rótulo
+     y la letra alta y torcida de la marca */
+  --hw-dusk: #1c0d33;
+  --hw-lime: #d6ff82;
+  --hw-font-thief: "Jolly Lodger", "Creepster", fantasy;
   font-family: var(--font-body);
 }
 

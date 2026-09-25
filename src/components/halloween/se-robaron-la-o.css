@@ -1,0 +1,242 @@
+/* Halloween · "Se robaron la O". Todas las reglas cuelgan de .hw-thief, que
+   solo existe dentro de SeRobaronLaOHero: con la campaña apagada son inertes.
+   Móvil primero; la composición de escritorio entra en md (48rem). */
+
+/* Jolly Lodger servida desde el propio dominio (subconjunto latino, 18 KB):
+   letras altas y torcidas, lo más cercano a la referencia «Happy Halloween».
+   Solo se descarga cuando sale esta variante. */
+@font-face {
+  font-family: "Jolly Lodger";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jolly-lodger-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.hw-thief {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100svh;
+  padding: 5rem 0 2.5rem;
+  background: var(--hw-night);
+  color: var(--color-light);
+}
+
+/* ── Escena ───────────────────────────────────────────────────────── */
+.hw-thief__scene,
+.hw-thief__scene > * {
+  position: absolute;
+  pointer-events: none;
+}
+.hw-thief__scene { inset: 0; z-index: 0; }
+.hw-thief__scene img { display: block; max-width: none; height: auto; }
+
+/* Cielo en CSS: nítido a cualquier tamaño y sin bytes. Halo violeta junto a
+   la luna y un resplandor verde de niebla a ras de las lápidas. */
+.hw-thief__sky {
+  inset: 0;
+  background:
+    radial-gradient(55% 32% at 82% 14%, color-mix(in srgb, var(--color-secondary) 34%, transparent), transparent 70%),
+    radial-gradient(80% 22% at 50% 52%, color-mix(in srgb, var(--hw-lime) 10%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--hw-dusk) 0%, color-mix(in srgb, var(--hw-dusk) 70%, var(--hw-night)) 45%, var(--hw-night) 78%);
+}
+.hw-thief__moon { width: 15rem; top: 3rem; right: -3.5rem; opacity: 0.95; }
+.hw-thief__tree { height: 58%; width: auto !important; top: -4%; }
+.hw-thief__tree--l { left: -9.5rem; }
+.hw-thief__tree--r { right: -10rem; transform: scaleX(-1); }
+.hw-thief__bats {
+  width: 9.5rem;
+  top: 8rem;
+  left: 0.75rem;
+  animation: hw-thief-drift 7s ease-in-out infinite alternate;
+}
+.hw-thief__tombs {
+  width: 30rem;
+  top: clamp(10rem, 27svh, 15rem);
+  left: 50%;
+  margin-left: -15rem;
+  opacity: 0.9;
+}
+/* Bajo la escena, la noche se funde con el contenido. */
+.hw-thief__shade {
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 30%,
+    color-mix(in srgb, var(--hw-dusk) 72%, transparent) 50%,
+    color-mix(in srgb, var(--hw-night) 96%, transparent) 68%
+  );
+}
+
+/* ── Contenido ────────────────────────────────────────────────────── */
+.hw-thief__content { padding-top: clamp(14rem, 36svh, 20rem); }
+.hw-thief__head { display: flex; flex-direction: column; gap: 1rem; }
+.hw-thief__title { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.hw-thief__kicker,
+.hw-thief__loc {
+  margin: 0;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+/* Mientras roban la O, el rótulo cambia a la alarma. Las dos frases ocupan
+   la misma celda para que nada salte. */
+.hw-thief__kicker { display: grid; color: var(--hw-lime); }
+.hw-thief__kicker > span { grid-area: 1 / 1; transition: opacity 0.3s; }
+.hw-thief__kicker-alarm { opacity: 0; color: var(--color-primary); }
+.hw-thief.is-stolen .hw-thief__kicker-calm { opacity: 0; }
+.hw-thief.is-stolen .hw-thief__kicker-alarm { opacity: 1; }
+.hw-thief__loc {
+  font-size: 0.53rem;
+  letter-spacing: 0.42em;
+  color: color-mix(in srgb, var(--color-light) 45%, transparent);
+}
+
+/* La marca: 2,76 em de letras más el hueco de la O ≈ 3,4 em de ancho, así
+   que 24vw cabe entero en un celular de 360 px con su margen. */
+.hw-thief__brand {
+  margin: 0;
+  font-family: var(--hw-font-thief);
+  font-weight: 400;
+  font-size: clamp(4.5rem, 24vw, 7rem);
+  line-height: 0.82;
+  color: var(--color-light);
+  text-shadow:
+    0 0.05em 0 color-mix(in srgb, var(--hw-dusk) 80%, transparent),
+    0 0 0.3em color-mix(in srgb, var(--hw-lime) 22%, transparent);
+}
+.hw-thief__word { display: flex; align-items: flex-end; white-space: nowrap; }
+.hw-thief__letter {
+  display: inline-block;
+  transform: rotate(var(--r)) translateY(var(--y));
+}
+
+/* El hueco de la O: la calabaza, el contorno punteado que queda cuando se
+   la llevan, y la araña con su hilo. */
+.hw-thief__slot {
+  position: relative;
+  display: inline-block;
+  width: 0.64em;
+  height: 0.66em;
+  margin: 0 0.02em 0.05em;
+}
+.hw-thief__hole {
+  position: absolute;
+  inset: 6% 8% 0;
+  border: 2px dashed color-mix(in srgb, var(--color-light) 32%, transparent);
+  border-radius: 50%;
+  opacity: 0;
+}
+.hw-thief__pumpkin {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.hw-thief__pumpkin img { position: relative; width: 100%; height: 100%; object-fit: contain; }
+/* La vela: un halo que solo late en opacidad. */
+.hw-thief__pumpkin::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 50%, transparent), transparent 65%);
+  animation: hw-thief-candle 2.4s ease-in-out infinite;
+}
+.hw-thief__rig {
+  position: absolute;
+  left: 50%;
+  bottom: 38%;
+  width: 0.8em;
+  margin-left: -0.4em;
+  transform-origin: 50% 0;
+  visibility: hidden; /* JS la sube fuera de la vista y la muestra */
+}
+.hw-thief__thread {
+  position: absolute;
+  left: 50%;
+  bottom: 70%;
+  width: 1.5px;
+  height: 60rem; /* más que cualquier distancia del hueco al techo del hero */
+  margin-left: -0.75px;
+  pointer-events: none;
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-light) 75%, transparent), color-mix(in srgb, var(--color-light) 18%, transparent));
+}
+.hw-thief__spider {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.hw-thief__side { display: flex; flex-direction: column; gap: 1rem; }
+.hw-thief__tag {
+  margin: 0;
+  max-width: 19rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-light) 70%, transparent);
+}
+
+/* ── Escritorio ───────────────────────────────────────────────────── */
+@media (min-width: 48rem) {
+  .hw-thief { padding: 6rem 0 3.5rem; }
+  .hw-thief__moon { width: 26rem; top: 2.5rem; right: 8%; }
+  .hw-thief__tree { height: 104%; top: -8%; }
+  .hw-thief__tree--l { left: -4.5rem; }
+  .hw-thief__tree--r { right: -5.5rem; }
+  .hw-thief__bats { width: 15rem; top: 5rem; left: 24%; }
+  .hw-thief__tombs {
+    width: 44rem;
+    top: auto;
+    bottom: 30%;
+    margin-left: -22rem;
+    opacity: 0.55;
+  }
+  .hw-thief__shade {
+    background: linear-gradient(
+      180deg,
+      transparent 32%,
+      color-mix(in srgb, var(--hw-dusk) 55%, transparent) 55%,
+      color-mix(in srgb, var(--hw-night) 95%, transparent) 80%
+    );
+  }
+
+  .hw-thief__content { padding-top: clamp(16rem, 36vh, 22rem); }
+  .hw-thief__head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3.5rem;
+  }
+  .hw-thief__title { gap: 0.6rem; }
+  .hw-thief__kicker { font-size: 0.7rem; }
+  .hw-thief__loc { font-size: 0.6rem; }
+  .hw-thief__brand { font-size: clamp(7.5rem, 12.5vw, 12rem); }
+  .hw-thief__side { width: 21rem; flex-shrink: 0; }
+  .hw-thief__tag { max-width: none; font-size: 0.84rem; }
+}
+
+/* ── Movimiento ───────────────────────────────────────────────────── */
+@keyframes hw-thief-drift { to { transform: translate(18px, -10px) rotate(2deg); } }
+@keyframes hw-thief-candle { 0%, 100% { opacity: 0.7; } 35% { opacity: 1; } 60% { opacity: 0.8; } }
+
+/* Fuera de pantalla no se anima nada. */
+.hw-thief.is-asleep *,
+.hw-thief.is-asleep *::before { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-thief__bats,
+  .hw-thief__pumpkin::before { animation: none; }
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import ApagaLaLuzHero from "@/components/halloween/ApagaLaLuzHero";
 import HalloweenDecor from "@/components/halloween/HalloweenDecor";
+import SeRobaronLaOHero from "@/components/halloween/SeRobaronLaOHero";
 import "./halloween.css";
 
 /**
@@ -12,8 +13,9 @@ import "./halloween.css";
  * otro). El sorteo se guarda en sessionStorage para que la variante no
  * cambie mientras la misma persona navega y vuelve a la carta.
  *
- * Para probar una variante concreta: `/?hero=apaga-la-luz` (también en
- * `/mesa/...`). Añadir una variante = importarla y sumarla a VARIANTS.
+ * Para probar una variante concreta: `/?hero=apaga-la-luz` o
+ * `/?hero=se-robaron-la-o` (también en `/mesa/...`). Añadir una variante =
+ * importarla y sumarla a VARIANTS.
  *
  * Monta también los adornos de la carta (`HalloweenDecor`), que son los
  * mismos para cualquier variante.
@@ -21,6 +23,7 @@ import "./halloween.css";
 
 const VARIANTS = {
   "apaga-la-luz": ApagaLaLuzHero,
+  "se-robaron-la-o": SeRobaronLaOHero,
 };
 
 const STORAGE_KEY = "frostbyte_halloween_hero";
