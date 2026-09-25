@@ -8,10 +8,10 @@ import "./halloween.css";
  * Hero de la campaña de Halloween (`LIVE_CAMPAIGN = "halloween"` en
  * config/campaign.js, o `?campana=halloween` para verla sin encenderla).
  *
- * Halloween no tiene un solo hero sino varios estilos que se sortean: cada
- * visita ve uno al azar (una persona entra y ve "Apaga la luz", la siguiente
- * otro). El sorteo se guarda en sessionStorage para que la variante no
- * cambie mientras la misma persona navega y vuelve a la carta.
+ * Halloween no tiene un solo hero sino varios estilos que se sortean cada vez
+ * que se monta la carta: cada recarga, o cada vuelta a la carta desde otra
+ * página, puede traer otro. No se recuerda nada: solo cambia el hero, el
+ * resto de la carta es igual, y así se descubren todos.
  *
  * Para probar una variante concreta: `/?hero=apaga-la-luz` o
  * `/?hero=se-robaron-la-o` (también en `/mesa/...`). Añadir una variante =
@@ -26,8 +26,6 @@ const VARIANTS = {
   "se-robaron-la-o": SeRobaronLaOHero,
 };
 
-const STORAGE_KEY = "frostbyte_halloween_hero";
-
 function pickVariant() {
   const names = Object.keys(VARIANTS);
   try {
@@ -36,19 +34,7 @@ function pickVariant() {
   } catch {
     // sin URL legible: se sortea
   }
-  try {
-    const saved = sessionStorage.getItem(STORAGE_KEY);
-    if (saved && VARIANTS[saved]) return saved;
-  } catch {
-    // sessionStorage bloqueado (modo privado estricto): se sortea igual
-  }
-  const pick = names[Math.floor(Math.random() * names.length)];
-  try {
-    sessionStorage.setItem(STORAGE_KEY, pick);
-  } catch {
-    // no pasa nada si no se puede recordar
-  }
-  return pick;
+  return names[Math.floor(Math.random() * names.length)];
 }
 
 export default function HalloweenHero() {
