@@ -171,13 +171,94 @@
   pointer-events: none;
   background: linear-gradient(to top, color-mix(in srgb, var(--color-light) 75%, transparent), color-mix(in srgb, var(--color-light) 18%, transparent));
 }
+/* El hilo tenso avisa antes de romperse: se enrojece y tiembla. */
+.hw-thief.is-taut .hw-thief__thread {
+  background: color-mix(in srgb, var(--hw-bite) 85%, var(--color-light));
+  animation: hw-thief-taut 0.09s steps(2) infinite;
+}
+/* El cuerpo es lo que se arrastra: sin scroll ni menú de imagen al tocarlo. */
+.hw-thief__body {
+  position: relative;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.hw-thief.is-grabbing .hw-thief__body { cursor: grabbing; }
+/* Zona de agarre algo más grande que la araña, para el dedo. */
+.hw-thief__body::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+}
 .hw-thief__spider {
   position: relative;
   display: block;
   width: 100%;
   height: auto;
-  cursor: pointer;
-  touch-action: manipulation;
+  pointer-events: none;
+}
+
+/* ── La mordida (portal en el body) ───────────────────────────────── */
+.hw-bite {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  visibility: hidden;
+  overflow: hidden;
+}
+.hw-bite__flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 35%, color-mix(in srgb, var(--hw-bite) 55%, transparent) 100%);
+  opacity: 0;
+}
+.hw-bite__spider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(88vmin, 34rem);
+  height: auto;
+  opacity: 0;
+  /* La ilustración corta las patas en el borde: se funden en vez de cortar. */
+  -webkit-mask-image: radial-gradient(closest-side, #000 78%, transparent);
+  mask-image: radial-gradient(closest-side, #000 78%, transparent);
+}
+/* Dos pinchazos y el grito, centrados en el punto de la mordida. */
+.hw-bite__marks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.hw-bite__marks i {
+  position: absolute;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--hw-bite) 70%, #000);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--hw-bite) 30%, transparent);
+}
+.hw-bite__marks i:first-child { left: -19px; }
+.hw-bite__marks i:nth-child(2) { left: 9px; }
+.hw-bite__marks span {
+  position: absolute;
+  left: -3em;
+  width: 6em;
+  top: -2.6em;
+  text-align: center;
+  font-family: var(--hw-font-thief);
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--color-light);
+  text-shadow: 0 3px 0 color-mix(in srgb, var(--hw-bite) 70%, #000);
+  transform: rotate(-8deg);
 }
 
 .hw-thief__side { display: flex; flex-direction: column; gap: 1rem; }
@@ -230,6 +311,7 @@
 
 /* ── Movimiento ───────────────────────────────────────────────────── */
 @keyframes hw-thief-drift { to { transform: translate(18px, -10px) rotate(2deg); } }
+@keyframes hw-thief-taut { 50% { opacity: 0.55; } }
 @keyframes hw-thief-candle { 0%, 100% { opacity: 0.7; } 35% { opacity: 1; } 60% { opacity: 0.8; } }
 
 /* Fuera de pantalla no se anima nada. */

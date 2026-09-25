@@ -154,6 +154,8 @@
      y la letra alta y torcida de la marca */
   --hw-dusk: #1c0d33;
   --hw-lime: #d6ff82;
+  /* Mordida de la araña cuando se rompe el hilo */
+  --hw-bite: #ff2d3f;
   --hw-font-thief: "Jolly Lodger", "Creepster", fantasy;
   font-family: var(--font-body);
 }
