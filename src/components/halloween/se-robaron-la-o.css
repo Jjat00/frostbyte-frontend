@@ -136,13 +136,26 @@
   border-radius: 50%;
   opacity: 0;
 }
+/* La calabaza se arrastra: sin scroll ni menú de imagen al tocarla. */
 .hw-thief__pumpkin {
   position: absolute;
   inset: 0;
-  cursor: pointer;
-  touch-action: manipulation;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
-.hw-thief__pumpkin img { position: relative; width: 100%; height: 100%; object-fit: contain; }
+.hw-thief__pumpkin img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.hw-thief.is-grabbing .hw-thief__pumpkin { cursor: grabbing; }
+/* Lo que se arrastra pasa por encima de las tarjetas. */
+.hw-thief__slot.is-lifted { z-index: 30; }
 /* La vela: un halo que solo late en opacidad. */
 .hw-thief__pumpkin::before {
   content: "";

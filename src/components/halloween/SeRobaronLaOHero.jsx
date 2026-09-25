@@ -23,12 +23,15 @@ gsap.registerPlugin(useGSAP);
  *
  * Con la araña a la vista:
  * - Un toque la asusta: suelta la calabaza y sale huyendo.
- * - Se puede arrastrar con el dedo o el ratón. El hilo es un resorte: cuanto
- *   más se jala, más cuesta (goma), y al soltarla vuelve rebotando. Si carga
- *   la calabaza, la calabaza viene con ella.
+ * - Se puede arrastrar con el dedo o el ratón. El hilo es un resorte muy
+ *   elástico: se estira y adelgaza, y al soltarla vuelve rebotando varias
+ *   veces, con más fuerza cuanto más fuerte se soltó. Si carga la calabaza,
+ *   la calabaza viene con ella.
  * - Si se jala demasiado, el hilo se rompe y la araña salta a la pantalla y
  *   muerde donde estaba el dedo (`mordida.webp`, generada con Codex).
- * Tocar la calabaza quieta la hace reírse (un saltito).
+ * La calabaza también se arrastra y, al soltarla, vuelve volando a su sitio
+ * (si se lanza, sale con esa velocidad). Un toque sin arrastrar la hace
+ * reírse (un saltito).
  *
  * Rendimiento: el cielo es CSS (sin imagen que pixele al estirarse), las
  * imágenes son pequeñas y todo anima transform y opacity con GSAP. Fuera de
@@ -52,13 +55,23 @@ const AFTER = [
   { c: "E", r: 3, y: 0.02 },
 ];
 
-// El hilo como goma: el desplazamiento visible crece cada vez menos
-// (raw / (1 + raw / RUBBER)). Se rompe cuando el dedo se aleja más de
-// SNAP px del punto donde agarró; desde TAUT del camino, el hilo avisa.
-const RUBBER = 380;
-const SNAP_MOBILE = 170;
-const SNAP_DESKTOP = 230;
-const TAUT = 0.6;
+// El hilo es un resorte. Mientras se sostiene, la araña sigue al dedo con
+// una goma suave (raw / (1 + raw / RUBBER)); se rompe cuando el dedo se aleja
+// más de SNAP px (acotado al 45 % del alto de pantalla, nunca menos de
+// SNAP_MIN) del punto donde agarró, y desde TAUT de ese camino avisa.
+const RUBBER = 1100;
+const SNAP_MOBILE = 330;
+const SNAP_DESKTOP = 440;
+const SNAP_MIN = 240;
+const TAUT = 0.7;
+
+// Resortes (k rigidez, c amortiguación). FOLLOW: el cuerpo tras el dedo.
+// SPIDER_RELEASE: la araña suelta, ~1,3 rebotes por segundo que tardan en
+// apagarse (hilo muy elástico). PUMPKIN_RELEASE: la calabaza vuelve volando
+// con un par de rebotes.
+const FOLLOW = { k: 900, c: 42 };
+const SPIDER_RELEASE = { k: 70, c: 2.6 };
+const PUMPKIN_RELEASE = { k: 140, c: 7 };
 
 const Letter = ({ c, r, y }) => (
   <span className="hw-thief__letter" style={{ "--r": `${r}deg`, "--y": `${y}em` }}>
@@ -179,37 +192,108 @@ const SeRobaronLaOHero = () => {
         if (!visible) heist.pause();
       });
 
+      // ── Resortes ─────────────────────────────────────────────────────
+      // Integración propia en el ticker de GSAP (Euler semiimplícito, dos
+      // pasos por cuadro): un tween elástico dura siempre lo mismo y olvida
+      // la velocidad del tirón; el resorte la conserva, así que si se suelta
+      // con fuerza rebota más. Mientras se sostiene, el cuerpo sigue al dedo
+      // con un resorte duro (un poco de gelatina); al soltar manda el blando.
+      const makeSpring = (apply, release, onRest) => {
+        const s = { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, held: false, running: false };
+        const tick = (_time, deltaMs) => {
+          const dt = Math.min(deltaMs, 50) / 2000;
+          const { k, c } = s.held ? FOLLOW : release;
+          for (let i = 0; i < 2; i += 1) {
+            s.vx += (-k * (s.x - s.tx) - c * s.vx) * dt;
+            s.vy += (-k * (s.y - s.ty) - c * s.vy) * dt;
+            s.x += s.vx * dt;
+            s.y += s.vy * dt;
+          }
+          if (!s.held && Math.hypot(s.x, s.y) < 0.4 && Math.hypot(s.vx, s.vy) < 6) {
+            s.x = s.y = s.vx = s.vy = 0;
+            apply(s);
+            stop();
+            onRest();
+            return;
+          }
+          apply(s);
+        };
+        const start = () => {
+          if (s.running) return;
+          s.running = true;
+          gsap.ticker.add(tick);
+        };
+        const stop = () => {
+          if (!s.running) return;
+          s.running = false;
+          gsap.ticker.remove(tick);
+        };
+        const reset = () => {
+          stop();
+          Object.assign(s, { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, held: false });
+        };
+        return { s, start, stop, reset };
+      };
+
+      // Distancia del dedo (desde donde agarró) a la que el hilo se rompe:
+      // un tirón largo, no un roce.
+      const snapAt = () =>
+        Math.min(
+          window.innerWidth >= 768 ? SNAP_DESKTOP : SNAP_MOBILE,
+          Math.max(SNAP_MIN, window.innerHeight * 0.45)
+        );
+
+      const busy = () => spider.s.running || pumpkinSpring.s.running;
+
+      // Se retoma el robo (o la espera del siguiente) cuando nada se mueve.
+      const resumeAll = () => {
+        slot.classList.remove("is-lifted");
+        if (!visible || busy()) return;
+        heist?.resume();
+        next?.resume();
+      };
+
       // ── La araña en la mano ──────────────────────────────────────────
-      // `pos` es cuánto se aparta el cuerpo de donde cuelga; el hilo va de
-      // su punto de anclaje (el techo del hero) hasta el cuerpo.
-      const pos = { x: 0, y: 0 };
-      let grab = null;
+      // El hilo va de su anclaje en el techo del hero (a `anchorH` px sobre
+      // el cuerpo en reposo) hasta el cuerpo: se estira, gira y adelgaza.
       let anchorH = 0;
-      let spring = null;
+      let grab = null;
+      // Mientras la araña no vuelve al reposo: ¿carga la calabaza?, ¿desde
+      // qué altura?
+      let hold = null;
 
-      const snapAt = () => (window.innerWidth >= 768 ? SNAP_DESKTOP : SNAP_MOBILE);
-
-      const sync = () => {
-        const len = Math.hypot(pos.x, anchorH + pos.y);
-        gsap.set(body, { x: pos.x, y: pos.y, rotation: gsap.utils.clamp(-28, 28, pos.x * 0.18) });
-        gsap.set(thread, {
-          x: pos.x,
-          y: pos.y,
-          rotation: (Math.atan2(-pos.x, anchorH + pos.y) * 180) / Math.PI,
-          scaleY: len / anchorH,
+      const applySpider = (s) => {
+        const len = Math.hypot(s.x, anchorH + s.y);
+        const stretch = len / anchorH;
+        gsap.set(body, {
+          x: s.x,
+          y: s.y,
+          rotation: gsap.utils.clamp(-40, 40, s.x * 0.1 + s.vx * 0.025),
         });
-        // Si carga la calabaza, la calabaza viene con ella.
-        const hold = grab ?? spring;
-        if (hold?.holding) gsap.set(pumpkin, { x: pos.x, y: hold.pumpkinY + pos.y });
+        gsap.set(thread, {
+          x: s.x,
+          y: s.y,
+          rotation: (Math.atan2(-s.x, anchorH + s.y) * 180) / Math.PI,
+          scaleY: stretch,
+          scaleX: gsap.utils.clamp(0.4, 1, 1 / Math.sqrt(stretch)),
+        });
+        if (hold?.holding) gsap.set(pumpkin, { x: s.x, y: hold.pumpkinY + s.y });
       };
 
       // El hilo vuelve a su largo normal cuando la araña ya no se aparta.
       const relaxThread = () => {
-        gsap.set(thread, { clearProps: "height,x,y,rotation,scaleY,clipPath" });
+        gsap.set(thread, { clearProps: "height,x,y,rotation,scaleX,scaleY,clipPath" });
         gsap.set(thread, { transformOrigin: "50% 100%" });
         section.classList.remove("is-taut");
         anchorH = 0;
       };
+
+      const spider = makeSpring(applySpider, SPIDER_RELEASE, () => {
+        gsap.set(body, { rotation: 0 });
+        relaxThread();
+        hold = null;
+        resumeAll();
+      });
 
       // Un toque (sin arrastrar): se asusta, suelta la calabaza y huye.
       const flee = contextSafe(() => {
@@ -218,6 +302,7 @@ const SeRobaronLaOHero = () => {
         heist?.kill();
         heist = null;
         phase = "gone";
+        slot.classList.remove("is-lifted");
         gsap.to(rig, { rotation: 0, duration: 0.1 });
         gsap.to(rig, { y: -distance, duration: 0.55, ease: "power3.in" });
         if (carried) dropBack(gsap.getProperty(pumpkin, "y"));
@@ -227,9 +312,11 @@ const SeRobaronLaOHero = () => {
       // El hilo se rompe: la araña salta a la pantalla y muerde donde estaba
       // el dedo.
       const snap = contextSafe((clientX, clientY) => {
-        const carried = grab.holding;
-        const pumpkinY = grab.pumpkinY + pos.y;
+        const carried = !!hold?.holding;
+        const pumpkinY = carried ? hold.pumpkinY + spider.s.y : 0;
         grab = null;
+        hold = null;
+        spider.reset();
         heist?.kill();
         heist = null;
         phase = "biting";
@@ -243,16 +330,15 @@ const SeRobaronLaOHero = () => {
           .timeline({
             onComplete: () => {
               // Vuelve a su sitio de siempre, fuera de la vista.
-              pos.x = 0;
-              pos.y = 0;
               gsap.set(body, { x: 0, y: 0, rotation: 0, scale: 1, autoAlpha: 1 });
               gsap.set(rig, { y: -travel(), rotation: 0 });
               relaxThread();
+              slot.classList.remove("is-lifted");
               if (carried) dropBack(pumpkinY);
               else rest();
             },
           })
-          // El hilo se recoge hacia arriba y la araña se lanza hacia ti.
+          // El hilo roto se recoge hacia arriba y la araña se lanza hacia ti.
           .to(thread, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.22, ease: "power4.out" }, 0)
           .to(body, { scale: 1.7, autoAlpha: 0, duration: 0.14, ease: "power2.in" }, 0)
           .set(bite, { autoAlpha: 1 }, 0)
@@ -286,101 +372,174 @@ const SeRobaronLaOHero = () => {
           .set(bite, { autoAlpha: 0 });
       });
 
-      const onDown = contextSafe((event) => {
+      const onSpiderDown = contextSafe((event) => {
         if (phase !== "coming" && phase !== "carrying") return;
-        if (grab) return;
+        if (grab || pumpkinSpring.s.running) return;
         event.preventDefault();
         body.setPointerCapture?.(event.pointerId);
         heist?.pause();
-        spring?.tween.kill();
-        const holding = phase === "carrying" || !!spring?.holding;
-        const pumpkinY = spring?.pumpkinY ?? gsap.getProperty(pumpkin, "y");
-        spring = null;
-        if (!anchorH) {
-          // Largo del hilo en reposo: del cuerpo al techo del hero.
+        const s = spider.s;
+        if (!hold) {
+          // Agarrada desde el reposo: se mide el hilo y se anota si carga
+          // la calabaza.
           anchorH = Math.max(
             40,
             thread.getBoundingClientRect().bottom - section.getBoundingClientRect().top
           );
           gsap.set(thread, { height: anchorH });
+          hold = {
+            holding: phase === "carrying",
+            pumpkinY: gsap.getProperty(pumpkin, "y"),
+          };
         }
         grab = {
           id: event.pointerId,
           startX: event.clientX,
           startY: event.clientY,
           // Si la agarran mientras rebota, se sigue desde donde va.
-          rawX: pos.x,
-          rawY: pos.y,
+          baseX: s.x,
+          baseY: s.y,
+          fresh: !s.running,
           time: performance.now(),
           moved: false,
-          holding,
-          pumpkinY,
         };
+        s.held = true;
+        s.tx = s.x;
+        s.ty = s.y;
+        slot.classList.add("is-lifted");
         section.classList.add("is-grabbing");
+        spider.start();
       });
 
-      const onMove = contextSafe((event) => {
+      const onSpiderMove = contextSafe((event) => {
         if (!grab || event.pointerId !== grab.id) return;
-        const rawX = grab.rawX + event.clientX - grab.startX;
-        const rawY = grab.rawY + event.clientY - grab.startY;
+        const dx = event.clientX - grab.startX;
+        const dy = event.clientY - grab.startY;
+        if (Math.hypot(dx, dy) > 6) grab.moved = true;
+        const rawX = grab.baseX + dx;
+        const rawY = grab.baseY + dy;
         const raw = Math.hypot(rawX, rawY);
-        if (raw > 6) grab.moved = true;
         const limit = snapAt();
         if (raw > limit) {
+          section.classList.remove("is-grabbing");
           snap(event.clientX, event.clientY);
           return;
         }
+        // Goma suave: casi sigue al dedo, pero cada vez cuesta un poco más.
         const k = 1 / (1 + raw / RUBBER);
-        pos.x = rawX * k;
-        pos.y = rawY * k;
+        spider.s.tx = rawX * k;
+        spider.s.ty = rawY * k;
         section.classList.toggle("is-taut", raw > limit * TAUT);
-        sync();
       });
 
-      const onUp = contextSafe((event) => {
+      const onSpiderUp = contextSafe((event) => {
         if (!grab || event.pointerId !== grab.id) return;
-        const { moved, time, holding, pumpkinY } = grab;
+        const { moved, time, fresh } = grab;
         grab = null;
         section.classList.remove("is-grabbing", "is-taut");
-        if (!moved && performance.now() - time < 350 && pos.x === 0 && pos.y === 0) {
+        spider.s.held = false;
+        spider.s.tx = 0;
+        spider.s.ty = 0;
+        if (!moved && fresh && performance.now() - time < 350) {
+          spider.reset();
+          gsap.set(body, { x: 0, y: 0, rotation: 0 });
           relaxThread();
+          hold = null;
           flee();
-          return;
         }
-        // Suelta: el hilo tira de ella y vuelve rebotando como un resorte.
-        spring = {
-          holding,
-          pumpkinY,
-          tween: gsap.to(pos, {
-            x: 0,
-            y: 0,
-            duration: 1.4,
-            ease: "elastic.out(1.1, 0.28)",
-            onUpdate: sync,
-            onComplete: () => {
-              spring = null;
-              gsap.set(body, { rotation: 0 });
-              relaxThread();
-              heist?.resume();
-            },
-          }),
-        };
+        // Si no, el resorte blando la trae de vuelta rebotando.
       });
 
-      body.addEventListener("pointerdown", onDown);
-      body.addEventListener("pointermove", onMove);
-      body.addEventListener("pointerup", onUp);
-      body.addEventListener("pointercancel", onUp);
+      body.addEventListener("pointerdown", onSpiderDown);
+      body.addEventListener("pointermove", onSpiderMove);
+      body.addEventListener("pointerup", onSpiderUp);
+      body.addEventListener("pointercancel", onSpiderUp);
 
-      // Tocar la calabaza quieta: se ríe (un saltito con estirón).
-      const onPumpkin = contextSafe(() => {
-        if (phase !== "idle" || gsap.isTweening(pumpkin)) return;
+      // ── La calabaza en la mano ───────────────────────────────────────
+      // Se arrastra libre y, al soltarla, vuelve volando a su sitio: si se
+      // lanza, sale con esa velocidad y el resorte la regresa.
+      let pumpkinGrab = null;
+
+      const pumpkinSpring = makeSpring(
+        (s) =>
+          gsap.set(pumpkin, {
+            x: s.x,
+            y: s.y,
+            rotation: gsap.utils.clamp(-50, 50, s.x * 0.04 + s.vx * 0.04),
+          }),
+        PUMPKIN_RELEASE,
+        () => {
+          gsap.set(pumpkin, { rotation: 0 });
+          resumeAll();
+        }
+      );
+
+      // Un toque sin arrastrar: se ríe (un saltito con estirón).
+      const laugh = contextSafe(() => {
         gsap
           .timeline()
           .to(pumpkin, { y: "-=18", scaleY: 1.08, scaleX: 0.94, duration: 0.18, ease: "power2.out" })
           .to(pumpkin, { y: 0, scaleY: 1, scaleX: 1, duration: 0.5, ease: "bounce.out" });
       });
-      pumpkin.addEventListener("pointerdown", onPumpkin);
+
+      const onPumpkinDown = contextSafe((event) => {
+        // Solo mientras está en su sitio (o la araña aún no llega).
+        if (phase !== "idle" && phase !== "coming") return;
+        if (pumpkinGrab || grab || spider.s.running) return;
+        if (!pumpkinSpring.s.running && gsap.isTweening(pumpkin)) return;
+        event.preventDefault();
+        pumpkin.setPointerCapture?.(event.pointerId);
+        heist?.pause();
+        next?.pause();
+        const s = pumpkinSpring.s;
+        pumpkinGrab = {
+          id: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          baseX: s.x,
+          baseY: s.y,
+          fresh: !s.running,
+          time: performance.now(),
+          moved: false,
+        };
+        s.held = true;
+        s.tx = s.x;
+        s.ty = s.y;
+        slot.classList.add("is-lifted");
+        section.classList.add("is-grabbing");
+        pumpkinSpring.start();
+      });
+
+      const onPumpkinMove = (event) => {
+        if (!pumpkinGrab || event.pointerId !== pumpkinGrab.id) return;
+        const dx = event.clientX - pumpkinGrab.startX;
+        const dy = event.clientY - pumpkinGrab.startY;
+        if (Math.hypot(dx, dy) > 6) pumpkinGrab.moved = true;
+        pumpkinSpring.s.tx = pumpkinGrab.baseX + dx;
+        pumpkinSpring.s.ty = pumpkinGrab.baseY + dy;
+      };
+
+      const onPumpkinUp = contextSafe((event) => {
+        if (!pumpkinGrab || event.pointerId !== pumpkinGrab.id) return;
+        const { moved, time, fresh } = pumpkinGrab;
+        pumpkinGrab = null;
+        section.classList.remove("is-grabbing");
+        const s = pumpkinSpring.s;
+        s.held = false;
+        s.tx = 0;
+        s.ty = 0;
+        if (!moved && fresh && performance.now() - time < 350) {
+          pumpkinSpring.reset();
+          gsap.set(pumpkin, { x: 0, y: 0, rotation: 0 });
+          resumeAll();
+          laugh();
+        }
+      });
+
+      pumpkin.addEventListener("pointerdown", onPumpkinDown);
+      pumpkin.addEventListener("pointermove", onPumpkinMove);
+      pumpkin.addEventListener("pointerup", onPumpkinUp);
+      pumpkin.addEventListener("pointercancel", onPumpkinUp);
 
       // ── Fuera de pantalla no trabaja nada.
       const setVisible = (value) => {
@@ -388,8 +547,10 @@ const SeRobaronLaOHero = () => {
         visible = value;
         section.classList.toggle("is-asleep", !value);
         if (value) {
-          if (!grab && !spring) heist?.resume();
-          next?.resume();
+          if (!busy()) {
+            heist?.resume();
+            next?.resume();
+          }
         } else {
           heist?.pause();
           next?.pause();
@@ -405,11 +566,16 @@ const SeRobaronLaOHero = () => {
       return () => {
         io.disconnect();
         next?.kill();
-        body.removeEventListener("pointerdown", onDown);
-        body.removeEventListener("pointermove", onMove);
-        body.removeEventListener("pointerup", onUp);
-        body.removeEventListener("pointercancel", onUp);
-        pumpkin.removeEventListener("pointerdown", onPumpkin);
+        spider.stop();
+        pumpkinSpring.stop();
+        body.removeEventListener("pointerdown", onSpiderDown);
+        body.removeEventListener("pointermove", onSpiderMove);
+        body.removeEventListener("pointerup", onSpiderUp);
+        body.removeEventListener("pointercancel", onSpiderUp);
+        pumpkin.removeEventListener("pointerdown", onPumpkinDown);
+        pumpkin.removeEventListener("pointermove", onPumpkinMove);
+        pumpkin.removeEventListener("pointerup", onPumpkinUp);
+        pumpkin.removeEventListener("pointercancel", onPumpkinUp);
       };
     },
     { scope: rootRef }
@@ -444,7 +610,7 @@ const SeRobaronLaOHero = () => {
                   <span className="hw-thief__slot">
                     <span className="hw-thief__hole" />
                     <span className="hw-thief__pumpkin">
-                      <img src={`${IMG}/robo-calabaza.webp`} alt="" width="320" height="307" decoding="async" />
+                      <img src={`${IMG}/robo-calabaza.webp`} alt="" width="320" height="307" decoding="async" draggable="false" />
                     </span>
                     <span className="hw-thief__rig">
                       <span className="hw-thief__thread" />
