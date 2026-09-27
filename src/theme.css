@@ -157,6 +157,11 @@
   /* Mordida de la araña cuando se rompe el hilo */
   --hw-bite: #ff2d3f;
   --hw-font-thief: "Jolly Lodger", "Creepster", fantasy;
+  /* "La mirada": carmesí de la máscara (también tiñe sus tarjetas), noche
+     rojiza de la escena y la letra de pintura que gotea */
+  --hw-crimson: #e8424f;
+  --hw-blood-night: #14050b;
+  --hw-font-paint: "Rubik Wet Paint", "Creepster", fantasy;
   font-family: var(--font-body);
 }
 

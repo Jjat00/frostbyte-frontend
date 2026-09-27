@@ -1,6 +1,7 @@
 import React from "react";
 import ApagaLaLuzHero from "@/components/halloween/ApagaLaLuzHero";
 import HalloweenDecor from "@/components/halloween/HalloweenDecor";
+import LaMiradaHero from "@/components/halloween/LaMiradaHero";
 import SeRobaronLaOHero from "@/components/halloween/SeRobaronLaOHero";
 import "./halloween.css";
 
@@ -13,9 +14,9 @@ import "./halloween.css";
  * página, puede traer otro. No se recuerda nada: solo cambia el hero, el
  * resto de la carta es igual, y así se descubren todos.
  *
- * Para probar una variante concreta: `/?hero=apaga-la-luz` o
- * `/?hero=se-robaron-la-o` (también en `/mesa/...`). Añadir una variante =
- * importarla y sumarla a VARIANTS.
+ * Para probar una variante concreta: `/?hero=apaga-la-luz`,
+ * `/?hero=se-robaron-la-o` o `/?hero=la-mirada` (también en `/mesa/...`).
+ * Añadir una variante = importarla y sumarla a VARIANTS.
  *
  * Monta también los adornos de la carta (`HalloweenDecor`), que son los
  * mismos para cualquier variante.
@@ -24,6 +25,7 @@ import "./halloween.css";
 const VARIANTS = {
   "apaga-la-luz": ApagaLaLuzHero,
   "se-robaron-la-o": SeRobaronLaOHero,
+  "la-mirada": LaMiradaHero,
 };
 
 function pickVariant() {

@@ -1,0 +1,254 @@
+/* Halloween · "La mirada". Todas las reglas cuelgan de .hw-gaze, que solo
+   existe dentro de LaMiradaHero: con la campaña apagada son inertes.
+   Móvil primero; la composición de escritorio entra en md (48rem). */
+
+/* Rubik Wet Paint servida desde el propio dominio, recortada a letras,
+   tildes y signos (30 KB). Solo se descarga cuando sale esta variante. */
+@font-face {
+  font-family: "Rubik Wet Paint";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/rubik-wet-paint-latin.woff2") format("woff2");
+}
+
+.hw-gaze {
+  /* Las tarjetas de esta variante van en carmesí: HeroParts pinta con
+     primary, así que basta con redefinirlo aquí. */
+  --color-primary: var(--hw-crimson);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100svh;
+  padding: 5rem 0 2.5rem;
+  background: var(--hw-blood-night);
+  color: var(--color-light);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Escena ───────────────────────────────────────────────────────── */
+.hw-gaze__scene,
+.hw-gaze__scene > * {
+  position: absolute;
+  pointer-events: none;
+}
+.hw-gaze__scene { inset: 0; z-index: 0; }
+
+/* El mismo bosque de "Apaga la luz" (recorte vertical nativo en móvil),
+   apagado y enrojecido. */
+.hw-gaze__bg {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40rem;
+  background: url("/images/halloween/bosque-movil.webp") center top / cover no-repeat;
+  background-image: image-set(
+    url("/images/halloween/bosque-movil.avif") type("image/avif"),
+    url("/images/halloween/bosque-movil.webp") type("image/webp")
+  );
+  filter: brightness(0.42) saturate(1.15);
+  -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent);
+  mask-image: linear-gradient(180deg, #000 62%, transparent);
+}
+
+/* La máscara en tres capas: __watch la coloca (cambia de sitio cuando no
+   la miras, según .is-s0 a .is-s3), __head la hace mirar (JS escribe su
+   transform) y la imagen da los tirones con translate/rotate/scale, que no
+   pisan el transform. */
+.hw-gaze__watch { z-index: 1; width: 62%; right: -14%; top: 3.2rem; }
+.hw-gaze__head { transform-origin: 50% 62%; will-change: transform; }
+.hw-gaze__mask {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  transform-origin: 50% 70%;
+  -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 92%);
+  mask-image: linear-gradient(180deg, #000 58%, transparent 92%);
+  animation: hw-gaze-breathe 6s ease-in-out infinite;
+}
+.hw-gaze.is-s1 .hw-gaze__watch { width: 56%; right: auto; left: -12%; top: 4.25rem; }
+.hw-gaze.is-s2 .hw-gaze__watch { width: 82%; right: -10%; top: 4.5rem; }
+.hw-gaze.is-s3 .hw-gaze__watch { width: 122%; right: auto; left: -11%; top: 0.5rem; }
+
+.hw-gaze__shade {
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    transparent 30%,
+    color-mix(in srgb, var(--hw-blood-night) 80%, transparent) 50%,
+    var(--hw-blood-night) 64%
+  );
+}
+.hw-gaze.is-s3 .hw-gaze__shade {
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    color-mix(in srgb, var(--hw-blood-night) 80%, transparent) 56%,
+    var(--hw-blood-night) 68%
+  );
+}
+
+/* Destello del susto, capa de efectos (gotas, susurros) y el negro de
+   "irse y volver": encima del contenido y sin tragarse los toques. */
+.hw-gaze__flash,
+.hw-gaze__fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hw-gaze__flash {
+  z-index: 6;
+  opacity: 0;
+  background: radial-gradient(80% 60% at 50% 35%, rgba(255, 40, 60, 0.55), rgba(120, 0, 20, 0.75));
+}
+.hw-gaze__fx { z-index: 7; overflow: hidden; }
+
+.hw-gaze__hint {
+  position: absolute;
+  z-index: 5;
+  top: 5.25rem;
+  left: 1.25rem;
+  margin: 0;
+  font-size: 0.56rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-light) 50%, transparent);
+  transition: opacity 0.6s;
+}
+.hw-gaze.is-touched .hw-gaze__hint { opacity: 0; }
+
+/* ── Contenido ────────────────────────────────────────────────────── */
+.hw-gaze__content { padding-top: clamp(19.5rem, 48svh, 26rem); }
+.hw-gaze__head-row { display: flex; flex-direction: column; gap: 1rem; }
+.hw-gaze__title { display: flex; flex-direction: column; gap: 0.55rem; }
+
+.hw-gaze__kicker,
+.hw-gaze__loc {
+  margin: 0;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+.hw-gaze__kicker { min-height: 1em; color: color-mix(in srgb, var(--hw-crimson) 55%, var(--color-light)); }
+.hw-gaze__loc { font-size: 0.53rem; letter-spacing: 0.42em; color: color-mix(in srgb, var(--color-light) 45%, transparent); }
+
+.hw-gaze__brand {
+  display: flex;
+  margin: 0;
+  font-family: var(--hw-font-paint);
+  font-weight: 400;
+  font-size: clamp(2.9rem, 14.5vw, 4.1rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--hw-crimson);
+  text-shadow: 0 3px 0 rgba(60, 0, 12, 0.7), 0 0 26px color-mix(in srgb, var(--hw-crimson) 28%, transparent);
+}
+.hw-gaze__letter { display: inline-block; cursor: pointer; touch-action: manipulation; }
+
+.hw-gaze__side { display: flex; flex-direction: column; gap: 1rem; }
+.hw-gaze__tag {
+  margin: 0;
+  max-width: 19rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-light) 70%, transparent);
+}
+
+/* ── Gotas y susurros (se crean en JS dentro de __fx) ─────────────── */
+.hw-gaze__run,
+.hw-gaze__drop,
+.hw-gaze__splat,
+.hw-gaze__speck {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--hw-crimson);
+}
+.hw-gaze__run { width: 6px; height: 18px; margin-left: -3px; border-radius: 3px 3px 50% 50%; transform-origin: 50% 0; }
+.hw-gaze__drop {
+  width: 8px;
+  height: 11px;
+  margin: -2px 0 0 -4px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  box-shadow: inset -1px -2px 0 rgba(90, 0, 15, 0.45);
+}
+.hw-gaze__splat { width: 26px; height: 7px; margin: -4px 0 0 -13px; border-radius: 50%; }
+.hw-gaze__speck { width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; }
+.hw-gaze__whisper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--hw-font-paint);
+  font-size: 1.35rem;
+  white-space: nowrap;
+  color: #ffd9dc;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--hw-crimson) 80%, transparent), 0 2px 0 rgba(60, 0, 12, 0.8);
+  transform: translate(-50%, -100%);
+}
+
+/* ── Escritorio ───────────────────────────────────────────────────── */
+@media (min-width: 48rem) {
+  .hw-gaze { padding: 6rem 0 3.5rem; }
+  .hw-gaze__bg {
+    height: 85%;
+    background-image: url("/images/halloween/bosque.webp");
+    background-image: image-set(
+      url("/images/halloween/bosque.avif") type("image/avif"),
+      url("/images/halloween/bosque.webp") type("image/webp")
+    );
+    background-position: center 35%;
+  }
+  .hw-gaze__watch { width: 28rem; right: 6%; top: 1.5rem; }
+  .hw-gaze.is-s1 .hw-gaze__watch { width: 28rem; left: 3%; top: 2rem; }
+  .hw-gaze.is-s2 .hw-gaze__watch { width: 38rem; right: 18%; top: 1rem; }
+  .hw-gaze.is-s3 .hw-gaze__watch { width: 62rem; left: 50%; margin-left: -31rem; top: -9rem; }
+  .hw-gaze__shade {
+    background: linear-gradient(
+      180deg,
+      transparent 42%,
+      color-mix(in srgb, var(--hw-blood-night) 80%, transparent) 62%,
+      var(--hw-blood-night) 78%
+    );
+  }
+  .hw-gaze.is-s3 .hw-gaze__shade {
+    background: linear-gradient(
+      180deg,
+      transparent 48%,
+      color-mix(in srgb, var(--hw-blood-night) 82%, transparent) 66%,
+      var(--hw-blood-night) 80%
+    );
+  }
+  .hw-gaze__hint { top: 7rem; left: 2rem; font-size: 0.62rem; }
+
+  .hw-gaze__content { padding-top: clamp(20rem, 42vh, 27rem); }
+  .hw-gaze__head-row {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3.5rem;
+  }
+  .hw-gaze__title { gap: 0.8rem; }
+  .hw-gaze__kicker { font-size: 0.7rem; }
+  .hw-gaze__loc { font-size: 0.6rem; }
+  .hw-gaze__brand { font-size: clamp(5rem, 10vw, 8.5rem); }
+  .hw-gaze__side { width: 21rem; flex-shrink: 0; }
+  .hw-gaze__tag { max-width: none; font-size: 0.84rem; }
+}
+
+/* ── Movimiento ───────────────────────────────────────────────────── */
+@keyframes hw-gaze-breathe { 50% { scale: 1.02; } }
+
+/* Fuera de pantalla no se anima nada. */
+.hw-gaze.is-asleep * { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-gaze__mask { animation: none; }
+}
