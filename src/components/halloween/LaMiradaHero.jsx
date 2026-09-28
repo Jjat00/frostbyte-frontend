@@ -153,10 +153,21 @@ const LaMiradaHero = () => {
       return { x: b.x + b.w * ex, y: b.y + b.h * m.eye[1] };
     };
 
+    // Ancho de la máscara, medido fuera del bucle (leerlo en cada cuadro
+    // forzaría un layout por cuadro).
+    let headWidth = head.offsetWidth;
+
     const write = () => {
       // |f| nunca llega a 0: el giro pasa "de canto" sin desaparecer.
       const f = Math.abs(cur.f) < 0.06 ? (cur.f < 0 ? -0.06 : 0.06) : cur.f;
-      const t = `translate(${cur.x.toFixed(1)}px,${cur.y.toFixed(1)}px) scaleX(${f.toFixed(3)}) rotate(${cur.r.toFixed(2)}deg)`;
+      // Voltear la imagen sobre su centro llevaría la cara (que está en la
+      // mitad izquierda del perfil) al otro lado, y contra el borde derecho
+      // del celular quedaba cortada. Se corrige el desplazamiento para que
+      // la cara gire en su sitio y lo que se mueva sea la capucha.
+      const [x0, , x1] = MASKS[mask].box;
+      const faceShift = ((1 - f) / 2) * (1 - (x0 + x1)) * headWidth;
+      const x = cur.x - faceShift;
+      const t = `translate(${x.toFixed(1)}px,${cur.y.toFixed(1)}px) scaleX(${f.toFixed(3)}) rotate(${cur.r.toFixed(2)}deg)`;
       if (t !== lastTransform) {
         head.style.transform = t;
         lastTransform = t;
@@ -212,6 +223,7 @@ const LaMiradaHero = () => {
       root.classList.remove("is-s0", "is-s1", "is-s2", "is-s3");
       root.classList.add(`is-s${stage}`);
       kicker.textContent = KICKERS[stage];
+      headWidth = head.offsetWidth;
       // En el sitio nuevo ya te está mirando: sin giro visible.
       cur = restPose();
       tgt = { ...cur };
@@ -525,6 +537,10 @@ const LaMiradaHero = () => {
     };
     const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting));
     io.observe(root);
+    const ro = new ResizeObserver(() => {
+      headWidth = head.offsetWidth;
+    });
+    ro.observe(head);
     const onVisibility = () => {
       if (document.hidden) markAway();
       else if (visible) comeBack();
@@ -535,6 +551,7 @@ const LaMiradaHero = () => {
 
     return () => {
       io.disconnect();
+      ro.disconnect();
       cancelAnimationFrame(frame);
       timers.forEach(clearTimeout);
       document.removeEventListener("visibilitychange", onVisibility);
