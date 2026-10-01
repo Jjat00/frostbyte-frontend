@@ -470,8 +470,13 @@ const AdminSearch = ({ isConnected, floor }) => {
       queryClient.invalidateQueries({ queryKey: ['now-playing'] });
       toast({ title: "Reproduciendo", duration: 2000 });
     },
-    onError: () => {
-      toast({ title: "Error al reproducir", variant: "destructive", duration: 3000 });
+    onError: (err) => {
+      toast({
+        title: "Error al reproducir",
+        description: err.response?.data?.error,
+        variant: "destructive",
+        duration: 5000,
+      });
     },
   });
 
@@ -768,8 +773,13 @@ const SongRequestsPage = () => {
       queryClient.invalidateQueries({ queryKey: ['now-playing'] });
       toast({ title: "Reproduciendo", duration: 2000 });
     },
-    onError: () => {
-      toast({ title: "Error al reproducir", variant: "destructive", duration: 3000 });
+    onError: (err) => {
+      toast({
+        title: "Error al reproducir",
+        description: err.response?.data?.error,
+        variant: "destructive",
+        duration: 5000,
+      });
     },
   });
 
