@@ -26,6 +26,11 @@ export const contestsService = {
     return response.data;
   },
 
+  /** Cuenta la visita a /concurso; el backend la cuenta una vez por visitorId. */
+  async registerVisit(visitorId) {
+    await customerClient.post("/contests/current/visit/", { visitor_id: visitorId });
+  },
+
   /** Cancelar mi inscripción (solo si aún no está pagada). */
   async cancelMyEntry() {
     await customerClient.post("/contests/current/entry/cancel/");

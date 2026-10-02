@@ -138,7 +138,8 @@ const ContestAdminPage = () => {
             )}
 
             {/* Conteos */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+              <Stat label="Visitas únicas" value={data.unique_visitors ?? 0} />
               <Stat label="Confirmadas" value={counts.confirmed ?? 0} />
               <Stat label="Pendientes" value={counts.pending ?? 0} />
               <Stat

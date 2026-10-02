@@ -14,6 +14,7 @@ import {
   useMyContestEntry,
   useRegisterContest,
   useCancelContestEntry,
+  useTrackContestVisit,
 } from "@/hooks/useContest";
 
 /**
@@ -52,6 +53,7 @@ const ContestPage = () => {
   const { data: entry, isLoading: entryLoading } = useMyContestEntry(
     isAuthenticated && !!contest
   );
+  useTrackContestVisit(contest, isAuthenticated);
   const register = useRegisterContest();
   const cancel = useCancelContestEntry();
 
