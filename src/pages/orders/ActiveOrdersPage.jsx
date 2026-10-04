@@ -121,11 +121,25 @@ const getRelativeAge = (dateString) => {
   }
   if (diffDays === 1) return "ayer";
   if (diffDays === 2) return "anteayer";
-  if (diffDays < 30) return `hace ${diffDays} días`;
-  const months = Math.floor(diffDays / 30);
-  if (months < 12) return `hace ${months} ${months === 1 ? "mes" : "meses"}`;
-  const years = Math.floor(diffDays / 365);
-  return `hace ${years} ${years === 1 ? "año" : "años"}`;
+
+  // Meses de calendario completos y los días que sobran: "hace 1 mes y 2 días"
+  let months =
+    (now.getFullYear() - created.getFullYear()) * 12 +
+    (now.getMonth() - created.getMonth());
+  if (now.getDate() < created.getDate()) months -= 1;
+  if (months < 1) return `hace ${diffDays} días`;
+
+  const anchor = new Date(created.getFullYear(), created.getMonth() + months, created.getDate());
+  const days = Math.round((startOfDay(now) - startOfDay(anchor)) / 86400000);
+  const years = Math.floor(months / 12);
+  const restMonths = months % 12;
+
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const parts = [];
+  if (years) parts.push(plural(years, "año", "años"));
+  if (restMonths) parts.push(plural(restMonths, "mes", "meses"));
+  if (days > 0) parts.push(plural(days, "día", "días"));
+  return `hace ${parts.slice(0, -1).join(", ")}${parts.length > 1 ? " y " : ""}${parts.at(-1)}`;
 };
 
 const OrderCard = ({ order, onUpdateStatus, relativeAge = false }) => {
