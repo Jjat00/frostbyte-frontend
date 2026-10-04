@@ -103,7 +103,32 @@ const BusinessBreakdown = ({ breakdown }) => {
   );
 };
 
-const OrderCard = ({ order, onUpdateStatus }) => {
+// Antigüedad legible para deudas: "hace 2 horas", "ayer", "anteayer", "hace 20 días"
+const getRelativeAge = (dateString) => {
+  const now = new Date();
+  const created = new Date(dateString);
+  const diffMinutes = Math.floor((now - created) / 60000);
+
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diffDays = Math.round((startOfDay(now) - startOfDay(created)) / 86400000);
+
+  // Dentro del mismo día (o de madrugada tras una noche) se cuenta en horas
+  if (diffDays === 0 || diffMinutes < 12 * 60) {
+    if (diffMinutes < 1) return "Ahora";
+    if (diffMinutes < 60) return `hace ${diffMinutes} min`;
+    const hours = Math.floor(diffMinutes / 60);
+    return `hace ${hours} ${hours === 1 ? "hora" : "horas"}`;
+  }
+  if (diffDays === 1) return "ayer";
+  if (diffDays === 2) return "anteayer";
+  if (diffDays < 30) return `hace ${diffDays} días`;
+  const months = Math.floor(diffDays / 30);
+  if (months < 12) return `hace ${months} ${months === 1 ? "mes" : "meses"}`;
+  const years = Math.floor(diffDays / 365);
+  return `hace ${years} ${years === 1 ? "año" : "años"}`;
+};
+
+const OrderCard = ({ order, onUpdateStatus, relativeAge = false }) => {
   const status = statusConfig[order.status] || statusConfig.pending;
   const StatusIcon = status.icon;
   const navigate = useNavigate();
@@ -141,10 +166,16 @@ const OrderCard = ({ order, onUpdateStatus }) => {
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString("es-CO", {
+    const time = date.toLocaleTimeString("es-CO", {
       hour: "2-digit",
       minute: "2-digit",
     });
+    // En deudas viejas la hora sola no dice nada: se antepone la fecha
+    if (relativeAge && date.toDateString() !== new Date().toDateString()) {
+      const day = date.toLocaleDateString("es-CO", { day: "numeric", month: "short" });
+      return `${day}, ${time}`;
+    }
+    return time;
   };
 
   const getTimeSince = (dateString) => {
@@ -202,7 +233,9 @@ const OrderCard = ({ order, onUpdateStatus }) => {
                   : ""
               }`}
             >
-              {getTimeSince(order.created_at)}
+              {relativeAge
+                ? getRelativeAge(order.created_at)
+                : getTimeSince(order.created_at)}
             </span>
           </div>
         </div>
@@ -778,6 +811,7 @@ const ActiveOrdersPage = () => {
                 key={order.id}
                 order={order}
                 onUpdateStatus={handleUpdateStatus}
+                relativeAge={filter === "pending_payments"}
               />
             ))}
           </AnimatePresence>
