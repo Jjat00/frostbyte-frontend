@@ -501,6 +501,11 @@ const OrderDetailPage = () => {
                   {order.customer_phone}
                 </p>
               )}
+              {order.table_number == null && order.table_floor != null && (
+                <p className="mt-3 text-sm text-gray">
+                  En el local · <span className="text-light font-semibold">Piso {order.table_floor}</span>
+                </p>
+              )}
               {order.table_number != null && order.table_number !== undefined && (
                 <div className="mt-3">
                   <p className="text-xs text-gray mb-2">{order.table_number === 0 ? 'Barra' : 'Mesa'}:</p>

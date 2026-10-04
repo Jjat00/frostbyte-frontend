@@ -243,6 +243,11 @@ const OrderCard = ({ order, onUpdateStatus }) => {
             )}
           </div>
         )}
+        {order.table_number == null && order.table_floor != null && (
+          <p className="text-xs text-gray mt-2">
+            En el local · <span className="text-light font-semibold">Piso {order.table_floor}</span>
+          </p>
+        )}
         <DeliveryInfo order={order} />
         <OrderNotes notes={order.customer_notes} />
         <BusinessBreakdown breakdown={order.business_breakdown} />
