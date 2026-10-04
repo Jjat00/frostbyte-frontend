@@ -162,6 +162,13 @@
   --hw-crimson: #e8424f;
   --hw-blood-night: #14050b;
   --hw-font-paint: "Rubik Wet Paint", "Creepster", fantasy;
+  /* "El espejo": escarcha de las tarjetas y el destello, noche fría de la
+     escena, gris azulado del vaho (lo lee el canvas) y la letra escrita a
+     dedo en el vidrio */
+  --hw-frost: #bfe4f2;
+  --hw-frost-night: #070a0d;
+  --hw-fog: #8fa2ad;
+  --hw-font-salt: "Rock Salt", cursive;
   font-family: var(--font-body);
 }
 

@@ -1,0 +1,215 @@
+/* Halloween · "El espejo". Todas las reglas cuelgan de .hw-mirror, que solo
+   existe dentro de ElEspejoHero: con la campaña apagada son inertes.
+   Móvil primero; la composición de escritorio entra en md (48rem). */
+
+/* Rock Salt servida desde el propio dominio, recortada a letras, tildes y
+   signos (26 KB). Solo se descarga cuando sale esta variante. */
+@font-face {
+  font-family: "Rock Salt";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/rock-salt-latin.woff2") format("woff2");
+}
+
+.hw-mirror {
+  /* Las tarjetas de esta variante van en escarcha: HeroParts pinta con
+     primary, así que basta con redefinirlo aquí. */
+  --color-primary: var(--hw-frost);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100svh;
+  padding: 5rem 0 2.5rem;
+  background: var(--hw-frost-night);
+  color: var(--color-light);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Escena ───────────────────────────────────────────────────────── */
+.hw-mirror__scene,
+.hw-mirror__scene > * {
+  position: absolute;
+  pointer-events: none;
+}
+.hw-mirror__scene { inset: 0; z-index: 0; }
+
+/* El cementerio con niebla de la sección de música, apagado y frío. */
+.hw-mirror__bg {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40rem;
+  background: url("/images/halloween/cementerio-movil.webp") 60% center / cover no-repeat;
+  filter: brightness(0.32) saturate(0.6);
+  -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+  mask-image: linear-gradient(180deg, #000 60%, transparent);
+}
+
+/* Un fantasma apenas visible, del lado contrario al enmascarado. */
+.hw-mirror__ghost {
+  z-index: 1;
+  width: 42%;
+  height: auto;
+  max-width: none;
+  left: -6%;
+  top: 9rem;
+  opacity: 0.22;
+  animation: hw-mirror-drift 9s ease-in-out infinite alternate;
+}
+
+/* El enmascarado detrás del vidrio. Cambia de sitio (.is-s0 a .is-s2) cada
+   vez que te descubre, cada vez más cerca. */
+.hw-mirror__figure { z-index: 1; width: 70%; right: -10%; top: 3.5rem; transform-origin: 50% 30%; }
+.hw-mirror__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 92%);
+  mask-image: linear-gradient(180deg, #000 55%, transparent 92%);
+}
+.hw-mirror.is-s1 .hw-mirror__figure { width: 62%; right: auto; left: -8%; top: 5rem; }
+.hw-mirror.is-s1 .hw-mirror__figure img { transform: scaleX(-1); }
+.hw-mirror.is-s2 .hw-mirror__figure { width: 96%; right: auto; left: 2%; top: 0.5rem; }
+
+/* El vaho: se desvanece arriba para no tapar el menú y abajo para no
+   pelear con el texto. */
+.hw-mirror__fog {
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: clamp(24rem, 64svh, 34rem);
+  opacity: 0.93;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 4.5rem, #000 74%, transparent);
+  mask-image: linear-gradient(180deg, transparent 0, #000 4.5rem, #000 74%, transparent);
+}
+
+.hw-mirror__shade {
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    180deg,
+    transparent 34%,
+    color-mix(in srgb, var(--hw-frost-night) 85%, transparent) 52%,
+    var(--hw-frost-night) 66%
+  );
+}
+
+/* Destello frío del susto, por encima del contenido y sin tragarse toques. */
+.hw-mirror__flash {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    80% 60% at 50% 30%,
+    color-mix(in srgb, var(--hw-frost) 70%, transparent),
+    color-mix(in srgb, var(--hw-frost-night) 80%, transparent)
+  );
+}
+
+.hw-mirror__hint {
+  position: absolute;
+  z-index: 5;
+  top: 5.25rem;
+  right: 1.25rem;
+  margin: 0;
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--hw-frost-night) 70%, transparent);
+  transition: opacity 0.6s;
+}
+.hw-mirror.is-touched .hw-mirror__hint { opacity: 0; }
+
+/* ── Contenido ────────────────────────────────────────────────────── */
+.hw-mirror__content { padding-top: clamp(19.5rem, 48svh, 26rem); }
+.hw-mirror__head-row { display: flex; flex-direction: column; gap: 1rem; }
+.hw-mirror__title { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.hw-mirror__line {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-height: 2.3em;
+  font-size: 1.65rem;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-light);
+  text-wrap: balance;
+}
+.hw-mirror__line-b { color: color-mix(in srgb, var(--hw-frost) 75%, var(--color-light)); }
+
+.hw-mirror__loc {
+  margin: 0;
+  font-size: 0.53rem;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  color: color-mix(in srgb, var(--color-light) 45%, transparent);
+}
+
+.hw-mirror__side { display: flex; flex-direction: column; gap: 1rem; }
+.hw-mirror__tag {
+  margin: 0;
+  max-width: 19rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-light) 70%, transparent);
+}
+
+/* ── Escritorio ───────────────────────────────────────────────────── */
+@media (min-width: 48rem) {
+  .hw-mirror { padding: 6rem 0 3.5rem; }
+  .hw-mirror__bg {
+    height: 85%;
+    background-image: url("/images/halloween/cementerio.webp");
+    background-position: center 40%;
+  }
+  .hw-mirror__ghost { width: 18rem; left: auto; right: 4%; top: 3rem; }
+  .hw-mirror__figure { width: 26rem; right: 12%; top: 2rem; }
+  .hw-mirror.is-s1 .hw-mirror__figure { width: 24rem; left: 4%; top: 3rem; }
+  .hw-mirror.is-s2 .hw-mirror__figure { width: 40rem; left: 50%; margin-left: -20rem; top: -3rem; }
+  .hw-mirror__fog { height: clamp(28rem, 72vh, 44rem); }
+  .hw-mirror__shade {
+    background: linear-gradient(
+      180deg,
+      transparent 42%,
+      color-mix(in srgb, var(--hw-frost-night) 85%, transparent) 62%,
+      var(--hw-frost-night) 78%
+    );
+  }
+  .hw-mirror__hint { top: 7rem; right: 2rem; font-size: 0.62rem; }
+
+  .hw-mirror__content { padding-top: clamp(20rem, 46vh, 28rem); }
+  .hw-mirror__head-row {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3.5rem;
+  }
+  .hw-mirror__line { font-size: 2.6rem; }
+  .hw-mirror__loc { font-size: 0.6rem; }
+  .hw-mirror__side { width: 21rem; flex-shrink: 0; }
+  .hw-mirror__tag { max-width: none; font-size: 0.84rem; }
+}
+
+/* ── Movimiento ───────────────────────────────────────────────────── */
+@keyframes hw-mirror-drift {
+  from { translate: 0 0; }
+  to { translate: 1.25rem -0.9rem; }
+}
+
+/* Fuera de pantalla no se anima nada. */
+.hw-mirror.is-asleep * { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hw-mirror__ghost { animation: none; }
+}
