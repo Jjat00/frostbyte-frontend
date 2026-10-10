@@ -109,6 +109,7 @@ const DeliveryPage = lazyLoad(() => import("./pages/customer/DeliveryPage"));
 
 // Agente de WhatsApp (Frosty): configuración y stickers (solo admin)
 const WhatsAppAgentPage = lazyLoad(() => import("./pages/whatsapp/AgentSettingsPage"));
+const WhatsAppChatsPage = lazyLoad(() => import("./pages/whatsapp/ConversationsPage"));
 
 // Reservas (mesa, grupo, Sala VIP)
 const ReservationsPage = lazyLoad(() => import("./pages/customer/ReservationsPage"));
@@ -242,6 +243,17 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  // Chats de WhatsApp con Frosty y el equipo (admin y empleados, solo lectura)
+  ...["/chats-whatsapp", "/chats-whatsapp/:contactId"].map((path) => ({
+    path,
+    element: (
+      <ProtectedRoute>
+        <Lazy>
+          <WhatsAppChatsPage />
+        </Lazy>
+      </ProtectedRoute>
+    ),
+  })),
   // Gestión de reservas (staff)
   {
     path: "/reservas-admin",

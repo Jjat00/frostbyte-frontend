@@ -39,6 +39,8 @@ import {
   Smile,
   Drama,
   Instagram,
+  MessageCircle,
+  ShoppingBag,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useSongRequestsNotification } from '@/hooks';
@@ -307,6 +309,18 @@ const HomePage = () => {
       ],
     },
     {
+      id: 'whatsapp-chats',
+      title: 'Chats de WhatsApp',
+      description: 'Lee lo que hablan los clientes con Frosty y con el equipo',
+      icon: MessageCircle,
+      path: '/chats-whatsapp',
+      features: [
+        { icon: MessageSquare, text: 'Conversaciones' },
+        { icon: Bot, text: 'Quién atiende' },
+        { icon: ShoppingBag, text: 'Pedidos' },
+      ],
+    },
+    {
       id: 'whatsapp-agent',
       title: 'Agente de WhatsApp',
       description: 'Como habla Frosty, que puede mandar y su banco de stickers',
@@ -322,7 +336,7 @@ const HomePage = () => {
 
   const modules = isAdmin()
     ? allModules
-    : allModules.filter(m => ['orders', 'contest', 'products', 'music', 'feedback', 'recetarios', 'games'].includes(m.id));
+    : allModules.filter(m => ['orders', 'whatsapp-chats', 'contest', 'products', 'music', 'feedback', 'recetarios', 'games'].includes(m.id));
 
   // Quick stats data
   const currentHour = new Date().getHours();

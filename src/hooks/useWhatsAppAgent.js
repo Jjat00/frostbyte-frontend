@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { whatsappAgentService } from '@/services/whatsappAgent.service';
 
 /**
@@ -15,6 +15,8 @@ import { whatsappAgentService } from '@/services/whatsappAgent.service';
 export const whatsappAgentKeys = {
   settings: ['whatsapp-agent-settings'],
   stickers: ['whatsapp-stickers'],
+  conversations: (search) => ['whatsapp-conversations', search],
+  messages: (id) => ['whatsapp-conversation-messages', id],
 };
 
 export function useAgentSettings(options = {}) {
@@ -146,5 +148,28 @@ export function useDeleteSticker() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: whatsappAgentKeys.stickers });
     },
+  });
+}
+
+// La bandeja y el chat abierto se refrescan solos: el equipo la deja abierta
+// mientras Frosty atiende, y un chat que no se mueve se lee como caído.
+const INBOX_REFRESH_MS = 15 * 1000;
+const CHAT_REFRESH_MS = 6 * 1000;
+
+export function useConversations(search = '') {
+  return useQuery({
+    queryKey: whatsappAgentKeys.conversations(search),
+    queryFn: () => whatsappAgentService.listConversations({ search: search || undefined }),
+    refetchInterval: INBOX_REFRESH_MS,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useConversationMessages(id) {
+  return useQuery({
+    queryKey: whatsappAgentKeys.messages(id),
+    queryFn: () => whatsappAgentService.getConversationMessages(id),
+    enabled: Boolean(id),
+    refetchInterval: CHAT_REFRESH_MS,
   });
 }

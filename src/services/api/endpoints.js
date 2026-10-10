@@ -107,6 +107,8 @@ export const ENDPOINTS = {
   WHATSAPP_AGENT_TONES: '/whatsapp/agent-tones/',
   WHATSAPP_AGENT_TONE_DETAIL: (id) => `/whatsapp/agent-tones/${id}/`,
   WHATSAPP_AGENT_TONE_RESTORE: (id) => `/whatsapp/agent-tones/${id}/restore/`,
+  WHATSAPP_CONVERSATIONS: '/whatsapp/conversations/',
+  WHATSAPP_CONVERSATION_MESSAGES: (id) => `/whatsapp/conversations/${id}/messages/`,
 };
 
 export default ENDPOINTS;

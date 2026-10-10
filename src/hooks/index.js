@@ -45,6 +45,8 @@ export {
   useCreateSticker,
   useUpdateSticker,
   useDeleteSticker,
+  useConversations,
+  useConversationMessages,
   whatsappAgentKeys,
 } from './useWhatsAppAgent';
 

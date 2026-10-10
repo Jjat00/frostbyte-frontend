@@ -90,6 +90,27 @@ export const whatsappAgentService = {
   async deleteSticker(id) {
     await apiClient.delete(ENDPOINTS.WHATSAPP_STICKER_DETAIL(id));
   },
+
+  /**
+   * Bandeja de chats (admin y empleados): un contacto por fila, el más
+   * reciente primero, con su último mensaje y quién lo está atendiendo.
+   * @param {{ search?: string, page?: number }} params
+   */
+  async listConversations(params = {}) {
+    const response = await apiClient.get(ENDPOINTS.WHATSAPP_CONVERSATIONS, { params });
+    return response.data;
+  },
+
+  /**
+   * Los mensajes de un chat en orden de lectura, más los pedidos del cliente.
+   * Con `before` (fecha ISO) trae los anteriores a ese mensaje.
+   */
+  async getConversationMessages(id, { before } = {}) {
+    const response = await apiClient.get(ENDPOINTS.WHATSAPP_CONVERSATION_MESSAGES(id), {
+      params: before ? { before } : {},
+    });
+    return response.data;
+  },
 };
 
 export default whatsappAgentService;
