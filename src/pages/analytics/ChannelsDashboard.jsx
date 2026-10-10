@@ -92,8 +92,8 @@ const Metric = ({ label, value }) => (
   </div>
 );
 
-const Section = ({ icon: Icon, title, subtitle, children }) => (
-  <section className="fb-card p-4 md:p-5">
+const Section = ({ icon: Icon, title, subtitle, className = '', children }) => (
+  <section className={`fb-card p-4 md:p-5 ${className}`}>
     <div className="mb-4 flex items-start gap-3">
       <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-secondary" />
       <div>
@@ -337,26 +337,24 @@ const ChannelsDashboard = () => {
 
       {/* Tendencia mensual */}
       <div className="grid gap-5 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <Section icon={Store} title="Pedidos por canal, mes a mes" subtitle="Últimos 12 meses, sin cancelados">
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={monthlyData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
-                  <XAxis dataKey="label" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                  <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
-                  <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" iconSize={8} />
-                  <Bar dataKey="staff" name="En el local" stackId="orders" fill={colors.staff} />
-                  <Bar dataKey="customer" name="App" stackId="orders" fill={colors.customer} />
-                  <Bar dataKey="whatsapp" name="WhatsApp" stackId="orders" fill={colors.whatsapp} radius={[4, 4, 0, 0]} />
-                  <Line dataKey="delivery" name="Domicilios" type="monotone" stroke={colors.delivery} strokeWidth={2} dot={{ r: 2 }} />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
-          </Section>
-        </div>
-        <Section icon={Trophy} title="Registros con Google" subtitle="Por mes; separa a quien jugó la Polla">
+        <Section icon={Store} title="Pedidos por canal, mes a mes" subtitle="Últimos 12 meses, sin cancelados" className="lg:col-span-2">
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={monthlyData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
+                <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" iconSize={8} />
+                <Bar dataKey="staff" name="En el local" stackId="orders" fill={colors.staff} />
+                <Bar dataKey="customer" name="App" stackId="orders" fill={colors.customer} />
+                <Bar dataKey="whatsapp" name="WhatsApp" stackId="orders" fill={colors.whatsapp} radius={[4, 4, 0, 0]} />
+                <Line dataKey="delivery" name="Domicilios" type="monotone" stroke={colors.delivery} strokeWidth={2} dot={{ r: 2 }} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </Section>
+        <Section icon={Trophy} title="Registros con Google" subtitle="Por mes, clientes y Polla">
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
