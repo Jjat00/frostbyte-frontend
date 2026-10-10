@@ -155,7 +155,7 @@ const Bubble = ({ message }) => {
             {AUTHOR_LABEL[message.author]}
           </span>
         )}
-        <p className={`whitespace-pre-wrap break-words ${isNote ? 'italic text-light/60' : ''}`}>{text}</p>
+        <p className={`whitespace-pre-wrap break-words [overflow-wrap:anywhere] ${isNote ? 'italic text-light/60' : ''}`}>{text}</p>
         <span className="mt-0.5 block text-right text-[0.65rem] text-light/35">{timeOf(message.created_at)}</span>
       </div>
     </div>
@@ -247,7 +247,7 @@ const ChatThread = ({ contactId, onBack }) => {
   const dialable = contact.is_bsuid ? contact.contact_phone : contact.phone;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="border-b border-white/[0.07] px-3 py-2.5 md:px-5">
         <div className="flex items-center gap-2">
           <button
@@ -278,7 +278,7 @@ const ChatThread = ({ contactId, onBack }) => {
           )}
         </div>
         {orders.length > 0 && (
-          <div className="-mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-0.5">
+          <div className="no-scrollbar -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-0.5">
             {orders.map((order) => (
               <OrderChip key={order.id} order={order} />
             ))}
@@ -286,7 +286,7 @@ const ChatThread = ({ contactId, onBack }) => {
         )}
       </div>
 
-      <div ref={scrollRef} onScroll={onScroll} className="min-h-0 flex-1 space-y-1.5 overflow-y-auto px-3 py-4 md:px-6">
+      <div ref={scrollRef} onScroll={onScroll} className="min-h-0 flex-1 space-y-1.5 overflow-y-auto overflow-x-hidden px-3 py-4 md:px-6">
         {hasMore && (
           <div className="flex justify-center pb-2">
             <button
@@ -366,7 +366,7 @@ const ConversationsPage = () => {
   const back = () => navigate('/chats-whatsapp');
 
   return (
-    <div className="fb-screen fb-screen--plain flex h-[100dvh] flex-col">
+    <div className="fb-screen fb-screen--plain flex h-[100dvh] flex-col overflow-hidden">
       <header className="shrink-0 border-b border-white/[0.07] bg-dark/95">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3.5">
           <button
@@ -393,10 +393,10 @@ const ConversationsPage = () => {
         </div>
       </header>
 
-      <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1">
+      <div className="mx-auto flex min-h-0 w-full min-w-0 max-w-6xl flex-1">
         {/* Bandeja: en el celular se esconde cuando hay un chat abierto */}
         <aside
-          className={`min-h-0 w-full flex-col border-white/[0.07] md:flex md:w-80 md:border-r lg:w-96 ${
+          className={`min-h-0 w-full min-w-0 flex-col border-white/[0.07] md:flex md:w-80 md:shrink-0 md:border-r lg:w-96 ${
             contactId ? 'hidden' : 'flex'
           }`}
         >
@@ -443,7 +443,7 @@ const ConversationsPage = () => {
         </aside>
 
         {/* Chat abierto */}
-        <section className={`min-h-0 flex-1 flex-col ${contactId ? 'flex' : 'hidden md:flex'}`}>
+        <section className={`min-h-0 min-w-0 flex-1 flex-col ${contactId ? 'flex' : 'hidden md:flex'}`}>
           {contactId ? (
             <ChatThread key={contactId} contactId={contactId} onBack={back} />
           ) : (
