@@ -95,3 +95,32 @@ export const analyticsService = {
 };
 
 export default analyticsService;
+
+const CHANNELS_URL = '/analytics/channels';
+
+/**
+ * Estadisticas de canales: domicilios, pedidos por WhatsApp y por la app,
+ * y clientes que entraron con Google. Solo admin.
+ */
+export const channelAnalyticsService = {
+  /**
+   * Pedidos por canal, domicilios y registros con Google en una ventana.
+   * @param {number} days - 7, 30, 90, 365 o 0 (todo el historico)
+   */
+  async getSummary(days = 30) {
+    const response = await apiClient.get(`${CHANNELS_URL}/summary/`, { params: { days } });
+    return response.data;
+  },
+
+  /** Pedidos por canal, domicilios y registros con Google, mes a mes. */
+  async getMonthly(months = 12) {
+    const response = await apiClient.get(`${CHANNELS_URL}/monthly/`, { params: { months } });
+    return response.data;
+  },
+
+  /** Ultimos registros con Google y si llegaron a pedir por la app. */
+  async getGoogleUsers(limit = 50) {
+    const response = await apiClient.get(`${CHANNELS_URL}/google_users/`, { params: { limit } });
+    return response.data;
+  },
+};
