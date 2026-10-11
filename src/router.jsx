@@ -85,6 +85,7 @@ const RecurringPage = lazyLoad(() => import("./pages/expenses/RecurringPage"));
 const AnalyticsLayout = lazyLoad(() => import("./pages/analytics/AnalyticsLayout"));
 const FinancialDashboard = lazyLoad(() => import("./pages/analytics/FinancialDashboard"));
 const ChannelsDashboard = lazyLoad(() => import("./pages/analytics/ChannelsDashboard"));
+const ScheduleDashboard = lazyLoad(() => import("./pages/analytics/ScheduleDashboard"));
 
 // Juegos
 const GamesListPage = lazyLoad(() => import("./pages/game/GamesListPage"));
@@ -752,6 +753,14 @@ export const router = createBrowserRouter([
         element: (
           <Lazy>
             <ChannelsDashboard />
+          </Lazy>
+        ),
+      },
+      {
+        path: "horario",
+        element: (
+          <Lazy>
+            <ScheduleDashboard />
           </Lazy>
         ),
       },

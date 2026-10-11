@@ -15,6 +15,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Users,
+  Clock,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSongRequestsNotification } from "@/hooks";
@@ -40,6 +41,7 @@ const AnalyticsLayout = () => {
     { name: "Carta", shortName: "Carta", path: "/", icon: Store, external: true },
     { name: "Dashboard", shortName: "Dashboard", path: "/analytics", icon: BarChart3, end: true },
     { name: "Canales y clientes", shortName: "Canales", path: "/analytics/canales", icon: Users },
+    { name: "Horario del local", shortName: "Horario", path: "/analytics/horario", icon: Clock },
     { name: "Gastos", shortName: "Gastos", path: "/gastos", icon: Wallet },
     { name: "Musica", shortName: "Musica", path: "/musica", icon: Music, hasNotification: true },
     { name: "Juegos", shortName: "Juegos", path: "/juegos-admin", icon: Gamepad2 },

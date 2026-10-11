@@ -124,3 +124,20 @@ export const channelAnalyticsService = {
     return response.data;
   },
 };
+
+const SCHEDULE_URL = '/analytics/schedule';
+
+/**
+ * Horario real del local: a que hora se abre y se cierra cada jornada,
+ * segun el historial de aperturas y cierres del panel. Solo admin.
+ */
+export const scheduleAnalyticsService = {
+  /**
+   * Apertura y cierre por jornada, lo normal (mediana) y por dia de la semana.
+   * @param {number} days - 30, 90, 365 o 0 (todo el historico)
+   */
+  async getDaily(days = 30) {
+    const response = await apiClient.get(`${SCHEDULE_URL}/daily/`, { params: { days } });
+    return response.data;
+  },
+};
