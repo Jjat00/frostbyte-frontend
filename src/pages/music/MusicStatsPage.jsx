@@ -35,17 +35,25 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { musicService } from '@/services';
 import { themeColorRaw } from '@/lib/themeColors';
+import PeriodPicker from '@/components/analytics/PeriodPicker';
+import useOperatingToday from '@/hooks/useOperatingToday';
+import {
+  periodFromSearch,
+  periodParams,
+  periodRange,
+  parseDay,
+  periodToSearch,
+} from '@/lib/periods';
 
 // ─── Constantes de presentación ──────────────────────────────────
 
-const RANGES = [
-  { id: '30', label: '30 días', days: 30 },
-  { id: '90', label: '90 días', days: 90 },
-  { id: '180', label: '6 meses', days: 180 },
-  { id: 'all', label: 'Todo', days: 'all' },
-];
+const DEFAULT_PERIOD = { preset: 'last90' };
+// Antes de esta hora, lo pedido cuenta para la noche anterior (igual que el
+// backend en OPERATING_DAY_CUTOFF_HOUR).
+const NIGHT_CUTOFF_HOUR = 6;
 
 const FLOORS = [
   { id: 'all', label: 'Los dos pisos' },
@@ -243,7 +251,10 @@ const TopList = ({ items, max, renderTitle, renderMeta, image = false }) => (
 // ─── Pantalla ────────────────────────────────────────────────────
 
 const MusicStatsPage = () => {
-  const [rangeId, setRangeId] = useState('90');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const period = periodFromSearch(searchParams, DEFAULT_PERIOD);
+  const setPeriod = (next) =>
+    setSearchParams(periodToSearch(searchParams, next, DEFAULT_PERIOD), { replace: true });
   const [floorId, setFloorId] = useState('all');
 
   const genreColors = useMemo(() => buildGenreColors(), []);
@@ -256,14 +267,15 @@ const MusicStatsPage = () => {
     [],
   );
 
-  const range = RANGES.find((r) => r.id === rangeId) || RANGES[1];
+  const today = useOperatingToday(NIGHT_CUTOFF_HOUR);
+  const range = periodRange(period, today);
   const params = {
-    days: range.days,
+    ...periodParams(period, today),
     ...(floorId !== 'all' ? { floor: Number(floorId) } : {}),
   };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['music-stats', rangeId, floorId],
+    queryKey: ['music-stats', params.start || 'all', params.end || 'all', floorId],
     queryFn: () => musicService.getStats(params),
     staleTime: 5 * 60 * 1000,
   });
@@ -327,22 +339,18 @@ const MusicStatsPage = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-1">
-            {RANGES.map((r) => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => setRangeId(r.id)}
-                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
-                  rangeId === r.id
-                    ? 'bg-white/[0.1] text-light'
-                    : 'text-light/45 hover:text-light/80'
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
+          <PeriodPicker
+            period={period}
+            // Con "Todo" el rango real lo dice la primera y la última noche con datos.
+            range={
+              range ||
+              (data?.range?.start
+                ? { start: parseDay(data.range.start), end: parseDay(data.range.end) }
+                : null)
+            }
+            today={today}
+            onChange={setPeriod}
+          />
 
           <div className="flex items-center gap-1 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-1">
             {FLOORS.map((f) => (
@@ -394,7 +402,7 @@ const MusicStatsPage = () => {
           <button
             type="button"
             onClick={() => {
-              setRangeId('all');
+              setPeriod({ preset: 'all' });
               setFloorId('all');
             }}
             className="fb-btn text-xs"
