@@ -476,7 +476,8 @@ const platformFeatures = [
 
 const extraModules = [
   "Reservas de mesa y salón",
-  "Música por piso con Spotify",
+  "Música por piso con Spotify o YouTube",
+  "Chats de WhatsApp a la vista del equipo",
   "Pantallas del local",
   "Feedback de clientes",
   "Juegos multijugador",
