@@ -9,7 +9,7 @@ import { ENDPOINTS } from './api/endpoints';
  * usa `customerOrdersService.getConfig()` (endpoint /my-orders/config/).
  */
 export const storeSettingsService = {
-  /** Estado actual: { is_open, customer_ordering_enabled, can_order, can_pickup, delivery_fee, delivery_radius_km, delivery_area, status_changed_at } */
+  /** Estado actual: { is_open, customer_ordering_enabled, can_order, can_pickup, delivery_fee, delivery_radius_km, delivery_area, delivery_min_order, delivery_min_order_free_radius_m, status_changed_at } */
   async get() {
     const response = await apiClient.get(ENDPOINTS.STORE_SETTINGS);
     return response.data;

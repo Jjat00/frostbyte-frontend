@@ -7,7 +7,9 @@ import { useStoreConfig, useCreateOrder } from "@/hooks";
 import {
   coverageLabel,
   isWithinCoverage,
+  minOrderFor,
   resolveCoverage,
+  resolveMinOrder,
 } from "@/lib/deliveryArea";
 import { ACTIVE_PAYMENT_METHODS } from "@/lib/paymentMethods";
 import CustomerAuthGate from "./CustomerAuthGate";
@@ -94,6 +96,15 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
   // Zona de cobertura vigente (la configura el admin desde el dashboard):
   // polígono dibujado si lo hay, y si no el círculo por radio.
   const coverage = useMemo(() => resolveCoverage(config), [config]);
+  // Pedido mínimo: a un par de cuadras del local no hay; más lejos el
+  // subtotal (sin envío) debe llegar al mínimo. Hasta marcar la ubicación no
+  // se sabe cuál aplica, así que solo se avisa con el pin puesto.
+  const minOrder = useMemo(() => resolveMinOrder(config), [config]);
+  const hasLocation = delivery.lat != null && delivery.lng != null;
+  const minOrderHere = hasLocation
+    ? minOrderFor(delivery.lat, delivery.lng, minOrder)
+    : 0;
+  const missingForMin = Math.max(0, minOrderHere - subtotal);
 
   // Prefijar datos del cliente cuando hay sesión
   useEffect(() => {
@@ -158,6 +169,12 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
         `Tu ubicación está fuera de nuestra zona de domicilios (${coverageLabel(
           coverage
         )}).`
+      );
+    if (missingForMin > 0)
+      return setError(
+        `El pedido mínimo para domicilio a tu ubicación es de ${formatCOP(
+          minOrderHere
+        )} en productos. Te faltan ${formatCOP(missingForMin)}.`
       );
     if (!payment) return setError("Elige un método de pago.");
     if (payment === "cash") {
@@ -379,6 +396,22 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                       {formatCOP(total)}
                     </span>
                   </div>
+                  {missingForMin > 0 ? (
+                    <p className="text-xs text-amber-400">
+                      Pedido mínimo a tu ubicación: {formatCOP(minOrderHere)} en
+                      productos. Te faltan {formatCOP(missingForMin)}.
+                    </p>
+                  ) : (
+                    minOrder.amount > 0 &&
+                    !hasLocation && (
+                      <p className="text-xs text-white/40">
+                        Pedido mínimo {formatCOP(minOrder.amount)}
+                        {minOrder.freeRadiusM > 0 &&
+                          ` (sin mínimo a ${minOrder.freeRadiusM} m del local)`}
+                        .
+                      </p>
+                    )
+                  )}
                 </div>
                 <button
                   type="button"

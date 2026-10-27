@@ -228,3 +228,33 @@ export const coverageViewport = (coverage, baseZoom = 13.2) => {
     zoom: fitZoomForRadiusKm(Math.max(halfDiagonalKm, 0.05), baseZoom),
   };
 };
+
+/** Distancia en línea recta del local a la ubicación, en metros. */
+export const distanceFromStoreM = (lat, lng) =>
+  distance([STORE_LOCATION.lng, STORE_LOCATION.lat], [lng, lat], {
+    units: "meters",
+  });
+
+/**
+ * Regla del pedido mínimo a partir de la config pública (/my-orders/config/).
+ * `amount` es el mínimo en productos (sin envío); `freeRadiusM`, la distancia
+ * al local dentro de la cual se pide de cualquier valor. Debe coincidir con
+ * `min_order_for` del backend, que es quien valida de verdad.
+ * @returns {{ amount: number, freeRadiusM: number }}
+ */
+export const resolveMinOrder = (config) => {
+  const amount = Number(config?.delivery_min_order);
+  const freeRadiusM = Number(config?.delivery_min_order_free_radius_m);
+  return {
+    amount: Number.isFinite(amount) && amount > 0 ? amount : 0,
+    freeRadiusM: Number.isFinite(freeRadiusM) && freeRadiusM > 0 ? freeRadiusM : 0,
+  };
+};
+
+/** Pedido mínimo que aplica a esa ubicación (0 = se pide de cualquier valor). */
+export const minOrderFor = (lat, lng, minOrder) => {
+  if (!minOrder?.amount) return 0;
+  if (lat != null && lng != null && distanceFromStoreM(lat, lng) <= minOrder.freeRadiusM)
+    return 0;
+  return minOrder.amount;
+};
