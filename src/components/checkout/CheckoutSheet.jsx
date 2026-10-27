@@ -402,8 +402,10 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
                     !hasLocation && (
                       <p className="text-xs text-white/40">
                         Pedido mínimo {formatCOP(minOrder.amount)}
-                        {minOrder.freeRadiusM > 0 &&
-                          ` (sin mínimo a ${minOrder.freeRadiusM} m del local)`}
+                        {minOrder.isPolygon
+                          ? " (sin mínimo cerca del local)"
+                          : minOrder.freeRadiusM > 0 &&
+                            ` (sin mínimo a ${minOrder.freeRadiusM} m del local)`}
                         .
                       </p>
                     )

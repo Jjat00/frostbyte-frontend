@@ -83,9 +83,10 @@ const parsePesos = (text) => {
  *  3. Zona de entrega   -> delivery_area / delivery_radius_km (solo admin; los
  *     empleados la ven). La zona se dibuja como polígono; el círculo por radio
  *     queda como respaldo para volver atrás rápido.
- *  4. Pedido mínimo     -> delivery_min_order / delivery_min_order_free_radius_m
- *     (solo admin). Cerca del local se pide de cualquier valor; más lejos el
- *     subtotal debe llegar al mínimo. Aplica en la app y en WhatsApp.
+ *  4. Pedido mínimo     -> delivery_min_order y su zona libre, dibujada
+ *     (delivery_min_order_free_area) o por radio (..._free_radius_m), solo
+ *     admin. En la zona libre se pide de cualquier valor; fuera, el subtotal
+ *     debe llegar al mínimo. Aplica en la app y en WhatsApp.
  */
 const StoreControls = () => {
   const { data: settings, isLoading } = useStoreSettings();
@@ -107,6 +108,9 @@ const StoreControls = () => {
   // Pedido mínimo en edición (texto: se aceptan puntos de miles)
   const [minOrderDraft, setMinOrderDraft] = useState("");
   const [freeRadiusDraft, setFreeRadiusDraft] = useState("");
+  // Zona sin mínimo, igual que la de domicilios: "polygon" | "circle"
+  const [freeMode, setFreeMode] = useState("circle");
+  const [freePoints, setFreePoints] = useState([]);
 
   if (isLoading || !settings) {
     return (
@@ -175,28 +179,63 @@ const StoreControls = () => {
   const minOrder = resolveMinOrder(settings);
   const minOrderLabel = minOrder.amount
     ? `${formatCOP(minOrder.amount)}${
-        minOrder.freeRadiusM ? ` · libre a ${minOrder.freeRadiusM} m` : ""
+        minOrder.isPolygon
+          ? " · zona libre"
+          : minOrder.freeRadiusM
+          ? ` · libre a ${minOrder.freeRadiusM} m`
+          : ""
       }`
     : "Sin mínimo";
   const minOrderValue = parsePesos(minOrderDraft);
   const freeRadiusValue = parsePesos(freeRadiusDraft);
   const minOrderValid = minOrderValue !== null;
+  const drawingFree = freeMode === "polygon";
+  const freePointsValid =
+    freePoints.length >= COVERAGE_LIMITS.minPoints &&
+    freePoints.length <= COVERAGE_LIMITS.maxPoints;
   const freeRadiusValid =
     freeRadiusValue !== null && freeRadiusValue <= FREE_RADIUS_MAX_M;
-  const minOrderChanged =
-    minOrderValue !== minOrder.amount || freeRadiusValue !== minOrder.freeRadiusM;
+  // Sin mínimo la zona libre no importa: no se exige dibujarla
+  const freeZoneValid =
+    !minOrderValue || (drawingFree ? freePointsValid : freeRadiusValid);
+  const savedFreePolygon = minOrder.polygons[0] || [];
+  const freeZoneChanged = drawingFree
+    ? JSON.stringify(freePoints) !== JSON.stringify(savedFreePolygon)
+    : minOrder.isPolygon || freeRadiusValue !== minOrder.freeRadiusM;
+  const minOrderChanged = minOrderValue !== minOrder.amount || freeZoneChanged;
+  // El radio en km que entiende el mapa; con 0 m se usa uno chico solo como
+  // escala de referencia (la zona propia se oculta).
+  const freeRadiusKm =
+    (freeRadiusValid && freeRadiusValue ? freeRadiusValue : minOrder.freeRadiusM || 200) /
+    1000;
+  const freeCoverage = drawingFree
+    ? { polygons: [freePoints], radiusKm: freeRadiusKm, isPolygon: true }
+    : { polygons: [], radiusKm: freeRadiusKm, isPolygon: false };
 
   const openMinOrderDialog = () => {
     setMinOrderDraft(String(minOrder.amount));
     setFreeRadiusDraft(String(minOrder.freeRadiusM));
+    setFreeMode(minOrder.isPolygon ? "polygon" : "circle");
+    setFreePoints(savedFreePolygon);
     setConfirm("minOrder");
   };
 
-  const openAreaDialog = () => {
-    setMode(coverage.isPolygon ? "polygon" : "circle");
-    setDraftPoints(coverage.polygons[0] || []);
-    setRadiusDraft(String(Number(coverage.radiusKm.toFixed(2))));
-    setConfirm("area");
+  const saveMinOrder = () => {
+    const data = { delivery_min_order: minOrderValue };
+    if (minOrderValue && drawingFree) {
+      // Figuras extra guardadas (la UI edita una) se conservan
+      data.delivery_min_order_free_area = [freePoints, ...minOrder.polygons.slice(1)];
+    } else if (minOrderValue) {
+      // Lista vacía = se borra el dibujo y vuelve a mandar el radio
+      data.delivery_min_order_free_radius_m = freeRadiusValue;
+      data.delivery_min_order_free_area = [];
+    }
+    apply(
+      data,
+      minOrderValue
+        ? `Pedido mínimo: ${formatCOP(minOrderValue)}`
+        : "Domicilios sin pedido mínimo"
+    );
   };
 
   const apply = (data, successMsg) => {
@@ -214,6 +253,7 @@ const StoreControls = () => {
             error.response?.data?.delivery_radius_km ||
             error.response?.data?.delivery_min_order ||
             error.response?.data?.delivery_min_order_free_radius_m ||
+            error.response?.data?.delivery_min_order_free_area ||
             error.response?.data?.error ||
             "No se pudo actualizar el estado.",
           variant: "destructive",
@@ -575,24 +615,15 @@ const StoreControls = () => {
       <ConfirmDialog
         open={confirm === "minOrder"}
         tone="default"
+        size="lg"
         icon={Coins}
         title="Pedido mínimo a domicilio"
-        message="Cuánto debe sumar un domicilio en productos (sin contar el envío). Cerca del local se puede pedir de cualquier valor. Aplica en la app y en el agente de WhatsApp; para recoger no hay mínimo."
+        message="Cuánto debe sumar un domicilio en productos (sin contar el envío). En la zona cercana al local se puede pedir de cualquier valor. Aplica en la app y en el agente de WhatsApp; para recoger no hay mínimo."
         confirmLabel="Guardar"
         loading={updateMutation.isPending}
-        confirmDisabled={!minOrderChanged || !minOrderValid || !freeRadiusValid}
+        confirmDisabled={!minOrderChanged || !minOrderValid || !freeZoneValid}
         onCancel={() => setConfirm(null)}
-        onConfirm={() =>
-          apply(
-            {
-              delivery_min_order: minOrderValue,
-              delivery_min_order_free_radius_m: freeRadiusValue,
-            },
-            minOrderValue
-              ? `Pedido mínimo: ${formatCOP(minOrderValue)}`
-              : "Domicilios sin pedido mínimo"
-          )
-        }
+        onConfirm={saveMinOrder}
       >
         <div className="space-y-4">
           <div className="space-y-2">
@@ -630,65 +661,134 @@ const StoreControls = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label
-              htmlFor="free-radius"
-              className="block text-xs font-semibold text-gray"
-            >
-              Sin mínimo a esta distancia del local (metros)
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                id="free-radius"
-                type="text"
-                inputMode="numeric"
-                value={freeRadiusDraft}
-                onChange={(e) => setFreeRadiusDraft(e.target.value)}
-                placeholder="200"
-                disabled={!minOrderValue}
-                className="w-full rounded-xl bg-white/[0.04] border border-white/[0.12] px-3 py-2.5 text-base text-light placeholder:text-white/30 focus:outline-none focus:border-white/30 disabled:opacity-50"
-              />
-              <span className="text-sm text-gray shrink-0">m</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {FREE_RADIUS_PRESETS.map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  disabled={!minOrderValue}
-                  onClick={() => setFreeRadiusDraft(String(value))}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors disabled:opacity-50",
-                    freeRadiusValue === value
-                      ? "border-secondary bg-secondary/15 text-secondary"
-                      : "border-white/10 bg-white/[0.04] text-gray hover:bg-white/[0.08]"
-                  )}
-                >
-                  {value} m
-                </button>
-              ))}
-            </div>
-            {freeRadiusValid ? (
-              <p className="text-xs text-gray">
-                {!minOrderValue
-                  ? "Sin pedido mínimo: se puede pedir de cualquier valor en toda la zona."
-                  : freeRadiusValue
-                  ? `A ${freeRadiusValue} m o menos del local (en línea recta, ≈ ${Math.max(
-                      1,
-                      Math.round(freeRadiusValue / 100)
-                    )} cuadra(s)) se pide de cualquier valor; más lejos, mínimo ${formatCOP(
-                      minOrderValue
-                    )}.`
-                  : `El mínimo de ${formatCOP(minOrderValue)} aplica en toda la zona.`}
+          {minOrderValue ? (
+            <div className="space-y-3">
+              <p className="text-xs font-semibold text-gray">
+                Zona sin pedido mínimo
               </p>
-            ) : (
-              freeRadiusDraft !== "" && (
-                <p className="text-xs text-red-400">
-                  Ingresa una distancia entre 0 y {FREE_RADIUS_MAX_M} m.
-                </p>
-              )
-            )}
-          </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { key: "polygon", icon: Hexagon, label: "Dibujar zona" },
+                  { key: "circle", icon: Ruler, label: "Círculo por radio" },
+                ].map(({ key, icon: Icon, label }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setFreeMode(key)}
+                    className={cn(
+                      "flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors",
+                      freeMode === key
+                        ? "border-secondary bg-secondary/15 text-secondary"
+                        : "border-white/10 bg-white/[0.04] text-gray hover:bg-white/[0.08]"
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* La zona de domicilios va de fondo: el mínimo aplica en lo que
+                  queda entre las dos */}
+              <Suspense
+                fallback={
+                  <div className="h-56 sm:h-72 rounded-xl border border-white/10 bg-white/[0.04] grid place-items-center">
+                    <Loader2 className="w-5 h-5 animate-spin text-white/40" />
+                  </div>
+                }
+              >
+                <CoverageAreaMap
+                  key={`free-${freeMode}`}
+                  coverage={freeCoverage}
+                  editable={drawingFree}
+                  onChange={setFreePoints}
+                  context={coverage}
+                  hideArea={!drawingFree && !freeRadiusValue}
+                />
+              </Suspense>
+
+              {drawingFree ? (
+                freePointsValid ? (
+                  <p className="text-xs text-gray">
+                    {freePoints.length} puntos · dentro de la figura se pide de
+                    cualquier valor; en el resto de la zona de domicilios (borde
+                    blanco), mínimo {formatCOP(minOrderValue)}.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-xs text-amber-400">
+                      Marca al menos {COVERAGE_LIMITS.minPoints} puntos en el mapa
+                      para cerrar la zona sin mínimo.
+                    </p>
+                    {freePoints.length === 0 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFreePoints(circleToPolygonPoints(freeRadiusKm))
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-gray hover:bg-white/[0.08] transition-colors"
+                      >
+                        Partir del círculo de {Math.round(freeRadiusKm * 1000)} m y
+                        ajustarlo
+                      </button>
+                    )}
+                  </div>
+                )
+              ) : (
+                <>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="free-radius"
+                      type="text"
+                      inputMode="numeric"
+                      value={freeRadiusDraft}
+                      onChange={(e) => setFreeRadiusDraft(e.target.value)}
+                      placeholder="200"
+                      className="w-full rounded-xl bg-white/[0.04] border border-white/[0.12] px-3 py-2.5 text-base text-light placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                    />
+                    <span className="text-sm text-gray shrink-0">m</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {FREE_RADIUS_PRESETS.map((value) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setFreeRadiusDraft(String(value))}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors",
+                          freeRadiusValue === value
+                            ? "border-secondary bg-secondary/15 text-secondary"
+                            : "border-white/10 bg-white/[0.04] text-gray hover:bg-white/[0.08]"
+                        )}
+                      >
+                        {value} m
+                      </button>
+                    ))}
+                  </div>
+                  {freeRadiusValid ? (
+                    <p className="text-xs text-gray">
+                      {freeRadiusValue
+                        ? `A ${freeRadiusValue} m o menos del local (en línea recta) se pide de cualquier valor; más lejos, mínimo ${formatCOP(
+                            minOrderValue
+                          )}.`
+                        : `El mínimo de ${formatCOP(minOrderValue)} aplica en toda la zona.`}
+                      {minOrder.isPolygon && " Al guardar se borra la zona dibujada."}
+                    </p>
+                  ) : (
+                    freeRadiusDraft !== "" && (
+                      <p className="text-xs text-red-400">
+                        Ingresa una distancia entre 0 y {FREE_RADIUS_MAX_M} m.
+                      </p>
+                    )
+                  )}
+                </>
+              )}
+            </div>
+          ) : (
+            <p className="text-xs text-gray">
+              Sin pedido mínimo: se puede pedir de cualquier valor en toda la zona.
+            </p>
+          )}
         </div>
       </ConfirmDialog>
     </>

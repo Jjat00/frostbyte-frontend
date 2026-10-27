@@ -59,6 +59,10 @@ const midpoint = ([lng1, lat1], [lng2, lat2]) => [
  * Carga Mapbox (bundle pesado), así que se importa en diferido desde el
  * diálogo y no desde el dashboard.
  *
+ * `context` pinta otra zona de fondo, sin editar (ej: la zona de domicilios
+ * detrás de la zona sin pedido mínimo), y `hideArea` oculta la zona propia
+ * (un radio de 0 no encierra nada que pintar).
+ *
  * @param {{ polygons: number[][][], radiusKm: number, isPolygon: boolean }} coverage
  */
 const CoverageAreaMap = ({
@@ -66,6 +70,8 @@ const CoverageAreaMap = ({
   editable = false,
   onChange,
   heightClass = "h-56 sm:h-72",
+  context = null,
+  hideArea = false,
 }) => {
   const token = env.MAPBOX_TOKEN;
   const [styleKey, setStyleKey] = useState("satellite");
@@ -135,6 +141,7 @@ const CoverageAreaMap = ({
   // Lo que se pinta: en lectura, la zona vigente; editando, la figura en curso
   // (más las figuras extra, que no se tocan aquí).
   const geoJson = useMemo(() => {
+    if (hideArea && !drawing) return { type: "FeatureCollection", features: [] };
     if (!drawing) return coverageGeoJson(coverage);
     const features = extraPolygons
       .filter((p) => p.length >= 3)
@@ -143,7 +150,12 @@ const CoverageAreaMap = ({
     else if (points.length === 2) features.push(lineFeature(points));
     return { type: "FeatureCollection", features };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drawing, coverage, points]);
+  }, [drawing, coverage, points, hideArea]);
+
+  const contextGeoJson = useMemo(
+    () => (context ? coverageGeoJson(context) : null),
+    [context]
+  );
 
   // Editando siempre se ve el círculo de respaldo como referencia de escala
   const referenceCircle = useMemo(
@@ -208,6 +220,25 @@ const CoverageAreaMap = ({
         touchPitch={false}
         cursor={drawing ? "crosshair" : "grab"}
       >
+        {contextGeoJson && (
+          <Source id="coverage-context" type="geojson" data={contextGeoJson}>
+            <Layer
+              id="coverage-context-fill"
+              type="fill"
+              paint={{ "fill-color": "#ffffff", "fill-opacity": 0.05 }}
+            />
+            <Layer
+              id="coverage-context-line"
+              type="line"
+              paint={{
+                "line-color": "#ffffff",
+                "line-opacity": 0.45,
+                "line-width": 1,
+              }}
+            />
+          </Source>
+        )}
+
         {referenceCircle && (
           <Source id="coverage-reference" type="geojson" data={referenceCircle}>
             <Layer
