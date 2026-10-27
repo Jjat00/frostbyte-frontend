@@ -98,7 +98,9 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
   const coverage = useMemo(() => resolveCoverage(config), [config]);
   // Pedido mínimo: a un par de cuadras del local no hay; más lejos el
   // subtotal (sin envío) debe llegar al mínimo. Hasta marcar la ubicación no
-  // se sabe cuál aplica, así que solo se avisa con el pin puesto.
+  // se sabe cuál aplica, así que solo se avisa con el pin puesto. Es un aviso,
+  // no un bloqueo: el carrito guarda los precios de cuando se agregó cada cosa
+  // y quien decide con los precios vigentes es el backend.
   const minOrder = useMemo(() => resolveMinOrder(config), [config]);
   const hasLocation = delivery.lat != null && delivery.lng != null;
   const minOrderHere = hasLocation
@@ -169,12 +171,6 @@ const CheckoutSheet = ({ open, onBack, onSuccess }) => {
         `Tu ubicación está fuera de nuestra zona de domicilios (${coverageLabel(
           coverage
         )}).`
-      );
-    if (missingForMin > 0)
-      return setError(
-        `El pedido mínimo para domicilio a tu ubicación es de ${formatCOP(
-          minOrderHere
-        )} en productos. Te faltan ${formatCOP(missingForMin)}.`
       );
     if (!payment) return setError("Elige un método de pago.");
     if (payment === "cash") {
