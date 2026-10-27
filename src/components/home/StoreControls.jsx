@@ -220,6 +220,13 @@ const StoreControls = () => {
     setConfirm("minOrder");
   };
 
+  const openAreaDialog = () => {
+    setMode(coverage.isPolygon ? "polygon" : "circle");
+    setDraftPoints(coverage.polygons[0] || []);
+    setRadiusDraft(String(Number(coverage.radiusKm.toFixed(2))));
+    setConfirm("area");
+  };
+
   const saveMinOrder = () => {
     const data = { delivery_min_order: minOrderValue };
     if (minOrderValue && drawingFree) {
