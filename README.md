@@ -15,7 +15,7 @@ Aplicación web del local Frostbyte (granizados y cocteles en Cumbal, Nariño), 
 | Tailwind CSS | 4.0 | Framework CSS |
 | Radix UI | - | Componentes accesibles |
 | Framer Motion + GSAP | 10 / 3.14 | Animaciones (GSAP en heros y landing) |
-| Mapbox (`react-map-gl`) | 3.25 | Mapa de domicilios y zona de cobertura |
+| Mapbox (`react-map-gl`) | 3.25 | Mapa de domicilios, zona de cobertura y zona sin pedido mínimo |
 | `@react-oauth/google` | 0.13 | Cuenta de cliente con Google |
 | Recharts | - | Gráficos y visualizaciones |
 
@@ -78,7 +78,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - Frase motivacional diaria con IA (GPT-4o-mini)
 - Transcripción de voz con IA (Whisper)
 - Tracking por mesa con piso (`/mesa/:floor/:tableNumber`)
-- **Cuenta de cliente con Google** (`/mi-cuenta`): domicilios y pedidos para recoger con carrito, mapa y seguimiento en vivo (`/domicilios`, `/mis-pedidos`), reservas de mesa, grupo o Sala VIP (`/reservas`, `/mis-reservas`) y concurso vigente (`/concurso`)
+- **Cuenta de cliente con Google** (`/mi-cuenta`): domicilios y pedidos para recoger con carrito, mapa y seguimiento en vivo (`/domicilios`, `/mis-pedidos`; el checkout avisa cuánto falta para el pedido mínimo a la ubicación marcada, sin bloquear), reservas de mesa, grupo o Sala VIP (`/reservas`, `/mis-reservas`) y concurso vigente (`/concurso`)
 - Campañas de temporada detrás de un interruptor (heros, banners y tarjeta de celebración en `/amor-amistad/tarjeta`)
 - **Solicitudes de música** - el admin elige la fuente (Spotify o YouTube, default YouTube) y los clientes ven la UI correspondiente:
   - **Spotify**: búsqueda, Now Playing con letras sincronizadas, cola en tiempo real
@@ -90,6 +90,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - **Productos - Generador IA**: AIImageGeneratorPage con generación de imágenes profesionales (Gemini/OpenAI)
 - **Negocios**: un mismo equipo opera varios negocios (Frostbyte bebidas y Frostbyte Food); `/seleccionar-negocio` elige con cuál trabajar
 - **Pedidos**: Gestión del ciclo de vida de pedidos (Pendiente → Preparando → Listo → Entregado), pantalla de cocina, mesas por piso con sus QR, domicilios, deudas con su antigüedad, historial y estadísticas
+- **Estado del local** (`/home`): abrir y cerrar, domicilios en línea y, solo para el admin, la zona de cobertura y el **pedido mínimo a domicilio según la distancia**: el valor mínimo en productos (sin el envío) y la zona cercana sin mínimo, dibujada en el mapa o por radio en metros. Aplica en la app y en Frosty; para recoger no hay mínimo
 - **Reservas** (`/reservas-admin`) y **concurso** (`/concurso-admin`): paneles del staff
 - **Recetarios** (`/recetarios`): guías de preparación paso a paso
 - **Inventario**: Control de materias primas, recetas y órdenes de compra
@@ -165,7 +166,7 @@ El admin elige la fuente activa desde el selector del panel `/musica`. Los clien
 | `/productos/*` | Protegido/Admin | Catálogo, categorías y modificadores, con sugerencia de descripción IA |
 | `/gastos/*` | Admin | Control de gastos |
 | `/musica` | Protegido | Panel de música - Spotify (index) |
-| `/musica/estadisticas` | Protegido | Estadísticas de música (géneros, pisos, horas) |
+| `/musica/estadisticas` | Protegido | Estadísticas de música (géneros, pisos, horas) con selector de periodo: presets (hoy, semanas, meses, últimos 90 días) o rango propio en calendario |
 | `/musica/youtube` | Protegido | Panel de música - YouTube con búsqueda, recomendaciones, cola, controles TV e indicador de cuota |
 | `/youtube-tv` | Público | Pantalla TV para el local - reproduce videos en cola y Mix automático a pantalla completa |
 | `/game/*` | Público | Salas de juego (Duelo e Impostor) |
