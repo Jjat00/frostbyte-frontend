@@ -23,7 +23,7 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 /** Campaña encendida para todo el mundo, o null para el look habitual. */
-const LIVE_CAMPAIGN = "halloween";
+const LIVE_CAMPAIGN = null;
 
 /**
  * Campañas terminadas pero apagadas que se pueden ver antes de encenderlas:
