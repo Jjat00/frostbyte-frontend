@@ -117,10 +117,6 @@ const WhatsAppChatsPage = lazyLoad(() => import("./pages/whatsapp/ConversationsP
 const ReservationsPage = lazyLoad(() => import("./pages/customer/ReservationsPage"));
 const ReservationsAdminPage = lazyLoad(() => import("./pages/reservations/ReservationsAdminPage"));
 
-// Concursos (disfraces de Halloween): página del cliente y panel de barra
-const ContestPage = lazyLoad(() => import("./pages/customer/ContestPage"));
-const ContestAdminPage = lazyLoad(() => import("./pages/contests/ContestAdminPage"));
-
 // Cuenta del cliente (sesión Google)
 const AccountPage = lazyLoad(() => import("./pages/customer/AccountPage"));
 const MyReservationsPage = lazyLoad(() => import("./pages/customer/MyReservationsPage"));
@@ -210,26 +206,6 @@ export const router = createBrowserRouter([
       <Lazy>
         <ReservationsPage />
       </Lazy>
-    ),
-  },
-  // Concurso vigente (pública; el login de Google salta al inscribirse)
-  {
-    path: "/concurso",
-    element: (
-      <Lazy>
-        <ContestPage />
-      </Lazy>
-    ),
-  },
-  // Inscritos al concurso: la barra marca pago e Instagram (staff)
-  {
-    path: "/concurso-admin",
-    element: (
-      <ProtectedRoute>
-        <Lazy>
-          <ContestAdminPage />
-        </Lazy>
-      </ProtectedRoute>
     ),
   },
   // Configuración del agente de WhatsApp (solo admin)

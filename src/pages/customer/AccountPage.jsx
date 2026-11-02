@@ -12,7 +12,6 @@ import {
   LogOut,
   Pencil,
   UserCircle2,
-  Drama,
   X,
 } from "lucide-react";
 import { useCustomerAuthStore } from "@/stores/useCustomerAuthStore";
@@ -24,8 +23,7 @@ import CustomerTabBar, { tabBarSpacing } from "@/components/CustomerTabBar";
 import { ACTIVE_ORDER_STATUSES } from "@/lib/domicilios";
 import { useCartaPath, useMyOrders, useMyOrdersLive } from "@/hooks";
 import { useStoreConfig } from "@/hooks/useCustomerOrders";
-import { useCurrentContest, useHalloweenMood } from "@/hooks/useContest";
-import ContestAccountCard from "@/components/concurso/ContestAccountCard";
+import { isCampaign } from "@/config/campaign";
 import { cn } from "@/lib/utils";
 import {
   useReservationsConfig,
@@ -35,13 +33,12 @@ import {
 /**
  * Mi cuenta: el hogar del cliente autenticado con Google.
  *
- * Reúne su perfil (editable), el concurso vigente (invitación o su
- * inscripción), pedidos en curso, próximas reservas y accesos. Sin sesión
+ * Reúne su perfil (editable), pedidos en curso, próximas reservas y accesos. Sin sesión
  * muestra el login de Google con los beneficios — no redirige.
  *
  * Móvil: una columna. Escritorio (lg): cabecera ancha y dos columnas, con
  * los datos y el cierre de sesión en una lateral fija. En temporada de
- * Halloween (`useHalloweenMood`) la pantalla se pone el traje: tokens de
+ * Halloween (`isCampaign("halloween")`) la pantalla se pone el traje: tokens de
  * .theme-halloween y la cabecera del bosque con luna y niebla.
  */
 
@@ -335,8 +332,7 @@ const AccountPage = () => {
   const { data: storeConfig } = useStoreConfig();
   const { data: reservationsConfig } = useReservationsConfig();
   const [confirmLogout, setConfirmLogout] = useState(false);
-  const { data: contest } = useCurrentContest();
-  const hw = useHalloweenMood();
+  const hw = isCampaign("halloween");
 
   const orders = ordersData?.results || [];
   const activeOrders = orders.filter((o) =>
@@ -398,11 +394,6 @@ const AccountPage = () => {
           </h1>
           {/* En escritorio no hay barra inferior: los accesos van arriba */}
           <nav className="ml-auto hidden items-center gap-1 md:flex" aria-label="Tu cuenta">
-            {contest && (
-              <Link to="/concurso" className="rounded-full px-3 py-1.5 text-[0.8rem] text-light/65 transition-colors hover:bg-white/[0.06] hover:text-light">
-                Concurso
-              </Link>
-            )}
             {isAuthenticated && showOrders && (
               <Link to="/mis-pedidos" className="rounded-full px-3 py-1.5 text-[0.8rem] text-light/65 transition-colors hover:bg-white/[0.06] hover:text-light">
                 Mis pedidos
@@ -421,10 +412,8 @@ const AccountPage = () => {
         <AccountHero customer={isAuthenticated ? customer : null} hw={hw} />
 
         {!isAuthenticated ? (
-          <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
+          <div className="mt-6">
             <LoginHero />
-            {/* Sin sesión también se invita: entrar es el primer paso */}
-            <ContestAccountCard />
           </div>
         ) : (
           <motion.div
@@ -432,21 +421,12 @@ const AccountPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:items-start lg:gap-8"
           >
-            {/* Móvil: la invitación va primero, antes que los datos */}
-            <div className="lg:hidden">
-              <ContestAccountCard />
-            </div>
-
             <aside className="grid gap-4 lg:sticky lg:top-20">
               <ProfileCard />
               <div className="hidden lg:block">{logoutBlock}</div>
             </aside>
 
             <div className="grid gap-6">
-              <div className="hidden lg:block">
-                <ContestAccountCard />
-              </div>
-
               {/* Pedidos en curso */}
               {activeOrders.length > 0 && (
                 <section>
@@ -529,14 +509,6 @@ const AccountPage = () => {
               <section>
                 <SectionTitle>¿Qué quieres hacer?</SectionTitle>
                 <div className="grid grid-cols-2 gap-2.5 mt-3 sm:grid-cols-4">
-                  {contest && (
-                    <QuickAction
-                      to="/concurso"
-                      icon={Drama}
-                      label="Concurso"
-                      sub="Disfraces +18"
-                    />
-                  )}
                   {orderingEnabled && (
                     <QuickAction
                       to="/domicilios"

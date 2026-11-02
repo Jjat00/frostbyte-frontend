@@ -31,10 +31,9 @@ src/
 │   ├── inventory/      # Control de inventario
 │   ├── expenses/       # Gastos operacionales
 │   ├── analytics/      # Finanzas, canales y clientes, horario del local
-│   ├── customer/       # Cuenta Google, domicilios, mis pedidos, reservas, concurso
+│   ├── customer/       # Cuenta Google, domicilios, mis pedidos, reservas
 │   ├── whatsapp/       # Configuración de Frosty y bandeja de chats
 │   ├── reservations/   # Gestión de reservas (staff)
-│   ├── contests/       # Panel de barra del concurso
 │   ├── recetarios/     # Recetarios del equipo
 │   ├── music/ · youtube/  # Paneles de música y pantalla TV
 │   ├── game/           # Duelo Frostbyte e Impostor
@@ -78,7 +77,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - Frase motivacional diaria con IA (GPT-4o-mini)
 - Transcripción de voz con IA (Whisper)
 - Tracking por mesa con piso (`/mesa/:floor/:tableNumber`)
-- **Cuenta de cliente con Google** (`/mi-cuenta`): domicilios y pedidos para recoger con carrito, mapa y seguimiento en vivo (`/domicilios`, `/mis-pedidos`; el checkout avisa cuánto falta para el pedido mínimo a la ubicación marcada, sin bloquear), reservas de mesa, grupo o Sala VIP (`/reservas`, `/mis-reservas`) y concurso vigente (`/concurso`)
+- **Cuenta de cliente con Google** (`/mi-cuenta`): domicilios y pedidos para recoger con carrito, mapa y seguimiento en vivo (`/domicilios`, `/mis-pedidos`; el checkout avisa cuánto falta para el pedido mínimo a la ubicación marcada, sin bloquear) y reservas de mesa, grupo o Sala VIP (`/reservas`, `/mis-reservas`)
 - Campañas de temporada detrás de un interruptor (heros, banners y tarjeta de celebración en `/amor-amistad/tarjeta`)
 - **Solicitudes de música** - el admin elige la fuente (Spotify o YouTube, default YouTube) y los clientes ven la UI correspondiente:
   - **Spotify**: búsqueda, Now Playing con letras sincronizadas, cola en tiempo real
@@ -91,7 +90,7 @@ Frostbyte incluye múltiples interfaces de IA en vistas públicas y privadas:
 - **Negocios**: un mismo equipo opera varios negocios (Frostbyte bebidas y Frostbyte Food); `/seleccionar-negocio` elige con cuál trabajar
 - **Pedidos**: Gestión del ciclo de vida de pedidos (Pendiente → Preparando → Listo → Entregado), pantalla de cocina, mesas por piso con sus QR, domicilios, deudas con su antigüedad, historial y estadísticas
 - **Estado del local** (`/home`): abrir y cerrar, domicilios en línea y, solo para el admin, la zona de cobertura y el **pedido mínimo a domicilio según la distancia**: el valor mínimo en productos (sin el envío) y la zona cercana sin mínimo, dibujada en el mapa o por radio en metros. Aplica en la app y en Frosty; para recoger no hay mínimo
-- **Reservas** (`/reservas-admin`) y **concurso** (`/concurso-admin`): paneles del staff
+- **Reservas** (`/reservas-admin`): panel del staff
 - **Recetarios** (`/recetarios`): guías de preparación paso a paso
 - **Inventario**: Control de materias primas, recetas y órdenes de compra
 - **Gastos**: Seguimiento de gastos operacionales y recurrentes
@@ -147,7 +146,7 @@ El admin elige la fuente activa desde el selector del panel `/musica`. Los clien
 | `/` | Público | Menú digital con quiz recomendador, frase motivacional y transcripción de voz |
 | `/mesa/:floor/:tableNumber` · `/mesa/:tableNumber` | Público | Tracking por mesa con todas las funciones de IA del menú |
 | `/mi-cuenta` · `/mis-pedidos` · `/mis-reservas` | Cliente (Google) | Cuenta, pedidos y reservas del cliente |
-| `/domicilios` · `/reservas` · `/concurso` | Público / Cliente | Pedir a domicilio o para recoger, reservar, inscribirse al concurso |
+| `/domicilios` · `/reservas` | Público / Cliente | Pedir a domicilio o para recoger, reservar |
 | `/landing` | Público | Landing comercial de la plataforma |
 | `/privacidad` · `/terminos` | Público | Legales |
 | `/amor-amistad/tarjeta` | Público | Tarjeta de celebración de temporada |
@@ -156,7 +155,7 @@ El admin elige la fuente activa desde el selector del panel `/musica`. Los clien
 | `/home` | Protegido | Dashboard principal |
 | `/agente-whatsapp` | Admin | Configuración de Frosty |
 | `/chats-whatsapp/:contactId?` | Protegido | Bandeja de chats de WhatsApp (solo lectura) |
-| `/reservas-admin` · `/concurso-admin` | Protegido | Reservas y concurso desde la barra |
+| `/reservas-admin` | Protegido | Reservas desde la barra |
 | `/recetarios/*` · `/feedback` | Protegido | Recetarios y feedback |
 | `/analytics/*` | Admin | Finanzas, canales y horario |
 | `/frostbyte-tv` | Público | Carta en diapositivas para las pantallas del local |
