@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { useActiveCategories, useProductsByCategory } from "@/hooks";
 import { activeVariants } from "@/lib/variants";
@@ -179,20 +180,46 @@ function CategorySection({ category, onOpen, register, onEmpty }) {
   );
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 function ProductSheet({ product, onClose }) {
   const closeRef = React.useRef(null);
+  const panelRef = React.useRef(null);
   React.useEffect(() => {
     if (!product) return undefined;
     const previous = document.activeElement;
     closeRef.current?.focus();
     const onKey = (event) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      // El foco no sale de la ficha mientras está abierta.
+      if (event.key !== "Tab" || !panelRef.current) return;
+      const items = [...panelRef.current.querySelectorAll(FOCUSABLE)];
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!panelRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
+    // Lo de detrás no se puede tocar ni enfocar mientras la ficha está abierta.
+    const outside = [...document.body.children].filter((el) => !el.contains(panelRef.current));
+    outside.forEach((el) => el.setAttribute("inert", ""));
     document.addEventListener("keydown", onKey);
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
+      outside.forEach((el) => el.removeAttribute("inert"));
       document.body.style.overflow = overflow;
       previous?.focus?.();
     };
@@ -203,10 +230,11 @@ function ProductSheet({ product, onClose }) {
   const christmas = NAVIDAD_MENU_IMAGES.has(product.slug);
   const image = christmas ? `/images/navidad/menu/${product.slug}.webp` : product.image_url;
 
-  return (
+  // En un portal sobre <body>: así todo lo demás (la app entera) queda inerte.
+  return createPortal(
     <div className="nv-sheet" role="dialog" aria-modal="true" aria-labelledby="nv-sheet-title">
       <button type="button" className="nv-sheet__scrim" aria-label="Cerrar" onClick={onClose} tabIndex={-1} />
-      <div className="nv-sheet__panel fb-sheet">
+      <div ref={panelRef} className="nv-sheet__panel fb-sheet">
         <button ref={closeRef} type="button" className="nv-sheet__close" onClick={onClose} aria-label="Cerrar">
           <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
         </button>
@@ -226,7 +254,8 @@ function ProductSheet({ product, onClose }) {
           </ul>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

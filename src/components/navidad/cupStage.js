@@ -165,56 +165,94 @@ export function mountCup({ root, tilt, img, shadow, area, cup, still = false, st
     apply();
   };
 
+  // Lo que se está pintando, para reconstruir si el navegador pierde WebGL.
+  const textures = { color: null, depth: null };
+
+  // Sin 3D (falló WebGL, una textura o se perdió el contexto): queda la
+  // <img> de siempre con la inclinación CSS. Nunca un vaso invisible.
+  const fallBack = () => {
+    gl = null;
+    root.classList.remove("is-3d");
+  };
+
+  const startGL = () => {
+    if (!canvas || !textures.color || !textures.depth) return false;
+    try {
+      gl = buildGL(canvas);
+      gl?.setTextures(textures.color, textures.depth);
+    } catch {
+      gl = null;
+    }
+    if (!gl) return false;
+    root.classList.add("is-3d");
+    state.drawnX = NaN;
+    apply();
+    return true;
+  };
+
+  const onLost = (event) => {
+    // preventDefault permite que el navegador lo restaure más tarde.
+    event.preventDefault();
+    fallBack();
+  };
+  const onRestored = () => {
+    if (!state.dead) startGL();
+  };
+
   const ready = preloadCup(cup)
     .then(([color, depth]) => {
       if (state.dead) return;
+      textures.color = color;
+      textures.depth = depth;
       const c = document.createElement("canvas");
       c.setAttribute("aria-hidden", "true");
       tilt.appendChild(c);
       canvas = c;
       size();
-      try {
-        gl = buildGL(c);
-        gl?.setTextures(color, depth);
-      } catch {
-        gl = null;
-      }
-      if (!gl) {
+      c.addEventListener("webglcontextlost", onLost);
+      c.addEventListener("webglcontextrestored", onRestored);
+      if (!startGL()) {
         c.remove();
         canvas = null;
         return;
       }
-      root.classList.add("is-3d");
       observer = new ResizeObserver(() => {
         size();
         apply();
       });
-      state.drawnX = NaN;
       observer.observe(c);
-      apply();
     })
     .catch(() => {});
 
   state.raf = requestAnimationFrame(frame);
 
   return {
-    /** Cambia de vaso. Resuelve cuando el nuevo ya está pintado. */
+    /**
+     * Cambia de vaso. Siempre resuelve: si la foto carga pero la profundidad
+     * o WebGL fallan, queda la foto plana; si ni la foto carga, se deja el
+     * vaso anterior a la vista.
+     */
     swap(next) {
-      return Promise.all([ready, preloadCup(next)]).then(([, [color, depth]]) => {
-        if (state.dead) return;
-        img.src = next.src;
-        if (gl) {
-          try {
-            gl.setTextures(color, depth);
-          } catch {
-            gl = null;
-            canvas?.remove();
-            canvas = null;
-            root.classList.remove("is-3d");
+      return ready
+        .then(() => Promise.allSettled([loadImage(next.src), loadImage(next.depth)]))
+        .then(([color, depth]) => {
+          if (state.dead || color.status !== "fulfilled") return;
+          img.src = next.src;
+          textures.color = color.value;
+          textures.depth = depth.status === "fulfilled" ? depth.value : null;
+          if (!gl) return;
+          if (!textures.depth) {
+            fallBack();
+            return;
           }
-        }
-        apply();
-      });
+          try {
+            gl.setTextures(textures.color, textures.depth);
+            state.drawnX = NaN;
+            apply();
+          } catch {
+            fallBack();
+          }
+        });
     },
     setPaused(value) {
       state.paused = value;
@@ -224,6 +262,8 @@ export function mountCup({ root, tilt, img, shadow, area, cup, still = false, st
       cancelAnimationFrame(state.raf);
       area.removeEventListener("pointermove", onMove);
       observer?.disconnect();
+      canvas?.removeEventListener("webglcontextlost", onLost);
+      canvas?.removeEventListener("webglcontextrestored", onRestored);
       // Sin loseContext(): si React vuelve a montar sobre el mismo canvas,
       // getContext devolvería el contexto perdido. El canvas se va con el DOM.
       canvas?.remove();

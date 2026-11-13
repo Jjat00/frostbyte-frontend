@@ -122,6 +122,7 @@ const LiquidoHero = () => {
       // Gama baja: un solo fotograma, a un tercio de resolución.
       still: reducedMotion() || LOW_END,
       scale: LOW_END ? 0.33 : TOUCH ? 0.4 : 0.5,
+      onLost: () => rootRef.current?.classList.add("nv-liq--flat"),
     });
     if (!instance) rootRef.current.classList.add("nv-liq--flat");
     liquid.current = instance;
@@ -203,8 +204,10 @@ const LiquidoHero = () => {
     const out = animate
       ? gsap.to(cup, { opacity: 0, xPercent: -7 * dir, duration: 0.2, ease: "power2.in", overwrite: true }).then()
       : Promise.resolve();
+    // Pase lo que pase con la carga, el vaso vuelve a verse.
     Promise.all([out, loaded])
       .then(() => (alive ? stage.swap(flavor) : null))
+      .catch(() => {})
       .then(() => {
         if (!alive) return;
         if (animate) gsap.fromTo(cup, { opacity: 0, xPercent: 7 * dir }, { opacity: 1, xPercent: 0, duration: 0.45, ease: "power3.out", overwrite: true });

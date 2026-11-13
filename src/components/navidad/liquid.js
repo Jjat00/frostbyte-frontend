@@ -48,7 +48,7 @@ const toRGB = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 
  * Monta el fondo en `canvas`. `area` recibe el puntero. `palette`: tres
  * colores hex (oscuro, medio, claro). Devuelve null si no hay WebGL.
  */
-export function mountLiquid({ canvas, area, palette, still = false, scale: startScale = 0.5 }) {
+export function mountLiquid({ canvas, area, palette, still = false, scale: startScale = 0.5, onLost = () => {} }) {
   const gl = canvas.getContext("webgl", { antialias: false, alpha: false, depth: false, powerPreference: "low-power" });
   if (!gl) return null;
   let program;
@@ -107,6 +107,15 @@ export function mountLiquid({ canvas, area, palette, still = false, scale: start
   };
   area.addEventListener("pointermove", onMove, { passive: true });
   area.addEventListener("pointerleave", onLeave);
+
+  // Si el navegador pierde WebGL (memoria baja, app en segundo plano), el
+  // fondo pasa a color plano: el componente lo resuelve con onLost.
+  const handleLost = (event) => {
+    event.preventDefault();
+    state.frozen = true;
+    onLost();
+  };
+  canvas.addEventListener("webglcontextlost", handleLost);
 
   function draw(now, dt = 0) {
     const t = (now - state.t0) / 1000;
@@ -183,6 +192,7 @@ export function mountLiquid({ canvas, area, palette, still = false, scale: start
       observer.disconnect();
       area.removeEventListener("pointermove", onMove);
       area.removeEventListener("pointerleave", onLeave);
+      canvas.removeEventListener("webglcontextlost", handleLost);
     },
   };
 }
