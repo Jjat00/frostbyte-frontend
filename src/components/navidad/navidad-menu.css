@@ -574,3 +574,18 @@ button.nv-card:focus-visible {
   background-color: #fffaf4;
   color: #231a1b;
 }
+
+/* Estilo plano: ningún botón, enlace ni tarjeta lleva sombra en Navidad.
+   Los botones principales (fb-btn--solid) traían un halo del color de
+   acento hacia abajo y las tarjetas de accesos del hero una sombra grande;
+   sobre fondos de un solo color se leían como manchas. El !important pisa
+   también las utilidades de Tailwind (shadow-[...]) de cada componente. */
+.theme-navidad :is(a, button, [role="button"], .fb-btn, .fb-pill, .fb-card, .fb-inset) {
+  box-shadow: none !important;
+}
+
+.nv-body .fb-btn--solid,
+.nv-body .fb-btn--solid:hover {
+  background-color: #f3ece4;
+  color: #231a1b;
+}
