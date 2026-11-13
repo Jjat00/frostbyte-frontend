@@ -462,6 +462,19 @@ button.nv-card:focus-visible {
     top: 56px;
   }
 
+  /* En escritorio no hay dedo para arrastrar: las pestañas bajan de fila y
+     se ven todas, sin scroll horizontal escondido. */
+  .nv-bar__track {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    gap: 0.45rem;
+  }
+
+  .nv-bar a {
+    min-height: 2.25rem;
+    padding: 0 0.9rem;
+  }
+
   .nv-cat {
     padding-top: 3.4rem;
   }

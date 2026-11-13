@@ -105,15 +105,21 @@ function ProductCard({ product, index, onOpen }) {
   );
 }
 
-function CategorySection({ category, onOpen, register }) {
+function CategorySection({ category, onOpen, register, onEmpty }) {
   const { data, isLoading } = useProductsByCategory(category.slug);
   const products = (data?.results || []).filter(
     (product) => product.is_active !== false && activeVariants(product).length
   );
   const id = sectionId(category);
   const extras = EXTRAS[category.slug];
+  const empty = !isLoading && !products.length;
 
-  if (!isLoading && !products.length) return null;
+  // Avisa a la barra: una categoría activa sin productos no tiene pestaña.
+  React.useEffect(() => {
+    onEmpty(category.slug, empty);
+  }, [category.slug, empty, onEmpty]);
+
+  if (empty) return null;
 
   return (
     <section id={id} ref={(el) => register(id, el)} className="nv-cat" aria-labelledby={`${id}-title`}>
@@ -224,6 +230,16 @@ export default function NavidadMenu() {
   }, [data]);
 
   const [open, setOpen] = React.useState(null);
+  const [empty, setEmpty] = React.useState(() => new Set());
+  const onEmpty = React.useCallback((slug, isEmpty) => {
+    setEmpty((prev) => {
+      if (prev.has(slug) === isEmpty) return prev;
+      const next = new Set(prev);
+      if (isEmpty) next.add(slug);
+      else next.delete(slug);
+      return next;
+    });
+  }, []);
   const [current, setCurrent] = React.useState(null);
   const sections = React.useRef(new Map());
   const barRef = React.useRef(null);
@@ -284,7 +300,8 @@ export default function NavidadMenu() {
 
       <nav className="nv-bar" aria-label="Categorías de la carta">
         <div ref={barRef} className="nv-bar__track">
-          {categories.map((category) => {
+          {/* Mismo orden que las secciones de abajo; sin las que no tienen productos. */}
+          {categories.filter((category) => !empty.has(category.slug)).map((category) => {
             const id = sectionId(category);
             return (
               <a
@@ -320,7 +337,7 @@ export default function NavidadMenu() {
 
       <div className="nv-menu__inner nv-menu__list">
         {categories.map((category) => (
-          <CategorySection key={category.slug} category={category} onOpen={setOpen} register={register} />
+          <CategorySection key={category.slug} category={category} onOpen={setOpen} register={register} onEmpty={onEmpty} />
         ))}
       </div>
 

@@ -65,6 +65,7 @@ export const NAVIDAD_MENU_IMAGES = new Set([
   "moscow-mule",
   "mr-tea",
   "oreo",
+  "paleta-de-dracula",
   "pecera-granizada",
   "pecera-granizado-con-alcohol",
   "poker",
