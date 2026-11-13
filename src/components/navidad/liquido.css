@@ -1,0 +1,368 @@
+/* Navidad, variante "Líquido". Todo cuelga de .nv-liq: con la campaña
+   apagada nada de esto pinta. Móvil primero.
+
+   Capas: el fondo líquido (canvas) ocupa todo el hero; un velo lo oscurece
+   hacia abajo para que las tarjetas de servicios, que son de vidrio
+   rebajado, se lean sobre oscuro como en el hero habitual. */
+
+/* Bricolage Grotesque condensada y gruesa, solo letras, números y algunos
+   signos (8 KB). Solo se descarga si algo la usa. Licencia OFL. */
+@font-face {
+  font-family: "Navidad Display";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/navidad-display.woff2") format("woff2");
+}
+
+.nv-liq {
+  --nv-flavor: #9d0812;
+  --nv-ink: #fff8ee;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100svh;
+  padding: 1.25rem 0 2.5rem;
+  background: var(--nv-flavor);
+  transition: background-color 0.9s ease;
+  color: var(--nv-ink);
+}
+
+.nv-liq__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Sin WebGL: el color del sabor, plano, con una luz suave arriba. */
+.nv-liq--flat .nv-liq__canvas {
+  display: none;
+}
+.nv-liq--flat {
+  background-image: radial-gradient(90% 60% at 50% 30%, rgba(255, 255, 255, 0.18), transparent 70%);
+}
+
+.nv-liq__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.28) 0%,
+    rgba(0, 0, 0, 0) 14%,
+    rgba(0, 0, 0, 0) 50%,
+    color-mix(in srgb, var(--color-dark) 78%, transparent) 70%,
+    var(--color-dark) 100%
+  );
+}
+
+.nv-liq__top {
+  display: grid;
+  grid-template-areas: "head" "stage" "info";
+  gap: 1rem;
+}
+
+/* ── Marca ─────────────────────────────────────────────────────────── */
+.nv-liq__head {
+  grid-area: head;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.nv-liq__brand {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 7vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.25);
+}
+
+.nv-liq__loc {
+  margin: 0;
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--nv-ink) 82%, transparent);
+  text-align: right;
+}
+
+/* ── Escenario: palabra gigante detrás, vaso delante ────────────────── */
+.nv-liq__stage {
+  grid-area: stage;
+  position: relative;
+  height: clamp(300px, 48svh, 470px);
+  display: grid;
+  place-items: center;
+}
+
+.nv-liq__word {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  display: grid;
+  place-content: center;
+  pointer-events: none;
+}
+
+.nv-liq__word > span {
+  display: block;
+  width: max-content;
+  font-family: "Navidad Display", var(--font-display);
+  font-size: 100px;
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.nv-liq__word i {
+  display: inline-block;
+  font-style: normal;
+  will-change: transform, opacity;
+}
+
+.nv-liq__cupline {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+  align-items: center;
+  justify-items: center;
+}
+
+.nv-liq__cup {
+  position: relative;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 0.74;
+  perspective: 900px;
+  touch-action: pan-y;
+  will-change: transform, opacity;
+}
+
+.nv-liq__tilt {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.nv-liq__tilt img,
+.nv-liq__tilt canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.nv-liq__cup.is-3d img {
+  visibility: hidden;
+}
+
+.nv-liq__shadow {
+  position: absolute;
+  z-index: 0;
+  left: 17%;
+  right: 17%;
+  bottom: 2%;
+  height: 7%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.32), transparent);
+  will-change: transform;
+}
+
+.nv-liq__nav {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--nv-ink) 50%, transparent);
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--nv-ink);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.nv-liq__nav:hover {
+  transform: scale(1.07);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.nv-liq__nav:focus-visible {
+  outline: 2px solid var(--nv-ink);
+  outline-offset: 3px;
+}
+
+.nv-liq__nav:disabled {
+  visibility: hidden;
+}
+
+/* ── Sabor, precio y lo de siempre ─────────────────────────────────── */
+.nv-liq__info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nv-liq__flavor {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  text-align: center;
+}
+
+.nv-liq__now {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem 0.7rem;
+}
+
+.nv-liq__name {
+  font-family: "Navidad Display", var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.nv-liq__price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--nv-ink) 85%, transparent);
+}
+
+.nv-liq__progress {
+  display: block;
+  width: 3.5rem;
+  height: 2px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--nv-ink) 30%, transparent);
+}
+
+.nv-liq__progress b {
+  display: block;
+  height: 100%;
+  background: var(--nv-ink);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.nv-liq__more {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--nv-ink) 80%, transparent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--nv-ink) 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.nv-liq__more:hover {
+  color: var(--nv-ink);
+}
+
+.nv-liq__tag {
+  margin: 0;
+  max-width: 21rem;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--color-light) 62%, transparent);
+}
+
+/* ── Escritorio: escenario a la izquierda, marca y sabor a la derecha ─ */
+@media (min-width: 768px) {
+  .nv-liq {
+    padding: 2rem 0 3.5rem;
+  }
+
+  .nv-liq__veil {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.22) 0%,
+      rgba(0, 0, 0, 0) 16%,
+      rgba(0, 0, 0, 0) 62%,
+      color-mix(in srgb, var(--color-dark) 80%, transparent) 82%,
+      var(--color-dark) 100%
+    );
+  }
+
+  .nv-liq__top {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-areas:
+      "stage head"
+      "stage info";
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(2rem, 5vw, 4.5rem);
+    row-gap: 1.5rem;
+    align-items: end;
+  }
+
+  .nv-liq__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    align-self: start;
+    padding-top: 2rem;
+  }
+
+  .nv-liq__brand {
+    font-size: clamp(2.6rem, 5.4vw, 4.6rem);
+    letter-spacing: 0.04em;
+  }
+
+  .nv-liq__loc {
+    text-align: left;
+    font-size: 0.62rem;
+  }
+
+  .nv-liq__stage {
+    height: clamp(420px, 64svh, 660px);
+  }
+
+  .nv-liq__flavor {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .nv-liq__now {
+    justify-content: flex-start;
+  }
+
+  .nv-liq__name {
+    font-size: 2.2rem;
+  }
+
+  .nv-liq__tag {
+    font-size: 0.84rem;
+    color: color-mix(in srgb, var(--nv-ink) 72%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-liq,
+  .nv-liq__nav {
+    transition: none;
+  }
+}

@@ -27,11 +27,11 @@ const LIVE_CAMPAIGN = null;
 
 /**
  * Campañas terminadas pero apagadas que se pueden ver antes de encenderlas:
- * `/?campana=halloween` (o `/mesa/2/1?campana=halloween`). Solo cambia la
+ * `/?campana=halloween` o `/?campana=navidad` (también en `/mesa/2/1?...`). Solo cambia la
  * pestaña de quien abre el enlace y se recuerda en sessionStorage mientras
  * esa pestaña siga abierta; `?campana=ninguna` la quita.
  */
-const PREVIEWABLE = ["halloween"];
+const PREVIEWABLE = ["halloween", "navidad"];
 const PREVIEW_KEY = "frostbyte_campaign_preview";
 
 function previewCampaign() {
