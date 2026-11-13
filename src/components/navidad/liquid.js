@@ -48,7 +48,7 @@ const toRGB = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 
  * Monta el fondo en `canvas`. `area` recibe el puntero. `palette`: tres
  * colores hex (oscuro, medio, claro). Devuelve null si no hay WebGL.
  */
-export function mountLiquid({ canvas, area, palette, still = false }) {
+export function mountLiquid({ canvas, area, palette, still = false, scale: startScale = 0.5 }) {
   const gl = canvas.getContext("webgl", { antialias: false, alpha: false, depth: false, powerPreference: "low-power" });
   if (!gl) return null;
   let program;
@@ -79,7 +79,7 @@ export function mountLiquid({ canvas, area, palette, still = false }) {
 
   const current = palette.map(toRGB);
   let target = current.map((color) => [...color]);
-  let scale = 0.5;
+  let scale = startScale;
   const pointer = { x: 0, y: 0, last: -1e9, inside: false };
   const mouse = { x: 0, y: 0, ready: false };
   const state = { paused: false, dead: false, raf: 0, frozen: still, t0: performance.now(), prev: 0, samples: [] };

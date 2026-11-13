@@ -11,6 +11,7 @@ import { activeVariants } from "@/lib/variants";
 import { NAVIDAD_CUPS } from "@/components/navidad/cups";
 import { mountCup, preloadCup } from "@/components/navidad/cupStage";
 import { mountLiquid } from "@/components/navidad/liquid";
+import { isLowEnd, isTouch } from "@/components/navidad/device";
 import "./liquido.css";
 
 gsap.registerPlugin(useGSAP);
@@ -57,6 +58,10 @@ const Chevron = ({ flip = false }) => (
   </svg>
 );
 
+// Se decide una vez por visita: el aparato no cambia mientras se navega.
+const LOW_END = isLowEnd();
+const TOUCH = isTouch();
+
 const reducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -84,7 +89,11 @@ const LiquidoHero = () => {
     () =>
       (data?.results || [])
         .filter((product) => product.is_active !== false && !product.is_coming_soon && NAVIDAD_CUPS[product.slug])
-        .map((product) => ({ ...NAVIDAD_CUPS[product.slug], name: product.name, slug: product.slug, price: priceLabel(product) }))
+        .map((product) => {
+          const cup = NAVIDAD_CUPS[product.slug];
+          // En el teléfono baja la versión pequeña del vaso.
+          return { ...cup, src: TOUCH || LOW_END ? cup.small : cup.src, name: product.name, slug: product.slug, price: priceLabel(product) };
+        })
         .filter((flavor) => flavor.price),
     [data]
   );
@@ -110,7 +119,9 @@ const LiquidoHero = () => {
       canvas: canvasRef.current,
       area: rootRef.current,
       palette: WAITING_PALETTE,
-      still: reducedMotion(),
+      // Gama baja: un solo fotograma, a un tercio de resolución.
+      still: reducedMotion() || LOW_END,
+      scale: LOW_END ? 0.33 : TOUCH ? 0.4 : 0.5,
     });
     if (!instance) rootRef.current.classList.add("nv-liq--flat");
     liquid.current = instance;
@@ -132,7 +143,8 @@ const LiquidoHero = () => {
       shadow: shadowRef.current,
       area: rootRef.current,
       cup: first,
-      still: reducedMotion(),
+      still: reducedMotion() || LOW_END,
+      maxDpr: LOW_END ? 1 : TOUCH ? 1.5 : 2,
     });
     instance.setPaused(halted.current);
     cupStage.current = instance;

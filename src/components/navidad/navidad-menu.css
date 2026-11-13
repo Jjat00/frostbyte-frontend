@@ -115,6 +115,17 @@
   background: rgba(35, 26, 27, 0.18);
 }
 
+.nv-bar a.nv-bar__song {
+  gap: 0.4rem;
+  background: var(--nv-pine);
+  border-color: var(--nv-pine);
+  color: #f6efe0;
+}
+
+.nv-bar a.nv-bar__song:hover {
+  background: #0a4d36;
+}
+
 .nv-bar a.nv-bar__more {
   border-style: dashed;
   font-weight: 500;

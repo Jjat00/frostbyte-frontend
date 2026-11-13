@@ -25,6 +25,8 @@ const cup = (key, word, liquid) => ({
   word,
   liquid,
   src: `${DIR}/${key}.webp`,
+  // 444 × 600 (~50 KB en vez de ~180 KB): la que baja el teléfono.
+  small: `${DIR}/${key}-sm.webp`,
   depth: `${DIR}/${key}-depth.webp`,
 });
 

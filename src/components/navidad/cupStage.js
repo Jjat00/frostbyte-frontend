@@ -118,8 +118,8 @@ function buildGL(canvas) {
  * vía `shadow`); `area` es el elemento que escucha el puntero.
  * Devuelve { swap(cup), setPaused(bool), destroy() }.
  */
-export function mountCup({ root, tilt, img, shadow, area, cup, still = false, strength = 0.045 }) {
-  const state = { px: 0, py: 0, x: 0, y: 0, lastMove: -1e9, paused: false, raf: 0, dead: false, t0: performance.now() };
+export function mountCup({ root, tilt, img, shadow, area, cup, still = false, strength = 0.045, maxDpr = 2 }) {
+  const state = { px: 0, py: 0, x: 0, y: 0, lastMove: -1e9, paused: false, raf: 0, dead: false, t0: performance.now(), drawnX: NaN, drawnY: NaN };
   let gl = null;
   let canvas = null;
   let observer = null;
@@ -134,7 +134,7 @@ export function mountCup({ root, tilt, img, shadow, area, cup, still = false, st
 
   const size = () => {
     if (!canvas) return;
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const ratio = Math.min(window.devicePixelRatio || 1, maxDpr);
     canvas.width = Math.max(1, Math.round(canvas.clientWidth * ratio));
     canvas.height = Math.max(1, Math.round(canvas.clientHeight * ratio));
   };
@@ -158,6 +158,10 @@ export function mountCup({ root, tilt, img, shadow, area, cup, still = false, st
     const swayY = still ? 0 : Math.cos(t * 0.5) * 0.3;
     state.x += (state.px * k + swayX * (1 - k) - state.x) * 0.07;
     state.y += (state.py * k + swayY * (1 - k) - state.y) * 0.07;
+    // Quieto (sin vaivén y sin dedo) no se repinta: cero trabajo de GPU.
+    if (Math.abs(state.x - state.drawnX) < 0.0005 && Math.abs(state.y - state.drawnY) < 0.0005) return;
+    state.drawnX = state.x;
+    state.drawnY = state.y;
     apply();
   };
 
@@ -185,6 +189,7 @@ export function mountCup({ root, tilt, img, shadow, area, cup, still = false, st
         size();
         apply();
       });
+      state.drawnX = NaN;
       observer.observe(c);
       apply();
     })

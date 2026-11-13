@@ -50,7 +50,6 @@ const MORE = [
   { id: "que-te-provoca", name: "¿Qué te provoca?" },
   { id: "descuento-redes", name: "10 % por redes" },
   { id: "descuento-cumple", name: "Cumpleaños" },
-  { id: "solicitar-cancion", name: "Pedir canción" },
   { id: "feedback", name: "Tu opinión" },
   { id: "frostbyte-play", name: "Frostbyte Play", tableOnly: true },
 ];
@@ -74,6 +73,10 @@ function ProductCard({ product, index, onOpen }) {
   if (!variants.length) return null;
   const christmas = NAVIDAD_MENU_IMAGES.has(product.slug);
   const image = christmas ? `/images/navidad/menu/${product.slug}.webp` : product.image_url;
+  // 320 px para el teléfono (~11 KB), 640 px para pantallas grandes.
+  const srcSet = christmas
+    ? `/images/navidad/menu/${product.slug}-sm.webp 320w, /images/navidad/menu/${product.slug}.webp 640w`
+    : undefined;
   const tile = TILES[index % TILES.length];
   const prices = variants.map((variant) => Number(variant.price)).filter((price) => price > 0);
   const lowest = prices.length ? Math.min(...prices) : 0;
@@ -83,7 +86,16 @@ function ProductCard({ product, index, onOpen }) {
       <button type="button" className="nv-card" onClick={() => onOpen(product)} style={{ "--nv-tile": tile }}>
         <span className={`nv-card__img${christmas ? "" : " nv-card__img--plain"}`}>
           {image ? (
-            <img src={image} alt="" loading="lazy" decoding="async" width="640" height="800" />
+            <img
+              src={image}
+              srcSet={srcSet}
+              sizes="(min-width: 1024px) 260px, (min-width: 640px) 30vw, 46vw"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              width="640"
+              height="800"
+            />
           ) : (
             <span className="nv-card__initial" aria-hidden="true">{product.name.charAt(0)}</span>
           )}
@@ -300,6 +312,24 @@ export default function NavidadMenu() {
 
       <nav className="nv-bar" aria-label="Categorías de la carta">
         <div ref={barRef} className="nv-bar__track">
+          {/* Pedir canción va primero: es de lo más usado y así queda a la mano. */}
+          <a
+            href="#solicitar-cancion"
+            className="nv-bar__song"
+            onClick={(event) => {
+              if (!document.getElementById("solicitar-cancion")) return;
+              event.preventDefault();
+              scrollToId("solicitar-cancion");
+            }}
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6 12.5V3.5l7-1.5v9" />
+              <circle cx="4.25" cy="12.5" r="1.75" />
+              <circle cx="11.25" cy="11" r="1.75" />
+            </svg>
+            Pedir canción
+          </a>
+          <span className="nv-bar__sep" aria-hidden="true" />
           {/* Mismo orden que las secciones de abajo; sin las que no tienen productos. */}
           {categories.filter((category) => !empty.has(category.slug)).map((category) => {
             const id = sectionId(category);
