@@ -15,7 +15,7 @@ import { useActiveCategories, useProductsByCategory } from "@/hooks";
 import { getCategoryStyles } from "@/lib/productStyles";
 import SalchipapasPromoBanner from "@/components/SalchipapasPromoBanner";
 import SectionHeading from "@/components/SectionHeading";
-import { campaignOn } from "@/config/campaign";
+import { campaignOn, isCampaign } from "@/config/campaign";
 import { activeVariants } from "@/lib/variants";
 
 const formatPrice = (price) => {
@@ -268,6 +268,10 @@ const SpecialSectionItem = ({ section }) => {
 };
 
 const CartaList = () => {
+  // Con la carta de Navidad encendida, esta sección vive dentro de
+  // NavidadMenu. La campaña no cambia durante la visita, así que el orden de
+  // los hooks es estable.
+  if (isCampaign("navidad")) return null;
   const location = useLocation();
   const isTableRoute = location.pathname.startsWith("/mesa/");
 

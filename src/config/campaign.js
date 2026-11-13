@@ -68,6 +68,7 @@ export const campaignThemeClass = ACTIVE_CAMPAIGN ? `theme-${ACTIVE_CAMPAIGN}` :
 const BODY_CLASS = {
   "amor-amistad": "aa-menu-body",
   halloween: "hw-menu-body",
+  navidad: "nv-body",
 };
 
 export const campaignBodyClass = BODY_CLASS[ACTIVE_CAMPAIGN] ?? "";

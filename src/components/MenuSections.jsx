@@ -13,6 +13,8 @@ import Cervezas from "./Cervezas";
 import Cuates from "./Cuates";
 import Luladas from "./Luladas";
 import PromoTicker from "./PromoTicker";
+import NavidadMenu from "./navidad/NavidadMenu";
+import { isCampaign } from "@/config/campaign";
 
 /**
  * Mapa de slug de categoría a componente de sección
@@ -39,7 +41,11 @@ const SECTION_COMPONENTS = {
  * basándose en las categorías activas de la base de datos.
  * Solo se muestran las secciones cuya categoría esté marcada como activa (is_active=true)
  */
-const MenuSections = () => {
+const MenuSections = (props) =>
+  // En Navidad la carta entera (lista, fotos, agua, desguayabator) es una sola.
+  isCampaign("navidad") ? <NavidadMenu /> : <ClassicMenuSections {...props} />;
+
+const ClassicMenuSections = () => {
   const { data: categoriesData, isLoading } = useActiveCategories();
 
   // Obtener las categorías activas ordenadas por display_order

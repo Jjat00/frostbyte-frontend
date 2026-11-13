@@ -3,6 +3,7 @@ import { Zap, Heart, Sparkles, Star } from "lucide-react";
 import { useProductsByCategory } from "@/hooks";
 import SectionHeading from "@/components/SectionHeading";
 import { activeVariants } from "@/lib/variants";
+import { isCampaign } from "@/config/campaign";
 
 /**
  * El Desguayabator: la bebida más famosa de la casa.
@@ -83,6 +84,10 @@ const INGREDIENTES = [
 ];
 
 const Desguayabator = () => {
+  // Con la carta de Navidad encendida, esta sección vive dentro de
+  // NavidadMenu. La campaña no cambia durante la visita, así que el orden de
+  // los hooks es estable.
+  if (isCampaign("navidad")) return null;
   const { data, isLoading, error } = useProductsByCategory("desguayabator");
 
   const products = data?.results || [];

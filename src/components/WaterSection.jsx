@@ -1,6 +1,7 @@
 import React from "react";
 import { Droplets } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
+import { isCampaign } from "@/config/campaign";
 
 /**
  * Agua embotellada. Una sola tarjeta: el precio es toda la información.
@@ -8,6 +9,10 @@ import SectionHeading from "@/components/SectionHeading";
  * agua; ahora el fondo es el mismo de toda la carta.
  */
 const WaterSection = () => {
+  // Con la carta de Navidad encendida, esta sección vive dentro de
+  // NavidadMenu. La campaña no cambia durante la visita, así que el orden de
+  // los hooks es estable.
+  if (isCampaign("navidad")) return null;
   return (
     <section
       id="agua"

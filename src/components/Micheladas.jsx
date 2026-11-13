@@ -174,4 +174,9 @@ const Micheladas = () => {
   );
 };
 
+/** Extras de la sección, también para la carta de campaña (navidad/). */
+export const MICHELADA_EXTRAS = [
+  { title: "¿Quieres envenenarla?", description: "Agrega un shot de tu licor favorito a cualquier michelada.", options: poisonShots },
+];
+
 export default Micheladas;

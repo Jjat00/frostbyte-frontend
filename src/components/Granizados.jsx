@@ -123,6 +123,12 @@ const flavorShots = [
   { name: "Tentaxxion", detalle: "Vodka · Morado", price: "+$5.000", icon: Droplets, gradient: "from-purple-400 to-fuchsia-600" },
 ];
 
+/** Extras de la sección, también para la carta de campaña (navidad/). */
+export const GRANIZADO_EXTRAS = [
+  { title: "¿Quieres envenenarlo?", description: "Agrega un shot de tu licor favorito a cualquier granizado.", options: poisonShots },
+  { title: "Shots de sabores", description: "Dale un toque extra de sabor a tu granizado.", options: flavorShots },
+];
+
 const Granizados = ({ showExtras = true }) => {
   const { data, isLoading, error } = useProductsByCategory("granizados");
   const products = data?.results || [];

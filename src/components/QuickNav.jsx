@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useActiveCategories, useStoreConfig } from "@/hooks";
+import { isCampaign } from "@/config/campaign";
 
 /**
  * Configuración de navegación para cada sección
@@ -54,6 +55,10 @@ const DEFAULT_SECTION_ORDER = [
 ];
 
 const QuickNav = () => {
+  // Con la carta de Navidad encendida, esta sección vive dentro de
+  // NavidadMenu. La campaña no cambia durante la visita, así que el orden de
+  // los hooks es estable.
+  if (isCampaign("navidad")) return null;
   const navigate = useNavigate();
   const location = useLocation();
   const { data: categoriesData } = useActiveCategories();

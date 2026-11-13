@@ -1,0 +1,563 @@
+/* Navidad: la carta (NavidadMenu) y el resto de la página con el lenguaje
+   del hero: fondos planos de un solo color, la letra condensada gruesa en
+   los titulares y fotos sobre bloques de color. Todo cuelga de .nv-menu o
+   de .nv-body (la clase del <main> con la campaña encendida), así que con
+   la campaña apagada nada de esto pinta. Móvil primero. */
+
+/* ── La carta ──────────────────────────────────────────────────────── */
+.nv-menu {
+  --nv-red: #9d0812;
+  --nv-pine: #073d29;
+  --nv-cream: #f3ece4;
+  --nv-gold: #e3bf76;
+  position: relative;
+  padding: 3rem 0 3.5rem;
+  background: var(--nv-cream);
+  color: #231a1b;
+}
+
+.nv-menu__inner {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1.1rem;
+}
+
+.nv-menu__eyebrow {
+  margin: 0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--nv-red);
+}
+
+.nv-menu__title {
+  margin: 0.4rem 0 0;
+  font-family: "Navidad Display", var(--font-display);
+  font-size: clamp(3.4rem, 17vw, 7rem);
+  font-weight: 800;
+  line-height: 0.82;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--nv-pine);
+}
+
+.nv-menu__lead {
+  margin: 0.9rem 0 0;
+  max-width: 30rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(35, 26, 27, 0.68);
+}
+
+/* Barra de categorías: se queda pegada bajo el encabezado de la página. */
+.nv-bar {
+  position: sticky;
+  top: 52px;
+  z-index: 30;
+  margin-top: 1.4rem;
+  background: var(--nv-cream);
+  border-bottom: 1px solid rgba(35, 26, 27, 0.1);
+}
+
+.nv-bar__track {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.6rem 1.1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.nv-bar__track::-webkit-scrollbar {
+  display: none;
+}
+
+.nv-bar a {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(35, 26, 27, 0.16);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #231a1b;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.nv-bar a:hover {
+  border-color: rgba(35, 26, 27, 0.4);
+}
+
+.nv-bar a[aria-current="true"] {
+  background: var(--nv-red);
+  border-color: var(--nv-red);
+  color: #fff6ec;
+}
+
+.nv-bar a:focus-visible {
+  outline: 2px solid var(--nv-pine);
+  outline-offset: 2px;
+}
+
+.nv-bar__sep {
+  flex: none;
+  width: 1px;
+  height: 1.4rem;
+  margin: 0 0.3rem;
+  background: rgba(35, 26, 27, 0.18);
+}
+
+.nv-bar a.nv-bar__more {
+  border-style: dashed;
+  font-weight: 500;
+  color: rgba(35, 26, 27, 0.75);
+}
+
+/* Categoría */
+.nv-menu__list {
+  padding-top: 0.5rem;
+}
+
+.nv-cat {
+  padding-top: 2.4rem;
+  scroll-margin-top: 118px;
+}
+
+.nv-cat__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 2px solid #231a1b;
+  padding-bottom: 0.45rem;
+}
+
+.nv-cat__title {
+  margin: 0;
+  font-family: "Navidad Display", var(--font-display);
+  font-size: clamp(2rem, 9vw, 3.2rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #231a1b;
+}
+
+.nv-cat__count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(35, 26, 27, 0.5);
+}
+
+.nv-cat__desc {
+  margin: 0.6rem 0 0;
+  max-width: 34rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: rgba(35, 26, 27, 0.65);
+}
+
+/* Rejilla de productos: 2 columnas en el teléfono. */
+.nv-grid {
+  list-style: none;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.nv-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fffaf4;
+  text-align: left;
+  color: inherit;
+  box-shadow: 0 1px 0 rgba(35, 26, 27, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button.nv-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(35, 26, 27, 0.14);
+}
+
+button.nv-card:focus-visible {
+  outline: 2px solid var(--nv-red);
+  outline-offset: 2px;
+}
+
+.nv-card__img {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  background: var(--nv-tile, var(--nv-red));
+}
+
+.nv-card__img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Foto de siempre (aún sin versión navideña): entera, sobre el bloque. */
+.nv-card__img--plain img {
+  inset: 10%;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.nv-card__initial {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: "Navidad Display", var(--font-display);
+  font-size: 4rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.nv-card__body {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.65rem 0.75rem 0.8rem;
+}
+
+.nv-card__name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1.2;
+  color: #231a1b;
+}
+
+.nv-card__price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--nv-red);
+}
+
+.nv-card__price small {
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: rgba(35, 26, 27, 0.55);
+}
+
+.nv-card--skeleton .nv-card__img {
+  background: rgba(35, 26, 27, 0.08);
+}
+
+.nv-card--skeleton .nv-card__body span {
+  display: block;
+  height: 0.7rem;
+  border-radius: 4px;
+  background: rgba(35, 26, 27, 0.08);
+}
+
+/* Extras (licor, shots de sabores) */
+.nv-extras {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.nv-extras__group {
+  border-radius: 16px;
+  padding: 1rem 1.1rem 1.1rem;
+  background: var(--nv-pine);
+  color: #f6efe0;
+}
+
+.nv-extras__title {
+  margin: 0;
+  font-family: "Navidad Display", var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.nv-extras__desc {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 0.74rem;
+  color: rgba(246, 239, 224, 0.72);
+}
+
+.nv-extras__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.nv-extras__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px dashed rgba(246, 239, 224, 0.2);
+  font-size: 0.82rem;
+}
+
+.nv-extras__list small {
+  color: rgba(246, 239, 224, 0.6);
+}
+
+.nv-extras__list b {
+  flex: none;
+  color: var(--nv-gold);
+}
+
+/* Ficha del producto: hoja desde abajo en el teléfono, tarjeta en escritorio. */
+.nv-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.nv-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(12, 10, 11, 0.72);
+  cursor: pointer;
+}
+
+.nv-sheet__panel {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+  max-height: 92svh;
+  overflow-y: auto;
+  border-radius: 22px 22px 0 0;
+  background: #fffaf4;
+  color: #231a1b;
+  animation: nv-sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes nv-sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+.nv-sheet__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 250, 244, 0.92);
+  color: #231a1b;
+}
+
+.nv-sheet__img {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  max-height: 56svh;
+  margin: 0 auto;
+  background: var(--nv-tile, var(--nv-red));
+}
+
+.nv-sheet__img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nv-sheet__body {
+  padding: 1.1rem 1.25rem 1.6rem;
+}
+
+.nv-sheet__name {
+  margin: 0;
+  font-family: "Navidad Display", var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.nv-sheet__desc {
+  margin: 0.6rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: rgba(35, 26, 27, 0.72);
+}
+
+.nv-sheet__prices {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.nv-sheet__prices li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  background: rgba(35, 26, 27, 0.05);
+  font-size: 0.86rem;
+}
+
+.nv-sheet__prices b {
+  color: var(--nv-red);
+}
+
+@media (min-width: 640px) {
+  .nv-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .nv-menu {
+    padding: 4.5rem 0 5rem;
+  }
+
+  .nv-menu__inner,
+  .nv-bar__track {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .nv-bar {
+    top: 56px;
+  }
+
+  .nv-cat {
+    padding-top: 3.4rem;
+  }
+
+  .nv-extras {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nv-sheet {
+    align-items: center;
+    padding: 1.5rem;
+  }
+
+  .nv-sheet__panel {
+    max-width: 44rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    border-radius: 22px;
+  }
+
+  .nv-sheet__img {
+    max-height: none;
+    width: 100%;
+  }
+
+  .nv-sheet__body {
+    align-self: center;
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nv-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nv-card,
+  .nv-bar a,
+  .nv-sheet__panel {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ── El resto de la página ─────────────────────────────────────────────
+   Las secciones que siguen (recomendador, descuentos, Sala VIP, música,
+   opiniones...) pierden los velos de color y el grano: cada una es un
+   bloque plano, alternando noche, pino y vino, como los fondos del hero.
+   Sus titulares toman la letra condensada. */
+.nv-body .fb-section {
+  background-color: #0c0a0b;
+}
+
+.nv-body .fb-section:nth-of-type(3n + 1) {
+  background-color: #073d29;
+}
+
+.nv-body .fb-section:nth-of-type(3n + 2) {
+  background-color: #5c0710;
+}
+
+.nv-body .fb-section::before,
+.nv-body .fb-section::after {
+  display: none;
+}
+
+.nv-body .fb-section-heading h2 {
+  font-family: "Navidad Display", var(--font-display);
+  font-size: clamp(2.3rem, 11vw, 3.6rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+
+.nv-body .fb-rule {
+  background: var(--color-secondary);
+}
+
+.nv-body .fb-card {
+  background-image: none;
+  background-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+}
+
+.nv-body .fb-btn {
+  background-image: none;
+  background-color: #f3ece4;
+  border-color: #f3ece4;
+  color: #231a1b;
+  font-weight: 600;
+}
+
+.nv-body .fb-btn:hover {
+  background-color: #fffaf4;
+  color: #231a1b;
+}
