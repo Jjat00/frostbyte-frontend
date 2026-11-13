@@ -294,6 +294,13 @@ const LiquidoHero = () => {
     if (Math.abs(dx) > 44) go(dx < 0 ? 1 : -1);
   };
 
+  // La <img> del vaso solo la cambia cupStage.swap() cuando la foto nueva
+  // cargó: si React la reescribiera en cada sabor, una foto fallida dejaría
+  // el vaso roto. Aquí solo se pone la primera.
+  const firstSrc = React.useRef(null);
+  if (!flavor) firstSrc.current = null;
+  else if (!firstSrc.current) firstSrc.current = flavor.src;
+
   const word = flavor?.word ?? "Navidad";
 
   return (
@@ -332,7 +339,7 @@ const LiquidoHero = () => {
                   >
                     <div ref={shadowRef} className="nv-liq__shadow" />
                     <div ref={tiltRef} className="nv-liq__tilt">
-                      <img ref={imgRef} src={flavor.src} alt="" draggable="false" decoding="async" />
+                      <img ref={imgRef} src={firstSrc.current} alt="" draggable="false" decoding="async" />
                     </div>
                   </div>
                   <button type="button" className="nv-liq__nav" onClick={() => go(1)} aria-label="Sabor siguiente" disabled={count < 2}>

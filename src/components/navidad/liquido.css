@@ -176,6 +176,12 @@
   visibility: hidden;
 }
 
+/* Sin 3D (falló una textura o se perdió WebGL) manda la foto: el lienzo,
+   que puede tener pintado el sabor anterior, no se ve. */
+.nv-liq__cup:not(.is-3d) canvas {
+  display: none;
+}
+
 .nv-liq__shadow {
   position: absolute;
   z-index: 0;
