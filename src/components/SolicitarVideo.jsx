@@ -22,6 +22,10 @@ import { isCampaign } from "@/config/campaign";
 const haunted = isCampaign("halloween");
 const PumpkinVisualizer = haunted ? React.lazy(() => import("@/components/halloween/PumpkinVisualizer")) : null;
 
+// En Navidad, la misma nevada con bolas que en la sección de Spotify.
+const snowy = isCampaign("navidad");
+const SnowVisualizer = snowy ? React.lazy(() => import("@/components/navidad/SnowVisualizer")) : null;
+
 const formatDuration = (iso) => {
   if (!iso) return "";
   const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
@@ -233,15 +237,17 @@ const SolicitarVideo = ({ active = true }) => {
   return (
     <section
       id="solicitar-cancion"
-      className={`relative overflow-hidden min-h-[80vh] flex flex-col justify-center${haunted ? " hw-haunted" : ""}`}
-      style={{
-        background: "linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)",
-      }}
+      className={`relative overflow-hidden min-h-[80vh] flex flex-col justify-center${haunted ? " hw-haunted" : ""}${snowy ? " nv-musica" : ""}`}
+      style={snowy ? undefined : { background: "linear-gradient(to bottom, #0a0a14, #0d0d1a, #0a0a14)" }}
     >
       {/* Canvas animation - esfera 3D de particulas */}
       {haunted ? (
         <React.Suspense fallback={null}>
           <PumpkinVisualizer isPlaying={!!nowPlaying?.video_id} />
+        </React.Suspense>
+      ) : snowy ? (
+        <React.Suspense fallback={null}>
+          <SnowVisualizer isPlaying={!!nowPlaying?.video_id} trackKey={nowPlaying?.video_id} />
         </React.Suspense>
       ) : (
         <MusicVisualizer isPlaying={!!nowPlaying?.video_id} />

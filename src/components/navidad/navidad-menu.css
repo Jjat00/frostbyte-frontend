@@ -600,3 +600,58 @@ button.nv-card:focus-visible {
   background-color: #f3ece4;
   color: #231a1b;
 }
+
+/* ── Música: nevada con bolas ──────────────────────────────────────────
+   La sección de pedir canción (Spotify o YouTube) va sobre pino liso. La
+   nieve y las bolas las pinta SnowVisualizer en un canvas pegado a la
+   pantalla; overflow: clip y no hidden, para que ese canvas pueda pegarse.
+   Arriba se deja aire: ahí cuelgan las bolas, sin tapar el título. */
+.nv-body #solicitar-cancion.nv-musica {
+  overflow: clip;
+  background: #073d29;
+}
+
+.nv-snow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.nv-snow canvas {
+  position: sticky;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  max-height: 100%;
+}
+
+.nv-body #solicitar-cancion.nv-musica > .container {
+  padding-top: 10.5rem;
+}
+
+.nv-body #solicitar-cancion.nv-musica h2 {
+  font-family: "Navidad Display", var(--font-display);
+  font-size: clamp(2.3rem, 11vw, 3.6rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+
+/* Sin sombras ni halos, como el resto de Navidad: ni en la carátula ni en
+   la letra de la canción. */
+.nv-body #solicitar-cancion.nv-musica img {
+  box-shadow: none;
+}
+
+.nv-body #solicitar-cancion.nv-musica [class*="drop-shadow"] {
+  filter: none;
+}
+
+@media (min-width: 900px) {
+  .nv-body #solicitar-cancion.nv-musica > .container {
+    padding-top: 12rem;
+  }
+}

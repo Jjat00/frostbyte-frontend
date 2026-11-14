@@ -13,6 +13,11 @@ import { isCampaign } from '@/config/campaign';
 const haunted = isCampaign('halloween');
 const PumpkinVisualizer = haunted ? React.lazy(() => import('@/components/halloween/PumpkinVisualizer')) : null;
 
+// En Navidad, nieve que baila con la música y bolas colgando. Mismo trato:
+// chunk aparte que solo se descarga con la campaña encendida.
+const snowy = isCampaign('navidad');
+const SnowVisualizer = snowy ? React.lazy(() => import('@/components/navidad/SnowVisualizer')) : null;
+
 const parseSyncedLyrics = (syncedLyrics) => {
   if (!syncedLyrics) return [];
   return syncedLyrics
@@ -333,12 +338,16 @@ const SolicitarCancion = ({ floor: floorProp, active = true }) => {
   return (
     <section
       id="solicitar-cancion"
-      className={`fb-section flex min-h-[80vh] flex-col justify-center${haunted ? ' hw-haunted' : ''}`}
+      className={`fb-section flex min-h-[80vh] flex-col justify-center${haunted ? ' hw-haunted' : ''}${snowy ? ' nv-musica' : ''}`}
     >
       {/* Canvas animation - PROTAGONIST */}
       {haunted ? (
         <React.Suspense fallback={null}>
           <PumpkinVisualizer isPlaying={!!nowPlaying?.is_playing} />
+        </React.Suspense>
+      ) : snowy ? (
+        <React.Suspense fallback={null}>
+          <SnowVisualizer isPlaying={!!nowPlaying?.is_playing} trackKey={nowPlaying?.uri} />
         </React.Suspense>
       ) : (
         <MusicVisualizer isPlaying={!!nowPlaying?.is_playing} />
