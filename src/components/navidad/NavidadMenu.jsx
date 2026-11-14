@@ -17,8 +17,10 @@ import "./navidad-menu.css";
  *   bajar, se marca sola la que estás viendo. Al final, lo que no es carta
  *   (pedir canción, opinión, descuentos...).
  * - Cada producto es una tarjeta con su foto navideña sobre fondo plano
- *   (rojo, verde pino o crema), el nombre y el precio. Si tiene tamaños, los
- *   precios van en fila. Tocarla abre la ficha con la descripción.
+ *   (rojo, verde pino o crema), el nombre y el precio. Si tiene tamaños o
+ *   presentaciones, van todos a la vista en la tarjeta, cada uno con su
+ *   precio: nadie tiene que adivinar que hay que tocarla. Tocarla abre la
+ *   ficha con la descripción.
  * - Las categorías y productos son los activos de la API, en el mismo orden
  *   de la carta habitual (Frostbyte Food primero). Un producto sin foto
  *   navideña usa su foto de siempre sobre el mismo fondo plano.
@@ -61,6 +63,23 @@ const TILES = ["#9d0812", "#073d29", "#f3ece4"];
 const sectionId = (category) => SECTION_IDS[category.slug] || `cat-${category.slug}`;
 const formatPrice = (value) => `$${Math.round(Number(value)).toLocaleString("es-CO")}`;
 
+// Lo que se anuncia de un producto: sus variantes activas con precio, de
+// menor a mayor; a igual precio queda el orden del panel (sort es estable).
+// Una variante sin precio (nulo o cero) no se muestra: no es "gratis".
+const pricedVariants = (product) =>
+  activeVariants(product)
+    .filter((variant) => Number(variant.price) > 0)
+    .sort((a, b) => Number(a.price) - Number(b.price));
+
+// "grande" y "Grande" conviven en el panel: en la carta, siempre con mayúscula.
+const label = (name) => {
+  const text = String(name || "").trim();
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
+// Clave de una variante en una lista: su id, o su posición si no lo trae.
+const variantKey = (variant, index) => variant.id ?? `i${index}`;
+
 const scrollToId = (id) => {
   const el = document.getElementById(id);
   if (!el) return;
@@ -70,8 +89,8 @@ const scrollToId = (id) => {
 };
 
 function ProductCard({ product, index, onOpen }) {
-  const variants = activeVariants(product);
-  if (!variants.length) return null;
+  if (!activeVariants(product).length) return null;
+  const variants = pricedVariants(product);
   const christmas = NAVIDAD_MENU_IMAGES.has(product.slug);
   const image = christmas ? `/images/navidad/menu/${product.slug}.webp` : product.image_url;
   // 320 px para el teléfono (~11 KB), 640 px para pantallas grandes.
@@ -79,8 +98,10 @@ function ProductCard({ product, index, onOpen }) {
     ? `/images/navidad/menu/${product.slug}-sm.webp 320w, /images/navidad/menu/${product.slug}.webp 640w`
     : undefined;
   const tile = TILES[index % TILES.length];
-  const prices = variants.map((variant) => Number(variant.price)).filter((price) => price > 0);
-  const lowest = prices.length ? Math.min(...prices) : 0;
+  // Mismo precio en todas (sabores de una gaseosa): un solo precio y la
+  // lista de opciones. Precios distintos (tamaños): una fila por cada uno.
+  const samePrice = variants.every((variant) => Number(variant.price) === Number(variants[0].price));
+  const options = variants.map((variant) => label(variant.name)).filter(Boolean);
 
   return (
     <li>
@@ -103,15 +124,23 @@ function ProductCard({ product, index, onOpen }) {
         </span>
         <span className="nv-card__body">
           <span className="nv-card__name">{product.name}</span>
-          <span className="nv-card__price">
-            {variants.length > 1 ? (
-              <>
-                <small>Desde</small> {formatPrice(lowest)}
-              </>
-            ) : (
-              formatPrice(lowest)
-            )}
-          </span>
+          {!variants.length ? null : samePrice ? (
+            <>
+              <span className="nv-card__price">{formatPrice(variants[0].price)}</span>
+              {variants.length > 1 && options.length > 0 && (
+                <span className="nv-card__opts">{options.join(" · ")}</span>
+              )}
+            </>
+          ) : (
+            <span className="nv-card__sizes">
+              {variants.map((variant, i) => (
+                <span key={variantKey(variant, i)} className="nv-card__size">
+                  <span>{label(variant.name) || "Opción"}</span>
+                  <b>{formatPrice(variant.price)}</b>
+                </span>
+              ))}
+            </span>
+          )}
         </span>
       </button>
     </li>
@@ -226,7 +255,7 @@ function ProductSheet({ product, onClose }) {
   }, [product, onClose]);
 
   if (!product) return null;
-  const variants = activeVariants(product);
+  const variants = pricedVariants(product);
   const christmas = NAVIDAD_MENU_IMAGES.has(product.slug);
   const image = christmas ? `/images/navidad/menu/${product.slug}.webp` : product.image_url;
 
@@ -245,9 +274,9 @@ function ProductSheet({ product, onClose }) {
           <h3 id="nv-sheet-title" className="nv-sheet__name">{product.name}</h3>
           {product.description && <p className="nv-sheet__desc">{product.description}</p>}
           <ul className="nv-sheet__prices">
-            {variants.map((variant) => (
-              <li key={variant.id || variant.name}>
-                <span>{variants.length > 1 ? variant.name : "Precio"}</span>
+            {variants.map((variant, i) => (
+              <li key={variantKey(variant, i)}>
+                <span>{variants.length > 1 ? label(variant.name) || "Opción" : "Precio"}</span>
                 <b>{formatPrice(variant.price)}</b>
               </li>
             ))}

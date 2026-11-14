@@ -10,6 +10,7 @@
   --nv-pine: #073d29;
   --nv-cream: #f3ece4;
   --nv-gold: #e3bf76;
+  --nv-price: var(--nv-red);
   position: relative;
   padding: 3rem 0 3.5rem;
   background: var(--nv-cream);
@@ -248,6 +249,8 @@ button.nv-card:focus-visible {
 
 .nv-card__body {
   display: grid;
+  /* minmax(0, ...): un nombre largo se parte en vez de ensanchar la tarjeta. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.3rem;
   padding: 0.65rem 0.75rem 0.8rem;
 }
@@ -266,13 +269,52 @@ button.nv-card:focus-visible {
 .nv-card__price {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--nv-red);
+  color: var(--nv-price);
 }
 
-.nv-card__price small {
-  font-size: 0.66rem;
-  font-weight: 600;
-  color: rgba(35, 26, 27, 0.55);
+/* Tamaños y presentaciones a la vista, sin tocar la tarjeta: una fila por
+   cada uno, nombre a la izquierda y precio a la derecha. */
+.nv-card__sizes {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+}
+
+/* Si el nombre y el precio no caben en una línea (teléfonos muy angostos o
+   nombres largos como "Botella completa / 6 copas"), el precio baja a la
+   línea siguiente, a la derecha, en vez de partir una palabra. */
+.nv-card__size {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: 0.5rem;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.nv-card__size > span {
+  min-width: 0;
+  overflow-wrap: break-word;
+  color: color-mix(in srgb, currentColor 74%, transparent);
+}
+
+.nv-card__size b {
+  flex: none;
+  margin-left: auto;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--nv-price);
+}
+
+/* Opciones al mismo precio (sabores): se nombran bajo el precio. */
+.nv-card__opts {
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: color-mix(in srgb, currentColor 74%, transparent);
 }
 
 .nv-card--skeleton .nv-card__img {
