@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { LogIn, MapPin, MessageCircle } from "lucide-react";
 import SocialLink, { SOCIAL_ICON } from "@/components/SocialLink";
 import { SOCIAL_SOURCE } from "@/lib/social";
+import { isCampaign } from "@/config/campaign";
 
 /**
  * Pie de la carta pública.
@@ -24,7 +25,8 @@ const quickLinks = [
   { label: "Carta completa", href: "#carta" },
   { label: "Explorar por sección", href: "#menu" },
   { label: "Por qué Frostbyte", href: "#features" },
-];
+  // En Navidad la navegación rápida (#menu) no se pinta: va dentro de la carta.
+].filter((link) => !(link.href === "#menu" && isCampaign("navidad")));
 
 const Footer = () => {
   return (

@@ -20,7 +20,17 @@ const ScrollToCarta = () => {
   }, []);
 
   const scrollToCarta = () => {
-    document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
+    // "menu" es la navegación rápida; en campañas que la reemplazan (la carta
+    // de Navidad) no existe, y entonces se sube al inicio de la carta.
+    const target = document.getElementById("menu") || document.getElementById("carta");
+    if (!target) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    // 56 px: el encabezado fijo de la página, para que no tape el título.
+    const top = target.getBoundingClientRect().top + window.scrollY - 56;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
   };
 
   return (
