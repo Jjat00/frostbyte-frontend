@@ -18,7 +18,7 @@ import "./navidad-menu.css";
  *   (pedir canción, opinión, descuentos...).
  * - Cada producto es una tarjeta con su foto navideña sobre fondo plano
  *   (rojo, verde pino o crema), el nombre y el precio. Si tiene tamaños o
- *   presentaciones, dice el precio más bajo y lleva un botón a la vista
+ *   presentaciones, dice el precio más bajo y lo avisa con un texto a la vista
  *   ("Ver 3 opciones"): nadie tiene que adivinar que hay que tocarla.
  *   Tocarla abre la ficha con todos los precios y la descripción.
  * - Las categorías y productos son los activos de la API, en el mismo orden
@@ -99,7 +99,7 @@ function ProductCard({ product, index, onOpen }) {
     : undefined;
   const tile = TILES[index % TILES.length];
   // Con varias opciones la tarjeta dice el precio más bajo y lo anuncia con
-  // un botón a la vista ("Ver 3 opciones"): que se sepa que hay más y que
+  // un texto a la vista ("Ver 3 opciones"): que se sepa que hay más y que
   // hay que tocar. Si todas cuestan lo mismo (sabores), sobra el "Desde".
   const samePrice = variants.every((variant) => Number(variant.price) === Number(variants[0].price));
   const many = variants.length > 1;

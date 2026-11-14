@@ -281,20 +281,15 @@ button.nv-card:focus-visible {
   color: rgba(35, 26, 27, 0.72);
 }
 
-/* "Ver 3 opciones": con forma de botón, para que se note que la tarjeta se
-   toca y que hay más tamaños o presentaciones dentro. */
+/* "Ver 3 opciones": solo texto con su flecha, alineado con el nombre y el
+   precio, para que se sepa que hay más tamaños o presentaciones dentro. */
 .nv-card__more {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.35rem;
-  margin-top: 0.3rem;
-  padding: 0.42rem 0.6rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--nv-price) 12%, transparent);
+  gap: 0.2rem;
   font-size: 0.72rem;
   font-weight: 650;
-  line-height: 1.15;
+  line-height: 1.2;
   color: var(--nv-price);
 }
 
