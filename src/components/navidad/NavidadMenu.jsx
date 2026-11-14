@@ -18,9 +18,9 @@ import "./navidad-menu.css";
  *   (pedir canción, opinión, descuentos...).
  * - Cada producto es una tarjeta con su foto navideña sobre fondo plano
  *   (rojo, verde pino o crema), el nombre y el precio. Si tiene tamaños o
- *   presentaciones, van todos a la vista en la tarjeta, cada uno con su
- *   precio: nadie tiene que adivinar que hay que tocarla. Tocarla abre la
- *   ficha con la descripción.
+ *   presentaciones, dice el precio más bajo y lleva un botón a la vista
+ *   ("Ver 3 opciones"): nadie tiene que adivinar que hay que tocarla.
+ *   Tocarla abre la ficha con todos los precios y la descripción.
  * - Las categorías y productos son los activos de la API, en el mismo orden
  *   de la carta habitual (Frostbyte Food primero). Un producto sin foto
  *   navideña usa su foto de siempre sobre el mismo fondo plano.
@@ -98,10 +98,11 @@ function ProductCard({ product, index, onOpen }) {
     ? `/images/navidad/menu/${product.slug}-sm.webp 320w, /images/navidad/menu/${product.slug}.webp 640w`
     : undefined;
   const tile = TILES[index % TILES.length];
-  // Mismo precio en todas (sabores de una gaseosa): un solo precio y la
-  // lista de opciones. Precios distintos (tamaños): una fila por cada uno.
+  // Con varias opciones la tarjeta dice el precio más bajo y lo anuncia con
+  // un botón a la vista ("Ver 3 opciones"): que se sepa que hay más y que
+  // hay que tocar. Si todas cuestan lo mismo (sabores), sobra el "Desde".
   const samePrice = variants.every((variant) => Number(variant.price) === Number(variants[0].price));
-  const options = variants.map((variant) => label(variant.name)).filter(Boolean);
+  const many = variants.length > 1;
 
   return (
     <li>
@@ -124,21 +125,16 @@ function ProductCard({ product, index, onOpen }) {
         </span>
         <span className="nv-card__body">
           <span className="nv-card__name">{product.name}</span>
-          {!variants.length ? null : samePrice ? (
-            <>
-              <span className="nv-card__price">{formatPrice(variants[0].price)}</span>
-              {variants.length > 1 && options.length > 0 && (
-                <span className="nv-card__opts">{options.join(" · ")}</span>
-              )}
-            </>
-          ) : (
-            <span className="nv-card__sizes">
-              {variants.map((variant, i) => (
-                <span key={variantKey(variant, i)} className="nv-card__size">
-                  <span>{label(variant.name) || "Opción"}</span>
-                  <b>{formatPrice(variant.price)}</b>
-                </span>
-              ))}
+          {variants.length > 0 && (
+            <span className="nv-card__price">
+              {many && !samePrice && <small>Desde </small>}
+              {formatPrice(variants[0].price)}
+            </span>
+          )}
+          {many && (
+            <span className="nv-card__more">
+              Ver {variants.length} opciones
+              <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 3.5l4.5 4.5L6 12.5" /></svg>
             </span>
           )}
         </span>
@@ -365,7 +361,7 @@ export default function NavidadMenu() {
       <div className="nv-menu__inner">
         <p className="nv-menu__eyebrow">Bebidas y comida · Navidad</p>
         <h2 className="nv-menu__title">La carta</h2>
-        <p className="nv-menu__lead">Toca una categoría para ir directo. Toca un producto para ver su descripción.</p>
+        <p className="nv-menu__lead">Toca una categoría para ir directo. Toca un producto para ver sus tamaños, precios y descripción.</p>
       </div>
 
       <nav className="nv-bar" aria-label="Categorías de la carta">

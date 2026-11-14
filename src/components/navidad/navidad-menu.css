@@ -260,6 +260,9 @@ button.nv-card:focus-visible {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* Siempre el alto de dos líneas: así el precio y el botón quedan a la
+     misma altura en las dos tarjetas de una fila. */
+  min-height: 2.4em;
   font-size: 0.86rem;
   font-weight: 650;
   line-height: 1.2;
@@ -272,49 +275,31 @@ button.nv-card:focus-visible {
   color: var(--nv-price);
 }
 
-/* Tamaños y presentaciones a la vista, sin tocar la tarjeta: una fila por
-   cada uno, nombre a la izquierda y precio a la derecha. */
-.nv-card__sizes {
-  display: grid;
-  gap: 0.3rem;
-  margin-top: 0.15rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+.nv-card__price small {
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: rgba(35, 26, 27, 0.72);
 }
 
-/* Si el nombre y el precio no caben en una línea (teléfonos muy angostos o
-   nombres largos como "Botella completa / 6 copas"), el precio baja a la
-   línea siguiente, a la derecha, en vez de partir una palabra. */
-.nv-card__size {
+/* "Ver 3 opciones": con forma de botón, para que se note que la tarjeta se
+   toca y que hay más tamaños o presentaciones dentro. */
+.nv-card__more {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  column-gap: 0.5rem;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+  padding: 0.42rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nv-price) 12%, transparent);
   font-size: 0.72rem;
-  line-height: 1.25;
-}
-
-.nv-card__size > span {
-  min-width: 0;
-  overflow-wrap: break-word;
-  color: color-mix(in srgb, currentColor 74%, transparent);
-}
-
-.nv-card__size b {
-  flex: none;
-  margin-left: auto;
-  font-size: 0.84rem;
-  font-weight: 700;
+  font-weight: 650;
+  line-height: 1.15;
   color: var(--nv-price);
 }
 
-/* Opciones al mismo precio (sabores): se nombran bajo el precio. */
-.nv-card__opts {
-  overflow-wrap: anywhere;
-  font-size: 0.72rem;
-  line-height: 1.35;
-  color: color-mix(in srgb, currentColor 74%, transparent);
+.nv-card__more svg {
+  flex: none;
 }
 
 .nv-card--skeleton .nv-card__img {
