@@ -36,6 +36,7 @@ export const NAVIDAD_MENU_IMAGES = new Set([
   "gintonic",
   "granizado-de-chicle",
   "granizado-de-mandarina",
+  "granizado-sabor-lujuria",
   "jarra-de-mojito-13-l",
   "jugo-hit",
   "limonada-de-cereza",

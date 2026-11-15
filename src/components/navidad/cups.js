@@ -35,6 +35,8 @@ export const NAVIDAD_CUPS = {
   "limonada-de-cereza": cup("cereza", "Cereza", ["#9c0718", "#e3122b", "#ff6b75"]),
   "granizado-de-chicle": cup("chicle", "Chicle", ["#0a4f94", "#1f9be6", "#8fdcff"]),
   fresa: cup("frutos-rojos", "Frutos rojos", ["#3a0d52", "#7a2a9c", "#d08af0"]),
+  "granizado-sabor-lujuria": cup("lujuria", "Lujuria", ["#4a0a52", "#a3228f", "#f08ad6"]),
+  // Desactivado en el panel el 2026-11-14 (lo reemplazó Lujuria); si vuelve, sale solo.
   venom: cup("venom", "Venom", ["#101014", "#3a3b46", "#9a9dab"]),
   "pecera-granizada": cup("pecera", "Pecera", ["#8e0f4a", "#e8366e", "#ffb347"]),
   "pecera-granizado-con-alcohol": cup("pecera-alcohol", "Pecera", ["#6e1230", "#d9481f", "#ffc56b"]),
