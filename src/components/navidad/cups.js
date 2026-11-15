@@ -18,16 +18,18 @@
  * `liquid`: los tres tonos del fondo líquido (oscuro, medio, claro).
  */
 
+import { nvImg } from "./imageVersion";
+
 const DIR = "/images/navidad";
 
 const cup = (key, word, liquid) => ({
   key,
   word,
   liquid,
-  src: `${DIR}/${key}.webp`,
+  src: nvImg(`${DIR}/${key}.webp`),
   // 444 × 600 (~50 KB en vez de ~180 KB): la que baja el teléfono.
-  small: `${DIR}/${key}-sm.webp`,
-  depth: `${DIR}/${key}-depth.webp`,
+  small: nvImg(`${DIR}/${key}-sm.webp`),
+  depth: nvImg(`${DIR}/${key}-depth.webp`),
 });
 
 export const NAVIDAD_CUPS = {

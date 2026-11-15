@@ -6,6 +6,7 @@ import { activeVariants } from "@/lib/variants";
 import { GRANIZADO_EXTRAS } from "@/components/Granizados";
 import { MICHELADA_EXTRAS } from "@/components/Micheladas";
 import { NAVIDAD_MENU_IMAGES } from "@/components/navidad/menuImages";
+import { nvImg } from "@/components/navidad/imageVersion";
 import "./navidad-menu.css";
 
 /**
@@ -92,10 +93,10 @@ function ProductCard({ product, index, onOpen }) {
   if (!activeVariants(product).length) return null;
   const variants = pricedVariants(product);
   const christmas = NAVIDAD_MENU_IMAGES.has(product.slug);
-  const image = christmas ? `/images/navidad/menu/${product.slug}.webp` : product.image_url;
+  const image = christmas ? nvImg(`/images/navidad/menu/${product.slug}.webp`) : product.image_url;
   // 320 px para el teléfono (~11 KB), 640 px para pantallas grandes.
   const srcSet = christmas
-    ? `/images/navidad/menu/${product.slug}-sm.webp 320w, /images/navidad/menu/${product.slug}.webp 640w`
+    ? `${nvImg(`/images/navidad/menu/${product.slug}-sm.webp`)} 320w, ${nvImg(`/images/navidad/menu/${product.slug}.webp`)} 640w`
     : undefined;
   const tile = TILES[index % TILES.length];
   // Con varias opciones la tarjeta dice el precio más bajo y lo anuncia con
@@ -253,7 +254,7 @@ function ProductSheet({ product, onClose }) {
   if (!product) return null;
   const variants = pricedVariants(product);
   const christmas = NAVIDAD_MENU_IMAGES.has(product.slug);
-  const image = christmas ? `/images/navidad/menu/${product.slug}.webp` : product.image_url;
+  const image = christmas ? nvImg(`/images/navidad/menu/${product.slug}.webp`) : product.image_url;
 
   // En un portal sobre <body>: así todo lo demás (la app entera) queda inerte.
   return createPortal(
